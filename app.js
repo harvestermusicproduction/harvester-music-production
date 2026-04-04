@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <h3 style="color:#fff; font-size:1.6rem; font-family: var(--font-display); margin-bottom: 0.8rem;">${e.title}</h3>
               <p style="color:rgba(255,255,255,0.7); line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
-            <button class="btn-score-premium" style="width:100%; margin-top:20px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2);" onclick="openReminderModal('${e.id}', '${e.title}')"><i class="fas fa-bell"></i> 我要参与 提醒我</button>
+            <button class="btn-score-premium" style="width:100%; margin-top:20px;" onclick="openReminderModal('${e.id}', '${e.title}')"><i class="fas fa-bell"></i> 我要参与 提醒我</button>
           </div>`;
       });
       container.innerHTML = html;
