@@ -434,6 +434,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); }
   transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  opacity: 0.5; /* 🔥 Reduced opacity as requested */
 }
 
 .btn-frosted-yt:hover,
@@ -443,6 +444,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); }
   transform: translateY(-3px);
   box-shadow: 0 15px 45px rgba(255, 255, 255, 0.1);
   color: #fff !important;
+  opacity: 1 !important; /* Restore opacity on hover */
 }
 /* --- 🎶 Musical Note Particles --- */
 .floating-note {
