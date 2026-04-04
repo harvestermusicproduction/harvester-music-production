@@ -184,16 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
       let { data: events, error } = await db.from('events').select('*').order('date', { ascending: true });
       if (error) throw error;
       
-      // Inject Special Fundraising Event at the top
-      const specialEvent = {
-        id: 'special-fund-2026',
-        title: '成就筹款活动',
-        date: '2026-08-25',
-        description: 'M-Ambition 成就筹款活动 - 汇聚音乐与爱心，共同推进行动。',
-        is_gold: true
-      };
-      events = [specialEvent, ...events];
-
       let html = "";
       events.forEach(e => {
         const isGold = e.is_gold || false;
@@ -220,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         html += `<div class="event-card fade-in visible ${goldClass}" style="box-shadow: 0 15px 45px rgba(0,0,0,0.1);">
             <div>
               <div style="color:#666; font-size:0.75rem; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px;">
-                <span><i class="fas fa-calendar-alt"></i> ${date || 'TBA'} ${isGold ? '(2026-08-25)' : ''}</span>
+                <span><i class="fas fa-calendar-alt"></i> ${date || 'TBA'}</span>
                 <span><i class="fas fa-clock"></i> ${time}</span>
                 ${locHtml}
               </div>
