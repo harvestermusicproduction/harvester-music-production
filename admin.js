@@ -150,6 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function renderMusic(container) {
     const { data: songs } = await db.from('music_works').select('*').order('created_at', {ascending: false});
+    const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_latest_music_id').maybeSingle();
+    const latestId = cfg?.value;
+
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
         <h1 style="color:var(--gold);">音乐作品管理</h1>
@@ -166,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                    style="width:80px; height:80px; object-fit:cover; border-radius:8px; border:1px solid #333;"
                    onerror="this.src='https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80'">
               <div style="flex:1;">
-                <h3 style="margin:0; color:#fff; font-size:1.2rem;">${s.title}</h3>
+                <h3 style="margin:0; color:#fff; font-size:1.2rem;">${s.title} ${s.id === latestId || s.is_latest ? '<span style="color:var(--gold); font-size:0.7rem; background:rgba(246,210,138,0.1); padding:2px 8px; border-radius:50px; margin-left:10px;">HOME FEATURED</span>' : ''}</h3>
                 <p style="margin:5px 0 0 0; color:#666; font-size:0.85rem; line-height:1.4;">${s.description || '暂无作品简介...'}</p>
                 <div style="display:flex; gap:15px; margin-top:8px;">
                    <span style="font-size:0.75rem; color:#444;">📺 YouTube: ${s.audio_url ? '已链接' : '未设置'}</span>
@@ -177,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <!-- 第二排：操作按钮 -->
             <div style="display:flex; gap:10px; justify-content: flex-end;">
-              <button class="btn-tiny" style="padding:8px 25px;" onclick='openMusicModal(${JSON.stringify(s).replace(/'/g, "&apos;")})'>⚙️ 编辑详细资料 (Edit)</button>
+              <button class="btn-tiny" style="padding:8px 25px;" onclick='openMusicModal(${JSON.stringify({ ...s, force_latest: s.id === latestId })}.replace(/'/g, "&apos;"))'>⚙️ 编辑详细资料 (Edit)</button>
               <button class="btn-tiny danger" style="padding:8px 15px;" onclick="deleteItem('music_works', '${s.id}')">🗑️ 删除 (Delete)</button>
             </div>
 
@@ -226,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <div style="margin: 15px 0;">
           <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--gold);">
-            <input type="checkbox" id="m_latest" ${s?.is_latest ? 'checked' : ''} style="width:auto;"> 
+            <input type="checkbox" id="m_latest" ${s?.force_latest || s?.is_latest ? 'checked' : ''} style="width:auto;"> 
             设为最新歌曲 (首页首屏展示)
           </label>
         </div>
@@ -249,27 +252,39 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const isLatest = document.getElementById('m_latest').checked;
       
-      if(isLatest) {
-        // Unset previous latest manually to ensure exclusivity
-        await db.from('music_works').update({ is_latest: false }).neq('id', id);
-      }
-
       const payload = {
         title: document.getElementById('m_t').value,
         cover_url: document.getElementById('m_url').value,
         audio_url: document.getElementById('m_a').value,
         score_url: document.getElementById('m_s').value,
         description: document.getElementById('m_d').value,
-        is_latest: isLatest
+        is_latest: isLatest // Try normal save first
       };
 
       let result;
       if(id) {
-        result = await db.from('music_works').update(payload).eq('id', id);
+        result = await db.from('music_works').update(payload).eq('id', id).select();
       } else {
-        result = await db.from('music_works').insert([payload]);
+        result = await db.from('music_works').insert([payload]).select();
       }
       
+      // 🛡️ FALLBACK: If 'is_latest' column is missing, retry without it
+      if (result.error && result.error.message.includes("is_latest")) {
+        console.warn("Retrying without 'is_latest' column...");
+        delete payload.is_latest;
+        if(id) {
+          result = await db.from('music_works').update(payload).eq('id', id).select();
+        } else {
+          result = await db.from('music_works').insert([payload]).select();
+        }
+        
+        // Handle "Latest" logic using site_config instead
+        if (!result.error && isLatest) {
+          const newId = id || result.data[0].id;
+          await db.from('site_config').upsert({ key: 'cfg_latest_music_id', value: newId });
+        }
+      }
+
       if (result.error) throw result.error;
 
       console.log("Music saved successfully!");

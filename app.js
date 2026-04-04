@@ -120,42 +120,65 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   async function fetchLatestMusicForHome() {
-    const coverEl = document.getElementById('cfg_homeSongCover');
-    const titleEl = document.getElementById('cfg_homeSongTitle');
-    const ytEl = document.getElementById('cfg_homeSongYT');
-    const wrapper = document.getElementById('vinylWrapper');
+    // 🛡️ TRIPLE-LAYER FETCH FOR LATEST MUSIC (Schema-Safe)
+    let latest = null;
+
     try {
-      let { data: latest, error } = await db.from('music_works').select('*').eq('is_latest', true).limit(1).single();
-      if (error || !latest) {
-        const { data: fallback } = await db.from('music_works').select('*').order('created_at', { ascending: false }).limit(1).single();
-        latest = fallback;
+      // 1. Check site_config for manually set ID (High Priority)
+      const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_latest_music_id').maybeSingle();
+      if (cfg?.value) {
+        const { data: s } = await db.from('music_works').select('*').eq('id', cfg.value).maybeSingle();
+        if (s) latest = s;
       }
-      
-      if(latest && wrapper){
-        const coverEl = document.getElementById('cfg_homeSongCover'); // Corrected from querySelector
-        const fallbackLogo = 'assets/logo.png';
-        const coverImg = latest.cover_url || latest.image_url || fallbackLogo;
-        
-        if(coverEl) {
-          coverEl.src = coverImg;
-          coverEl.onerror = () => { coverEl.src = fallbackLogo; };
-        }
-        
-        const titleEl = document.getElementById('cfg_homeSongTitle');
-        const ytBtn = document.getElementById('cfg_homeSongYT');
-        if(titleEl) titleEl.innerText = latest.title || '最新单曲';
-        if(ytBtn) {
-          const ytUrl = latest.audio_url || latest.youtube_url;
-          if(ytUrl) {
-            ytBtn.href = ytUrl;
-            ytBtn.style.display = 'inline-block';
-          } else {
-            ytBtn.style.display = 'none';
-          }
-        }
+
+      // 2. Fallback to is_latest column (Legacy Support)
+      if (!latest) {
+        const { data: s } = await db.from('music_works').select('*').eq('is_latest', true).limit(1).maybeSingle();
+        if (s) latest = s;
+      }
+
+      // 3. Final fallback: Most recent creation date
+      if (!latest) {
+        const { data: s } = await db.from('music_works').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
+        if (s) latest = s;
       }
     } catch (e) {
-      console.error("Home music error:", e);
+      console.warn("Latest music fetch error:", e);
+    }
+    
+    if (latest) {
+      // Compatibility support for various index.html versions
+      const titleEl = document.getElementById('latest_title') || document.getElementById('cfg_homeSongTitle');
+      const descEl = document.getElementById('latest_desc');
+      const ytBtn = document.getElementById('latest_btns') || document.getElementById('cfg_homeSongYT');
+      const coverImg = document.getElementById('latest_cover') || document.getElementById('cfg_homeSongCover');
+      const wrapper = document.getElementById('vinylWrapper');
+
+      if (titleEl) titleEl.innerText = latest.title || '';
+      if (descEl) descEl.innerText = latest.description || '';
+      
+      const ytLink = latest.audio_url || latest.youtube_url;
+      const scoreLink = latest.score_url;
+      
+      if (ytBtn) {
+        if (ytBtn.tagName === 'A') {
+          ytBtn.href = ytLink || '#';
+        } else {
+          ytBtn.innerHTML = `
+            ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-premium"><i class="fab fa-youtube"></i> Watch on YouTube</a>` : ''}
+            ${scoreLink ? `<a href="${scoreLink}" target="_blank" class="btn-premium" style="background:#fff; color:#0e0e0e;"><i class="fas fa-file-pdf"></i> Download Scores</a>` : ''}
+          `;
+        }
+      }
+      
+      if (coverImg) {
+        coverImg.src = latest.cover_url || latest.image_url || 'assets/logo.png';
+        coverImg.onerror = () => { coverImg.src = 'assets/logo.png'; };
+      }
+
+      if (wrapper && latest.cover_url) {
+        wrapper.style.display = 'block';
+      }
     }
   }
 
