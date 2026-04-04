@@ -142,8 +142,10 @@ header.scrolled {
   to { transform: rotate(360deg); }
 }
 
-.vinyl-rotating {
+.vinyl-rotating,
+#vinylWrapper:hover #vinylDisc {
   animation: vinylRotate 8s linear infinite;
+  transform-origin: center center;
 }
 
 .hero-content-layer {
@@ -151,6 +153,91 @@ header.scrolled {
   z-index: 10;
   padding-top: 2rem;
 }
+
+/* 🎼 Score & Sheet Music Cards */
+.score-box {
+  background: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 24px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.score-box:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+  transform: translateY(-5px);
+  border-color: rgba(255,255,255,0.4);
+}
+
+.score-title {
+  color: #fff !important;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.score-verse {
+  font-family: var(--font-kaiti);
+  color: #ddd;
+  font-size: 0.95rem;
+  font-style: italic;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(255,255,255,0.05);
+  border-left: 3px solid var(--gold);
+}
+
+.btn-dl {
+  display: inline-block;
+  background: #fff !important;
+  color: #222 !important;
+  padding: 12px 25px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700 !important;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+.btn-dl:hover {
+  background: var(--gold) !important;
+  color: #000 !important;
+  transform: scale(1.05);
+}
+
+.btn-dl, .btn-frosted-yt, .btn-frosted-dl {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: #fff !important;
+  color: #111 !important;
+  padding: 12px 25px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 800 !important;
+  letter-spacing: 1.5px;
+  font-size: 0.85rem;
+  transition: var(--transition);
+  box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+  border: 2px solid #fff;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.btn-dl:hover, .btn-frosted-yt:hover, .btn-frosted-dl:hover {
+  background: var(--gold) !important;
+  border-color: var(--gold) !important;
+  color: #000 !important;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.btn-frosted-yt { background: #ff0000 !important; border-color: #ff0000 !important; color: #fff !important; }
+.btn-frosted-yt:hover { background: #cc0000 !important; border-color: #cc0000 !important; color: #fff !important; }
 
 /* 🖋️ Special Typography Rules */
 .kaiti-quote {

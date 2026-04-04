@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       if(latest && wrapper){
-        const coverEl = wrapper.querySelector('.vinyl-cover');
+        const coverEl = document.getElementById('cfg_homeSongCover'); // Corrected from querySelector
         const fallbackLogo = 'assets/logo.png';
         const coverImg = latest.cover_url || latest.image_url || fallbackLogo;
         
