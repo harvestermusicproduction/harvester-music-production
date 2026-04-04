@@ -94,6 +94,33 @@
       to   { transform: rotate(360deg); }
     }
 
+    @media (max-width: 768px) {
+      .song-work-card {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+        padding: 1.5rem !important;
+        text-align: center !important;
+      }
+      .mini-vinyl {
+        width: 140px !important;
+        height: 140px !important;
+      }
+      .mini-vinyl img {
+        width: 60px !important;
+        height: 60px !important;
+      }
+      .song-card-title {
+        font-size: 1.5rem !important;
+      }
+      .song-meta {
+        font-size: 0.8rem !important;
+      }
+      .music-actions {
+        flex-direction: column !important;
+        gap: 1rem !important;
+      }
+    }
+
     /* ── Song Content ── */
     .song-content-area { display: flex; flex-direction: column; gap: 1rem; }
     .song-card-title {

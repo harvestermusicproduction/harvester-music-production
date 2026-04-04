@@ -1414,3 +1414,31 @@ body.harvest-active {
   box-shadow: 0 0 100px rgba(246, 210, 138, 0.2);
   transition: transform 0.3s ease;
 }
+
+/* 📱 GLOBAL RESPONSIVE REFINEMENTS */
+.res-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  section { padding: 3rem 1.5rem !important; }
+  h1 { font-size: 2.5rem !important; }
+  h2 { font-size: 2rem !important; }
+  
+  .res-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+  
+  header { padding: 1rem 1.5rem !important; }
+  .logo { font-size: 1.2rem !important; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 2.2rem !important; letter-spacing: 2px !important; }
+  h2 { font-size: 1.8rem !important; }
+  .res-grid { gap: 2rem !important; }
+}

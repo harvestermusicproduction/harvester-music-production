@@ -7,6 +7,15 @@
   <link rel="stylesheet" href="styles.css?v=4.6.3">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js"></script>
+  <style>
+    .folder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; padding: 2rem; }
+    @media (max-width: 768px) {
+      main { padding-top: 80px !important; }
+      h1 { font-size: 2.2rem !important; }
+      .folder-grid { grid-template-columns: 1fr !important; padding: 1.5rem !important; gap: 1.5rem !important; }
+      footer { padding: 3rem 1.5rem !important; }
+    }
+  </style>
 </head>
 <body class="diary-body">
   <!-- BG Particles -->
