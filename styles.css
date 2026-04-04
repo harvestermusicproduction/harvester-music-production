@@ -251,23 +251,22 @@ header.scrolled {
   box-shadow: 0 12px 35px rgba(246, 210, 138, 0.4);
 }
 
-/* 🔘 High-Contrast Buttons - Crystalline Frosted Standard (WHITE TEXT REVIVAL) */
+/* 🔘 High-Contrast Buttons - Crystalline Frosted Standard (GOLDEN CRYSTAL REVIVAL) */
 .btn-dl, .btn-frosted-yt, .btn-frosted-dl, .btn-frosted-white, .btn-frosted-score {
   display: inline-flex;
   align-items: center;
   gap: 0.8rem;
-  background: rgba(0, 0, 0, 0.4) !important; 
-  color: #fff !important; 
-  padding: 12px 25px;
+  background: transparent !important; 
+  color: var(--gold) !important; 
+  padding: 10px 22px;
   border-radius: 50px;
   text-decoration: none;
-  font-weight: 800 !important;
+  font-weight: 500 !important; 
   letter-spacing: 1.5px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   transition: var(--transition);
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border: 1px solid rgba(246, 210, 138, 0.4) !important; 
   text-transform: uppercase;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3); 
 }
 .btn-dl:hover, .btn-frosted-yt:hover, .btn-frosted-dl:hover, .btn-frosted-score:hover, .btn-frosted-white:hover {
   background: rgba(0, 0, 0, 0.6) !important;
