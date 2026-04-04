@@ -262,15 +262,15 @@ header.scrolled {
   box-shadow: 0 12px 35px rgba(246, 210, 138, 0.4);
 }
 
-/* 🔘 High-Contrast Buttons - Crystalline Frosted Standard */
+/* 🔘 High-Contrast Buttons - Crystalline Frosted Standard (WHITE TEXT REVIVAL) */
 .btn-dl, .btn-frosted-yt, .btn-frosted-dl, .btn-frosted-white, .btn-frosted-score {
   display: inline-flex;
   align-items: center;
   gap: 0.8rem;
-  background: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(0, 0, 0, 0.4) !important; /* Slightly darker base for white text contrast */
   backdrop-filter: blur(15px) !important;
   -webkit-backdrop-filter: blur(15px) !important;
-  color: #111 !important;
+  color: #fff !important; /* BACK TO WHITE */
   padding: 12px 25px;
   border-radius: 50px;
   text-decoration: none;
@@ -278,15 +278,15 @@ header.scrolled {
   letter-spacing: 1.5px;
   font-size: 0.85rem;
   transition: var(--transition);
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
   text-transform: uppercase;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Ensure legibility on white card */
 }
 .btn-dl:hover, .btn-frosted-yt:hover, .btn-frosted-dl:hover, .btn-frosted-score:hover, .btn-frosted-white:hover {
-  background: rgba(0, 0, 0, 0.05) !important;
-  border-color: #111 !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-color: #fff !important;
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
 }
 
 /* 🎼 All Cards - White Ceramic (SOLID / ZERO-DISTORTION) */
