@@ -262,14 +262,14 @@ header.scrolled {
   box-shadow: 0 12px 35px rgba(246, 210, 138, 0.4);
 }
 
-/* 🔘 High-Contrast Buttons - Crystalline Standard (NO FILTERS / NO DISTORTION) */
+/* 🔘 High-Contrast Buttons - Crystalline Frosted Standard */
 .btn-dl, .btn-frosted-yt, .btn-frosted-dl, .btn-frosted-white, .btn-frosted-score {
   display: inline-flex;
   align-items: center;
   gap: 0.8rem;
-  background: rgba(0, 0, 0, 0.04) !important;
-  backdrop-filter: none !important; /* CRITICAL: Remove magnification lens */
-  -webkit-backdrop-filter: none !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
   color: #111 !important;
   padding: 12px 25px;
   border-radius: 50px;
@@ -278,8 +278,15 @@ header.scrolled {
   letter-spacing: 1.5px;
   font-size: 0.85rem;
   transition: var(--transition);
-  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
   text-transform: uppercase;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+.btn-dl:hover, .btn-frosted-yt:hover, .btn-frosted-dl:hover, .btn-frosted-score:hover, .btn-frosted-white:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: #111 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
 /* 🎼 All Cards - White Ceramic (SOLID / ZERO-DISTORTION) */
