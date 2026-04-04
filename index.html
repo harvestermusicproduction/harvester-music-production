@@ -5,9 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Harvester Music Production - 收割机音乐工作坊。一个建立在音乐创作、剧情叙事与基督信仰上的艺术品牌。">
   <title>主页 Home - Harvester Music Production</title>
-  <link rel="stylesheet" href="styles.css?v=1.1">
+  <link rel="stylesheet" href="styles.css?v=1.7">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+  <script>
+    window.onerror = function(msg, url, line) {
+      alert("⚠️ 网页加载异常！\n错误: " + msg + "\n行号: " + line);
+    };
+  </script>
 </head>
 <body style="position: relative; background: transparent !important; margin: 0; padding: 0;">
   <!-- Liquid Ripple Background (Layer 1) -->
@@ -86,7 +91,7 @@
           <p style="color:#888;">To promote and develop modern contemporary Christian music.</p>
         </div>
         <div style="border-left: 2px solid var(--gold); padding-left: 1.5rem;">
-          <h3 style="color: var(--gold); font-family: 'KaiTi', 'STKaiti', 'AR PL UKai CN', serif; font-size: 2.2rem; margin: 0; font-weight: 400; text-shadow: 0 0 15px rgba(246,210,138,0.3);">用音乐，收割灵魂</h3>
+          <h3 style="color: #fff; font-family: 'KaiTi', 'STKaiti', 'AR PL UKai CN', serif; font-size: 2.2rem; margin: 0; font-weight: 400; text-shadow: 0 0 15px rgba(255,255,255,0.2);">用音乐，收割灵魂</h3>
           <p style="color: #666; font-size: 0.8rem; letter-spacing: 2px; margin-top: 0.5rem;">Harvesting souls through the power of music.</p>
         </div>
       </div>
@@ -102,13 +107,14 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="ripple.js"></script>
-  <script src="water-material.js"></script>
-  <script src="liquid-engine.js"></script>
-  <script src="visualizer.js"></script>
-  <script src="app.js?v=1775277655"></script>
+  <script src="ripple.js?v=1.7" defer></script>
+  <script src="water-material.js?v=1.7" defer></script>
+  <script src="liquid-engine.js?v=1.7" defer></script>
+  <script src="visualizer.js?v=1.7" defer></script>
+  <script src="app.js?v=1.7" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      console.log("💎 Harvester Diamond V1.7: Engine Active");
       if (typeof LiquidRipple !== 'undefined') {
         window.liquid = new LiquidRipple('liquid-canvas-container');
       }
