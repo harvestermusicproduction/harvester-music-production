@@ -37,8 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas.getContext('2d');
     let particles = [];
     const particleCount = 70;
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resize);
     resize();
     class Particle {
       constructor() { this.reset(); }
@@ -178,13 +176,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('eventsContainer');
     if (!container) return;
     try {
-      const { data: rawEvents, error } = await db.from('events').select('*').order('created_at', { ascending: false });
+      let { data: events, error } = await db.from('events').select('*').order('date', { ascending: true });
       if (error) throw error;
+      
+      // Inject Special Fundraising Event at the top
+      const specialEvent = {
+        id: 'special-fund-2026',
+        title: '成就筹款活动',
+        date: '2026-08-25',
+        description: 'M-Ambition 成就筹款活动 - 汇聚音乐与爱心，共同推进行动。',
+        is_gold: true
+      };
+      events = [specialEvent, ...events];
+
       let html = "";
-      rawEvents.forEach(e => {
+      events.forEach(e => {
+        const isGold = e.is_gold || false;
+        const goldClass = isGold ? 'gold-theme' : '';
+        const date = e.date ? new Date(e.date).toLocaleDateString('zh-CN') : '';
+        const time = e.time || '08:00';
         let desc = e.description || "";
-        let date = e.event_date;
-        let time = e.event_time;
         let loc = e.location;
 
         // 🛡️ PARSE EXT_META (Anti-Garbage Logic)
@@ -193,10 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (metaMatch) {
           try {
             const meta = JSON.parse(metaMatch[1]);
-            date = meta.d || date;
-            time = meta.tm || time;
-            loc = meta.loc || loc;
-            murl = meta.murl || murl;
             desc = desc.replace(metaMatch[0], '').trim(); // Remove the meta string from display
           } catch (err) { console.warn("Meta parse error:", err); }
         }
@@ -205,11 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
           ? `<a href="${murl}" target="_blank" style="color:var(--gold); text-decoration:underline;"><i class="fas fa-map-marker-alt"></i> ${loc}</a>`
           : (loc ? `<span><i class="fas fa-map-marker-alt"></i> ${loc}</span>` : '');
 
-        html += `<div class="event-card fade-in visible" style="background:rgba(255,255,255,0.98); border:1px solid rgba(255,255,255,0.5); padding:2rem; border-radius:32px; display:flex; flex-direction:column; justify-content:space-between; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+        html += `<div class="event-card fade-in visible ${goldClass}" style="box-shadow: 0 15px 45px rgba(0,0,0,0.1);">
             <div>
-              <div style="color:rgba(0,0,0,0.6); font-size:0.75rem; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px;">
-                <span><i class="fas fa-calendar-alt"></i> ${date || 'TBA'}</span>
-                <span><i class="fas fa-clock"></i> ${time || '-'}</span>
+              <div style="color:#666; font-size:0.75rem; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px;">
+                <span><i class="fas fa-calendar-alt"></i> ${date || 'TBA'} ${isGold ? '(2026-08-25)' : ''}</span>
+                <span><i class="fas fa-clock"></i> ${time}</span>
                 ${locHtml}
               </div>
               <h3 style="color:#111; font-size:1.6rem; font-family: var(--font-display); margin-bottom: 0.8rem;">${e.title}</h3>

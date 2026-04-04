@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>歌谱集 Sheet Music - Harvester Music Production</title>
-  <link rel="stylesheet" href="styles.css?v=4.6.1">
+  <link rel="stylesheet" href="styles.css?v=4.6.3">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body style="position: relative;">
@@ -38,7 +38,20 @@
     
     <div class="grid-2">
       
-      <!-- 1 -->
+      <!-- 0: 成就筹款活动 (FEATURED GOLD) -->
+      <div class="score-box gold-theme" style="grid-column: 1 / -1; border: 2px solid var(--gold) !important; background: rgba(246, 210, 138, 0.05) !important;">
+        <div class="mini-vinyl-wrap" onmouseenter="startNotes(this)" onmouseleave="stopNotes(this)">
+            <div class="mini-vinyl"><img src="assets/logo.png"></div>
+        </div>
+        <div class="score-content-area">
+          <div style="font-size: 1.1rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 0.5rem;">2026-08-25 08:00</div>
+          <h3 class="score-title" style="font-size: 2.2rem;">成就筹款活动</h3>
+          <p style="font-size: 1.1rem; line-height: 1.6;">汇聚音乐与爱心，成就哈麦音乐制作的未来。诚邀您的参与与支持。</p>
+          <div class="song-card-actions" style="margin-top: 1rem;">
+            <a href="support.html" class="btn-score-premium" style="font-size: 1.2rem; padding: 18px 45px;"><i class="fas fa-heart"></i> 我要支持 参与筹款</a>
+          </div>
+        </div>
+      </div>
       <div class="score-box">
         <div class="mini-vinyl-wrap"><div class="mini-vinyl"><img src="assets/logo.png"></div></div>
         <div class="score-content-area">
@@ -65,12 +78,17 @@
         </div>
       </div>
 
-      <!-- 3 -->
+      <!-- 3: 更新敬拜 (LINGHUO TEMPLATE PORT) -->
       <div class="score-box">
-        <div class="mini-vinyl-wrap"><div class="mini-vinyl"><img src="assets/logo.png"></div></div>
+        <div class="mini-vinyl-wrap" onmouseenter="startNotes(this)" onmouseleave="stopNotes(this)">
+            <div class="mini-vinyl"><img src="assets/logo.png"></div>
+        </div>
         <div class="score-content-area">
           <h3 class="score-title">更新敬拜</h3>
           <p style="color:#bbb; font-size:0.9rem; margin:0;">适合群体敬拜与火热火热的灵界争战宣告...</p>
+          <div class="score-verse">
+            "你要为真道打那美好的仗，持定永生..." — 提摩太前书 6:12
+          </div>
           <div class="song-card-actions">
             <a id="cfg_score_3_dl" href="#" target="_blank" class="btn-dl"><i class="fas fa-file-pdf"></i> 下载歌谱 PDF</a>
             <a href="https://www.youtube.com/@harvestermusic.production" target="_blank" class="btn-frosted-yt"><i class="fab fa-youtube"></i> WATCH VIDEO</a>
@@ -100,6 +118,7 @@
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>  <script src="app.js?v=4.6.1"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>  <script src="app.js?v=4.6.3"></script>
+  <link rel="stylesheet" href="styles.css?v=4.6.3">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>  </body>
 </html>
