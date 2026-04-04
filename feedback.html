@@ -242,20 +242,20 @@
       const isMobile = window.innerWidth <= 768;
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      canvas.width = 1024;
-      canvas.height = 160;
+      canvas.width = 1200; // Wider for better resolution
+      canvas.height = 200;
       
-      const fontSize = isPrimary ? 72 : 48;
-      ctx.font = `300 ${fontSize}px "Ma Shan Zheng", "Inter", sans-serif`;
+      const fontSize = isPrimary ? 110 : 80;
+      ctx.font = `400 ${fontSize}px "Ma Shan Zheng", "Inter", sans-serif`;
       
-      // Glow Effect
-      ctx.shadowBlur = 20;
-      ctx.shadowColor = isPrimary ? 'rgba(246, 210, 138, 0.8)' : 'rgba(255,255,255,0.4)';
-      ctx.fillStyle = isPrimary ? '#f6d28a' : 'rgba(255,255,255,0.7)';
+      // Stronger Glow Effect for Legibility
+      ctx.shadowBlur = 35;
+      ctx.shadowColor = isPrimary ? 'rgba(246, 210, 138, 0.9)' : 'rgba(255,255,255,0.5)';
+      ctx.fillStyle = isPrimary ? '#f6d28a' : 'rgba(255,255,255,0.85)';
       
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(message, 512, 80);
+      ctx.fillText(message, 600, 100);
 
       const texture = new THREE.CanvasTexture(canvas);
       const material = new THREE.SpriteMaterial({ 
@@ -266,18 +266,18 @@
       });
       
       const sprite = new THREE.Sprite(material);
-      const scaleBase = isMobile ? 0.4 : 1.2;
-      sprite.scale.set(isPrimary ? (12 * scaleBase) : (7 * scaleBase), isPrimary ? (1.5 * scaleBase) : (0.8 * scaleBase), 1);
+      const scaleBase = isMobile ? 0.8 : 2.0; // DOUBLED SCALE
+      sprite.scale.set(isPrimary ? (15 * scaleBase) : (8 * scaleBase), isPrimary ? (2.5 * scaleBase) : (1.35 * scaleBase), 1);
       
-      const boundX = isMobile ? 400 : 1000;
-      const boundY = isMobile ? 600 : 800;
+      const boundX = isMobile ? 500 : 1200;
+      const boundY = isMobile ? 700 : 900;
 
       if(isPrimary) {
-        sprite.position.set(0, 0, 300);
-        sprite.userData = { speed: 0.15, drift: (Math.random()-0.5)*0.2, fade: 0, life: 1.0 };
+        sprite.position.set(0, 0, 350);
+        sprite.userData = { speed: 0.18, drift: (Math.random()-0.5)*0.2, fade: 0, life: 1.0 };
       } else {
-        sprite.position.set((Math.random()-0.5)*boundX, (Math.random()-0.5)*boundY, (Math.random()-0.5)*800);
-        sprite.userData = { speed: Math.random()*0.05 + 0.02, drift: (Math.random()-0.5)*0.05, fade: 0 };
+        sprite.position.set((Math.random()-0.5)*boundX, (Math.random()-0.5)*boundY, (Math.random()-0.5)*1000);
+        sprite.userData = { speed: Math.random()*0.05 + 0.03, drift: (Math.random()-0.5)*0.05, fade: 0 };
       }
 
       scene.add(sprite);
