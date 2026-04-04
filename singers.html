@@ -17,6 +17,11 @@
     <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem; padding: 1rem 2rem;">
       <a href="index.html" class="logo" style="text-decoration:none; color:var(--gold); pointer-events: auto;">Harvester</a>
     </div>
+    <div class="menu-toggle" onclick="toggleMobileMenu()" style="pointer-events: auto; padding: 1rem 2rem;">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
     <nav class="nav-links" style="pointer-events: auto; padding: 1rem 2rem;">
       <a href="index.html">主页</a>
       <a href="music.html">音乐与歌谱集</a>
@@ -30,6 +35,19 @@
       <a href="contact.html">联系我们</a>
     </nav>
   </header>
+
+  <div id="mobileNavOverlay">
+    <a href="index.html">主页</a>
+    <a href="music.html">音乐与歌谱集</a>
+    <a href="feedback.html">回声空间</a>
+    <a href="events.html">活动</a>
+    <a href="diary.html">田野日志</a>
+    <a href="singers.html" class="active">福音歌手</a>
+    <a href="submit.html">我要投稿</a>
+    <a href="about.html">关于我们</a>
+    <a href="support.html">支持我们</a>
+    <a href="contact.html">联系我们</a>
+  </div>
 
   <!-- Conceptual Title -->
   <div class="harvest-title-layer" style="position:fixed; bottom:10vh; left:5vw; z-index:100; pointer-events:none;">

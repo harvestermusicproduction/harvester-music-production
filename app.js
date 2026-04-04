@@ -104,6 +104,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- 📱 Mobile Menu Controller ---
+  window.toggleMobileMenu = () => {
+    const overlay = document.getElementById('mobileNavOverlay');
+    if (!overlay) return;
+    overlay.classList.toggle('active');
+    document.body.style.overflow = overlay.classList.contains('active') ? 'hidden' : '';
+  };
+  
+  // Close menu when clicking a link
+  document.getElementById('mobileNavOverlay')?.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') toggleMobileMenu();
+  });
+
   async function fetchLatestMusicForHome() {
     const coverEl = document.getElementById('cfg_homeSongCover');
     const titleEl = document.getElementById('cfg_homeSongTitle');

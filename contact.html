@@ -43,7 +43,12 @@
         <a href="https://www.youtube.com/@harvestermusic.production" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
-        <nav class="nav-links">
+    <div class="menu-toggle" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="nav-links">
       <a href="index.html">主页</a>
       <a href="music.html">音乐与歌谱集</a>
       <a href="feedback.html">回声空间</a>
@@ -56,6 +61,19 @@
       <a href="contact.html" class="active">联系我们</a>
     </nav>
   </header>
+
+  <div id="mobileNavOverlay">
+    <a href="index.html">主页</a>
+    <a href="music.html">音乐与歌谱集</a>
+    <a href="feedback.html">回声空间</a>
+    <a href="events.html">活动</a>
+    <a href="diary.html">田野日志</a>
+    <a href="singers.html">福音歌手</a>
+    <a href="submit.html">我要投稿</a>
+    <a href="about.html">关于我们</a>
+    <a href="support.html">支持我们</a>
+    <a href="contact.html" class="active">联系我们</a>
+  </div>
 
   <section class="fade-in" style="margin-top: 8rem; min-height: 80vh; padding: 0 2rem; max-width: 1200px; margin-left: auto; margin-right: auto;">
     <div class="res-grid">
@@ -88,7 +106,7 @@
            <label>合作意向或留言建议 (Message)</label>
            <textarea id="contactMsg" placeholder="请详细描述您的想法..." rows="6" required></textarea>
            
-           <button type="submit" class="btn btn-submit btn-frosted-white" id="btnContactSubmit" style="width:100%; border-radius: 60px; padding: 15px;">发 送 请 求 (Send Message)</button>
+           <button type="submit" class="btn btn-submit btn-frosted-white" id="btnContactSubmit" style="width:100%; border-radius: 60px; padding: 15px; display: flex; align-items: center; justify-content: center;">发 送 请 求 (Send Message)</button>
         </form>
       </div>
     </div>
