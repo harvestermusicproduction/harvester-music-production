@@ -37,6 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas.getContext('2d');
     let particles = [];
     const particleCount = 70;
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
     resize();
     class Particle {
       constructor() { this.reset(); }
