@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
         <h1 style="color:var(--gold);">音乐作品管理</h1>
-        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="addMusic()">+ 发布新单曲</button>
+        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openMusicModal()">+ 发布新单曲</button>
       </div>
       
       <div style="display:flex; flex-direction:column; gap:20px;">
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <!-- 第二排：操作按钮 -->
             <div style="display:flex; gap:10px; justify-content: flex-end;">
-              <button class="btn-tiny" style="padding:8px 25px;" onclick="editMusic('${s.id}')">⚙️ 编辑详细资料 (Edit)</button>
+              <button class="btn-tiny" style="padding:8px 25px;" onclick='openMusicModal(${JSON.stringify(s).replace(/'/g, "&apos;")})'>⚙️ 编辑详细资料 (Edit)</button>
               <button class="btn-tiny danger" style="padding:8px 15px;" onclick="deleteItem('music_works', '${s.id}')">🗑️ 删除 (Delete)</button>
             </div>
 
@@ -187,37 +187,53 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  window.addMusic = async() => {
-    const title = prompt("标题:");
-    if(title) { await db.from('music_works').insert([{title}]); renderCMS(); }
-  };
-
-  window.editMusic = async(id) => {
-    const { data: s } = await db.from('music_works').select('*').eq('id', id).single();
+  window.openMusicModal = (s = null) => {
+    const isEdit = !!s;
     const modal = document.createElement('div');
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center;";
+    modal.id = 'musicEditModal';
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(10px); padding:20px;";
     modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:12px; padding:2rem; width:100%; max-width:500px;">
-        <h3 style="color:var(--gold);">编辑: ${s.title}</h3>
-        <div style="margin-bottom:15px;">
-          <img id="m_prev" src="${s.cover_url || 'https://via.placeholder.com/120x120?text=No+Cover'}" style="width:80px; height:80px; object-fit:cover; display:block; margin-bottom:10px; background:#222;">
-          <input type="file" id="f_up">
-          <button class="btn-tiny" style="margin-top:5px; width:100%;" onclick="uploadFile('f_up', 'm_url', 'm_prev')">上传封面</button>
-          <input type="hidden" id="m_url" value="${s.cover_url||''}">
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,1);">
+        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑详细资料' : '发布新单曲'}</h2>
+        
+        <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222;">
+          <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem;">封面照片 (Cover Image)</label>
+          <img id="m_prev" src="${s?.cover_url || 'https://via.placeholder.com/300x300?text=Harvester+Cover'}" style="width:120px; height:120px; object-fit:cover; border-radius:8px; display:block; margin:0 auto 15px; border:1px solid #333; background:#222;">
+          <input type="file" id="mf_up" style="font-size:0.8rem; color:#888;">
+          <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('mf_up', 'm_url', 'm_prev')">📤 上传封面图</button>
+          <input type="hidden" id="m_url" value="${s?.cover_url || ''}">
         </div>
-        <label>标题</label><input type="text" id="m_t" value="${s.title}" style="width:100%; margin-bottom:10px;">
-        <label>YouTube 链接</label><input type="text" id="m_a" value="${s.audio_url||''}" style="width:100%; margin-bottom:10px;">
-        <label>PDF 歌谱链接</label><input type="text" id="m_s" value="${s.score_url||''}" style="width:100%; margin-bottom:10px;">
-        <label>作品简介</label><textarea id="m_d" style="width:100%; height:80px;">${s.description||''}</textarea>
+
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲名字 (Title)</label>
+          <input type="text" id="m_t" value="${s?.title || ''}" placeholder="歌曲名称" style="width:100%; padding:10px;">
+        </div>
+
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">YouTube 链接</label>
+          <input type="text" id="m_a" value="${s?.audio_url || ''}" placeholder="https://youtube.com/..." style="width:100%; padding:10px;">
+        </div>
+
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Google Drive 歌谱链接</label>
+          <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="https://drive.google.com/..." style="width:100%; padding:10px;">
+        </div>
+
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲简介 (Description)</label>
+          <textarea id="m_d" placeholder="简单介绍一下这首作品..." style="width:100%; height:80px; padding:10px;">${s?.description || ''}</textarea>
+        </div>
+
         <div style="margin: 15px 0;">
           <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--gold);">
-            <input type="checkbox" id="m_latest" ${s.is_latest ? 'checked' : ''} style="width:auto;"> 
-            设为最新歌曲 (首页展示)
+            <input type="checkbox" id="m_latest" ${s?.is_latest ? 'checked' : ''} style="width:auto;"> 
+            设为最新歌曲 (首页首屏展示)
           </label>
         </div>
-        <div style="margin-top:20px; display:flex; gap:10px;">
-          <button class="btn btn-submit" style="flex:1;" onclick="saveMusic('${id}')">保存</button>
-          <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.parentElement.remove()">取消</button>
+
+        <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
+          <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveMusic('${s?.id || ''}')">💾 保存作品信息</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#musicEditModal').remove()">取消</button>
         </div>
       </div>
     `;
@@ -227,12 +243,12 @@ document.addEventListener('DOMContentLoaded', () => {
   window.saveMusic = async(id) => {
     const isLatest = document.getElementById('m_latest').checked;
     
-    // 🛡️ EXCLUSIVITY LOGIC: If this one is latest, unset all others
     if(isLatest) {
+      // Unset previous latest manually to ensure exclusivity
       await db.from('music_works').update({ is_latest: false }).neq('id', id);
     }
 
-    const p = {
+    const payload = {
       title: document.getElementById('m_t').value,
       cover_url: document.getElementById('m_url').value,
       audio_url: document.getElementById('m_a').value,
@@ -240,8 +256,16 @@ document.addEventListener('DOMContentLoaded', () => {
       description: document.getElementById('m_d').value,
       is_latest: isLatest
     };
-    await db.from('music_works').update(p).eq('id', id);
-    location.reload();
+
+    if(id) {
+      await db.from('music_works').update(payload).eq('id', id);
+    } else {
+      await db.from('music_works').insert([payload]);
+    }
+    
+    const modal = document.getElementById('musicEditModal');
+    if(modal) modal.remove();
+    renderCMS();
   };
 
   // --- 📅 EVENTS MODULE (Upgraded) ---
