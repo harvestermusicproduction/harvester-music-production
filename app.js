@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ? `<a href="${murl}" target="_blank" style="color:var(--gold); text-decoration:underline;"><i class="fas fa-map-marker-alt"></i> ${loc}</a>`
           : (loc ? `<span><i class="fas fa-map-marker-alt"></i> ${loc}</span>` : '');
 
-        html += `<div class="event-card fade-in visible" style="background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.5); padding:2rem; border-radius:32px; display:flex; flex-direction:column; justify-content:space-between; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+        html += `<div class="event-card fade-in visible" style="background:rgba(255,255,255,0.98); border:1px solid rgba(255,255,255,0.5); padding:2rem; border-radius:32px; display:flex; flex-direction:column; justify-content:space-between; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
             <div>
               <div style="color:rgba(0,0,0,0.6); font-size:0.75rem; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px;">
                 <span><i class="fas fa-calendar-alt"></i> ${date || 'TBA'}</span>
