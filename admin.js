@@ -257,8 +257,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cover_url: document.getElementById('m_url').value,
         audio_url: document.getElementById('m_a').value,
         score_url: document.getElementById('m_s').value,
-        description: document.getElementById('m_d').value,
-        is_latest: isLatest // Try normal save first
+        description: document.getElementById('m_d').value
+        // 🚀 Physical Removal: is_latest is no longer sent to music_works table
       };
 
       let result;
@@ -268,24 +268,15 @@ document.addEventListener('DOMContentLoaded', () => {
         result = await db.from('music_works').insert([payload]).select();
       }
       
-      // 🛡️ FALLBACK: If 'is_latest' column is missing, retry without it
-      if (result.error && result.error.message.includes("is_latest")) {
-        console.warn("Retrying without 'is_latest' column...");
-        delete payload.is_latest;
-        if(id) {
-          result = await db.from('music_works').update(payload).eq('id', id).select();
-        } else {
-          result = await db.from('music_works').insert([payload]).select();
-        }
-        
-        // Handle "Latest" logic using site_config instead
-        if (!result.error && isLatest) {
-          const newId = id || result.data[0].id;
-          await db.from('site_config').upsert({ key: 'cfg_latest_music_id', value: newId });
+      if (result.error) throw result.error;
+
+      // Handle "Latest" logic EXCLUSIVELY via site_config (Schema-Safe)
+      if (isLatest) {
+        const savedId = id || result.data?.[0]?.id;
+        if (savedId) {
+          await db.from('site_config').upsert({ key: 'cfg_latest_music_id', value: savedId });
         }
       }
-
-      if (result.error) throw result.error;
 
       console.log("Music saved successfully!");
       const modal = document.getElementById('musicEditModal');
