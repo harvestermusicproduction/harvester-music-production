@@ -251,36 +251,35 @@ header.scrolled {
   box-shadow: 0 12px 35px rgba(246, 210, 138, 0.4);
 }
 
-/* 🔘 Unified Frosted Action Buttons (Music/Scores/Feedback) - 50% Opacity Legacy Style */
+/* 🔘 Unified Frosted Action Buttons (Music/Scores/Feedback) - Crystalline Gold Style */
 .btn-dl, .btn-frosted-yt, .btn-frosted-dl, .btn-frosted-white, .btn-frosted-score {
   display: inline-flex !important;
   align-items: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  gap: 10px;
+  background: transparent !important; 
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  border: 1px solid rgba(246, 210, 138, 0.4) !important; 
   border-radius: 60px;
-  padding: 10px 30px;
-  color: #ffffff !important;
+  padding: 8px 22px;
+  color: var(--gold) !important; 
   text-decoration: none;
   font-family: 'Times New Roman', 'KaiTi', serif !important;
   font-size: 0.85rem;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   cursor: pointer;
-  opacity: 0.5;
+  opacity: 0.7; /* Increased slightly for better text visibility */
   font-weight: 500;
 }
 
 .btn-dl:hover, .btn-frosted-yt:hover, .btn-frosted-dl:hover, .btn-frosted-score:hover, .btn-frosted-white:hover {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
-  transform: translateY(-3px);
-  box-shadow: 0 15px 45px rgba(255, 255, 255, 0.1);
-  color: #fff !important;
+  background: rgba(246, 210, 138, 0.1) !important;
+  border-color: var(--gold) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(246, 210, 138, 0.15);
+  color: var(--gold) !important;
   opacity: 1 !important;
 }
 
