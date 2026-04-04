@@ -298,14 +298,25 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="text" id="ev_t" value="${e?.title || ''}" placeholder="例如：赞美祭" style="width:100%; padding:10px;">
           </div>
           <div>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动日期</label>
-            <input type="date" id="ev_d" value="${e?.event_date || ''}" style="width:100%; padding:10px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动地点 (名称)</label>
+            <input type="text" id="ev_l" value="${e?.location || ''}" placeholder="例如：吉隆坡大礼堂" style="width:100%; padding:10px;">
           </div>
         </div>
 
         <div style="margin-bottom:15px;">
-          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">开始时间</label>
-          <input type="time" id="ev_tm" value="${e?.event_time || ''}" style="width:100%; padding:10px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Google Map 链接 (可选)</label>
+          <input type="text" id="ev_ml" value="${e?.map_url || ''}" placeholder="https://goo.gl/maps/..." style="width:100%; padding:10px;">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动日期</label>
+            <input type="date" id="ev_d" value="${e?.event_date || ''}" style="width:100%; padding:10px;">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">开始时间</label>
+            <input type="time" id="ev_tm" value="${e?.event_time || ''}" style="width:100%; padding:10px;">
+          </div>
         </div>
 
         <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动详情描述</label>
@@ -328,29 +339,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const payload = {
       title: document.getElementById('ev_t').value,
-      date: document.getElementById('ev_d').value || new Date().toISOString().split('T')[0], // Map to mandatory 'date' column
       event_date: document.getElementById('ev_d').value,
       event_time: document.getElementById('ev_tm').value,
+      location: document.getElementById('ev_l').value,
+      map_url: document.getElementById('ev_ml').value,
       image_url: document.getElementById('ev_url').value,
       description: document.getElementById('ev_desc').value
     };
 
     try {
+      // 尝试直接保存（如果数据库表已有这些栏位）
       const { error } = id 
         ? await db.from('events').update(payload).eq('id', id)
         : await db.from('events').insert([payload]);
 
       if (error) {
-        console.warn("Retrying with fallback due to schema error:", error);
-        // Fallback: If columns don't exist, store extra data in description as JSON
+        console.warn("Retrying with fallback due to missing columns:", error);
+        // Fallback: 将多余数据打包进 description 避免乱码
         const meta = {
           d: payload.event_date,
           tm: payload.event_time,
+          loc: payload.location,
+          murl: payload.map_url,
           img: payload.image_url
         };
         const fallbackPayload = {
           title: payload.title,
-          date: payload.date, // Must still provide the mandatory 'date'
+          date: payload.event_date || new Date().toISOString().split('T')[0],
           description: `EXT_META:${JSON.stringify(meta)}||${payload.description}`
         };
         
@@ -363,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const modal = document.getElementById('eventEditModal');
       if (modal) modal.remove();
-      renderCMS(); // Refresh lists
+      renderCMS(); 
     } catch (err) {
       alert("❌ 保存失败: " + err.message);
       btn.innerText = originalText;

@@ -123,6 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (error) throw error;
       let html = "";
       docs.forEach(s => {
+        // Use 'audio_url' as the YouTube link per admin backend mapping
+        const ytLink = s.audio_url || s.youtube_url; 
         html += `<div class="song-work-card fade-in visible">
             <div class="mini-vinyl-wrap" style="position:relative;" onmouseenter="triggerNotes(this)">
               <div class="mini-vinyl"><img src="${s.cover_url}" onerror="this.src='assets/logo.png'"><div class="vinyl-play-overlay">🎶</div></div>
@@ -131,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <h3 class="song-card-title">${s.title || 'Untitled'}</h3>
               <p class="song-card-desc">${s.description || ''}</p>
               <div class="song-card-actions">
-                ${s.youtube_url ? `<a href="${s.youtube_url}" target="_blank" class="btn-youtube-premium"><i class="fab fa-youtube"></i> WATCH ON YOUTUBE</a>` : ''}
+                ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-youtube-premium"><i class="fab fa-youtube"></i> WATCH ON YOUTUBE</a>` : ''}
                 ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-dl-score"><i class="fas fa-file-pdf"></i> DOWNLOAD SCORE</a>` : ''}
               </div>
             </div>
@@ -146,17 +148,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('eventsContainer');
     if (!container) return;
     try {
-      const { data: rawEvents, error } = await db.from('events').select('*');
+      const { data: rawEvents, error } = await db.from('events').select('*').order('created_at', { ascending: false });
       if (error) throw error;
       let html = "";
       rawEvents.forEach(e => {
+        let desc = e.description || "";
+        let date = e.event_date;
+        let time = e.event_time;
+        let loc = e.location;
+
+        // 🛡️ PARSE EXT_META (Anti-Garbage Logic)
+        const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
+        let murl = e.map_url;
+        if (metaMatch) {
+          try {
+            const meta = JSON.parse(metaMatch[1]);
+            date = meta.d || date;
+            time = meta.tm || time;
+            loc = meta.loc || loc;
+            murl = meta.murl || murl;
+            desc = desc.replace(metaMatch[0], '').trim(); // Remove the meta string from display
+          } catch (err) { console.warn("Meta parse error:", err); }
+        }
+
+        const locHtml = (loc && murl) 
+          ? `<a href="${murl}" target="_blank" style="color:var(--gold); text-decoration:underline;"><i class="fas fa-map-marker-alt"></i> ${loc}</a>`
+          : (loc ? `<span><i class="fas fa-map-marker-alt"></i> ${loc}</span>` : '');
+
         html += `<div class="event-card fade-in visible" style="background:rgba(255,255,255,0.02); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.05); padding:2.5rem; border-radius:24px; border-left:2px solid var(--gold); min-height:250px; display:flex; flex-direction:column; justify-content:space-between;">
             <div>
-              <div style="color:var(--gold); font-size:0.8rem; letter-spacing:3px; margin-bottom:1.2rem;"><i class="fas fa-calendar-alt"></i> ${e.event_date || 'COMING SOON'}</div>
+              <div style="color:var(--gold); font-size:0.8rem; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px;">
+                <span><i class="fas fa-calendar-alt"></i> ${date || 'TBA'}</span>
+                <span><i class="fas fa-clock"></i> ${time || '-'}</span>
+                ${locHtml}
+              </div>
               <h3 style="color:#fff; font-size:1.6rem; font-family:'Ma Shan Zheng', cursive;">${e.title}</h3>
-              <p style="color:#ccc; line-height:1.8;">${e.description || ''}</p>
+              <p style="color:#ccc; line-height:1.8;">${desc}</p>
             </div>
-            <button class="btn-score-premium" style="width:100%; border-radius:60px; padding:12px;" onclick="openReminderModal('${e.id}', '${e.title}')"><i class="fas fa-bell"></i> 提醒我 RECEIVE REMINDER</button>
+            <button class="btn-score-premium" style="width:100%; border-radius:60px; padding:12px; margin-top:20px;" onclick="openReminderModal('${e.id}', '${e.title}')"><i class="fas fa-bell"></i> 提醒我 RECEIVE REMINDER</button>
           </div>`;
       });
       container.innerHTML = html;
