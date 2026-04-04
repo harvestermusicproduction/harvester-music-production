@@ -386,12 +386,20 @@
     async function fetchEchoes() {
       const db = window.supabase;
       try {
-        // Robust fetching: Search for [ECHO] OR just common feedback patterns if needed
+        // 1. Fetch the curated list of Approved IDs from site_config
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
+        const approvedIds = cfg?.value ? cfg.value.split(',') : [];
+        
+        if (approvedIds.length === 0) {
+          console.log("No approved echoes found yet.");
+          return;
+        }
+
+        // 2. Fetch only the messages that are in the approved list
         const { data, error } = await db.from('contact_messages')
           .select('*')
-          .or('message.ilike.[ECHO]%,message.ilike.被触动%,message.ilike.被安慰%') 
-          .order('created_at', {ascending:false})
-          .limit(30);
+          .in('id', approvedIds)
+          .order('created_at', {ascending:false});
           
         if(error) throw error;
         if(data) {

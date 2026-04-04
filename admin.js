@@ -669,12 +669,50 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // --- 📮 SUBMISSIONS MODULE ---
+  // --- 📮 SUBMISSIONS MODULE ---
   async function renderSubmissions(container) {
     const { data: subs } = await db.from('submissions').select('*').order('created_at', {ascending: false});
     const { data: contacts } = await db.from('contact_messages').select('*').order('created_at', {ascending: false});
     
+    // 🛡️ Fetch approved IDs for moderation UI
+    const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
+    const approvedIds = cfg?.value ? cfg.value.split(',') : [];
+
     container.innerHTML = `
       <h1 style="color:var(--gold); margin-bottom:2rem;">📮 全站收件箱 (Inboxes)</h1>
+
+      <!-- Part 0: Echo Space Moderation (回声空间审核) -->
+      <section style="margin-bottom:4rem;">
+        <h3 style="color:var(--gold); border-bottom:1px solid #222; padding-bottom:10px;">✨ 回声空间审核 (Echo Moderation)</h3>
+        <p style="color:#666; font-size:0.85rem; margin-top:5px;">此处审核通过的内容将以 X 轴漂浮方式呈现在“回声空间”页面。</p>
+        <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222; margin-top:15px;">
+          <table style="width:100%; text-align:left; border-collapse:collapse;">
+            <tr style="background:#151515; color:#666; font-size:0.8rem;">
+              <th style="padding:15px;">留言内容</th><th>状态</th><th>操作</th>
+            </tr>
+            ${contacts?.filter(c => c.message?.includes('[ECHO]')).map(c => {
+              const isApproved = approvedIds.includes(c.id.toString());
+              return `
+              <tr style="border-bottom:1px solid #222;">
+                <td style="padding:15px; color:#ccc;">
+                  <div style="color:var(--gold); font-size:0.75rem; margin-bottom:4px;">${new Date(c.created_at).toLocaleDateString()} ${c.name}</div>
+                  ${c.message.replace('[ECHO]', '')}
+                </td>
+                <td>
+                  <span style="padding:4px 8px; border-radius:4px; font-size:0.75rem; background:${isApproved ? 'rgba(100,210,138,0.1)' : 'rgba(255,255,255,0.05)'}; color:${isApproved ? '#64D28A' : '#444'}">
+                    ${isApproved ? '✅ 已在回声空间显示' : '🚫 隐藏中'}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn-tiny" onclick="toggleEchoApproval('${c.id}', ${isApproved})">${isApproved ? '取消批准' : '批准显示'}</button>
+                  <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${c.id}')">删除</button>
+                </td>
+              </tr>
+              `;
+            }).join('') || '<tr><td colspan="3" style="padding:30px; text-align:center;">暂无回声留言</td></tr>'}
+          </table>
+        </div>
+      </section>
       
       <!-- Part 1: Creative Submissions (我要投稿) -->
       <section style="margin-bottom:4rem;">
@@ -708,7 +746,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <tr style="background:#151515; color:#666; font-size:0.8rem;">
               <th style="padding:15px;">日期</th><th>姓名</th><th>Email</th><th>预览</th><th>操作</th>
             </tr>
-            ${contacts?.map(c => `
+            ${contacts?.filter(c => !c.message?.includes('[ECHO]')).map(c => `
               <tr style="border-bottom:1px solid #222;">
                 <td style="padding:15px; font-size:0.8rem; color:#666;">${new Date(c.created_at).toLocaleDateString()}</td>
                 <td style="color:var(--gold);">${c.name}</td>
@@ -725,6 +763,20 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>
     `;
   }
+
+  window.toggleEchoApproval = async(id, currentlyApproved) => {
+    const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
+    let currentIds = cfg?.value ? cfg.value.split(',') : [];
+    
+    if (currentlyApproved) {
+      currentIds = currentIds.filter(cid => cid !== id.toString());
+    } else {
+      if (!currentIds.includes(id.toString())) currentIds.push(id.toString());
+    }
+    
+    await db.from('site_config').upsert({ key: 'cfg_approved_echo_ids', value: currentIds.join(',') });
+    renderCMS();
+  };
 
   // --- Modal Helpers ---
   window.viewContact = async(id) => {
