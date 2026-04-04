@@ -241,31 +241,47 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   window.saveMusic = async(id) => {
-    const isLatest = document.getElementById('m_latest').checked;
-    
-    if(isLatest) {
-      // Unset previous latest manually to ensure exclusivity
-      await db.from('music_works').update({ is_latest: false }).neq('id', id);
-    }
+    const btn = event.target;
+    const originalText = btn.innerText;
+    btn.innerText = "⏳ 正在保存...";
+    btn.disabled = true;
 
-    const payload = {
-      title: document.getElementById('m_t').value,
-      cover_url: document.getElementById('m_url').value,
-      audio_url: document.getElementById('m_a').value,
-      score_url: document.getElementById('m_s').value,
-      description: document.getElementById('m_d').value,
-      is_latest: isLatest
-    };
+    try {
+      const isLatest = document.getElementById('m_latest').checked;
+      
+      if(isLatest) {
+        // Unset previous latest manually to ensure exclusivity
+        await db.from('music_works').update({ is_latest: false }).neq('id', id);
+      }
 
-    if(id) {
-      await db.from('music_works').update(payload).eq('id', id);
-    } else {
-      await db.from('music_works').insert([payload]);
+      const payload = {
+        title: document.getElementById('m_t').value,
+        cover_url: document.getElementById('m_url').value,
+        audio_url: document.getElementById('m_a').value,
+        score_url: document.getElementById('m_s').value,
+        description: document.getElementById('m_d').value,
+        is_latest: isLatest
+      };
+
+      let result;
+      if(id) {
+        result = await db.from('music_works').update(payload).eq('id', id);
+      } else {
+        result = await db.from('music_works').insert([payload]);
+      }
+      
+      if (result.error) throw result.error;
+
+      console.log("Music saved successfully!");
+      const modal = document.getElementById('musicEditModal');
+      if(modal) modal.remove();
+      renderCMS();
+    } catch (err) {
+      console.error("Save error:", err);
+      alert("❌ 保存失败: " + err.message);
+      btn.innerText = originalText;
+      btn.disabled = false;
     }
-    
-    const modal = document.getElementById('musicEditModal');
-    if(modal) modal.remove();
-    renderCMS();
   };
 
   // --- 📅 EVENTS MODULE (Upgraded) ---
