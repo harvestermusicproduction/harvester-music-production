@@ -259,8 +259,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="footprint-item fade-in visible" onclick="location.href='event.html?id=${d.id}'">
             <img src="${coverImg}" onerror="this.src='${fallback}'" class="footprint-img">
             <div class="footprint-overlay" style="background:rgba(255,255,255,0.15); backdrop-filter:blur(15px); -webkit-backdrop-filter:blur(15px);">
-              <h4 style="color:#222; font-family:'Ma Shan Zheng', cursive; font-size:1.4rem;">${d.title}</h4>
-              <p style="color:#555; font-size:0.85rem;">${d.date}</p>
+              <h4 style="color:#fff; font-family:'Ma Shan Zheng', cursive; font-size:1.4rem;">${d.title}</h4>
+              <p style="color:rgba(255,255,255,0.8); font-size:0.85rem;">${d.date}</p>
             </div>
           </div>`;
       }).join('');
