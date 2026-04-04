@@ -212,6 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span><i class="fas fa-clock"></i> ${time || '-'}</span>
                 ${locHtml}
               </div>
+              <h3 style="color:#111; font-size:1.6rem; font-family: var(--font-display); margin-bottom: 0.8rem;">${e.title}</h3>
+              <p style="color:#444; line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
             <button class="btn-score-premium" style="width:100%; margin-top:20px;" onclick="openReminderModal('${e.id}', '${e.title}')"><i class="fas fa-bell"></i> 我要参与 提醒我</button>
           </div>`;
