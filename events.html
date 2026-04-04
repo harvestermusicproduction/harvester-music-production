@@ -32,14 +32,15 @@
     .footprint-overlay { 
       position: absolute; 
       bottom: 0; left: 0; right: 0; 
-      background: rgba(255, 255, 255, 0.85) !important;
-      padding: 1.5rem; 
+      /* 底部 80% 白色，顶部 0% 全透明渐变 */
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 0) 100%) !important;
+      padding: 3rem 1.5rem 1.5rem; 
       transform: translateY(100%); 
       transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); 
       font-size: 0.95rem;
-      color: #333 !important; /* Dark text for readability on white */
-      backdrop-filter: blur(25px) !important;
-      -webkit-backdrop-filter: blur(25px) !important;
+      color: #111 !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
     }
     .footprint-item:hover .footprint-overlay { 
       transform: translateY(0); 
