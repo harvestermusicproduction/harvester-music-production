@@ -6,6 +6,43 @@
   <title>歌谱集 Sheet Music - Harvester Music Production</title>
   <link rel="stylesheet" href="styles.css?v=4.4.8">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* 🎼 Score & Sheet Music Cards - Unified with Music Cards */
+    .score-box {
+      background: rgba(255, 255, 255, 0.12) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      border-radius: 24px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 1.5rem;
+      align-items: center;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .score-box:hover {
+      background: rgba(255, 255, 255, 0.18) !important;
+      transform: translateY(-5px);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .score-content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .score-title {
+      color: #fff !important;
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      margin: 0;
+    }
+  </style>
 </head>
 <body style="position: relative;">
   <canvas id="bgParticles"></canvas>
@@ -40,34 +77,54 @@
       
       <!-- 1 -->
       <div class="score-box">
-        <h3 class="score-title">因为祢 上帝</h3>
-        <p>这是一首适合教会领唱的诗歌...</p>
-        <a id="cfg_score_1_dl" href="#" target="_blank" class="btn-dl">📥 下载歌谱 PDF</a>
+        <div class="mini-vinyl-wrap"><div class="mini-vinyl"><img src="assets/logo.png"></div></div>
+        <div class="score-content-area">
+          <h3 class="score-title">因为祢 上帝</h3>
+          <p style="color:#bbb; font-size:0.9rem; margin:0;">这是一首适合教会领唱的诗歌...</p>
+          <div class="song-card-actions">
+            <a id="cfg_score_1_dl" href="#" target="_blank" class="btn-dl"><i class="fas fa-file-pdf"></i> 下载歌谱 PDF</a>
+          </div>
+        </div>
       </div>
 
       <!-- 2 -->
       <div class="score-box">
-        <h3 class="score-title">灵火</h3>
-        <p>这是一首让信徒自我醒觉与灵修的作品...</p>
-        <div class="score-verse">
-          "我们若认自己的罪，神是信实的，是公义的..." — 约翰一书 1:9<br>
-          "他便救了我们... 乃是照他的怜悯..." — 提多书 3:5-6
+        <div class="mini-vinyl-wrap"><div class="mini-vinyl"><img src="assets/logo.png"></div></div>
+        <div class="score-content-area">
+          <h3 class="score-title">灵火</h3>
+          <p style="color:#bbb; font-size:0.9rem; margin:0;">这是一首让信徒自我醒觉与灵修的作品...</p>
+          <div class="score-verse">
+            "我们若认自己的罪，神是信实的..." — 约翰一书 1:9
+          </div>
+          <div class="song-card-actions">
+            <a id="cfg_score_2_dl" href="#" target="_blank" class="btn-dl"><i class="fas fa-file-pdf"></i> 下载歌谱 PDF</a>
+          </div>
         </div>
-        <a id="cfg_score_2_dl" href="#" target="_blank" class="btn-dl">📥 下载歌谱 PDF</a>
       </div>
 
       <!-- 3 -->
       <div class="score-box">
-        <h3 class="score-title">更新敬拜</h3>
-        <p>适合群体敬拜与火热火热的灵界争战宣告...</p>
-        <a id="cfg_score_3_dl" href="#" target="_blank" class="btn-dl">📥 下载歌谱 PDF</a>
+        <div class="mini-vinyl-wrap"><div class="mini-vinyl"><img src="assets/logo.png"></div></div>
+        <div class="score-content-area">
+          <h3 class="score-title">更新敬拜</h3>
+          <p style="color:#bbb; font-size:0.9rem; margin:0;">适合群体敬拜与火热火热的灵界争战宣告...</p>
+          <div class="song-card-actions">
+            <a id="cfg_score_3_dl" href="#" target="_blank" class="btn-dl"><i class="fas fa-file-pdf"></i> 下载歌谱 PDF</a>
+            <a href="https://www.youtube.com/@harvestermusic.production" target="_blank" class="btn-frosted-yt"><i class="fab fa-youtube"></i> WATCH VIDEO</a>
+          </div>
+        </div>
       </div>
 
       <!-- 4 -->
       <div class="score-box">
-        <h3 class="score-title">Im Alive</h3>
-        <p>一首充满生命力的英文敬拜赞美节奏布鲁斯...</p>
-        <a id="cfg_score_4_dl" href="#" target="_blank" class="btn-dl">📥 下载歌谱 PDF</a>
+        <div class="mini-vinyl-wrap"><div class="mini-vinyl"><img src="assets/logo.png"></div></div>
+        <div class="score-content-area">
+          <h3 class="score-title">Im Alive</h3>
+          <p style="color:#bbb; font-size:0.9rem; margin:0;">一首充满生命力的英文敬拜赞美节奏布鲁斯...</p>
+          <div class="song-card-actions">
+            <a id="cfg_score_4_dl" href="#" target="_blank" class="btn-dl"><i class="fas fa-file-pdf"></i> 下载歌谱 PDF</a>
+          </div>
+        </div>
       </div>
 
     </div>
