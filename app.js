@@ -205,17 +205,17 @@ document.addEventListener('DOMContentLoaded', () => {
           ? `<a href="${murl}" target="_blank" style="color:var(--gold); text-decoration:underline;"><i class="fas fa-map-marker-alt"></i> ${loc}</a>`
           : (loc ? `<span><i class="fas fa-map-marker-alt"></i> ${loc}</span>` : '');
 
-        html += `<div class="event-card fade-in visible" style="background:rgba(255,255,255,0.85); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); border:1px solid rgba(255,255,255,0.5); padding:2.5rem; border-radius:32px; border-left:4px solid var(--gold); min-height:250px; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 15px 45px rgba(0,0,0,0.1);">
+        html += `<div class="event-card fade-in visible" style="background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.2); padding:2rem; border-radius:32px; display:flex; flex-direction:column; justify-content:space-between; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
             <div>
-              <div style="color:#555; font-size:0.8rem; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px;">
+              <div style="color:rgba(255,255,255,0.6); font-size:0.75rem; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px;">
                 <span><i class="fas fa-calendar-alt"></i> ${date || 'TBA'}</span>
                 <span><i class="fas fa-clock"></i> ${time || '-'}</span>
                 ${locHtml}
               </div>
-              <h3 style="color:#222; font-size:1.6rem; font-family:'Ma Shan Zheng', cursive;">${e.title}</h3>
-              <p style="color:#444; line-height:1.8;">${desc}</p>
+              <h3 style="color:#fff; font-size:1.6rem; font-family: var(--font-display); margin-bottom: 0.8rem;">${e.title}</h3>
+              <p style="color:rgba(255,255,255,0.7); line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
-            <button class="btn-score-premium" style="width:100%; border-radius:60px; padding:12px; margin-top:20px; background:rgba(0,0,0,0.8); color:#fff;" onclick="openReminderModal('${e.id}', '${e.title}')"><i class="fas fa-bell"></i> 我要参与提醒我</button>
+            <button class="btn-score-premium" style="width:100%; margin-top:20px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2);" onclick="openReminderModal('${e.id}', '${e.title}')"><i class="fas fa-bell"></i> 我要参与 提醒我</button>
           </div>`;
       });
       container.innerHTML = html;
