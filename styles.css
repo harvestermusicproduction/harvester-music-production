@@ -18,16 +18,10 @@
 html { scroll-behavior: smooth; font-size: 16px; }
 body {
   font-family: var(--font-body);
-  background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #0a0a0a 100%);
-  background-size: 200% 200%;
-  animation: backgroundGlow 15s ease-in-out infinite alternate;
+  background: #0a0a0a; 
   color: var(--text);
   line-height: 1.8;
   overflow-x: hidden;
-}
-@keyframes backgroundGlow {
-  0% { background-position: 50% 50%; opacity: 0.9; }
-  100% { background-position: 55% 45%; opacity: 1; }
 }
 
 /* Background Particles Canvas */
@@ -67,7 +61,7 @@ header {
   z-index: 1000; background: transparent; transition: var(--transition);
 }
 header.scrolled {
-  background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
+  background: rgba(10, 10, 10, 0.98);
   padding: 1rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 .logo { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text); }
@@ -79,18 +73,15 @@ header.scrolled {
   padding: 6px 12px;
   border-radius: 50px;
   font-size: 0.75rem;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.4s ease;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: inline-block;
   white-space: nowrap;
 }
 .nav-links a.active, .active-nav-box {
   color: #fff !important;
   background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
   border: 1px solid rgba(255, 255, 255, 0.25) !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
@@ -101,8 +92,6 @@ header.scrolled {
 /* Cinematic Frosted Glass - White Edition */
 .frosted-glass-white {
   background: rgba(255, 255, 255, 0.12) !important;
-  backdrop-filter: blur(25px) !important;
-  -webkit-backdrop-filter: blur(25px) !important;
   border: 1px solid rgba(255, 255, 255, 0.25) !important;
   color: #fff !important;
   text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
@@ -207,7 +196,7 @@ header.scrolled {
 .btn-dl:hover {
   background: var(--gold) !important;
   color: #000 !important;
-  transform: scale(1.05);
+  transform: translateY(-3px);
 }
 
 .btn-dl, .btn-frosted-yt, .btn-frosted-dl {
@@ -258,7 +247,7 @@ header.scrolled {
 .btn-score-premium:hover {
   background: var(--gold) !important;
   color: #000 !important;
-  transform: scale(1.05);
+  transform: translateY(-3px);
   box-shadow: 0 12px 35px rgba(246, 210, 138, 0.4);
 }
 
@@ -267,10 +256,8 @@ header.scrolled {
   display: inline-flex;
   align-items: center;
   gap: 0.8rem;
-  background: rgba(0, 0, 0, 0.4) !important; /* Slightly darker base for white text contrast */
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  color: #fff !important; /* BACK TO WHITE */
+  background: rgba(0, 0, 0, 0.4) !important; 
+  color: #fff !important; 
   padding: 12px 25px;
   border-radius: 50px;
   text-decoration: none;
@@ -280,7 +267,7 @@ header.scrolled {
   transition: var(--transition);
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   text-transform: uppercase;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Ensure legibility on white card */
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3); 
 }
 .btn-dl:hover, .btn-frosted-yt:hover, .btn-frosted-dl:hover, .btn-frosted-score:hover, .btn-frosted-white:hover {
   background: rgba(0, 0, 0, 0.6) !important;
@@ -347,7 +334,7 @@ header.scrolled {
 }
 .btn-experience i { margin-right: 10px; font-size: 0.9rem; }
 .btn-experience span { display: block; font-size: 0.65rem; font-family: var(--font-body); letter-spacing: 1px; opacity: 0.6; margin-top: 4px; }
-.btn-experience:hover { background: var(--gold); color: #252525; box-shadow: 0 0 30px rgba(246, 210, 138, 0.4); transform: scale(1.05); }
+.btn-experience:hover { background: var(--gold); color: #252525; box-shadow: 0 0 30px rgba(246, 210, 138, 0.4); transform: translateY(-3px); }
 
 .hero-text-area { opacity: 0; transition: opacity 2s ease 1s; }
 .hero-text-area.active { opacity: 1; }
