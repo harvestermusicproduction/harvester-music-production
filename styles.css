@@ -251,28 +251,37 @@ header.scrolled {
   box-shadow: 0 12px 35px rgba(246, 210, 138, 0.4);
 }
 
-/* 🔘 High-Contrast Buttons - Crystalline Frosted Standard (GOLDEN CRYSTAL REVIVAL) */
+/* 🔘 Unified Frosted Action Buttons (Music/Scores/Feedback) - 50% Opacity Legacy Style */
 .btn-dl, .btn-frosted-yt, .btn-frosted-dl, .btn-frosted-white, .btn-frosted-score {
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
-  gap: 0.8rem;
-  background: transparent !important; 
-  color: var(--gold) !important; 
-  padding: 10px 22px;
-  border-radius: 50px;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 60px;
+  padding: 10px 30px;
+  color: #ffffff !important;
   text-decoration: none;
-  font-weight: 500 !important; 
-  letter-spacing: 1.5px;
-  font-size: 0.8rem;
-  transition: var(--transition);
-  border: 1px solid rgba(246, 210, 138, 0.4) !important; 
+  font-family: 'Times New Roman', 'KaiTi', serif !important;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
   text-transform: uppercase;
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  opacity: 0.5;
+  font-weight: 500;
 }
+
 .btn-dl:hover, .btn-frosted-yt:hover, .btn-frosted-dl:hover, .btn-frosted-score:hover, .btn-frosted-white:hover {
-  background: rgba(0, 0, 0, 0.6) !important;
-  border-color: #fff !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 15px 45px rgba(255, 255, 255, 0.1);
+  color: #fff !important;
+  opacity: 1 !important;
 }
 
 /* 🎼 All Cards - White Ceramic (SOLID / ZERO-DISTORTION) */
@@ -300,11 +309,7 @@ header.scrolled {
   flex-direction: column;
   padding: 2.2rem;
 }
-.btn-dl:hover, .btn-frosted-yt:hover, .btn-frosted-dl:hover {
-  background: rgba(0, 0, 0, 0.05) !important;
-  border-color: #111 !important;
-  transform: translateY(-3px);
-}
+
 
 /* 🖋️ Special Typography Rules */
 .kaiti-quote {
@@ -413,39 +418,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); }
   cursor: pointer;
 }
 
-/* --- 💎 Diamond Edition Buttons (Frosted Glass) --- */
-.btn-frosted-yt, 
-.btn-frosted-score {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 60px;
-  padding: 10px 30px;
-  color: #ffffff !important;
-  text-decoration: none;
-  font-family: 'Times New Roman', 'KaiTi', serif !important;
-  font-size: 0.85rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  opacity: 0.5; /* 🔄 Reverted to 50% as requested */
-}
 
-.btn-frosted-yt:hover,
-.btn-frosted-score:hover {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
-  transform: translateY(-3px);
-  box-shadow: 0 15px 45px rgba(255, 255, 255, 0.1);
-  color: #fff !important;
-  opacity: 1 !important;
-}
 /* --- 🎶 Musical Note Particles --- */
 .floating-note {
   position: absolute;
