@@ -823,6 +823,12 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div class="banner-edit-item" style="margin-top:20px; border-top:1px solid #222; padding-top:15px; grid-column: 1 / -1;">
+             <label style="color:var(--gold);"><i class="fas fa-edit"></i> 投稿页面说明文字 (Submit Terms Text)</label>
+             <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">支持多行输入。换行将自动转换为 HTML &lt;br&gt;</p>
+             <textarea id="cfg_submit_text" style="width:100%; height:120px; background:#0a0a0a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px; font-size:0.85rem; line-height:1.6;">${c['cfg_submit_text']||''}</textarea>
+          </div>
+
+          <div class="banner-edit-item" style="margin-top:20px; border-top:1px solid #222; padding-top:15px; grid-column: 1 / -1;">
             <label style="color:var(--gold);"><i class="fas fa-link"></i> 投稿按钮跳转链接 (Submit Button URL)</label>
             <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">点击“我要投稿”后跳转的页面地址</p>
             <input type="text" id="cfg_submit_btn_link" value="${c['cfg_submit_btn_link']||''}" placeholder="https://..." style="width:100%; background:#0a0a0a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px;">
@@ -864,7 +870,8 @@ document.addEventListener('DOMContentLoaded', () => {
       {k: 'cfg_about_video', v: document.getElementById('url_about_v').value},
       {k: 'cfg_contact_banner', v: document.getElementById('url_contact').value},
       {k: 'cfg_submit_poster', v: document.getElementById('url_submit').value},
-      {k: 'cfg_submit_btn_link', v: document.getElementById('cfg_submit_btn_link').value}
+      {k: 'cfg_submit_btn_link', v: document.getElementById('cfg_submit_btn_link').value},
+      {k: 'cfg_submit_text', v: document.getElementById('cfg_submit_text').value}
     ];
     for(let b of banners) {
       await db.from('site_config').upsert({key: b.k, value: b.v}, {onConflict: 'key'});
