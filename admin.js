@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="javascript:void(0)" onclick="switchModule('footprints')" style="color:${currentModule==='footprints'?'var(--gold)':'#888'}">👣 收割足迹 Footprints</a>
             <a href="javascript:void(0)" onclick="switchModule('singers')" style="color:${currentModule==='singers'?'var(--gold)':'#888'}">🎙️ 福音歌手 Singers</a>
             <a href="javascript:void(0)" onclick="switchModule('diary')" style="color:${currentModule==='diary'?'var(--gold)':'#888'}">📂 田野日记 Diary</a>
+            <a href="javascript:void(0)" onclick="switchModule('echo')" style="color:${currentModule==='echo'?'var(--gold)':'#888'}">🌌 回声空间 Echo</a>
             <a href="javascript:void(0)" onclick="switchModule('submissions')" style="color:${currentModule==='submissions'?'var(--gold)':'#888'}">📮 投稿中心 Inbox</a>
             <a href="javascript:void(0)" onclick="switchModule('config')" style="color:${currentModule==='config'?'var(--gold)':'#888'}">⚙️ 系统配置 Config</a>
           </nav>
@@ -69,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (currentModule === 'footprints') renderFootprints(body);
     else if (currentModule === 'singers') renderSingers(body);
     else if (currentModule === 'diary') renderDiary(body);
+    else if (currentModule === 'echo') renderEchoes(body);
     else if (currentModule === 'submissions') renderSubmissions(body);
     else if (currentModule === 'config') renderConfig(body);
     else body.innerHTML = `<h2>${currentModule.toUpperCase()}</h2><p>功能开发中...</p>`;
@@ -207,6 +209,12 @@ document.addEventListener('DOMContentLoaded', () => {
         <label>YouTube 链接</label><input type="text" id="m_a" value="${s.audio_url||''}" style="width:100%; margin-bottom:10px;">
         <label>PDF 歌谱链接</label><input type="text" id="m_s" value="${s.score_url||''}" style="width:100%; margin-bottom:10px;">
         <label>作品简介</label><textarea id="m_d" style="width:100%; height:80px;">${s.description||''}</textarea>
+        <div style="margin: 15px 0;">
+          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--gold);">
+            <input type="checkbox" id="m_latest" ${s.is_latest ? 'checked' : ''} style="width:auto;"> 
+            设为最新歌曲 (首页展示)
+          </label>
+        </div>
         <div style="margin-top:20px; display:flex; gap:10px;">
           <button class="btn btn-submit" style="flex:1;" onclick="saveMusic('${id}')">保存</button>
           <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.parentElement.remove()">取消</button>
@@ -217,12 +225,20 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   window.saveMusic = async(id) => {
+    const isLatest = document.getElementById('m_latest').checked;
+    
+    // 🛡️ EXCLUSIVITY LOGIC: If this one is latest, unset all others
+    if(isLatest) {
+      await db.from('music_works').update({ is_latest: false }).neq('id', id);
+    }
+
     const p = {
       title: document.getElementById('m_t').value,
       cover_url: document.getElementById('m_url').value,
       audio_url: document.getElementById('m_a').value,
       score_url: document.getElementById('m_s').value,
-      description: document.getElementById('m_d').value
+      description: document.getElementById('m_d').value,
+      is_latest: isLatest
     };
     await db.from('music_works').update(p).eq('id', id);
     location.reload();
@@ -513,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
         <h1 style="color:var(--gold);">田野日记管理</h1>
-        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="addDiary()">+ 新建相册</button>
+        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openDiaryModal()">+ 新建相册</button>
       </div>
       
       <div style="display:flex; flex-direction:column; gap:20px;">
@@ -531,6 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <!-- 第二排：操作按钮 -->
             <div style="display:flex; gap:10px; justify-content: flex-end;">
+              <button class="btn-tiny" style="padding:8px 15px;" onclick='openDiaryModal(${JSON.stringify(a).replace(/'/g, "&apos;")})'>✏️ 编辑详情 (Edit Details)</button>
               <button class="btn-tiny" style="padding:8px 25px;" onclick="managePhotos('${a.id}')">🖼️ 管理相册照片 (Manage Photos)</button>
               <button class="btn-tiny danger" style="padding:8px 15px;" onclick="deleteItem('diary_albums', '${a.id}')">🗑️ 删除相册 (Delete)</button>
             </div>
@@ -848,17 +865,51 @@ document.addEventListener('DOMContentLoaded', () => {
     alert("所有页面海报及背景图更新成功!");
   };
   
-  window.addDiary = async() => {
-    const t = prompt("相册标题 (Album Title):");
-    if(t) { 
-      await db.from('diary_albums').insert([{
-        title: t, 
-        date: new Date().toISOString().split('T')[0]
-      }]); 
-      renderCMS(); 
-    }
+  window.openDiaryModal = (a = null) => {
+    const isEdit = !!a;
+    const modal = document.createElement('div');
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;">
+        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑日记相册' : '新建日记相册'}</h2>
+        
+        <div style="margin-bottom:20px;">
+          <label>相册封面 (Cover Image)</label>
+          <img id="da_prev" src="${a?.cover_url || 'https://via.placeholder.com/400x300?text=Preview'}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px; margin-bottom:15px; border:1px solid #333;">
+          <input type="file" id="f_da_cover">
+          <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('f_da_cover', 'da_url', 'da_prev')">上传封面</button>
+          <input type="hidden" id="da_url" value="${a?.cover_url || ''}">
+        </div>
+
+        <label>文件夹名称 (Folder Title)</label>
+        <input type="text" id="da_title" value="${a?.title || ''}" placeholder="例如: 某某现场记录" style="width:100%; margin-bottom:15px;">
+
+        <label>发生日期 (Event Date)</label>
+        <input type="date" id="da_date" value="${a?.date || ''}" style="width:100%; margin-bottom:20px;">
+
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-submit" style="flex:2;" onclick="saveDiaryAlbum('${a?.id || ''}')">确认保存</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.remove()">取消</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
   };
 
+  window.saveDiaryAlbum = async(id) => {
+    const payload = {
+      title: document.getElementById('da_title').value,
+      date: document.getElementById('da_date').value,
+      cover_url: document.getElementById('da_url').value
+    };
+    if(!payload.title) return alert("请输入名称");
+    
+    if(id) await db.from('diary_albums').update(payload).eq('id', id);
+    else await db.from('diary_albums').insert([payload]);
+    
+    renderCMS();
+  };
+  
   window.managePhotos = async(id) => {
     const { data: photos } = await db.from('diary_media').select('*').eq('album_id', id);
     const modal = document.createElement('div');
@@ -942,4 +993,38 @@ document.addEventListener('DOMContentLoaded', () => {
   window.deleteItem = async(t, id) => {
     if(confirm("确定永久删除？")) { await db.from(t).delete().eq('id', id); renderCMS(); }
   };
+
+  async function renderEchoes(container) {
+    const { data: echoes } = await db.from('contact_messages').select('*').ilike('message', '[ECHO]%').order('created_at', {ascending: false});
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <h1 style="color:var(--gold);">回声空间留言管理 (Echo Space)</h1>
+        <p style="color:#666;">管理您的 3D 宇宙中的感悟记录</p>
+      </div>
+      <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px;">
+        <table style="width:100%; border-collapse:collapse; color:#eee;">
+          <thead>
+            <tr style="border-bottom:1px solid #333; text-align:left;">
+              <th style="padding:15px;">日期</th>
+              <th style="padding:15px;">发送者</th>
+              <th style="padding:15px;">感悟回声 (Message)</th>
+              <th style="padding:15px; text-align:right;">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${echoes?.map(e => `
+              <tr style="border-bottom:1px solid #1a1a1a;">
+                <td style="padding:15px; font-size:0.85rem; color:#666;">${new Date(e.created_at).toLocaleString()}</td>
+                <td style="padding:15px; color:var(--gold);">${e.name || 'Anonymous'}</td>
+                <td style="padding:15px; font-style:italic;">"${e.message.replace('[ECHO] ', '')}"</td>
+                <td style="padding:15px; text-align:right;">
+                  <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${e.id}')">🗑️ 删除回声 (Delete)</button>
+                </td>
+              </tr>
+            `).join('') || '<tr><td colspan="4" style="padding:30px; text-align:center; color:#444;">宇宙中还没有回声...</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
 });

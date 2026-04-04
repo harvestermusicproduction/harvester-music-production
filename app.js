@@ -103,15 +103,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchLatestMusicForHome() {
     const coverEl = document.getElementById('cfg_homeSongCover');
-    const audioEl = document.getElementById('homeAudioControls');
-    if (!coverEl) return;
+    const titleEl = document.getElementById('cfg_homeSongTitle');
+    const ytEl = document.getElementById('cfg_homeSongYT');
+    const wrapper = document.getElementById('vinylWrapper');
     try {
-      const { data, error } = await db.from('music_works').select('*').order('created_at', { ascending: false }).limit(1).single();
-      if (!error && data) {
-        coverEl.src = data.cover_url;
-        if (audioEl && data.audio_url) { audioEl.src = data.audio_url; audioEl.load(); }
+      let { data: latest, error } = await db.from('music_works').select('*').eq('is_latest', true).limit(1).single();
+      if (error || !latest) {
+        const { data: fallback } = await db.from('music_works').select('*').order('created_at', { ascending: false }).limit(1).single();
+        latest = fallback;
       }
-    } catch (e) {}
+      
+      if(latest && wrapper){
+        const coverEl = wrapper.querySelector('.vinyl-cover');
+        const fallbackLogo = 'assets/logo.png';
+        const coverImg = latest.cover_url || latest.image_url || fallbackLogo;
+        
+        if(coverEl) {
+          coverEl.src = coverImg;
+          coverEl.onerror = () => { coverEl.src = fallbackLogo; };
+        }
+        
+        const titleEl = document.getElementById('cfg_homeSongTitle');
+        const ytBtn = document.getElementById('cfg_homeSongYT');
+        if(titleEl) titleEl.innerText = latest.title || '最新单曲';
+        if(ytBtn) {
+          const ytUrl = latest.audio_url || latest.youtube_url;
+          if(ytUrl) {
+            ytBtn.href = ytUrl;
+            ytBtn.style.display = 'inline-block';
+          } else {
+            ytBtn.style.display = 'none';
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Home music error:", e);
+    }
   }
 
   // --- 3. Dynamic Modules ---
@@ -123,18 +150,21 @@ document.addEventListener('DOMContentLoaded', () => {
       if (error) throw error;
       let html = "";
       docs.forEach(s => {
-        // Use 'audio_url' as the YouTube link per admin backend mapping
         const ytLink = s.audio_url || s.youtube_url; 
+        const fallback = 'assets/logo.png';
+        const coverImg = s.cover_url || s.image_url || fallback;
+
         html += `<div class="song-work-card fade-in visible">
-            <div class="mini-vinyl-wrap" style="position:relative;" onmouseenter="triggerNotes(this)">
-              <div class="mini-vinyl"><img src="${s.cover_url}" onerror="this.src='assets/logo.png'"><div class="vinyl-play-overlay">🎶</div></div>
+            <div class="mini-vinyl-wrap" style="position:relative;" onmouseenter="startNotes(this)" onmouseleave="stopNotes(this)">
+                <div class="mini-vinyl"><img src="${coverImg}" onerror="this.src='${fallback}'"></div>
             </div>
             <div class="song-content-area">
               <h3 class="song-card-title">${s.title || 'Untitled'}</h3>
               <p class="song-card-desc">${s.description || ''}</p>
-              <div class="song-card-actions">
-                ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-youtube-premium"><i class="fab fa-youtube"></i> WATCH ON YOUTUBE</a>` : ''}
-                ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-dl-score"><i class="fas fa-file-pdf"></i> DOWNLOAD SCORE</a>` : ''}
+               <div class="song-card-actions">
+                ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-yt"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
+                ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-score"><i class="fas fa-file-pdf"></i> 下载歌谱集</a>` : ''}
+                <a href="feedback.html?id=${s.id}" class="btn-frosted-white" style="padding: 10px 15px; font-size: 0.75rem;"><i class="fas fa-bullhorn"></i> 回声 (Echo)</a>
               </div>
             </div>
           </div>`;
@@ -175,17 +205,17 @@ document.addEventListener('DOMContentLoaded', () => {
           ? `<a href="${murl}" target="_blank" style="color:var(--gold); text-decoration:underline;"><i class="fas fa-map-marker-alt"></i> ${loc}</a>`
           : (loc ? `<span><i class="fas fa-map-marker-alt"></i> ${loc}</span>` : '');
 
-        html += `<div class="event-card fade-in visible" style="background:rgba(255,255,255,0.02); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.05); padding:2.5rem; border-radius:24px; border-left:2px solid var(--gold); min-height:250px; display:flex; flex-direction:column; justify-content:space-between;">
+        html += `<div class="event-card fade-in visible" style="background:rgba(255,255,255,0.85); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); border:1px solid rgba(255,255,255,0.5); padding:2.5rem; border-radius:32px; border-left:4px solid var(--gold); min-height:250px; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 15px 45px rgba(0,0,0,0.1);">
             <div>
-              <div style="color:var(--gold); font-size:0.8rem; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px;">
+              <div style="color:#555; font-size:0.8rem; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px;">
                 <span><i class="fas fa-calendar-alt"></i> ${date || 'TBA'}</span>
                 <span><i class="fas fa-clock"></i> ${time || '-'}</span>
                 ${locHtml}
               </div>
-              <h3 style="color:#fff; font-size:1.6rem; font-family:'Ma Shan Zheng', cursive;">${e.title}</h3>
-              <p style="color:#ccc; line-height:1.8;">${desc}</p>
+              <h3 style="color:#222; font-size:1.6rem; font-family:'Ma Shan Zheng', cursive;">${e.title}</h3>
+              <p style="color:#444; line-height:1.8;">${desc}</p>
             </div>
-            <button class="btn-score-premium" style="width:100%; border-radius:60px; padding:12px; margin-top:20px;" onclick="openReminderModal('${e.id}', '${e.title}')"><i class="fas fa-bell"></i> 提醒我 RECEIVE REMINDER</button>
+            <button class="btn-score-premium" style="width:100%; border-radius:60px; padding:12px; margin-top:20px; background:rgba(0,0,0,0.8); color:#fff;" onclick="openReminderModal('${e.id}', '${e.title}')"><i class="fas fa-bell"></i> 我要参与提醒我</button>
           </div>`;
       });
       container.innerHTML = html;
@@ -198,50 +228,108 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!container) return;
     try {
       const { data: albums } = await db.from('diary_albums').select('*, diary_media(media_url)').order('date', { ascending: false });
-      container.innerHTML = albums.map(d => `<div class="folder-card fade-in visible" onclick="location.href='event.html?id=${d.id}'"><div class="folder-main"><img src="${d.cover_url || (d.diary_media[0]?d.diary_media[0].media_url:'')}" class="folder-cover"><div class="folder-info"><p class="folder-date">${d.date}</p><h3 class="folder-title">${d.title}</h3></div></div></div>`).join('');
+      container.innerHTML = albums.map(d => {
+        const photos = (d.diary_media || []).slice(0, 3).map((m, idx) => 
+          `<img src="${m.media_url}" class="peek-photo peek-${idx+1}">`
+        ).join('');
+        return `
+          <div class="folder-card fade-in visible" onclick="location.href='event.html?id=${d.id}'">
+            <div class="folder-main">
+              ${photos}
+              <img src="${d.cover_url || (d.diary_media[0]?d.diary_media[0].media_url:'')}" class="folder-cover">
+              <div class="folder-info">
+                <p class="folder-date">${d.date}</p>
+                <h3 class="folder-title">${d.title}</h3>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
       refreshObserver();
     } catch (e) {}
   }
-
-  function spawnMusicalNotes(element) {
-    const symbols = ['♪', '♫', '♬', '♩'];
-    const rect = element.getBoundingClientRect();
-    for (let i = 0; i < 5; i++) {
-      const note = document.createElement('span');
-      note.className = 'floating-note';
-      note.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-      const angle = Math.random() * Math.PI * 2;
-      const dist = 50 + Math.random() * 50;
-      note.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
-      note.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
-      note.style.left = `50%`; note.style.top = `50%`;
-      element.appendChild(note);
-      setTimeout(() => note.remove(), 2000);
+  async function fetchFootprints() {
+    const container = document.getElementById('footprintsContainer');
+    if (!container) return;
+    try {
+      const { data: albums } = await db.from('diary_albums').select('*').order('date', { ascending: false });
+      const fallback = 'assets/logo.png';
+      container.innerHTML = albums.map(d => {
+        const coverImg = d.cover_url || fallback;
+        return `
+          <div class="footprint-item fade-in visible" onclick="location.href='event.html?id=${d.id}'">
+            <img src="${coverImg}" onerror="this.src='${fallback}'" class="footprint-img">
+            <div class="footprint-overlay" style="background:rgba(255,255,255,0.85); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px);">
+              <h4 style="color:#222; font-family:'Ma Shan Zheng', cursive; font-size:1.4rem;">${d.title}</h4>
+              <p style="color:#555; font-size:0.85rem;">${d.date}</p>
+            </div>
+          </div>`;
+      }).join('');
+      refreshObserver();
+    } catch (e) {
+      console.error("Footprints fetch error:", e);
     }
   }
 
-  window.triggerNotes = (el) => spawnMusicalNotes(el);
+  function spawnSingleNote(element) {
+    const symbols = ['♪', '♫', '♬', '♩'];
+    const note = document.createElement('span');
+    note.className = 'note-particle';
+    note.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+    
+    // Random trajectory
+    const dx = (Math.random() * 80 - 40); // -40 to 40 px
+    const rot = (Math.random() * 60 - 30); // -30 to 30 deg
+    
+    note.style.setProperty('--dx', `${dx}px`);
+    note.style.setProperty('--rot', `${rot}deg`);
+    note.style.left = `50%`;
+    note.style.top = `50%`;
+    
+    element.appendChild(note);
+    setTimeout(() => note.remove(), 2500);
+  }
+
+  window.startNotes = (el) => {
+    if (el._noteTimer) clearInterval(el._noteTimer);
+    spawnSingleNote(el); // Immediate first note
+    el._noteTimer = setInterval(() => spawnSingleNote(el), 350);
+  };
+
+  window.stopNotes = (el) => {
+    clearInterval(el._noteTimer);
+  };
 
   window.openReminderModal = (id, title) => {
     let m = document.getElementById('reminderModal');
     if(!m){
       m=document.createElement('div'); m.id='reminderModal'; m.className='reminder-modal';
-      m.innerHTML=`<div class="reminder-content"><h2 style="color:var(--gold);">活动提醒</h2><p id="rem_t"></p><input type="email" id="rem_email" placeholder="your@email.com" style="width:100%; margin:1rem 0;"><input type="hidden" id="rem_id"><div style="display:flex; gap:10px;"><button class="btn btn-submit" style="flex:2;" onclick="submitReminder()">🔔 立即订阅</button><button class="btn-tiny" onclick="document.getElementById('reminderModal').remove()">取消</button></div></div>`;
+      m.innerHTML=`<div class="reminder-content" style="background:rgba(255,255,255,0.9); backdrop-filter:blur(35px); -webkit-backdrop-filter:blur(35px); border:1px solid rgba(255,255,255,0.5); border-radius:40px; padding:2.5rem; box-shadow:0 40px 80px rgba(0,0,0,0.2); text-align:center;">
+         <h2 style="color:#222; font-family:'Ma Shan Zheng', cursive; font-size:2.4rem; margin-bottom:1rem; letter-spacing:2px;">活动参与</h2>
+         <p id="rem_t" style="color:#555; margin-bottom:1.5rem; letter-spacing:2px; font-size:0.95rem;"></p>
+         <input type="email" id="rem_email" placeholder="输入您的邮箱地址..." style="width:100%; margin-bottom:1.8rem; padding:16px; border-radius:50px; background:rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.1); color:#222; outline:none; text-align:center;">
+         <input type="hidden" id="rem_id">
+         <div style="display:flex; gap:15px;">
+           <button class="btn btn-submit" style="flex:2; border-radius:50px; background:var(--gold); color:#000; font-weight:bold; border:none; padding:16px;" onclick="submitReminder()">🔔 提醒我</button>
+           <button class="frosted-glass-white" style="flex:1; border-radius:50px; padding:16px; font-size:0.9rem; background:rgba(0,0,0,0.05);" onclick="document.getElementById('reminderModal').classList.remove('active')">取消</button>
+         </div>
+      </div>`;
       document.body.appendChild(m);
     }
-    document.getElementById('rem_t').innerText=`订阅《${title}》`;
-    document.getElementById('rem_id').value=id; m.classList.add('active');
+    if(document.getElementById('rem_t')) document.getElementById('rem_t').innerText=`我要参与《${title}》`;
+    if(document.getElementById('rem_id')) document.getElementById('rem_id').value=id; 
+    m.classList.add('active');
   };
 
   window.submitReminder = async () => {
     const id=document.getElementById('rem_id').value; const email=document.getElementById('rem_email').value;
     if(!email) return alert("请输入邮箱");
     const { error } = await db.from('submissions').insert([{ type: 'event_reminder', content: `Email: ${email} | EventID: ${id}` }]);
-    alert("✅ 订阅成功！"); document.getElementById('reminderModal').remove();
+    alert("✅ 提醒设置成功！哈麦音乐届时将通知您。"); document.getElementById('reminderModal').classList.remove('active');
   };
 
   syncSiteContent();
   fetchMusic();
   fetchEvents();
   fetchDiary();
+  fetchFootprints();
 });

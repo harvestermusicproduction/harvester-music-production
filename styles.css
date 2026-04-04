@@ -9,6 +9,7 @@
   
   --font-display: 'Cormorant Garamond', serif;
   --font-body: 'Inter', sans-serif;
+  --font-kaiti: "Kaiti", "STKaiti", "Baskerville", "Times New Roman", serif;
   --transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
@@ -85,28 +86,38 @@ header.scrolled {
   display: inline-block;
   white-space: nowrap;
 }
-.nav-links a:hover, .nav-links a.active {
-  color: #fff;
-  background: rgba(246, 210, 138, 0.15);
-  border-color: rgba(246, 210, 138, 0.4);
+.nav-links a.active, .active-nav-box {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
-.nav-links a.text-gold { border-color: rgba(246, 210, 138, 0.3); color: var(--gold); }
 
-@media (max-width: 900px) { .nav-links { display: none; } }
+@media (max-width: 1000px) { .nav-links { display: none; } }
+
+/* Cinematic Frosted Glass - White Edition */
+.frosted-glass-white {
+  background: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+  border-radius: 50px;
+}
 
 /* Hero Interactive Visualizer & Overlays */
 .hero { 
   position: relative; 
   height: 100vh; 
   display: flex; 
-  flex-direction: column; 
-  justify-content: center; 
   align-items: center; 
-  text-align: center; 
-  overflow: hidden; 
-  background: transparent !important; /* CRITICAL: reveal liquid layer */
+  justify-content: center; 
+  overflow: hidden;
+  background: transparent;
 }
 #vizCanvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
 .hero-video-bg {
@@ -125,10 +136,27 @@ header.scrolled {
   z-index: 3;
 }
 
+/* 📀 Vinyl Record Dynamics */
+@keyframes vinylRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.vinyl-rotating {
+  animation: vinylRotate 8s linear infinite;
+}
+
 .hero-content-layer {
   position: relative;
   z-index: 10;
   padding-top: 2rem;
+}
+
+/* 🖋️ Special Typography Rules */
+.kaiti-quote {
+  font-family: var(--font-kaiti) !important;
+  font-style: normal;
+  letter-spacing: 2px;
 }
 
 .visual-overlay {
@@ -232,38 +260,36 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); }
 }
 
 /* --- 💎 Diamond Edition Buttons (Frosted Glass) --- */
-.btn-youtube-premium {
-  background: rgba(255, 0, 0, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(255, 0, 0, 0.1);
-  color: #fff;
+.btn-frosted-yt, 
+.btn-frosted-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 60px;
+  padding: 10px 30px;
+  color: #ffffff !important;
+  text-decoration: none;
+  font-family: 'Times New Roman', 'KaiTi', serif !important;
+  font-size: 0.85rem;
   letter-spacing: 2px;
-}
-.btn-youtube-premium:hover {
-  background: rgba(255, 0, 0, 0.85);
-  border-color: rgba(255, 0, 0, 1);
-  box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
-  color: #fff;
+  text-transform: uppercase;
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
-.btn-score-premium {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(246, 210, 138, 0.05);
-  color: var(--gold);
-  letter-spacing: 2px;
+.btn-frosted-yt:hover,
+.btn-frosted-score:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 45px rgba(255, 255, 255, 0.1);
+  color: #fff !important;
 }
-.btn-score-premium:hover {
-  background: rgba(246, 210, 138, 0.85);
-  border-color: var(--gold);
-  color: #000;
-  box-shadow: 0 0 30px rgba(246, 210, 138, 0.6);
-}
-
 /* --- 🎶 Musical Note Particles --- */
 .floating-note {
   position: absolute;
@@ -873,16 +899,17 @@ body.harvest-active {
   align-items: center;
   gap: 10px;
   padding: 12px 24px;
-  background: rgba(246, 210, 138, 0.05);
-  border: 1px solid rgba(246, 210, 138, 0.2);
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
   border-radius: 50px;
-  color: var(--gold);
+  color: #ffffff !important;
   text-decoration: none;
   font-size: 0.85rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   position: relative;
   overflow: hidden;
@@ -898,10 +925,10 @@ body.harvest-active {
 }
 
 .btn-terminal:hover {
-  background: rgba(246, 210, 138, 0.15);
-  border-color: var(--gold);
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: #fff !important;
   transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(246, 210, 138, 0.3);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
@@ -916,12 +943,14 @@ body.harvest-active {
 
 /* --- Cinematic Event Cards --- */
 .event-card {
-  background: rgba(10, 10, 10, 0.8);
-  border: 1px solid rgba(246, 210, 138, 0.1);
-  border-radius: 8px;
+  background: rgba(255,255,255,0.1) !important; 
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  border-radius: 20px;
   overflow: hidden;
+  z-index: 5;
   transition: all 0.4s ease;
-  position: relative;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
   aspect-ratio: 1 / 1;
 }
 
@@ -954,16 +983,19 @@ body.harvest-active {
 }
 
 /* --- Miniature Overlay Integration --- */
-.grid-miniature .event-info {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
-  padding: 1.5rem 0.8rem 0.8rem;
-  transform: translateY(100%);
-  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-  pointer-events: none; /* Let clicks pass to poster if needed */
-  backdrop-filter: blur(5px);
-}
+.grid-miniature    .footprint-overlay { 
+      position: absolute; 
+      bottom: 0; left: 0; right: 0; 
+      background: rgba(255, 255, 255, 0.12) !important;
+      padding: 1.5rem; 
+      transform: translateY(100%); 
+      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); 
+      font-size: 0.9rem;
+      color: #fff;
+      backdrop-filter: blur(25px) !important;
+      -webkit-backdrop-filter: blur(25px) !important;
+      border-top: 1px solid rgba(255,255,255,0.2);
+    }
 
 .grid-miniature .event-card:hover .event-info {
   transform: translateY(0);
@@ -1162,14 +1194,24 @@ body.harvest-active {
   border: 2px solid #fff;
   box-shadow: 0 8px 20px rgba(0,0,0,0.5);
   pointer-events: none;
+  width: 100px; height: 100px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.1);
+  transition: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1;
   opacity: 0;
-  z-index: 6;
-  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+.folder-card:hover .peek-photo { opacity: 1; }
+.peek-1 { transform: translate(-20px, -10px) rotate(-15deg); }
+.peek-2 { transform: translate(30px, -40px) rotate(10deg); }
+.peek-3 { transform: translate(80px, -15px) rotate(20deg); }
 
-/* Individual Peek Animation positions */
-.folder-card:hover .peek-photo:nth-child(1) { opacity: 1; transform: translate(-20px, -80px) rotate(-10deg); }
-.folder-card:hover .peek-photo:nth-child(2) { opacity: 1; transform: translate(50px, -110px) rotate(5deg); transition-delay: 0.1s; }
+.folder-card:hover .peek-1 { transform: translate(-40px, -50px) rotate(-25deg); }
+.folder-card:hover .peek-2 { transform: translate(40px, -80px) rotate(15deg); }
+.folder-card:hover .peek-3 { transform: translate(110px, -50px) rotate(25deg); }
+.peek-photo:nth-child(2) { opacity: 1; transform: translate(50px, -110px) rotate(5deg); transition-delay: 0.1s; }
 .folder-card:hover .peek-photo:nth-child(3) { opacity: 1; transform: translate(110px, -70px) rotate(15deg); transition-delay: 0.15s; }
 
 /* Photo Gallery Detail */

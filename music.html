@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>音乐与歌谱集 Music & Scores - Harvester Music Production</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=3.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* ── Song Work Card ── */
@@ -13,16 +13,20 @@
       grid-template-columns: 220px 1fr;
       gap: 2.5rem;
       align-items: start;
-      background: #101010;
-      border: 1px solid rgba(246,210,138,0.12);
-      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08) !important;
+      backdrop-filter: blur(25px) !important;
+      -webkit-backdrop-filter: blur(25px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-radius: 24px !important;
       padding: 2.5rem;
       margin-bottom: 3rem;
-      transition: border-color 0.4s, transform 0.4s;
+      transition: var(--transition);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
     .song-work-card:hover {
-      border-color: rgba(246,210,138,0.4);
-      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.3) !important;
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.12) !important;
     }
 
     /* ── Mini Vinyl ── */
@@ -39,7 +43,7 @@
       background: radial-gradient(circle at center,
         #111 0%, #1a1a1a 28%, #222 30%, #1a1a1a 32%, #222 34%,
         #111 48%, #1a1a1a 50%, #222 52%, #111 58%, #1a1a1a 100%);
-      box-shadow: 0 0 0 2px rgba(246,210,138,0.15), 0 8px 30px rgba(0,0,0,0.8);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15), 0 8px 30px rgba(0,0,0,0.8);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -51,22 +55,31 @@
     }
     .mini-vinyl.playing {
       animation-play-state: running;
-      box-shadow: 0 0 0 2px rgba(246,210,138,0.6), 0 0 40px rgba(246,210,138,0.15);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.15);
     }
     /* Spin on card hover */
     .song-work-card:hover .mini-vinyl {
       animation-play-state: running;
-      box-shadow: 0 0 0 2px rgba(246,210,138,0.5), 0 0 30px rgba(246,210,138,0.12);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5), 0 0 30px rgba(255, 255, 255, 0.12);
     }
-    /* JS-driven smoke note particles */
+
+    /* --- 🎶 Musical Note Particles (Animated) --- */
     .note-particle {
       position: absolute;
       pointer-events: none;
       color: var(--gold);
-      filter: drop-shadow(0 0 4px rgba(246,210,138,0.9));
+      filter: drop-shadow(0 0 5px rgba(246,210,138,0.9));
       user-select: none;
-      font-style: normal;
-      transition: none;
+      font-size: 1.5rem;
+      z-index: 100;
+      opacity: 0;
+      animation: float-note-up 2.5s ease-out forwards;
+    }
+
+    @keyframes float-note-up {
+      0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+      20% { opacity: 0.8; }
+      100% { transform: translate(var(--dx, 20px), -150px) scale(1.2) rotate(var(--rot, 20deg)); opacity: 0; }
     }
     .mini-vinyl img {
       width: 78px;
@@ -75,19 +88,6 @@
       object-fit: cover;
       border: 2px solid #333;
       pointer-events: none;
-    }
-    .vinyl-play-overlay {
-      position: absolute;
-      width: 36px; height: 36px;
-      background: rgba(246,210,138,0.9);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-      color: #252525;
-      pointer-events: none;
-      transition: opacity 0.3s;
     }
     @keyframes mvSpin {
       from { transform: rotate(0deg); }
@@ -128,26 +128,6 @@
       min-width: 200px;
       height: 38px;
     }
-    .btn-dl-score {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: transparent;
-      color: var(--gold);
-      border: 1px solid var(--gold);
-      padding: 0.55rem 1.4rem;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      text-decoration: none;
-      border-radius: 2px;
-      transition: all 0.3s;
-      white-space: nowrap;
-    }
-    .btn-dl-score:hover {
-      background: var(--gold);
-      color: #252525;
-    }
 
     @media (max-width: 768px) {
       .song-work-card { grid-template-columns: 1fr; }
@@ -160,22 +140,23 @@
   <header style="z-index:100;">
     <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
       <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">Harvester</a>
-      <div class="header-socials" style="display: flex; gap: 0.8rem; font-size: 1rem;">
-        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
-        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
-        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 1.2rem;">
+        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
-    <nav class="nav-links">
+        <nav class="nav-links">
       <a href="index.html">主页</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="feedback.html" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);">回声空间</a>
       <a href="events.html">活动</a>
-      <a href="music.html" class="text-gold">音乐与歌谱集</a>
-      <a href="diary.html">幕后田野日记</a>
+      <a href="diary.html">田野日志</a>
       <a href="singers.html">福音歌手</a>
       <a href="submit.html">我要投稿</a>
       <a href="about.html">关于我们</a>
       <a href="support.html">支持我们</a>
-      <a href="index.html#contact">联系我们</a>
+      <a href="contact.html">联系我们</a>
     </nav>
   </header>
 
@@ -198,7 +179,7 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="config.js?v=3.0"></script>
+  <script src="app.js?v=3.0"></script>
 </body>
 </html>

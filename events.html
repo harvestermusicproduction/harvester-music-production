@@ -32,13 +32,14 @@
     .footprint-overlay { 
       position: absolute; 
       bottom: 0; left: 0; right: 0; 
-      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); 
-      padding: 2rem 1.5rem 1.5rem; 
+      background: rgba(255, 255, 255, 0.85) !important;
+      padding: 1.5rem; 
       transform: translateY(100%); 
       transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); 
-      font-size: 0.9rem;
-      color: #fff;
-      backdrop-filter: blur(5px);
+      font-size: 0.95rem;
+      color: #333 !important; /* Dark text for readability on white */
+      backdrop-filter: blur(25px) !important;
+      -webkit-backdrop-filter: blur(25px) !important;
     }
     .footprint-item:hover .footprint-overlay { 
       transform: translateY(0); 
@@ -62,16 +63,17 @@
         <a id="cfg_nav_yt" href="#" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
-    <nav class="nav-links">
+        <nav class="nav-links">
       <a href="index.html">主页</a>
-      <a href="events.html" class="text-gold">活动</a>
       <a href="music.html">音乐与歌谱集</a>
-      <a href="diary.html">幕后田野日记</a>
+      <a href="feedback.html">回声空间</a>
+      <a href="events.html" class="active">活动</a>
+      <a href="diary.html">田野日志</a>
       <a href="singers.html">福音歌手</a>
       <a href="submit.html">我要投稿</a>
       <a href="about.html">关于我们</a>
       <a href="support.html">支持我们</a>
-      <a href="index.html#contact">联系我们</a>
+      <a href="contact.html">联系我们</a>
     </nav>
   </header>
 

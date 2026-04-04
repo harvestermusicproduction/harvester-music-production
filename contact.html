@@ -3,9 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>联系我们 Contact - Harvester Music Production</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>联系 Contact - Harvester Music Production</title>
+  <link rel="stylesheet" href="styles.css?v=3.2">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* --- 💎 Contact Form Light White Frosted Standard --- */
+    .contact-form {
+      background: rgba(255, 255, 255, 0.15) !important;
+      backdrop-filter: blur(35px) !important;
+      -webkit-backdrop-filter: blur(35px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      padding: 3.5rem !important;
+      border-radius: 40px !important;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.5) !important;
+      margin-top: 2rem;
+    }
+    .contact-form input, .contact-form textarea {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      color: #fff !important;
+      border-radius: 50px !important;
+      padding: 16px 25px !important;
+      margin-bottom: 1.8rem !important;
+      width: 100% !important;
+      outline: none;
+      font-size: 0.95rem;
+    }
+    .contact-form label { color: var(--gold); font-size: 0.85rem; letter-spacing: 2px; display: block; margin-bottom: 0.6rem; margin-left: 10px; }
+  </style>
 </head>
 <body style="position: relative;">
   <canvas id="bgParticles"></canvas>
@@ -13,50 +38,55 @@
     <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
       <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">Harvester</a>
       <div class="header-socials" style="display: flex; gap: 0.8rem; font-size: 1rem;">
-        <a id="cfg_nav_fb" href="https://www.facebook.com/harvester2025" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
-        <a id="cfg_nav_ig" href="https://www.instagram.com/harvestermusic.production?igsh=MTI2OGYzcDJuYm16dw==" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
-        <a id="cfg_nav_yt" href="https://www.youtube.com/@harvestermusic.production" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.facebook.com/harvester2025" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/harvestermusic.production" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.youtube.com/@harvestermusic.production" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
-    <nav class="nav-links">
+        <nav class="nav-links">
       <a href="index.html">主页</a>
-      <a href="events.html">活动</a>
       <a href="music.html">音乐与歌谱集</a>
-      <a href="diary.html">幕后田野日记</a>
+      <a href="feedback.html">回声空间</a>
+      <a href="events.html">活动</a>
+      <a href="diary.html">田野日志</a>
       <a href="singers.html">福音歌手</a>
       <a href="submit.html">我要投稿</a>
       <a href="about.html">关于我们</a>
       <a href="support.html">支持我们</a>
-      <a href="contact.html" class="text-gold">联系我们</a>
+      <a href="contact.html" class="active">联系我们</a>
     </nav>
   </header>
 
-  <section class="fade-in" style="margin-top: 5rem; min-height: 60vh; padding: 0 2rem;">
-    <div class="grid-2">
+  <section class="fade-in" style="margin-top: 8rem; min-height: 80vh; padding: 0 2rem; max-width: 1200px; margin-left: auto; margin-right: auto;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
       <!-- 联络方式与图片 -->
       <div style="text-align: center;">
-        <h2 class="text-gold mb-2">与我们同工共建</h2>
-        <p style="color:#888;">追踪收割机音乐工作坊的最新动态，洽谈事工合作</p>
+        <h2 class="text-gold mb-2" style="font-family:'Ma Shan Zheng', cursive; font-size: 3rem;">与我们同工共建</h2>
+        <p style="color:#888; letter-spacing: 2px;">追踪收割机音乐工作坊的最新动态，洽谈事工合作</p>
         
-        <div class="social-links" style="margin-top: 1.5rem;">
-          <a id="cfg_social_fb" href="#" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-          <a id="cfg_social_ig" href="#" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
-          <a id="cfg_social_yt" href="#" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+        <div style="margin-top: 2rem; display: flex; justify-content: center; gap: 2rem;">
+          <a href="#" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);"><i class="fab fa-youtube"></i></a>
         </div>
 
-        <img id="cfg_contact_banner" 
-             src="https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=800&q=80" 
-             alt="联络背景图" 
-             style="width: 100%; max-height: 350px; object-fit: cover; margin-top: 2rem; border-radius: 12px; border: 1px solid rgba(246,210,138,0.1);">
+        <img src="https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=800&q=80" 
+             style="width: 100%; max-height: 400px; object-fit: cover; margin-top: 3rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.5);">
       </div>
 
       <!-- 站内表单 -->
       <div class="contact">
         <form class="contact-form" id="contactForm">
-          <input type="text" id="contactName" placeholder="您的称呼 (Name)" required>
-          <input type="email" id="contactEmailInput" placeholder="您的联络邮箱 (Email)" required>
-          <textarea id="contactMsg" placeholder="请详细描述您的合作意向或留言建议... (Message)" rows="8" required></textarea>
-          <button type="submit" class="btn btn-submit" id="btnContactSubmit">发 送 请 求 (Send Message)</button>
+           <label>您的称呼 (Name)</label>
+           <input type="text" id="contactName" placeholder="怎么称呼您？" required>
+           
+           <label>您的联络邮箱 (Email)</label>
+           <input type="email" id="contactEmail" placeholder="example@email.com" required>
+           
+           <label>合作意向或留言建议 (Message)</label>
+           <textarea id="contactMsg" placeholder="请详细描述您的想法..." rows="6" required></textarea>
+           
+           <button type="submit" class="btn btn-submit btn-frosted-white" id="btnContactSubmit" style="width:100%; border-radius: 60px; padding: 15px;">发 送 请 求 (Send Message)</button>
         </form>
       </div>
     </div>
@@ -68,41 +98,11 @@
     <a href="admin.html" class="btn-terminal" style="margin-top: 1.5rem;"><i class="fas fa-terminal"></i> 进入控制台 ACCESS TERMINAL</a>
   </footer>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="config.js?v=3.2"></script>
+  <script src="app.js?v=3.2"></script>
   <script>
     document.getElementById('contactForm')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const db = window.supabase;
-      const btn = document.getElementById('btnContactSubmit');
-      
-      const data = {
-        name: document.getElementById('contactName').value,
-        email: document.getElementById('contactEmailInput').value,
-        message: document.getElementById('contactMsg').value
-      };
-
-      const oldText = btn.innerText;
-      btn.innerText = "正在发送...";
-      btn.disabled = true;
-
-      try {
-        const { error } = await db.from('contact_messages').insert([data]);
-        if (error) throw error;
-        alert("已收到您的信息！我们会尽快回复。");
-        e.target.reset();
-      } catch (err) {
-        alert("发送失败: " + err.message);
-      } finally {
-        btn.innerText = oldText;
-        btn.disabled = false;
-      }
-    });
-  </script>
-</body>
-</html>
       e.preventDefault();
       const btn = document.getElementById('btnContactSubmit');
       const db = window.supabase;
@@ -112,21 +112,21 @@
         name: document.getElementById('contactName').value,
         email: document.getElementById('contactEmail').value,
         message: document.getElementById('contactMsg').value,
-        read: false
+        status: 'pending'
       };
 
       btn.innerText = "发送中...";
       btn.disabled = true;
 
       try {
-        const { error } = await db.from('messages').insert([data]);
+        const { error } = await db.from('contact_messages').insert([data]);
         if (error) throw error;
-        alert("已成功发送申请！我们会尽快与您联络。");
+        alert("✅ 已成功发送申请！我们会尽快与您联络。");
         e.target.reset();
       } catch(err) {
-        alert("发送失败：" + err.message);
+        alert("❌ 发送失败：" + err.message);
       } finally {
-        btn.innerText = "发 送 请 求";
+        btn.innerText = "发 送 请 求 (Send Message)";
         btn.disabled = false;
       }
     });

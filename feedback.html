@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>回声空间 Echo Space - Harvester Music Production</title>
+  <link rel="stylesheet" href="styles.css?v=3.9">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* --- 💎 3D Echo Universe Standard --- */
+    body { 
+      margin: 0; overflow: hidden; background: #000; 
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    /* Overlay UI - Upgraded to Light White Frosted */
+    .ui-layer {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 4rem;
+    }
+
+    .interactive-card {
+      background: rgba(255, 255, 255, 0.1) !important;
+      backdrop-filter: blur(30px) !important;
+      -webkit-backdrop-filter: blur(30px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-radius: 40px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      pointer-events: auto;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .interactive-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.3); }
+
+    .btn-echo {
+      background: rgba(0, 0, 0, 0.2) !important;
+      border: 1px solid rgba(246, 210, 138, 0.3) !important;
+      color: #fff !important;
+      padding: 12px 22px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+      font-size: 1rem;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-echo:hover {
+      background: rgba(246, 210, 138, 0.15) !important;
+      transform: translateY(-5px) scale(1.05);
+      border-color: var(--gold) !important;
+      box-shadow: 0 0 20px rgba(246, 210, 138, 0.2);
+    }
+
+    .input-box {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 18px;
+      color: #fff;
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    /* UI Animations */
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Standard Header with Pure Chinese Nav */
+    header {
+      position: absolute; top:0; left:0; width:100%; z-index: 100 !important;
+      pointer-events: auto;
+    }
+
+    #scroll-hint {
+      position: absolute; bottom: 30px; left: 30px; color: rgba(255,255,255,0.3);
+      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Standard Navigation -->
+  <header class="scrolled">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">Harvester</a>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="feedback.html" class="active">回声空间</a>
+      <a href="events.html">活动</a> 
+      <a href="diary.html">田野日志</a>
+      <a href="singers.html">福音歌手</a>
+      <a href="submit.html">我要投稿</a>
+      <a href="about.html">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="contact.html">联系我们</a>
+    </nav>
+  </header>
+
+  <div id="scroll-hint">USE SCROLL WHEEL TO EXPLORE SPACE</div>
+
+  <div class="ui-layer">
+    <div class="interactive-card">
+      <h2 style="font-family:'Ma Shan Zheng', cursive; font-size: 3rem; color:#fff; margin:0; letter-spacing: 4px;">回声空间</h2>
+      <p style="color:var(--gold); letter-spacing: 6px; font-weight: 300; margin-top:5px; font-size:0.8rem;">THE ETERNAL ECHO</p>
+      
+      <div id="reaction-group" style="display: flex; justify-content: center; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap;">
+        <button class="btn-echo" onclick="postReaction('❤️', '被触动')">❤️ 被触动</button>
+        <button class="btn-echo" onclick="postReaction('🙏', '被安慰')">🙏 被安慰</button>
+        <button class="btn-echo" onclick="postReaction('🔥', '很真实')">🔥 很真实</button>
+        <button class="btn-echo" onclick="postReaction('🎧', '单曲循环')">🎧 单曲循环</button>
+        <button class="btn-echo" id="btnCustomTrigger" onclick="toggleCustomUI()">➕ 自定义</button>
+      </div>
+
+      <!-- Custom Reaction UI (Initially Hidden) -->
+      <div id="customReactionUI" style="display: none; margin-top: 1.5rem; animation: slideDown 0.4s ease;">
+        <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+          <input id="customEmoji" placeholder="😊" style="width: 60px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 15px; padding: 12px; color: #fff; text-align: center; outline: none; font-size: 1.2rem;">
+          <input id="customText" placeholder="写个短语..." style="flex:1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 15px; padding: 12px; color: #fff; outline: none;">
+          <button class="btn-echo" style="padding: 12px 20px; border-color: var(--gold);" onclick="handleCustomSubmit()">🔥 触发</button>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <input id="echoInput" class="input-box" maxlength="20" placeholder="写下你的感悟，融入这片回声..." />
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin: 1.5rem 0;">
+          <input type="checkbox" id="echoAnon" checked style="width:auto; transform: scale(1.2);">
+          <label for="echoAnon" style="color:#888; font-size: 0.9rem;">匿名共吟</label>
+        </div>
+        <button class="btn btn-submit btn-frosted-white" style="width: 100%; border-radius: 60px; padding: 18px; font-size: 1.1rem;" onclick="postEcho()">发 布 回 声</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js?v=3.9"></script>
+  <script src="app.js?v=3.9"></script>
+  <script>
+    // --- 🔮 3DEngine & Interactive Logic ---
+    let scene, camera, renderer, starField;
+    let echoes = [];
+    const MAX_ECHOES = 150;
+
+    function init3DEngine() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 2000);
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      document.body.appendChild(renderer.domElement);
+
+      camera.position.z = 100;
+
+      // 1. Create Starfield Background
+      const starGeometry = new THREE.BufferGeometry();
+      const starPositions = [];
+      for(let i=0; i<3000; i++) {
+        starPositions.push((Math.random()-0.5)*2000, (Math.random()-0.5)*2000, (Math.random()-0.5)*2000);
+      }
+      starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+      const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1.5, transparent: true, opacity: 0.8 });
+      starField = new THREE.Points(starGeometry, starMaterial);
+      scene.add(starField);
+
+      animate();
+    }
+
+    function createEchoSprite(text, isNew = false) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 512; canvas.height = 128;
+      
+      // Draw Frosted Glass Capsule Background
+      ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
+      ctx.beginPath();
+      ctx.roundRect(10, 10, 492, 108, 50);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Text
+      ctx.fillStyle = "white";
+      ctx.font = "bold 32px 'Ma Shan Zheng', cursive, 'Microsoft YaHei'";
+      ctx.textAlign = "center";
+      ctx.fillText(text, 256, 75);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+      const sprite = new THREE.Sprite(material);
+      
+      sprite.scale.set(40, 10, 1);
+      
+      const side = Math.random() > 0.5 ? 1 : -1;
+      const xOffset = side * (80 + Math.random() * 120); 
+
+      if(isNew) {
+        sprite.position.set(-500, (Math.random()-0.5)*300, 50); 
+        sprite.userData = { speed: Math.random()*0.1 + 0.1, rot: 0.02, axis: new THREE.Vector3(0,0,1) };
+      } else {
+        sprite.position.set((Math.random()-0.5)*1000, (Math.random()-0.5)*600, (Math.random()-0.5)*400);
+        sprite.userData = { speed: Math.random()*0.05 + 0.05, rot: (Math.random()-0.5)*0.01 };
+      }
+
+      scene.add(sprite);
+      echoes.push(sprite);
+      if(echoes.length > MAX_ECHOES) {
+        scene.remove(echoes.shift());
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      
+      scene.rotation.y += 0.0003;
+      scene.rotation.x += 0.0001;
+
+      echoes.forEach(e => {
+        if(e.userData.speed) {
+          e.position.x += e.userData.speed * 4; // Horizontal Drift
+          e.rotation.z += (e.userData.rot || 0) * 0.1;
+          
+          if(e.position.x > 600) {
+            e.position.x = -600;
+            e.position.y = (Math.random()-0.5)*600;
+          }
+        }
+      });
+
+      renderer.render(scene, camera);
+    }
+
+    function toggleCustomUI() {
+      const ui = document.getElementById('customReactionUI');
+      ui.style.display = ui.style.display === 'none' ? 'block' : 'none';
+      if(ui.style.display === 'block') document.getElementById('customEmoji').focus();
+    }
+
+    function handleCustomSubmit() {
+      const emoji = document.getElementById('customEmoji').value.trim() || '✨';
+      const text = document.getElementById('customText').value.trim();
+      if(!text) return alert("请写一点感悟文字吧");
+      
+      postReaction(emoji, text);
+      toggleCustomUI(); 
+      document.getElementById('customEmoji').value = '';
+      document.getElementById('customText').value = '';
+    }
+
+    function postReaction(emoji, text = "") {
+      createEchoSprite(text ? (emoji + " " + text) : emoji, true);
+    }
+
+    window.addEventListener('wheel', (e) => {
+      camera.position.z += e.deltaY * 0.15;
+      if(camera.position.z < -500) camera.position.z = -500;
+      if(camera.position.z > 800) camera.position.z = 800;
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    async function postEcho() {
+      const input = document.getElementById("echoInput");
+      const text = input.value.trim();
+      const isAnon = document.getElementById("echoAnon").checked;
+      if(!text) return;
+      const db = window.supabase;
+      const data = { name: isAnon?"Anonymous":"", message: "[ECHO] " + text };
+      try {
+        await db.from('contact_messages').insert([data]);
+        createEchoSprite(text, true);
+        input.value = "";
+      } catch(e) { console.error("Echo failed", e); }
+    }
+
+    async function fetchEchoes() {
+      const db = window.supabase;
+      const { data } = await db.from('contact_messages').select('*').ilike('message', '[ECHO]%').order('created_at', {ascending:false}).limit(20);
+      if(data) {
+        data.forEach(e => createEchoSprite(e.message.replace("[ECHO] ", "")));
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      init3DEngine();
+      fetchEchoes();
+    });
+  </script>
+</body>
+</html>
