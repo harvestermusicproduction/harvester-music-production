@@ -180,44 +180,7 @@ header.scrolled {
   border-left: 3px solid var(--gold);
 }
 
-.btn-dl {
-  display: inline-block;
-  background: #fff !important;
-  color: #222 !important;
-  padding: 12px 25px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 700 !important;
-  letter-spacing: 1px;
-  font-size: 0.9rem;
-  transition: var(--transition);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-.btn-dl:hover {
-  background: var(--gold) !important;
-  color: #000 !important;
-  transform: translateY(-3px);
-}
 
-.btn-dl, .btn-frosted-yt, .btn-frosted-dl {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.8rem;
-  background: #fff !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  backdrop-filter: blur(5px);
-  color: #fff !important;
-  padding: 12px 25px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 700 !important;
-  letter-spacing: 1.5px;
-  font-size: 0.85rem;
-  transition: var(--transition);
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
 .btn-dl:hover, .btn-frosted-yt:hover, .btn-frosted-dl:hover {
   background: rgba(255, 255, 255, 0.25) !important;
   border-color: #fff !important;
@@ -394,7 +357,7 @@ header.scrolled {
 .score-title { font-size: 1.8rem; color: var(--gold); margin-bottom: 1rem; }
 .score-verse { font-family: var(--font-display); font-style: italic; color: var(--gray); margin-top: 1rem; border-left: 1px solid var(--gold); padding-left: 1rem; }
 .btn-dl { display: inline-block; background: var(--gold); color: var(--bg); padding: 0.6rem 2rem; font-weight: 500; text-transform: uppercase; font-size: 0.85rem; border-radius: 2px; margin-top: 1.5rem; }
-.btn-dl:hover { background: #fff; }
+
 
 /* Forms & Inputs */
 .contact-form { display: flex; flex-direction: column; gap: 1.5rem; text-align: left; max-width: 600px; margin: 0 auto; }
