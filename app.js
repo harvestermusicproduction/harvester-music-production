@@ -209,16 +209,29 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) { console.error("🔥 Music Load Error:", err); }
   }
 
+  // --- 🪄 Global Design Configuration ---
+  window.hConfig = {};
+  async function fetchSiteConfig() {
+    try {
+      const { data } = await db.from('site_config').select('*');
+      if (data) {
+        data.forEach(c => window.hConfig[c.key] = c.value);
+      }
+    } catch (e) { console.warn("Config fetch failed:", e); }
+  }
+
   async function fetchEvents() {
     const container = document.getElementById('eventsContainer');
     if (!container) return;
     try {
-      // 1. Fetch data from Supabase
+      // Ensure config is loaded first
+      if (!window.hConfig.cfg_event_layout) await fetchSiteConfig();
+      const layoutMode = window.hConfig.cfg_event_layout || 'photo';
+
       const { data: rawEvents, error } = await db.from('events').select('*');
       
       if (error) {
-        console.error("Supabase Error:", error);
-        container.innerHTML = `<p style="grid-column:1/-1; text-align:center; opacity:0.6;">⚠️ 活动加载受限 (Status: ${error.code})。内容更新中...</p>`;
+        container.innerHTML = `<p style="grid-column:1/-1; text-align:center; opacity:0.6;">⚠️ 活动同步中...</p>`;
         return;
       }
 
@@ -227,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // 2. Map and parse (safe version)
       const data = rawEvents.map(e => {
         let desc = e.description || "";
         const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
@@ -237,7 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return {
               ...e,
               event_date: meta.d || e.event_date,
-              event_time: meta.tm || e.event_time,
               image_url: meta.img || e.image_url,
               description: desc.replace(metaMatch[0], '').trim()
             };
@@ -246,36 +257,57 @@ document.addEventListener('DOMContentLoaded', () => {
         return e;
       });
       
-      // 3. Sort by date
       data.sort((a, b) => (b.event_date || '').localeCompare(a.event_date || ''));
 
       let html = "";
       data.forEach(e => {
-        const poster = e.image_url || 'https://via.placeholder.com/600x800?text=Event';
-        html += `
-          <div class="event-card fade-in visible">
-            <div class="event-poster-wrap" style="aspect-ratio:1/1;">
-              <img src="${poster}" class="event-poster" alt="${e.title}" onerror="this.src='https://via.placeholder.com/600x800?text=Event'">
-            </div>
-            <div class="event-info" style="padding:1rem;">
-              <div class="event-meta" style="font-size:0.75rem; color:var(--gold); margin-bottom:8px;">
-                <span><i class="fas fa-calendar-day"></i> ${e.event_date || 'TBD'}</span>
+        if (layoutMode === 'minimal') {
+          // --- ✨ Minimalist Layout (No Photo) ---
+          html += `
+            <div class="event-card fade-in visible" style="background: rgba(255,255,255,0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); padding: 2rem; border-radius: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; transition: 0.4s ease;">
+              <div>
+                <div style="color: var(--gold); font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 1rem; opacity: 0.8;">
+                  <i class="fas fa-calendar-alt"></i> ${e.event_date || 'COMING SOON'}
+                </div>
+                <h3 style="color: #fff; font-size: 1.4rem; margin-bottom: 1rem; font-family: 'Ma Shan Zheng', cursive;">${e.title}</h3>
+                <p style="color: #bbb; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                  ${e.description || '点击提醒我，获取最新同行时刻。'}
+                </p>
               </div>
-              <h4 class="event-title" style="font-size:1rem; margin:0 0 10px 0; color:#fff;">${e.title}</h4>
               <div class="event-actions">
-                <button class="btn-premium" style="width:100%; font-size:0.7rem; padding:10px;" onclick="openReminderModal('${e.id}', '${e.title}')">
-                   提醒我
+                <button class="btn-score-premium" style="width: 100%; padding: 12px; border-radius: 50px; font-size: 0.8rem; backdrop-filter: blur(10px);" onclick="openReminderModal('${e.id}', '${e.title}')">
+                  <i class="fas fa-bell"></i> 提醒我 RECEIVE REMINDER
                 </button>
               </div>
             </div>
-          </div>
-        `;
+          `;
+        } else {
+          // --- 📸 Poster Layout (Original Card) ---
+          const poster = e.image_url || 'https://via.placeholder.com/600x800?text=Event';
+          html += `
+            <div class="event-card fade-in visible">
+              <div class="event-poster-wrap" style="aspect-ratio:1/1;">
+                <img src="${poster}" class="event-poster" alt="${e.title}" onerror="this.src='https://via.placeholder.com/600x800?text=Event'">
+              </div>
+              <div class="event-info" style="padding:1rem;">
+                <div class="event-meta" style="font-size:0.75rem; color:var(--gold); margin-bottom:8px;">
+                  <span><i class="fas fa-calendar-day"></i> ${e.event_date || 'TBD'}</span>
+                </div>
+                <h3 class="event-title" style="font-size:1.1rem; margin:0 0 10px 0; color:#fff; font-family: 'Ma Shan Zheng', cursive;">${e.title}</h3>
+                <div class="event-actions">
+                  <button class="btn-premium" style="width:100%; font-size:0.7rem; padding:10px;" onclick="openReminderModal('${e.id}', '${e.title}')">
+                    提醒我 RECEIVE REMINDER
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
       });
       container.innerHTML = html;
       if(window.refreshObserver) window.refreshObserver();
       fetchFootprints(); 
     } catch (err) { 
-      console.error("🔥 System Error:", err); 
       container.innerHTML = `<p style="grid-column:1/-1; text-align:center; opacity:0.5;">内容同步中...</p>`;
     }
   }

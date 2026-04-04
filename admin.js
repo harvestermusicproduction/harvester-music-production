@@ -701,26 +701,37 @@ document.addEventListener('DOMContentLoaded', () => {
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-bottom:40px;">
         <!-- Column 1: Core Content & Social -->
         <div style="background:#151515; padding:25px; border-radius:12px; border:1px solid #222;">
-          <h3 style="color:var(--gold); margin-top:0;"><i class="fas fa-edit"></i> 核心文案与社交链接</h3>
+          <h3 style="color:var(--gold); margin-top:0;"><i class="fas fa-magic"></i> 💎 装修中心 (Design Settings)</h3>
+          <p style="color:#888; font-size:0.75rem; margin-bottom:15px;">在这里切换官网的设计布局，修改后瞬间生效。</p>
+          
+          <div style="margin-bottom:20px;">
+            <label style="display:block; margin-bottom:8px;">活动页面展示模式 (Events Layout)</label>
+            <select id="cfg_event_layout" style="width:100%; background:#222; border:1px solid #444; color:#fff; padding:8px; border-radius:4px;">
+              <option value="photo" ${c['cfg_event_layout']==='photo'?'selected':''}>📸 经典大图模式 (Posters)</option>
+              <option value="minimal" ${c['cfg_event_layout']==='minimal'?'selected':''}>✨ 极简信息卡片 (Minimalist)</option>
+            </select>
+          </div>
+
+          <h3 style="color:var(--gold); margin-top:20px;"><i class="fas fa-edit"></i> 核心文案与社交链接</h3>
           
           <div style="margin-bottom:15px;">
             <label>关于我们描述 (About Text)</label>
-            <textarea id="cfg_about_text" style="width:100%; height:100px;">${c['cfg_about_text']||''}</textarea>
+            <textarea id="cfg_about_text" style="width:100%; height:80px; background:#222; border:1px solid #444; color:#fff; padding:10px; border-radius:4px;">${c['cfg_about_text']||''}</textarea>
           </div>
 
           <div style="margin-bottom:15px;">
             <label>联系我们邮箱 (Contact Email)</label>
-            <input type="text" id="cfg_contact_email" value="${c['cfg_contact_email']||''}" style="width:100%;">
+            <input type="text" id="cfg_contact_email" value="${c['cfg_contact_email']||''}" style="width:100%; background:#222; border:1px solid #444; color:#fff; padding:8px; border-radius:4px;">
           </div>
 
           <div style="margin-bottom:15px; padding-top:15px; border-top:1px solid #222;">
             <h4 style="margin-bottom:10px;">社交媒体链接 (Social Links)</h4>
-            <label>Facebook URL</label><input type="text" id="cfg_social_fb" value="${c['cfg_social_fb']||''}" style="width:100%; margin-bottom:10px;">
-            <label>Instagram URL</label><input type="text" id="cfg_social_ig" value="${c['cfg_social_ig']||''}" style="width:100%; margin-bottom:10px;">
-            <label>YouTube URL</label><input type="text" id="cfg_social_yt" value="${c['cfg_social_yt']||''}" style="width:100%;">
+            <label style="font-size:0.7rem; color:#666;">Facebook URL</label><input type="text" id="cfg_social_fb" value="${c['cfg_social_fb']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
+            <label style="font-size:0.7rem; color:#666;">Instagram URL</label><input type="text" id="cfg_social_ig" value="${c['cfg_social_ig']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
+            <label style="font-size:0.7rem; color:#666;">YouTube URL</label><input type="text" id="cfg_social_yt" value="${c['cfg_social_yt']||''}" style="width:100%; background:#222; border:1px solid #444; color:#fff;">
           </div>
 
-          <button class="btn btn-submit" style="margin-top:15px; width:100%;" onclick="saveAllConfigs()">更新所有文案与链接</button>
+          <button class="btn btn-submit" style="margin-top:15px; width:100%;" onclick="saveAllConfigs()">更新设置与文案</button>
         </div>
 
         <!-- Column 2: Financial & Support -->
@@ -729,16 +740,16 @@ document.addEventListener('DOMContentLoaded', () => {
           
           <div style="margin-bottom:15px;">
             <label>银行名称 (Bank Name)</label>
-            <input type="text" id="cfg_support_bank" value="${c['cfg_support_bank']||''}" style="width:100%; margin-bottom:10px;">
+            <input type="text" id="cfg_support_bank" value="${c['cfg_support_bank']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
             <label>银行账号 (Account No.)</label>
-            <input type="text" id="cfg_support_acc_no" value="${c['cfg_support_acc_no']||''}" style="width:100%; margin-bottom:10px;">
+            <input type="text" id="cfg_support_acc_no" value="${c['cfg_support_acc_no']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
             <label>户名 (Account Name)</label>
-            <input type="text" id="cfg_support_acc_name" value="${c['cfg_support_acc_name']||''}" style="width:100%; margin-bottom:10px;">
+            <input type="text" id="cfg_support_acc_name" value="${c['cfg_support_acc_name']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
           </div>
 
           <div style="margin-bottom:15px; padding-top:15px; border-top:1px solid #222;">
             <label>TNG / DuitNow 联络信息</label>
-            <input type="text" id="cfg_support_tng" value="${c['cfg_support_tng']||''}" style="width:100%; margin-bottom:15px;">
+            <input type="text" id="cfg_support_tng" value="${c['cfg_support_tng']||''}" style="width:100%; margin-bottom:15px; background:#222; border:1px solid #444; color:#fff;">
             
             <label>DuitNow QR Code</label>
             <img id="prev_qr" src="${c['cfg_support_qr']||''}" style="width:120px; height:120px; object-fit:contain; background:#fff; border-radius:4px; margin:5px 0; display:block;">
@@ -752,35 +763,32 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       <div style="background:#151515; padding:25px; border-radius:12px; border:1px solid #222;">
-        <h3 style="color:var(--gold); margin-top:0;"><i class="fas fa-image"></i> 页面海报与背景图 (Banners & Posters)</h3>
+        <h3 style="color:var(--gold); margin-top:0;"><i class="fas fa-image"></i> 页面海报与背景图 (Banners)</h3>
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
           
           <div class="banner-edit-item">
-            <label>关于我们 品牌宣传视频 (推荐使用 MP4 格式)</label>
-            <video id="prev_about_v" src="${c['cfg_about_video']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0; border:1px solid #333; background:#000;" autoplay muted loop playsinline controls></video>
-            <input type="file" id="f_about_v" accept="video/mp4,video/x-m4v,video/*">
-            <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_about_v', 'url_about_v', 'prev_about_v')">上传关于页宣传视频</button>
-            <div style="font-size:0.7rem; color:#666; margin-top:5px;">💡 建议文件大小在 15MB 以内，请确保格式为 MP4 以获得最佳兼容性。</div>
+            <label>关于我们 品牌宣传视频</label>
+            <video id="prev_about_v" src="${c['cfg_about_video']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0; background:#000;" muted loop playsinline controls></video>
+            <input type="file" id="f_about_v">
+            <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_about_v', 'url_about_v', 'prev_about_v')">上传视频</button>
             <input type="hidden" id="url_about_v" value="${c['cfg_about_video']||''}">
           </div>
 
           <div class="banner-edit-item">
             <label>联系我们 背景</label>
-            <img id="prev_contact" src="${c['cfg_contact_banner']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0; border:1px solid #333;">
+            <img id="prev_contact" src="${c['cfg_contact_banner']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0;">
             <input type="file" id="f_contact">
-            <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_contact', 'url_contact', 'prev_contact')">上传联系页背景</button>
+            <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_contact', 'url_contact', 'prev_contact')">上传背景</button>
             <input type="hidden" id="url_contact" value="${c['cfg_contact_banner']||''}">
           </div>
 
           <div class="banner-edit-item">
             <label>我要投稿 海报</label>
-            <img id="prev_submit" src="${c['cfg_submit_poster']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0; border:1px solid #333;">
+            <img id="prev_submit" src="${c['cfg_submit_poster']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0;">
             <input type="file" id="f_submit">
-            <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_submit', 'url_submit', 'prev_submit')">上传投稿页海报</button>
+            <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_submit', 'url_submit', 'prev_submit')">上传海报</button>
             <input type="hidden" id="url_submit" value="${c['cfg_submit_poster']||''}">
           </div>
-
-
         </div>
         <button class="btn btn-submit" style="margin-top:25px;" onclick="saveBanners()">保存所有媒体配置</button>
       </div>
@@ -788,14 +796,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.saveAllConfigs = async() => {
-    const keys = ['cfg_about_text', 'cfg_contact_email', 'cfg_social_fb', 'cfg_social_ig', 'cfg_social_yt'];
+    const keys = ['cfg_about_text', 'cfg_contact_email', 'cfg_social_fb', 'cfg_social_ig', 'cfg_social_yt', 'cfg_event_layout'];
     for(let k of keys) {
       const el = document.getElementById(k);
       if(el) {
         await db.from('site_config').upsert({key: k, value: el.value}, {onConflict: 'key'});
       }
     }
-    alert("基础配置已更新成功!");
+    alert("配置已更新成功! 您的设计选择已生效。");
+    renderCMS();
   };
 
   window.saveSupportInfo = async() => {
