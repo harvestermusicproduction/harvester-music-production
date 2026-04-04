@@ -172,10 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const fallback = 'assets/logo.png';
         const coverImg = s.cover_url || s.image_url || fallback;
 
-        // 🔮 Special Style for '灵火' (Sacred Fire) to match Home Page featured look
-        const isSacredFire = s.title === '灵火' || s.title?.includes('灵火');
-        const fireStyle = isSacredFire ? `background:transparent !important; border: 1px solid rgba(246, 210, 138, 0.4) !important; color:rgba(246,210,138,0.8) !important; opacity:0.5;` : '';
-
         html += `<div class="song-work-card fade-in visible">
             <div class="mini-vinyl-wrap" style="position:relative;" onmouseenter="startNotes(this)" onmouseleave="stopNotes(this)">
                 <div class="mini-vinyl"><img src="${coverImg}" onerror="this.src='${fallback}'"></div>
@@ -184,8 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
               <h3 class="song-card-title">${s.title || 'Untitled'}</h3>
               <p class="song-card-desc">${s.description || ''}</p>
                <div class="song-card-actions">
-                ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-yt" style="${fireStyle}"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
-                ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-score" style="${fireStyle}"><i class="fas fa-file-pdf"></i> 下载歌谱集</a>` : ''}
+                ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-yt"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
+                ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-score"><i class="fas fa-file-pdf"></i> 下载歌谱集</a>` : ''}
                 <a href="feedback.html?id=${s.id}" class="btn-frosted-white" style="padding: 10px 15px; font-size: 0.75rem;"><i class="fas fa-bullhorn"></i> 回声 (Echo)</a>
               </div>
             </div>
