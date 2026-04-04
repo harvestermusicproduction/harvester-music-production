@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.tagName === 'IMG') el.src = val;
       else if (['SOURCE','VIDEO','AUDIO'].includes(el.tagName)) { el.src = val; if(el.load) el.load(); }
       else if (el.tagName === 'A') el.href = val;
-      else el.innerHTML = val.replace(/\\n/g, '<br>');
+      else el.innerHTML = val.replace(/\n/g, '<br>');
     });
   }
 
