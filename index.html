@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Harvester Music Production - 收割机音乐工作坊。一个建立在音乐创作、剧情叙事与基督信仰上的艺术品牌。">
+  <title>主页 Home - Harvester Music Production</title>
+  <link rel="stylesheet" href="styles.css?v=1.1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+</head>
+<body style="position: relative; background: transparent !important; margin: 0; padding: 0;">
+  <!-- Liquid Ripple Background (Layer 1) -->
+  <div id="liquid-canvas-container" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; background:#000; pointer-events: none;"></div>
+
+  <canvas id="bgParticles" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; opacity: 0.15; pointer-events: none;"></canvas>
+
+  <header style="z-index:100;">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">Harvester</a>
+      <div class="header-socials" style="display: flex; gap: 0.8rem; font-size: 1rem;">
+        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="text-gold">主页</a>
+      <a href="events.html">活动</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="diary.html">幕后田野日记</a>
+      <a href="singers.html">福音歌手</a>
+      <a href="submit.html">我要投稿</a>
+      <a href="about.html">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="index.html#contact">联系我们</a>
+    </nav>
+  </header>
+
+  <section id="home" class="hero" style="z-index: 5;">
+    <video class="hero-video-bg" autoplay loop muted playsinline loading="lazy" style="z-index: 6; opacity: 0.2;">
+      <source id="cfg_heroVideo" src="https://cdn.pixabay.com/video/2021/08/13/84918-588725946_large.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay" style="z-index: 7;"></div>
+    <div class="hero-content-layer fade-in" style="text-align: center; position: relative; z-index: 10;">
+      <img src="assets/logo.png" alt="Harvester Logo" class="floating-ui" style="height: 100px; width: auto; margin: 0 auto 1.5rem; display: block; filter: drop-shadow(0 0 30px rgba(246,210,138,0.4));">
+      <h1 class="text-gold floating-ui" style="font-size: 3.5rem; margin-bottom: 0.5rem; text-shadow: 0 10px 30px rgba(0,0,0,0.8);">Harvester Music Production</h1>
+      <p class="floating-ui" style="letter-spacing: 5px; text-transform: uppercase; font-family: 'KaiTi', 'STKaiti', 'AR PL UKai CN', serif; opacity: 0.8;">收割机音乐工作坊</p>
+    </div>
+  </section>
+
+  <!-- 名字由来 -->
+  <section class="fade-in" style="margin: 2.5rem auto; padding: 0 2rem; max-width: 900px; position: relative; z-index: 5;">
+    <div style="position: relative; width: 100%; min-height: 240px; overflow: hidden; border-radius: 8px; border: 1px solid rgba(246, 210, 138, 0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+      <img src="assets/wheat-field.png" alt="麦田" style="width: 100%; height: 240px; object-fit: cover; filter: brightness(0.3);">
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%;">
+        <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold); margin-bottom: 0.5rem; opacity: 0.75;">The Origin of the Name</p>
+        <h2 style="font-size: 1.8rem; color: #fff; margin: 0 0 0.8rem 0; font-weight: 300;">名 字 由 来</h2>
+        <p style="font-size: 1.1rem; color: #fff;">那人撒种，这人收割，这话可见是真的。</p>
+        <p style="font-size: 0.9rem; color: rgba(246, 210, 138, 0.7); font-style: italic;">——约翰福音 4:37</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 最新歌曲 + 愿景 -->
+  <section class="fade-in" style="padding: 5rem 2rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 5;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+      <div style="text-align: center;">
+        <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold); margin-bottom: 0.5rem; opacity: 0.75;">Latest Music</p>
+        <h2 style="font-size: 2.8rem; color: #fff; margin-bottom: 2rem; margin-top: 0;">最新歌曲</h2>
+        <div id="vinylWrapper" style="position: relative; width: 260px; height: 260px; margin: 0 auto; z-index: 20; pointer-events: auto;" onclick="toggleVinyl()">
+          <div id="vinylDisc" style="width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); display:flex; align-items:center; justify-content:center; box-shadow: 0 0 50px rgba(0,0,0,0.5);">
+             <img id="cfg_homeSongCover" 
+                  src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80" 
+                  style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(246, 210, 138, 0.3);"
+                  onerror="this.src='https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80'">
+          </div>
+        </div>
+        <audio id="homeAudioControls" controls style="margin-top:2rem; width: 100%; max-width: 280px;"></audio>
+      </div>
+      <div>
+        <p style="font-size: 0.75rem; letter-spacing: 4px; color: var(--gold); margin-bottom: 0.5rem; opacity: 0.75;">Our Vision</p>
+        <h2 style="font-size: 2.8rem; color: #fff; margin-bottom: 1.5rem; margin-top: 0;">我们的愿景</h2>
+        <div style="border-left: 2px solid var(--gold); padding-left: 1.5rem; margin-bottom: 2rem;">
+          <h3 style="color:#fff;">推动现代流行基督教音乐的发展</h3>
+          <p style="color:#888;">To promote and develop modern contemporary Christian music.</p>
+        </div>
+        <div style="border-left: 2px solid var(--gold); padding-left: 1.5rem;">
+          <h3 style="color: var(--gold); font-family: 'KaiTi', 'STKaiti', 'AR PL UKai CN', serif; font-size: 2.2rem; margin: 0; font-weight: 400; text-shadow: 0 0 15px rgba(246,210,138,0.3);">用音乐，收割灵魂</h3>
+          <p style="color: #666; font-size: 0.8rem; letter-spacing: 2px; margin-top: 0.5rem;">Harvesting souls through the power of music.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="position:relative; z-index:5;">
+    <img src="assets/logo.png" alt="Harvester" style="height: 50px; display: block; margin: 0 auto 1rem;">
+    <p>&copy; 2026 Harvester Music Production. 版权所有。</p>
+    <a href="admin.html" class="btn-terminal" style="margin-top: 1.5rem;"><i class="fas fa-terminal"></i> 进入控制台 ACCESS TERMINAL</a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="ripple.js"></script>
+  <script src="water-material.js"></script>
+  <script src="liquid-engine.js"></script>
+  <script src="visualizer.js"></script>
+  <script src="app.js?v=1775277655"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof LiquidRipple !== 'undefined') {
+        window.liquid = new LiquidRipple('liquid-canvas-container');
+      }
+
+      // --- Vinyl Note Interaction ---
+      const wrapper = document.getElementById('vinylWrapper');
+      if (wrapper) {
+        let lastSpawn = 0;
+        wrapper.addEventListener('mousemove', (e) => {
+          const now = Date.now();
+          if (now - lastSpawn < 100) return; // limit frequency
+          lastSpawn = now;
+          spawnNote(wrapper);
+        });
+      }
+    });
+
+    const NOTES = ['♪', '♫', '♬'];
+    function spawnNote(parent) {
+      const note = document.createElement('div');
+      note.className = 'floating-note';
+      note.innerText = NOTES[Math.floor(Math.random() * NOTES.length)];
+      
+      const dx = (Math.random() - 0.5) * 100;
+      const rot = (Math.random() - 0.5) * 60;
+      
+      note.style.setProperty('--dx', `${dx}px`);
+      note.style.setProperty('--rot', `${rot}deg`);
+      note.style.left = `calc(50% + ${(Math.random() - 0.5) * 40}px)`;
+      note.style.top = `calc(50% + ${(Math.random() - 0.5) * 40}px)`;
+      
+      parent.appendChild(note);
+      // Fallback for missing CSS
+      note.style.color = "#f6d28a"; 
+      note.style.zIndex = "9999";
+      
+      setTimeout(() => note.remove(), 2500);
+    }
+    function toggleVinyl() {
+      const disc = document.getElementById('vinylDisc');
+      const audio = document.getElementById('homeAudioControls');
+      if (!audio) return;
+      if (audio.paused) {
+        audio.play(); disc.classList.add('playing');
+      } else {
+        audio.pause(); disc.classList.remove('playing');
+      }
+    }
+  </script>
+  <style>
+    @keyframes vinylSpin { from {transform:rotate(0deg);} to {transform:rotate(360deg);} }
+    .playing { animation: vinylSpin 4s linear infinite; }
+  </style>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我要投稿 Submit - Harvester Music Production</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="position: relative;">
+  <canvas id="bgParticles"></canvas>
+  <header class="scrolled">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">Harvester</a>
+      <div class="header-socials" style="display: flex; gap: 0.8rem; font-size: 1rem;">
+        <a id="cfg_nav_fb" href="https://www.facebook.com/harvester2025" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="https://www.instagram.com/harvestermusic.production?igsh=MTI2OGYzcDJuYm16dw==" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="https://www.youtube.com/@harvestermusic.production" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="events.html">活动</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="diary.html">幕后田野日记</a>
+      <a href="singers.html">福音歌手</a>
+      <a href="submit.html" class="text-gold">我要投稿</a>
+      <a href="about.html">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="contact.html">联系我们</a>
+    </nav>
+  </header>
+
+  <section class="fade-in" style="margin-top: 5rem; min-height: 60vh;">
+    
+    <div class="grid-2">
+      <!-- 投稿说明 -->
+      <div>
+        <h2 class="text-gold mb-2">关于投稿</h2>
+        <div style="font-size: 1.1rem; line-height: 2; margin-bottom: 2rem;">
+          <p style="color:#ddd; margin-bottom: 1rem;">
+            🔸 所有经收割机制作与发行的作品，词曲版权由收割机拥有七年。七年后归还作者。
+          </p>
+          <p style="color:#ddd; margin-bottom: 1rem;">
+            🔸 所有作品将以「收割机EP」形式发行。
+          </p>
+          <p style="color:#ddd;">
+            🔸 发行时将在 FB / IG / YouTube 标注所有创作者，给予应有尊重。
+          </p>
+        </div>
+        <img id="cfg_submit_poster" 
+             src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&w=600&q=80" 
+             alt="投稿引导海报" 
+             style="width:100%; height:auto; object-fit: cover; border-radius:12px; border:1px solid rgba(246,210,138,0.2);">
+      </div>
+
+      <!-- 投稿区 -->
+      <div class="contact">
+        <form class="contact-form" onsubmit="event.preventDefault(); alert('作品已提交记录 (Simulation).');">
+          <input type="text" placeholder="您的真实姓名或乐队名称" required>
+          <input type="email" placeholder="您的联络邮箱" required>
+          <input type="url" placeholder="歌曲云端试听链接 (Soundcloud / Google Drive)" required>
+          <textarea placeholder="这首歌的由来与你的见证故事..." rows="6" required></textarea>
+          <button type="submit" class="btn btn-submit">确认并提交作品</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <a href="index.html" style="display:block; opacity:0.75; transition:0.3s;"><img src="assets/logo.png" alt="Harvester" style="height: 50px; width: auto; margin: 0 auto 1rem; display: block; filter:brightness(0.8);"></a>
+    <p>&copy; 2026 Harvester Music Production. 版权所有。为主献上。</p>
+  <a href="admin.html" class="btn-terminal" style="margin-top: 1.5rem;"><i class="fas fa-terminal"></i> 进入控制台 ACCESS TERMINAL</a>  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    document.querySelector('.contact-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const btn = this.querySelector('button');
+      btn.innerText = '提交中...';
+      btn.disabled = true;
+
+      const data = {
+        user_name: this.elements[0].value,
+        contact_info: this.elements[1].value,
+        file_url: this.elements[2].value,
+        message: this.elements[3].value
+      };
+
+      try {
+        const { error } = await window.supabase.from('submissions').insert([data]);
+        if (error) throw error;
+        alert('感谢您的投稿！收割机团队将尽快与您联络。');
+        this.reset();
+      } catch (err) {
+        alert('提交失败: ' + err.message);
+      } finally {
+        btn.innerText = '确认并提交作品';
+        btn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>

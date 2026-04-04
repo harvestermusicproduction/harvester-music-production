@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>纪录每个瞬间 | Harvester Music</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+</head>
+<body class="diary-body">
+  <!-- BG Particles -->
+  <canvas id="bgParticles"></canvas>
+
+  <header style="z-index:100;">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">Harvester</a>
+      <div class="header-socials" style="display: flex; gap: 0.8rem; font-size: 1rem;">
+        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="events.html">活动</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="diary.html" class="text-gold">纪录每个瞬间</a>
+      <a href="singers.html">福音歌手</a>
+      <a href="submit.html">我要投稿</a>
+      <a href="about.html">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="index.html#contact">联系我们</a>
+    </nav>
+  </header>
+
+  <main style="padding-top: 100px;">
+    <section>
+      <div class="text-center mb-4">
+        <h1 class="text-gold" style="font-size: 3rem;">纪录每个瞬间</h1>
+        <p style="letter-spacing: 5px; text-transform: uppercase; font-size: 0.9rem; opacity: 0.7;">Record every moment</p>
+      </div>
+
+      <div id="diaryContainer" class="folder-grid">
+        <!-- Folders will be injected here by app.js -->
+        <div class="loading-pulse">正在整理回忆文件夹...</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Harvester Music Production. All Rights Reserved.</p>
+    <div class="social-links">
+      <a href="#" class="social-icon" id="cfg_social_yt">Youtube</a>
+      <a href="#" class="social-icon" id="cfg_social_fb">Facebook</a>
+      <a href="#" class="social-icon" id="cfg_social_ig">Instagram</a>
+    </div>
+    <button class="footer-admin-link" onclick="toggleAdmin()">Management console</button>
+  </footer>
+
+  <script src="visualizer.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Specific initialization for this page
+    document.addEventListener('DOMContentLoaded', () => {
+      // fetchDiary is called inside app.js if it detects diaryContainer
+    });
+  </script>
+</body>
+</html>

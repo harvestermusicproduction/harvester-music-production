@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>联系我们 Contact - Harvester Music Production</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="position: relative;">
+  <canvas id="bgParticles"></canvas>
+  <header class="scrolled">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">Harvester</a>
+      <div class="header-socials" style="display: flex; gap: 0.8rem; font-size: 1rem;">
+        <a id="cfg_nav_fb" href="https://www.facebook.com/harvester2025" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="https://www.instagram.com/harvestermusic.production?igsh=MTI2OGYzcDJuYm16dw==" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="https://www.youtube.com/@harvestermusic.production" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="events.html">活动</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="diary.html">幕后田野日记</a>
+      <a href="singers.html">福音歌手</a>
+      <a href="submit.html">我要投稿</a>
+      <a href="about.html">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="contact.html" class="text-gold">联系我们</a>
+    </nav>
+  </header>
+
+  <section class="fade-in" style="margin-top: 5rem; min-height: 60vh; padding: 0 2rem;">
+    <div class="grid-2">
+      <!-- 联络方式与图片 -->
+      <div style="text-align: center;">
+        <h2 class="text-gold mb-2">与我们同工共建</h2>
+        <p style="color:#888;">追踪收割机音乐工作坊的最新动态，洽谈事工合作</p>
+        
+        <div class="social-links" style="margin-top: 1.5rem;">
+          <a id="cfg_social_fb" href="#" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+          <a id="cfg_social_ig" href="#" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+          <a id="cfg_social_yt" href="#" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+        </div>
+
+        <img id="cfg_contact_banner" 
+             src="https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=800&q=80" 
+             alt="联络背景图" 
+             style="width: 100%; max-height: 350px; object-fit: cover; margin-top: 2rem; border-radius: 12px; border: 1px solid rgba(246,210,138,0.1);">
+      </div>
+
+      <!-- 站内表单 -->
+      <div class="contact">
+        <form class="contact-form" id="contactForm">
+          <input type="text" id="contactName" placeholder="您的称呼 (Name)" required>
+          <input type="email" id="contactEmailInput" placeholder="您的联络邮箱 (Email)" required>
+          <textarea id="contactMsg" placeholder="请详细描述您的合作意向或留言建议... (Message)" rows="8" required></textarea>
+          <button type="submit" class="btn btn-submit" id="btnContactSubmit">发 送 请 求 (Send Message)</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <a href="index.html" style="display:block; opacity:0.75; transition:0.3s;"><img src="assets/logo.png" alt="Harvester" style="height: 50px; width: auto; margin: 0 auto 1rem; display: block; filter:brightness(0.8);"></a>
+    <p>&copy; 2026 Harvester Music Production. 版权所有。为主献上。</p>
+    <a href="admin.html" class="btn-terminal" style="margin-top: 1.5rem;"><i class="fas fa-terminal"></i> 进入控制台 ACCESS TERMINAL</a>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    document.getElementById('contactForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const db = window.supabase;
+      const btn = document.getElementById('btnContactSubmit');
+      
+      const data = {
+        name: document.getElementById('contactName').value,
+        email: document.getElementById('contactEmailInput').value,
+        message: document.getElementById('contactMsg').value
+      };
+
+      const oldText = btn.innerText;
+      btn.innerText = "正在发送...";
+      btn.disabled = true;
+
+      try {
+        const { error } = await db.from('contact_messages').insert([data]);
+        if (error) throw error;
+        alert("已收到您的信息！我们会尽快回复。");
+        e.target.reset();
+      } catch (err) {
+        alert("发送失败: " + err.message);
+      } finally {
+        btn.innerText = oldText;
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
+      e.preventDefault();
+      const btn = document.getElementById('btnContactSubmit');
+      const db = window.supabase;
+      if(!db) return alert("系统连接超时");
+
+      const data = {
+        name: document.getElementById('contactName').value,
+        email: document.getElementById('contactEmail').value,
+        message: document.getElementById('contactMsg').value,
+        read: false
+      };
+
+      btn.innerText = "发送中...";
+      btn.disabled = true;
+
+      try {
+        const { error } = await db.from('messages').insert([data]);
+        if (error) throw error;
+        alert("已成功发送申请！我们会尽快与您联络。");
+        e.target.reset();
+      } catch(err) {
+        alert("发送失败：" + err.message);
+      } finally {
+        btn.innerText = "发 送 请 求";
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

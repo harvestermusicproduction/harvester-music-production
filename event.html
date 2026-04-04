@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>正在浏览相册 | Harvester Music</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+</head>
+<body class="event-body">
+  <canvas id="bgParticles"></canvas>
+
+  <header id="mainHeader">
+    <div class="logo">
+      <img src="logo.png" alt="Harvester" class="nav-logo" id="cfg_nav_logo">
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="diary.html">返回日记廊</a>
+      <a href="music.html">音乐与歌谱</a>
+    </nav>
+  </header>
+
+  <main style="padding-top: 100px;">
+    <section>
+      <div id="eventHeader" class="text-center mb-4">
+        <!-- Title and Date injected by JS -->
+        <h1 class="text-gold" id="eventTitle">...</h1>
+        <p id="eventDate" style="letter-spacing: 2px; font-size: 0.9rem; opacity: 0.6;"></p>
+      </div>
+
+      <div id="galleryContainer" class="photo-gallery">
+        <!-- Photos injected here -->
+        <div class="loading-pulse">正在整理照片...</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lightbox Overlay -->
+  <div id="lightbox" class="lightbox-mode" style="display: none;" onclick="closeLightbox()">
+    <img id="lightboxImg" class="lightbox-img" src="">
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Harvester Music Production. All Rights Reserved.</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    // Specific initialization for this page
+    document.addEventListener('DOMContentLoaded', () => {
+      // initGallery is called inside app.js if it detects galleryContainer
+    });
+    
+    function closeLightbox() {
+      document.getElementById('lightbox').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

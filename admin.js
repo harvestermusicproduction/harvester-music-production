@@ -1,0 +1,921 @@
+
+document.addEventListener('DOMContentLoaded', () => {
+  const db = window.supabase;
+  if (!db) return;
+
+  // --- UI Elements ---
+  const loadingText = document.getElementById('authLoading');
+  const loginBox = document.getElementById('loginBox');
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const adminDashboard = document.getElementById('adminDashboard');
+  const btnLogin = document.getElementById('btnLogin');
+
+  // --- Auth Listener ---
+  db.auth.onAuthStateChange((event, session) => {
+    if(loadingText) loadingText.style.display = 'none';
+    if (session) {
+      if(loginBox) loginBox.classList.add('hidden');
+      adminDashboard.classList.add('active');
+      renderCMS();
+    } else {
+      adminDashboard.classList.remove('active');
+      if(loginBox) loginBox.classList.remove('hidden');
+    }
+  });
+
+  // --- Login Logic ---
+  loginForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('txtEmail').value.trim();
+    const password = document.getElementById('txtPassword').value.trim();
+    btnLogin.innerText = '验证中...';
+    const { error } = await db.auth.signInWithPassword({ email, password });
+    if (error) {
+      loginError.innerText = "登录失败: " + error.message;
+      loginError.style.display = 'block';
+      btnLogin.innerText = '授权进入 (Login)';
+    }
+  });
+
+  let currentModule = 'dashboard';
+  window.switchModule = (m) => { currentModule = m; renderCMS(); };
+  window.logoutAdmin = () => db.auth.signOut();
+
+  async function renderCMS() {
+    adminDashboard.innerHTML = `
+      <div class="cms-layout" style="display:flex; height:100vh; background:#000; color:#fff; overflow:hidden;">
+        <aside style="width:250px; background:#0a0a0a; border-right:1px solid #222; padding:2rem; display:flex; flex-direction:column;">
+          <h2 style="color:var(--gold); margin-bottom:2rem;">Harvester CMS</h2>
+          <nav style="flex:1; display:flex; flex-direction:column; gap:10px;">
+            <a href="javascript:void(0)" onclick="switchModule('dashboard')" style="color:${currentModule==='dashboard'?'var(--gold)':'#888'}">📊 仪表盘 Dashboard</a>
+            <a href="javascript:void(0)" onclick="switchModule('music')" style="color:${currentModule==='music'?'var(--gold)':'#888'}">🎵 音乐作品 Music</a>
+            <a href="javascript:void(0)" onclick="switchModule('events')" style="color:${currentModule==='events'?'var(--gold)':'#888'}">📅 精彩活动 Events</a>
+            <a href="javascript:void(0)" onclick="switchModule('footprints')" style="color:${currentModule==='footprints'?'var(--gold)':'#888'}">👣 收割足迹 Footprints</a>
+            <a href="javascript:void(0)" onclick="switchModule('singers')" style="color:${currentModule==='singers'?'var(--gold)':'#888'}">🎙️ 福音歌手 Singers</a>
+            <a href="javascript:void(0)" onclick="switchModule('diary')" style="color:${currentModule==='diary'?'var(--gold)':'#888'}">📂 田野日记 Diary</a>
+            <a href="javascript:void(0)" onclick="switchModule('submissions')" style="color:${currentModule==='submissions'?'var(--gold)':'#888'}">📮 投稿中心 Inbox</a>
+            <a href="javascript:void(0)" onclick="switchModule('config')" style="color:${currentModule==='config'?'var(--gold)':'#888'}">⚙️ 系统配置 Config</a>
+          </nav>
+          <button onclick="logoutAdmin()" class="btn-tiny" style="margin-top:20px;">安全退出 Logout</button>
+        </aside>
+        <main id="moduleBody" style="flex:1; padding:3rem; overflow-y:auto; background:#111;"></main>
+      </div>
+    `;
+    const body = document.getElementById('moduleBody');
+    if (currentModule === 'dashboard') renderDashboard(body);
+    else if (currentModule === 'music') renderMusic(body);
+    else if (currentModule === 'events') renderEvents(body);
+    else if (currentModule === 'footprints') renderFootprints(body);
+    else if (currentModule === 'singers') renderSingers(body);
+    else if (currentModule === 'diary') renderDiary(body);
+    else if (currentModule === 'submissions') renderSubmissions(body);
+    else if (currentModule === 'config') renderConfig(body);
+    else body.innerHTML = `<h2>${currentModule.toUpperCase()}</h2><p>功能开发中...</p>`;
+  }
+
+  // --- SHARED Uploader ---
+  window.uploadFile = async (fileInputId, targetId, previewId) => {
+    const file = document.getElementById(fileInputId).files[0];
+    if(!file) return alert("请选择文件");
+    // Sanitize filename to avoid "Invalid key" errors (e.g., Chinese characters)
+    const safeName = file.name.replace(/[^\w.-]/g, "_");
+    const path = `uploads/${Date.now()}-${safeName}`;
+    const btn = event.target;
+    btn.innerText = "上传中...";
+    const { data, error } = await db.storage.from('harvester-media').upload(path, file);
+    if(error) return alert("上传失败: " + error.message);
+    const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
+    document.getElementById(targetId).value = publicUrl;
+    if(previewId) {
+      const prevEl = document.getElementById(previewId);
+      if(prevEl) {
+        prevEl.src = publicUrl;
+        if(prevEl.tagName === 'VIDEO') prevEl.load();
+      }
+    }
+    btn.innerText = "✅ 上传成功";
+  };
+
+  async function renderDashboard(container) {
+    const { count: v } = await db.from('visits').select('*', { count: 'exact', head: true });
+    const { count: m } = await db.from('music_works').select('*', { count: 'exact', head: true });
+    
+    // Fetch Rankings
+    const { data: topDownloads } = await db.from('music_works').select('*').order('download_count', { ascending: false }).limit(5);
+    const { data: topListen } = await db.from('music_works').select('*').order('listen_count', { ascending: false }).limit(5);
+
+    container.innerHTML = `
+      <h1 style="color:var(--gold);">系统概览 (Dashboard)</h1>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-top:20px;">
+        <div class="cms-card" style="background:#1a1a1a; padding:2rem; border-radius:12px; border-left:4px solid var(--gold);">
+          <h3 style="font-size:2.5rem; margin:0;">${v||0}</h3><p style="color:#666; margin:0;">全站访客总数 (Total Visits)</p>
+        </div>
+        <div class="cms-card" style="background:#1a1a1a; padding:2rem; border-radius:12px; border-left:4px solid #64D28A;">
+          <h3 style="font-size:2.5rem; margin:0;">${m||0}</h3><p style="color:#666; margin:0;">已发布曲目 (Live Tracks)</p>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:30px; margin-top:40px;">
+        <!-- Ranking 1: Downloads -->
+        <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px;">
+          <h3 style="color:var(--gold); margin-top:0; border-bottom:1px solid #222; padding-bottom:10px;">📈 热门下载 (Top Scores)</h3>
+          <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+            ${topDownloads?.map((s, i) => `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#151515; padding:10px 15px; border-radius:8px;">
+                <span><small style="color:#444;">#${i+1}</small> ${s.title}</span>
+                <span style="color:var(--gold); font-weight:bold;">${s.download_count||0} 📄</span>
+              </div>
+            `).join('') || '<p style="color:#444;">暂无下载数据</p>'}
+          </div>
+        </div>
+
+        <!-- Ranking 2: Listening -->
+        <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px;">
+          <h3 style="color:#64D28A; margin-top:0; border-bottom:1px solid #222; padding-bottom:10px;">🎧 热门收听 (Top Listening)</h3>
+          <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+            ${topListen?.map((s, i) => `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#151515; padding:10px 15px; border-radius:8px;">
+                <span><small style="color:#444;">#${i+1}</small> ${s.title}</span>
+                <span style="color:#64D28A; font-weight:bold;">${s.listen_count||0} 🎧</span>
+              </div>
+            `).join('') || '<p style="color:#444;">暂无收听数据</p>'}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  async function renderMusic(container) {
+    const { data: songs } = await db.from('music_works').select('*').order('created_at', {ascending: false});
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <h1 style="color:var(--gold);">音乐作品管理</h1>
+        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="addMusic()">+ 发布新单曲</button>
+      </div>
+      
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        ${songs?.map(s => `
+          <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px; transition:0.3s; position:relative;">
+            
+            <!-- 第一排：核心信息 -->
+            <div style="display:flex; gap:20px; align-items:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid #1a1a1a;">
+              <img src="${(s.cover_url && s.cover_url.startsWith('http')) ? s.cover_url : 'https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=400&q=80'}" 
+                   style="width:80px; height:80px; object-fit:cover; border-radius:8px; border:1px solid #333;"
+                   onerror="this.src='https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80'">
+              <div style="flex:1;">
+                <h3 style="margin:0; color:#fff; font-size:1.2rem;">${s.title}</h3>
+                <p style="margin:5px 0 0 0; color:#666; font-size:0.85rem; line-height:1.4;">${s.description || '暂无作品简介...'}</p>
+                <div style="display:flex; gap:15px; margin-top:8px;">
+                   <span style="font-size:0.75rem; color:#444;">📺 YouTube: ${s.audio_url ? '已链接' : '未设置'}</span>
+                   <span style="font-size:0.75rem; color:#444;">📄 歌谱: ${s.score_url ? '已上传' : '未设置'}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 第二排：操作按钮 -->
+            <div style="display:flex; gap:10px; justify-content: flex-end;">
+              <button class="btn-tiny" style="padding:8px 25px;" onclick="editMusic('${s.id}')">⚙️ 编辑详细资料 (Edit)</button>
+              <button class="btn-tiny danger" style="padding:8px 15px;" onclick="deleteItem('music_works', '${s.id}')">🗑️ 删除 (Delete)</button>
+            </div>
+
+          </div>
+        `).join('') || '<p style="text-align:center; color:#444; padding:50px;">暂无数据，请发布您的第一首单曲</p>'}
+      </div>
+    `;
+  }
+
+  window.addMusic = async() => {
+    const title = prompt("标题:");
+    if(title) { await db.from('music_works').insert([{title}]); renderCMS(); }
+  };
+
+  window.editMusic = async(id) => {
+    const { data: s } = await db.from('music_works').select('*').eq('id', id).single();
+    const modal = document.createElement('div');
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center;";
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:12px; padding:2rem; width:100%; max-width:500px;">
+        <h3 style="color:var(--gold);">编辑: ${s.title}</h3>
+        <div style="margin-bottom:15px;">
+          <img id="m_prev" src="${s.cover_url || 'https://via.placeholder.com/120x120?text=No+Cover'}" style="width:80px; height:80px; object-fit:cover; display:block; margin-bottom:10px; background:#222;">
+          <input type="file" id="f_up">
+          <button class="btn-tiny" style="margin-top:5px; width:100%;" onclick="uploadFile('f_up', 'm_url', 'm_prev')">上传封面</button>
+          <input type="hidden" id="m_url" value="${s.cover_url||''}">
+        </div>
+        <label>标题</label><input type="text" id="m_t" value="${s.title}" style="width:100%; margin-bottom:10px;">
+        <label>YouTube 链接</label><input type="text" id="m_a" value="${s.audio_url||''}" style="width:100%; margin-bottom:10px;">
+        <label>PDF 歌谱链接</label><input type="text" id="m_s" value="${s.score_url||''}" style="width:100%; margin-bottom:10px;">
+        <label>作品简介</label><textarea id="m_d" style="width:100%; height:80px;">${s.description||''}</textarea>
+        <div style="margin-top:20px; display:flex; gap:10px;">
+          <button class="btn btn-submit" style="flex:1;" onclick="saveMusic('${id}')">保存</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.parentElement.remove()">取消</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  };
+
+  window.saveMusic = async(id) => {
+    const p = {
+      title: document.getElementById('m_t').value,
+      cover_url: document.getElementById('m_url').value,
+      audio_url: document.getElementById('m_a').value,
+      score_url: document.getElementById('m_s').value,
+      description: document.getElementById('m_d').value
+    };
+    await db.from('music_works').update(p).eq('id', id);
+    location.reload();
+  };
+
+  // --- 📅 EVENTS MODULE (Upgraded) ---
+  async function renderEvents(container) {
+    const { data: rawEvents } = await db.from('events').select('*').order('created_at', {ascending: false});
+    
+    // Parse metadata if present (Regex for maximum robustness)
+    const events = rawEvents?.map(e => {
+      let desc = e.description || "";
+      const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
+      if (metaMatch) {
+        try {
+          const meta = JSON.parse(metaMatch[1]);
+          return {
+            ...e,
+            event_date: meta.d || e.event_date,
+            event_time: meta.tm || e.event_time,
+            image_url: meta.img || e.image_url,
+            description: desc.replace(metaMatch[0], '').trim()
+          };
+        } catch (err) {
+          console.warn("Meta parse fail:", err);
+          return { ...e, description: desc.replace(metaMatch[0], '').trim() };
+        }
+      }
+      return e;
+    });
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <h1 style="color:var(--gold);">活动预告管理</h1>
+        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openEventModal()">+ 新建活动</button>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
+        ${events?.map(e => `
+          <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:10px;">
+            <img src="${e.image_url || 'https://via.placeholder.com/1920x1080?text=Event+Poster'}" style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:8px; border:1px solid #333;">
+            <h3 style="margin:0; color:var(--gold);">${e.title}</h3>
+            <p style="color:#888; font-size:0.85rem; margin:0;"><i class="fas fa-calendar-alt"></i> ${e.event_date || '未设置日期'} | <i class="fas fa-clock"></i> ${e.event_time || '未设置时间'}</p>
+            <div style="display:flex; gap:10px; margin-top:10px; justify-content:flex-end;">
+              <button class="btn-tiny" onclick='openEventModal(${JSON.stringify(e).replace(/'/g, "&apos;")})'>编辑</button>
+              <button class="btn-tiny danger" onclick="deleteItem('events', '${e.id}')">删除</button>
+            </div>
+          </div>
+        `).join('') || '<p>暂无活动，请点击右上角新建。</p>'}
+      </div>
+    `;
+  }
+
+  window.openEventModal = (e = null) => {
+    const isEdit = !!e;
+    const modal = document.createElement('div');
+    modal.id = "eventEditModal";
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; position:relative; box-shadow: 0 20px 60px rgba(0,0,0,1);">
+        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑活动详情' : '发布新活动'}</h2>
+        
+        <div style="margin-bottom:20px; background: #0a0a0a; padding: 15px; border-radius: 12px; border:1px solid #222;">
+          <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">活动海报预览</label>
+          <img id="ev_prev" src="${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}" style="width:100%; max-height:180px; object-fit:cover; border-radius:8px; margin-bottom:10px; border:1px solid #333;">
+          <input type="file" id="f_ev" style="font-size:0.8rem; color:#888;">
+          <button class="btn-tiny" style="margin-top:10px; width:100%; padding:8px;" onclick="uploadFile('f_ev', 'ev_url', 'ev_prev')">📤 上传活动海报</button>
+          <input type="hidden" id="ev_url" value="${e?.image_url || ''}">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动名称</label>
+            <input type="text" id="ev_t" value="${e?.title || ''}" placeholder="例如：赞美祭" style="width:100%; padding:10px;">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动日期</label>
+            <input type="date" id="ev_d" value="${e?.event_date || ''}" style="width:100%; padding:10px;">
+          </div>
+        </div>
+
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">开始时间</label>
+          <input type="time" id="ev_tm" value="${e?.event_time || ''}" style="width:100%; padding:10px;">
+        </div>
+
+        <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动详情描述</label>
+        <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:100px; margin-bottom:20px; padding:10px;">${e?.description || ''}</textarea>
+
+        <div style="display:flex; gap:15px; position:sticky; bottom:0; background:#111; padding-top:10px; border-top:1px solid #222;">
+          <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveEvent('${e?.id || ''}')">🚀 立即保存</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#eventEditModal').remove()">取消</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  };
+
+  window.saveEvent = async(id) => {
+    const btn = document.querySelector('.btn-submit');
+    const originalText = btn.innerText;
+    btn.innerText = "⏳ 正在同步到云端...";
+    btn.disabled = true;
+
+    const payload = {
+      title: document.getElementById('ev_t').value,
+      date: document.getElementById('ev_d').value || new Date().toISOString().split('T')[0], // Map to mandatory 'date' column
+      event_date: document.getElementById('ev_d').value,
+      event_time: document.getElementById('ev_tm').value,
+      image_url: document.getElementById('ev_url').value,
+      description: document.getElementById('ev_desc').value
+    };
+
+    try {
+      const { error } = id 
+        ? await db.from('events').update(payload).eq('id', id)
+        : await db.from('events').insert([payload]);
+
+      if (error) {
+        console.warn("Retrying with fallback due to schema error:", error);
+        // Fallback: If columns don't exist, store extra data in description as JSON
+        const meta = {
+          d: payload.event_date,
+          tm: payload.event_time,
+          img: payload.image_url
+        };
+        const fallbackPayload = {
+          title: payload.title,
+          date: payload.date, // Must still provide the mandatory 'date'
+          description: `EXT_META:${JSON.stringify(meta)}||${payload.description}`
+        };
+        
+        const { error: fError } = id 
+          ? await db.from('events').update(fallbackPayload).eq('id', id)
+          : await db.from('events').insert([fallbackPayload]);
+        
+        if (fError) throw fError;
+      }
+      
+      const modal = document.getElementById('eventEditModal');
+      if (modal) modal.remove();
+      renderCMS(); // Refresh lists
+    } catch (err) {
+      alert("❌ 保存失败: " + err.message);
+      btn.innerText = originalText;
+      btn.disabled = false;
+    }
+  };
+
+  // --- 👣 FOOTPRINTS MODULE ---
+  async function renderFootprints(container) {
+    const { data: footprints } = await db.from('footprints').select('*').order('created_at', {ascending: false});
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <h1 style="color:var(--gold);">收割足迹管理 (Footprints)</h1>
+        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openFootprintModal()">+ 添加足迹照片</button>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap:20px;">
+        ${footprints?.map(f => `
+          <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:10px;">
+            <img src="${f.image_url || 'https://via.placeholder.com/400x300?text=No+Photo'}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:8px; border:1px solid #333;">
+            <p style="color:#888; font-size:0.85rem; height:40px; overflow:hidden;">${f.description || '无描述'}</p>
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+              <button class="btn-tiny" onclick='openFootprintModal(${JSON.stringify(f).replace(/'/g, "&apos;")})'>编辑</button>
+              <button class="btn-tiny danger" onclick="deleteItem('footprints', '${f.id}')">删除</button>
+            </div>
+          </div>
+        `).join('') || '<p>暂无足迹照片。</p>'}
+      </div>
+    `;
+  }
+
+  window.openFootprintModal = (f = null) => {
+    const isEdit = !!f;
+    const modal = document.createElement('div');
+    modal.id = 'footprintModal';
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;">
+        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑足迹' : '添加足迹'}</h2>
+        <div style="margin-bottom:20px;">
+          <img id="fp_prev" src="${f?.image_url || 'https://via.placeholder.com/400x300?text=Preview'}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px; margin-bottom:15px; border:1px solid #333;">
+          <input type="file" id="f_fp">
+          <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('f_fp', 'fp_url', 'fp_prev')">上传照片</button>
+          <input type="hidden" id="fp_url" value="${f?.image_url || ''}">
+        </div>
+        <label>照片描述 (悬浮显示)</label>
+        <textarea id="fp_desc" placeholder="请输入照片描述..." style="width:100%; height:80px; margin-bottom:20px;">${f?.description || ''}</textarea>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-submit" style="flex:2;" onclick="saveFootprint('${f?.id || ''}')">确认保存</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#footprintModal').remove()">取消</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  };
+
+  window.saveFootprint = async(id) => {
+    const payload = {
+      image_url: document.getElementById('fp_url').value,
+      description: document.getElementById('fp_desc').value
+    };
+    if(id) await db.from('footprints').update(payload).eq('id', id);
+    else await db.from('footprints').insert([payload]);
+    // Close modal manually if needed
+    const modal = document.getElementById('footprintModal');
+    if(modal) modal.remove();
+    renderCMS();
+  };
+
+  // --- 🎙️ SINGERS MODULE ---
+  async function renderSingers(container) {
+    const { data: singers } = await db.from('singers').select('*').order('created_at', {ascending: false});
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <h1 style="color:var(--gold);">福音歌手管理 (Singers)</h1>
+        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openSingerModal()">+ 新建歌手</button>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
+        ${singers?.map(s => `
+          <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:12px;">
+            <img src="${s.image_url || 'https://via.placeholder.com/300x400?text=Avatar'}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:8px; border:1px solid #333;">
+            <h3 style="margin:0; color:var(--gold);">${s.name}</h3>
+            <p style="color:#888; font-size:0.85rem; line-height:1.4; height:60px; overflow:hidden;">${s.bio || '无简介'}</p>
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+              <button class="btn-tiny" onclick='openSingerModal(${JSON.stringify(s).replace(/'/g, "&apos;")})'>编辑</button>
+              <button class="btn-tiny danger" onclick="deleteItem('singers', '${s.id}')">删除</button>
+            </div>
+          </div>
+        `).join('') || '<p>暂无歌手，请点击右上角新建。</p>'}
+      </div>
+    `;
+  }
+
+  window.openSingerModal = (s = null) => {
+    const isEdit = !!s;
+    const modal = document.createElement('div');
+    modal.id = 'singerModal';
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;">
+        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑歌手' : '发布新歌手'}</h2>
+        <div style="margin-bottom:20px;">
+          <img id="s_prev" src="${s?.image_url || 'https://via.placeholder.com/300x400?text=Preview'}" style="width:120px; aspect-ratio:3/4; object-fit:cover; border-radius:8px; display:block; margin:0 auto 15px; border:1px solid #333;">
+          <input type="file" id="f_s">
+          <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('f_s', 's_url', 's_prev')">上传歌手照片</button>
+          <input type="hidden" id="s_url" value="${s?.image_url || ''}">
+        </div>
+        <label>歌手名字</label>
+        <input type="text" id="s_n" value="${s?.name || ''}" placeholder="姓名" style="width:100%; margin-bottom:15px;">
+        <label>个人简介 (建议一段话)</label>
+        <textarea id="s_b" placeholder="请输入歌手简介..." style="width:100%; height:100px; margin-bottom:20px;">${s?.bio || ''}</textarea>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-submit" style="flex:2;" onclick="saveSinger('${s?.id || ''}')">确认保存</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#singerModal').remove()">取消</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  };
+
+  window.saveSinger = async(id) => {
+    const payload = {
+      name: document.getElementById('s_n').value,
+      bio: document.getElementById('s_b').value,
+      image_url: document.getElementById('s_url').value
+    };
+    if(id) await db.from('singers').update(payload).eq('id', id);
+    else await db.from('singers').insert([payload]);
+    renderCMS();
+  };
+  async function renderDiary(container) {
+    const { data: albums } = await db.from('diary_albums').select('*').order('date', {ascending: false});
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <h1 style="color:var(--gold);">田野日记管理</h1>
+        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="addDiary()">+ 新建相册</button>
+      </div>
+      
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        ${albums?.map(a => `
+          <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px;">
+            <!-- 第一排：相册封面与基本信息 -->
+            <div style="display:flex; gap:20px; align-items:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid #1a1a1a;">
+               <img src="${a.cover_url || 'https://via.placeholder.com/150x150?text=Diary'}" style="width:100px; height:100px; object-fit:cover; border-radius:8px; border:1px solid #333;">
+               <div style="flex:1;">
+                  <h3 style="margin:0; color:#fff; font-size:1.2rem;">${a.title}</h3>
+                  <p style="margin:5px 0; color:#666; font-size:0.85rem;">发布日期: ${a.date || '未知'}</p>
+                  <p style="margin:0; color:#444; font-size:0.8rem;">记录音乐背后的每一个动人瞬间。</p>
+               </div>
+            </div>
+
+            <!-- 第二排：操作按钮 -->
+            <div style="display:flex; gap:10px; justify-content: flex-end;">
+              <button class="btn-tiny" style="padding:8px 25px;" onclick="managePhotos('${a.id}')">🖼️ 管理相册照片 (Manage Photos)</button>
+              <button class="btn-tiny danger" style="padding:8px 15px;" onclick="deleteItem('diary_albums', '${a.id}')">🗑️ 删除相册 (Delete)</button>
+            </div>
+          </div>
+        `).join('') || '<p style="text-align:center; color:#444;">暂无日记数据</p>'}
+      </div>
+    `;
+  }
+
+  // --- 🎙️ SINGER MODULE ---
+  async function renderSingers(container) {
+    const { data: singers } = await db.from('singers').select('*').order('display_order', {ascending: true});
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <h1 style="color:var(--gold);">福音歌手管理</h1>
+        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="addSinger()">+ 邀请新歌手</button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
+        ${singers?.map(s => `
+          <div style="background:#1a1a1a; padding:20px; border-radius:12px; border:1px solid #222;">
+            <img src="${s.image_url || 'https://via.placeholder.com/300x400?text=Singer'}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:8px; margin-bottom:15px;">
+            <h3 style="margin:0; color:var(--gold);">${s.name}</h3>
+            <p style="color:#666; font-size:0.85rem; margin:10px 0;">${s.role || 'Gospel Singer'}</p>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+              <button class="btn-tiny" style="flex:1;" onclick="editSinger('${s.id}')">编辑</button>
+              <button class="btn-tiny danger" onclick="deleteItem('singers', '${s.id}')">删除</button>
+            </div>
+          </div>
+        `).join('') || '<p>暂无歌手数据</p>'}
+      </div>
+    `;
+  }
+
+  window.addSinger = async() => {
+    const name = prompt("歌手姓名:");
+    if(name) { await db.from('singers').insert([{name}]); renderCMS(); }
+  };
+
+  window.editSinger = async(id) => {
+    const { data: s } = await db.from('singers').select('*').eq('id', id).single();
+    const modal = document.createElement('div');
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center;";
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:12px; padding:2rem; width:100%; max-width:500px;">
+        <h3 style="color:var(--gold);">编辑歌手: ${s.name}</h3>
+        <div style="margin-bottom:15px;">
+          <img id="s_prev" src="${s.image_url || ''}" style="width:120px; height:160px; object-fit:cover; display:block; margin-bottom:10px; background:#222; border-radius:4px;">
+          <input type="file" id="sf_up">
+          <button class="btn-tiny" style="margin-top:5px; width:100%;" onclick="uploadFile('sf_up', 's_url', 's_prev')">上传人照</button>
+          <input type="hidden" id="s_url" value="${s.image_url || ''}">
+        </div>
+        <label>姓名</label><input type="text" id="s_n" value="${s.name}" style="width:100%; margin-bottom:10px;">
+        <label>头衔/职位</label><input type="text" id="s_r" value="${s.role || ''}" style="width:100%; margin-bottom:10px;">
+        <label>简介</label><textarea id="s_b" style="width:100%; height:80px;">${s.bio || ''}</textarea>
+        <div style="margin-top:20px; display:flex; gap:10px;">
+          <button class="btn btn-submit" style="flex:1;" onclick="saveSinger('${id}')">保存</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.parentElement.remove()">取消</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  };
+
+  window.saveSinger = async(id) => {
+    const p = {
+      name: document.getElementById('s_n').value,
+      role: document.getElementById('s_r').value,
+      bio: document.getElementById('s_b').value,
+      image_url: document.getElementById('s_url').value
+    };
+    await db.from('singers').update(p).eq('id', id);
+    renderCMS();
+  };
+
+  // --- 📮 SUBMISSIONS MODULE ---
+  async function renderSubmissions(container) {
+    const { data: subs } = await db.from('submissions').select('*').order('created_at', {ascending: false});
+    const { data: contacts } = await db.from('contact_messages').select('*').order('created_at', {ascending: false});
+    
+    container.innerHTML = `
+      <h1 style="color:var(--gold); margin-bottom:2rem;">📮 全站收件箱 (Inboxes)</h1>
+      
+      <!-- Part 1: Creative Submissions (我要投稿) -->
+      <section style="margin-bottom:4rem;">
+        <h3 style="color:#64D28A; border-bottom:1px solid #222; padding-bottom:10px;">🎵 我要投稿 (Creative Submissions)</h3>
+        <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222; margin-top:15px;">
+          <table style="width:100%; text-align:left; border-collapse:collapse;">
+            <tr style="background:#151515; color:#666; font-size:0.8rem;">
+              <th style="padding:15px;">日期</th><th>投稿人</th><th>预览</th><th>状态</th><th>操作</th>
+            </tr>
+            ${subs?.map(s => `
+              <tr style="border-bottom:1px solid #222;">
+                <td style="padding:15px; font-size:0.8rem; color:#666;">${new Date(s.created_at).toLocaleDateString()}</td>
+                <td style="color:var(--gold);">${s.user_name}</td>
+                <td style="color:#888;">${s.message?.substring(0, 30)}...</td>
+                <td><span style="color:${s.status==='pending'?'#e5b05a':'#666'}">${s.status.toUpperCase()}</span></td>
+                <td>
+                  <button class="btn-tiny" onclick="viewSub('${s.id}')">详情</button>
+                  <button class="btn-tiny danger" onclick="deleteItem('submissions', '${s.id}')">删除</button>
+                </td>
+              </tr>
+            `).join('') || '<tr><td colspan="5" style="padding:30px; text-align:center;">尚无粉丝投稿</td></tr>'}
+          </table>
+        </div>
+      </section>
+
+      <!-- Part 2: Contact Messages (联系我们) -->
+      <section>
+        <h3 style="color:var(--gold); border-bottom:1px solid #222; padding-bottom:10px;">📬 联系与合作 (Contact Inquiries)</h3>
+        <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222; margin-top:15px;">
+          <table style="width:100%; text-align:left; border-collapse:collapse;">
+            <tr style="background:#151515; color:#666; font-size:0.8rem;">
+              <th style="padding:15px;">日期</th><th>姓名</th><th>Email</th><th>预览</th><th>操作</th>
+            </tr>
+            ${contacts?.map(c => `
+              <tr style="border-bottom:1px solid #222;">
+                <td style="padding:15px; font-size:0.8rem; color:#666;">${new Date(c.created_at).toLocaleDateString()}</td>
+                <td style="color:var(--gold);">${c.name}</td>
+                <td><small>${c.email}</small></td>
+                <td style="color:#888;">${c.message?.substring(0, 30)}...</td>
+                <td>
+                  <button class="btn-tiny" onclick="viewContact('${c.id}')">查看</button>
+                  <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${c.id}')">删除</button>
+                </td>
+              </tr>
+            `).join('') || '<tr><td colspan="5" style="padding:30px; text-align:center;">暂无合作留言</td></tr>'}
+          </table>
+        </div>
+      </section>
+    `;
+  }
+
+  // --- Modal Helpers ---
+  window.viewContact = async(id) => {
+    const { data: c } = await db.from('contact_messages').select('*').eq('id', id).single();
+    const modal = document.createElement('div');
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center;";
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:12px; padding:2rem; width:100%; max-width:600px;">
+        <h3 style="color:var(--gold);">合作咨询详情</h3>
+        <p><strong>姓名:</strong> ${c.name}</p>
+        <p><strong>Email:</strong> ${c.email}</p>
+        <hr style="border:0; border-top:1px solid #222; margin:15px 0;">
+        <p style="white-space:pre-wrap; line-height:1.6;">${c.message}</p>
+        <div style="margin-top:20px;">
+          <button class="btn btn-submit" onclick="this.closest('div').parentElement.parentElement.remove()">关闭详情</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    await db.from('contact_messages').update({status:'reviewed'}).eq('id', id);
+  };
+
+  window.viewSub = async(id) => {
+    const { data: s } = await db.from('submissions').select('*').eq('id', id).single();
+    const modal = document.createElement('div');
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center;";
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:12px; padding:2rem; width:100%; max-width:600px;">
+        <h3 style="color:var(--gold);">投稿详情</h3>
+        <p><strong>姓名:</strong> ${s.user_name}</p>
+        <p><strong>联系方式:</strong> ${s.contact_info}</p>
+        <hr style="border:0; border-top:1px solid #222; margin:15px 0;">
+        <p style="white-space:pre-wrap;">${s.message}</p>
+        ${s.file_url ? `<a href="${s.file_url}" target="_blank" class="btn-tiny" style="display:inline-block; margin-top:10px;">查看附件</a>` : ''}
+        <div style="margin-top:20px;">
+          <button class="btn btn-submit" onclick="this.closest('div').parentElement.parentElement.remove()">关闭</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    if(s.status === 'pending') await db.from('submissions').update({status:'reviewed'}).eq('id', id);
+  };
+
+  // --- ⚙️ CONFIG MODULE ---
+  async function renderConfig(container) {
+    const { data: configs } = await db.from('site_config').select('*');
+    const c = configs.reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
+    
+    container.innerHTML = `
+      <h1 style="color:var(--gold); margin-bottom:2rem;">全站内容管理 (CMS Configuration)</h1>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-bottom:40px;">
+        <!-- Column 1: Core Content & Social -->
+        <div style="background:#151515; padding:25px; border-radius:12px; border:1px solid #222;">
+          <h3 style="color:var(--gold); margin-top:0;"><i class="fas fa-edit"></i> 核心文案与社交链接</h3>
+          
+          <div style="margin-bottom:15px;">
+            <label>关于我们描述 (About Text)</label>
+            <textarea id="cfg_about_text" style="width:100%; height:100px;">${c['cfg_about_text']||''}</textarea>
+          </div>
+
+          <div style="margin-bottom:15px;">
+            <label>联系我们邮箱 (Contact Email)</label>
+            <input type="text" id="cfg_contact_email" value="${c['cfg_contact_email']||''}" style="width:100%;">
+          </div>
+
+          <div style="margin-bottom:15px; padding-top:15px; border-top:1px solid #222;">
+            <h4 style="margin-bottom:10px;">社交媒体链接 (Social Links)</h4>
+            <label>Facebook URL</label><input type="text" id="cfg_social_fb" value="${c['cfg_social_fb']||''}" style="width:100%; margin-bottom:10px;">
+            <label>Instagram URL</label><input type="text" id="cfg_social_ig" value="${c['cfg_social_ig']||''}" style="width:100%; margin-bottom:10px;">
+            <label>YouTube URL</label><input type="text" id="cfg_social_yt" value="${c['cfg_social_yt']||''}" style="width:100%;">
+          </div>
+
+          <button class="btn btn-submit" style="margin-top:15px; width:100%;" onclick="saveAllConfigs()">更新所有文案与链接</button>
+        </div>
+
+        <!-- Column 2: Financial & Support -->
+        <div style="background:#151515; padding:25px; border-radius:12px; border:1px solid #222;">
+          <h3 style="color:var(--gold); margin-top:0;"><i class="fas fa-hand-holding-heart"></i> 支持我们 (Support Info)</h3>
+          
+          <div style="margin-bottom:15px;">
+            <label>银行名称 (Bank Name)</label>
+            <input type="text" id="cfg_support_bank" value="${c['cfg_support_bank']||''}" style="width:100%; margin-bottom:10px;">
+            <label>银行账号 (Account No.)</label>
+            <input type="text" id="cfg_support_acc_no" value="${c['cfg_support_acc_no']||''}" style="width:100%; margin-bottom:10px;">
+            <label>户名 (Account Name)</label>
+            <input type="text" id="cfg_support_acc_name" value="${c['cfg_support_acc_name']||''}" style="width:100%; margin-bottom:10px;">
+          </div>
+
+          <div style="margin-bottom:15px; padding-top:15px; border-top:1px solid #222;">
+            <label>TNG / DuitNow 联络信息</label>
+            <input type="text" id="cfg_support_tng" value="${c['cfg_support_tng']||''}" style="width:100%; margin-bottom:15px;">
+            
+            <label>DuitNow QR Code</label>
+            <img id="prev_qr" src="${c['cfg_support_qr']||''}" style="width:120px; height:120px; object-fit:contain; background:#fff; border-radius:4px; margin:5px 0; display:block;">
+            <input type="file" id="f_qr">
+            <button class="btn-tiny" style="margin-top:5px; width:100%;" onclick="uploadFile('f_qr', 'url_qr', 'prev_qr')">上传 QR Code</button>
+            <input type="hidden" id="url_qr" value="${c['cfg_support_qr']||''}">
+          </div>
+
+          <button class="btn btn-submit" style="margin-top:15px; width:100%;" onclick="saveSupportInfo()">保存支持信息</button>
+        </div>
+      </div>
+
+      <div style="background:#151515; padding:25px; border-radius:12px; border:1px solid #222;">
+        <h3 style="color:var(--gold); margin-top:0;"><i class="fas fa-image"></i> 页面海报与背景图 (Banners & Posters)</h3>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+          
+          <div class="banner-edit-item">
+            <label>关于我们 品牌宣传视频 (推荐使用 MP4 格式)</label>
+            <video id="prev_about_v" src="${c['cfg_about_video']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0; border:1px solid #333; background:#000;" autoplay muted loop playsinline controls></video>
+            <input type="file" id="f_about_v" accept="video/mp4,video/x-m4v,video/*">
+            <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_about_v', 'url_about_v', 'prev_about_v')">上传关于页宣传视频</button>
+            <div style="font-size:0.7rem; color:#666; margin-top:5px;">💡 建议文件大小在 15MB 以内，请确保格式为 MP4 以获得最佳兼容性。</div>
+            <input type="hidden" id="url_about_v" value="${c['cfg_about_video']||''}">
+          </div>
+
+          <div class="banner-edit-item">
+            <label>联系我们 背景</label>
+            <img id="prev_contact" src="${c['cfg_contact_banner']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0; border:1px solid #333;">
+            <input type="file" id="f_contact">
+            <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_contact', 'url_contact', 'prev_contact')">上传联系页背景</button>
+            <input type="hidden" id="url_contact" value="${c['cfg_contact_banner']||''}">
+          </div>
+
+          <div class="banner-edit-item">
+            <label>我要投稿 海报</label>
+            <img id="prev_submit" src="${c['cfg_submit_poster']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0; border:1px solid #333;">
+            <input type="file" id="f_submit">
+            <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_submit', 'url_submit', 'prev_submit')">上传投稿页海报</button>
+            <input type="hidden" id="url_submit" value="${c['cfg_submit_poster']||''}">
+          </div>
+
+
+        </div>
+        <button class="btn btn-submit" style="margin-top:25px;" onclick="saveBanners()">保存所有媒体配置</button>
+      </div>
+    `;
+  }
+
+  window.saveAllConfigs = async() => {
+    const keys = ['cfg_about_text', 'cfg_contact_email', 'cfg_social_fb', 'cfg_social_ig', 'cfg_social_yt'];
+    for(let k of keys) {
+      const el = document.getElementById(k);
+      if(el) {
+        await db.from('site_config').upsert({key: k, value: el.value}, {onConflict: 'key'});
+      }
+    }
+    alert("基础配置已更新成功!");
+  };
+
+  window.saveSupportInfo = async() => {
+    const data = [
+      {k: 'cfg_support_bank', v: document.getElementById('cfg_support_bank').value},
+      {k: 'cfg_support_acc_no', v: document.getElementById('cfg_support_acc_no').value},
+      {k: 'cfg_support_acc_name', v: document.getElementById('cfg_support_acc_name').value},
+      {k: 'cfg_support_tng', v: document.getElementById('cfg_support_tng').value},
+      {k: 'cfg_support_qr', v: document.getElementById('url_qr').value}
+    ];
+    for(let item of data) {
+      await db.from('site_config').upsert({key: item.k, value: item.v}, {onConflict: 'key'});
+    }
+    alert("支持信息（银行/TNG）更新成功!");
+  };
+
+  window.saveBanners = async() => {
+    const banners = [
+      {k: 'cfg_about_video', v: document.getElementById('url_about_v').value},
+      {k: 'cfg_contact_banner', v: document.getElementById('url_contact').value},
+      {k: 'cfg_submit_poster', v: document.getElementById('url_submit').value}
+    ];
+    for(let b of banners) {
+      await db.from('site_config').upsert({key: b.k, value: b.v}, {onConflict: 'key'});
+    }
+    alert("所有页面海报及背景图更新成功!");
+  };
+  
+  window.addDiary = async() => {
+    const t = prompt("相册标题 (Album Title):");
+    if(t) { 
+      await db.from('diary_albums').insert([{
+        title: t, 
+        date: new Date().toISOString().split('T')[0]
+      }]); 
+      renderCMS(); 
+    }
+  };
+
+  window.managePhotos = async(id) => {
+    const { data: photos } = await db.from('diary_media').select('*').eq('album_id', id);
+    const modal = document.createElement('div');
+    modal.id = 'photoManagerModal';
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(10px); padding:20px;";
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:800px; max-height:85vh; overflow-y:auto; box-shadow:0 0 50px rgba(0,0,0,0.8);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h3 style="color:var(--gold); margin:0;">正在管理相册照片 (Album Photos)</h3>
+          <button class="btn-tiny" onclick="this.closest('#photoManagerModal').remove()">关闭</button>
+        </div>
+        <div style="background:#0a0a0a; padding:20px; border-radius:12px; text-align:center; margin-bottom:20px; border:1px dashed #333;">
+           <p style="color:#888; font-size:0.8rem; margin-bottom:10px;">选择想要上传的作品瞬间</p>
+           <input type="file" id="d_up">
+           <button class="btn btn-submit" style="margin-top:10px; width:100%;" onclick="uploadDiaryPhoto('${id}')">上传并存入相册</button>
+           <div id="up_stat" style="font-size:0.7rem; color:var(--gold); margin-top:5px;"></div>
+        </div>
+        <div id="photoGridCMS" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:15px;">
+          ${photos?.map(p => `
+            <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden;">
+              <img src="${p.media_url}" style="width:100%; height:100%; object-fit:cover;">
+              <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color:white; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
+            </div>
+          `).join('') || '<p style="grid-column:1/-1; text-align:center; opacity:0.3;">暂无内容</p>'}
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  };
+
+  window.uploadDiaryPhoto = async (aid) => {
+    const fileInput = document.getElementById('d_up');
+    const stat = document.getElementById('up_stat');
+    if(!fileInput.files[0]) return alert("请先选择照片");
+    
+    stat.innerText = "⏳ 正在上传并同步数据库...";
+    
+    // Use the global uploadFile logic but handle the DB entry here
+    const file = fileInput.files[0];
+    const safeName = file.name.replace(/[^\w.-]/g, "_");
+    const path = `diary/${Date.now()}-${safeName}`;
+    
+    try {
+      const { data, error } = await db.storage.from('harvester-media').upload(path, file);
+      if(error) throw error;
+      
+      const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
+      
+      // Save to diary_media
+      await db.from('diary_media').insert([{
+        album_id: aid, 
+        media_url: publicUrl, 
+        type: file.type.startsWith('video') ? 'video' : 'image'
+      }]);
+      
+      stat.innerText = "✅ 上传成功！正在刷新列表...";
+      
+      // Refresh the specific photo grid without closing the modal
+      const { data: newPhotos } = await db.from('diary_media').select('*').eq('album_id', aid);
+      document.getElementById('photoGridCMS').innerHTML = newPhotos.map(p => `
+        <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden;">
+          <img src="${p.media_url}" style="width:100%; height:100%; object-fit:cover;">
+          <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color:white; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
+        </div>
+      `).join('');
+      
+      fileInput.value = ""; // Clear input
+    } catch (e) {
+      alert("上传失败: " + e.message);
+      stat.innerText = "❌ 发生错误";
+    }
+  };
+
+  window.deleteDiaryPhoto = async (id, btn) => {
+    if(confirm("确定删除这张照片？")) {
+      await db.from('diary_media').delete().eq('id', id);
+      btn.parentElement.remove();
+    }
+  };
+
+  window.deleteItem = async(t, id) => {
+    if(confirm("确定永久删除？")) { await db.from(t).delete().eq('id', id); renderCMS(); }
+  };
+});

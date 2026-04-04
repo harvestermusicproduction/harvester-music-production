@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>关于我们 About - Harvester Music Production</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="position: relative;">
+  <canvas id="bgParticles"></canvas>
+  <header class="scrolled">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">Harvester</a>
+      <div class="header-socials" style="display: flex; gap: 0.8rem; font-size: 1rem;">
+        <a id="cfg_nav_fb" href="https://www.facebook.com/harvester2025" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="https://www.instagram.com/harvestermusic.production?igsh=MTI2OGYzcDJuYm16dw==" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="https://www.youtube.com/@harvestermusic.production" target="_blank" style="color: #888; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="events.html">活动</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="diary.html">幕后田野日记</a>
+      <a href="singers.html">福音歌手</a>
+      <a href="submit.html">我要投稿</a>
+      <a href="about.html" class="text-gold">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="contact.html">联系我们</a>
+    </nav>
+  </header>
+
+  <section class="about fade-in" style="margin-top: 5rem; min-height: 60vh; text-align:center; padding: 0 2rem;">
+    <h2 class="text-gold mb-2">关于收割机音乐工作坊</h2>
+    <p style="font-size: 0.8rem; letter-spacing: 3px; color: #666; margin-bottom: 2rem;">SINCE 2025 • HARVESTER MUSIC PRODUCTION</p>
+    
+    <!-- Cinematic Video Container (16:9) -->
+    <div id="cfg_about_media_container" style="width: 100%; max-width: 1100px; aspect-ratio: 16 / 9; margin: 0 auto 3rem; overflow: hidden; border-radius: 12px; border: 1px solid rgba(246,210,138,0.15); background: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
+      <img id="cfg_about_banner" src="https://images.unsplash.com/photo-1514525253361-9ee1a07b7ec2?auto=format&fit=crop&w=1200&q=80" alt="正在加载媒体..." style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    
+    <div style="max-width: 900px; margin: 0 auto 4rem;">
+      <p id="cfg_about_text" style="font-size: 1.25rem; line-height: 2; color: #eee; text-align: justify; text-align-last: center;">
+        正在加载品牌故事...
+      </p>
+    </div>
+
+    <!-- Social Connect Section -->
+    <div style="margin-top: 4rem; padding: 3rem; border-top: 1px solid rgba(255,255,255,0.05);">
+        <h3 class="text-gold mb-4" style="font-weight: 300; letter-spacing: 4px;">CONNECT WITH US</h3>
+        <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+            <a id="cfg_social_fb" href="#" target="_blank" class="btn-premium btn-social-pill" style="min-width: 80px; width: 80px; height: 80px; padding: 0;">
+                <i class="fab fa-facebook-f" style="font-size: 1.5rem;"></i>
+            </a>
+            <a id="cfg_social_ig" href="#" target="_blank" class="btn-premium btn-social-pill" style="min-width: 80px; width: 80px; height: 80px; padding: 0;">
+                <i class="fab fa-instagram" style="font-size: 1.5rem;"></i>
+            </a>
+            <a id="cfg_social_yt" href="#" target="_blank" class="btn-premium btn-youtube-premium" style="min-width: 80px; width: 80px; height: 80px; padding: 0;">
+                <i class="fab fa-youtube" style="font-size: 1.5rem;"></i>
+            </a>
+        </div>
+    </div>
+  </section>
+
+  <footer>
+    <a href="index.html" style="display:block; opacity:0.75; transition:0.3s;"><img src="assets/logo.png" alt="Harvester" style="height: 50px; width: auto; margin: 0 auto 1rem; display: block; filter:brightness(0.8);"></a>
+    <p>&copy; 2026 Harvester Music Production. 版权所有。为主献上。</p>
+    <a href="admin.html" class="btn-terminal" style="margin-top: 1.5rem;"><i class="fas fa-terminal"></i> 进入控制台 ACCESS TERMINAL</a>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+  <script src="app.js?v=1775277655"></script>
+</body>
+</html>

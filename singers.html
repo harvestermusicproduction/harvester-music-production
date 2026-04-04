@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="space-active">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>福音歌手 - Harvester Music Production</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="harvest-active" style="margin:0; overflow:hidden; background:#050508;">
+
+  <!-- Immersive Canvas -->
+  <canvas id="harvest-canvas" style="position:fixed; top:0; left:0; width:100%; height:100%;"></canvas>
+
+  <!-- Navigation Layer -->
+  <header style="z-index:1000; position: fixed; width: 100%; top: 0; left: 0; background: transparent;">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem; padding: 1rem 2rem;">
+      <a href="index.html" class="logo" style="text-decoration:none; color:var(--gold); pointer-events: auto;">Harvester</a>
+    </div>
+    <nav class="nav-links" style="pointer-events: auto; padding: 1rem 2rem;">
+      <a href="index.html">主页</a>
+      <a href="events.html">活动</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="diary.html">幕后田野日记</a>
+      <a href="singers.html" class="text-gold">福音歌手</a>
+      <a href="submit.html">我要投稿</a>
+      <a href="about.html">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="contact.html">联系我们</a>
+    </nav>
+  </header>
+
+  <!-- Conceptual Title -->
+  <div class="harvest-title-layer" style="position:fixed; bottom:10vh; left:5vw; z-index:100; pointer-events:none;">
+    <h1 style="color:var(--gold); font-size:3rem; margin:0; font-family:serif; letter-spacing:8px; opacity:0.8;">收割麦田</h1>
+    <p style="color:#888; letter-spacing:3px;">Walk into the field. Discover the calling.</p>
+  </div>
+
+  <!-- Detail Card Overlay (Glassmorphism) -->
+  <div id="singer-card-overlay" class="hidden">
+    <div class="singer-card">
+      <button class="close-card">&times;</button>
+      <div class="card-content">
+        <div class="card-left">
+          <img id="card-img" src="" alt="Singer Profile">
+        </div>
+        <div class="card-right">
+          <h2 id="card-name" class="text-gold"></h2>
+          <div id="card-role" class="role-tag"></div>
+          <p id="card-bio"></p>
+          <div class="card-footer">
+            <span style="color:#666; font-size:0.8rem;">[ 已收割作品 • 收割机音乐 ]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Background (Optional) -->
+  <audio id="ambient-wind" loop>
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-light-wind-blowing-1165.mp3" type="audio/mpeg">
+  </audio>
+  
+  <div id="harvest-label" class="harvest-hud-label"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="harvest_field.js"></script>
+</body>
+</html>
