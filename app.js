@@ -209,12 +209,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         html += `<div class="event-card fade-in visible ${goldClass}" style="box-shadow: 0 15px 45px rgba(0,0,0,0.1);">
             <div>
-              <div style="color:#666; font-size:0.75rem; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px;">
+              <div style="color:#444; font-size:1.1rem; font-weight: 500; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px;">
                 <span><i class="fas fa-calendar-alt"></i> ${date || 'TBA'}</span>
                 <span><i class="fas fa-clock"></i> ${time}</span>
                 ${locHtml}
               </div>
-              <h3 style="color:#111; font-size:1.6rem; font-family: var(--font-display); margin-bottom: 0.8rem;">${e.title}</h3>
+              <h3 style="color:${e.title.includes('成就筹款活动') ? 'var(--gold)' : '#111'}; font-size:1.8rem; font-family: var(--font-display); margin-bottom: 0.8rem;">${e.title}</h3>
               <p style="color:#444; line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
             <button class="btn-score-premium" style="width:100%; margin-top:20px;" onclick="openReminderModal('${e.id}', '${e.title}')"><i class="fas fa-bell"></i> 我要参与 提醒我</button>
