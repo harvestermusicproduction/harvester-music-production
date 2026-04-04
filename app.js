@@ -83,12 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) { console.warn("Supabase Config Error:", err.message); }
   }
 
-  function applyHydration() {
+    function applyHydration() {
     const aboutContainer = document.getElementById('cfg_about_media_container');
     if (aboutContainer && siteConfigs['cfg_about_video']) {
       const videoUrl = siteConfigs['cfg_about_video'];
       const finalUrl = videoUrl + (videoUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
-      aboutContainer.innerHTML = `<video autoplay muted loop playsinline controls style="width:100%; height:100%; object-fit:cover; display:block; background:#000;"><source src="${finalUrl}"></video>`;
+      aboutContainer.innerHTML = `<video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; display:block; background:#000;"><source src="${finalUrl}"></video>`;
+      // Force play after insertion
+      setTimeout(() => { aboutContainer.querySelector('video')?.play().catch(e => console.log("Autoplay block checked: ", e)); }, 100);
     }
     document.querySelectorAll('[id^="cfg_"]').forEach(el => {
       let key = el.id;
@@ -236,13 +238,47 @@ document.addEventListener('DOMContentLoaded', () => {
               <h3 style="color:${titleColor}; font-size:1.8rem; font-family: var(--font-display); margin-bottom: 0.8rem;">${e.title}</h3>
               <p style="color:${contentColor}; line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
-            <button class="btn-score-premium" style="width:100%; margin-top:20px;" onclick="openReminderModal('${e.id}', '${e.title}')"><i class="fas fa-bell"></i> 我要参与 提醒我</button>
+            <button class="btn-score-premium" style="width:100%; margin-top:35px;" onclick="registerAndAddCalendar('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.date}', '${e.time}', '${e.location ? e.location.replace(/'/g, "\\'") : ''}', '${e.description ? e.description.replace(/'/g, "\\'").substring(0,200) : ''}')">
+               <i class="fas fa-bell"></i> 我要参与 提醒我
+            </button>
           </div>`;
       });
       container.innerHTML = html;
       refreshObserver();
-    } catch (err) {}
+    } catch (err) { console.error("FetchEvents error:", err); }
   }
+
+  // --- 📅 Google Calendar & Reminder Integration ---
+  window.registerAndAddCalendar = async (id, title, date, time, location, description) => {
+    const email = prompt("请输入您的 Email，以便我们在活动前一天提醒您：");
+    if (!email || !email.includes('@')) {
+       if(email) alert("请输入有效的 Email 地址。");
+       return;
+    }
+
+    try {
+      // 1. Record Registration in Supabase (for automated reminders)
+      const { error } = await db.from('event_registrations').insert([
+        { event_id: id, email: email, event_title: title, event_date: date }
+      ]);
+      if (error) throw error;
+
+      // 2. Generate Google Calendar Link
+      const startDateTime = new Date(`${date}T${time || '08:00'}:00`).toISOString().replace(/-|:|\.\d\d\d/g, "");
+      const endDateTime = new Date(new Date(`${date}T${time || '08:00'}:00`).getTime() + 2 * 60 * 60 * 1000).toISOString().replace(/-|:|\.\d\d\d/g, "");
+      
+      const gCalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(description + "\n\n注册邮箱: " + email)}&location=${encodeURIComponent(location || 'Online')}`;
+
+      // 3. Success Feedback
+      const confirmAdd = confirm("报名成功！我们会通过电邮在活动前一天提醒您。\n\n是否现在就将此活动加入您的 Google 日历？");
+      if (confirmAdd) {
+        window.open(gCalUrl, '_blank');
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
+      alert("报名成功！(但系统录入稍有延迟，我们会尽快处理)");
+    }
+  };
 
   async function fetchDiary() {
     const container = document.getElementById('diaryContainer');
@@ -277,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
       container.innerHTML = albums.map(d => {
         const coverImg = d.cover_url || fallback;
         return `
-          <div class="footprint-item fade-in visible" onclick="location.href='event.html?id=${d.id}'">
+          <div class="footprint-item fade-in visible" onclick="showFootprintDetail('${d.title.replace(/'/g, "\\'")}', '${d.date}', '${(d.description || "").replace(/'/g, "\\'").replace(/\n/g, " ")}')">
             <img src="${coverImg}" onerror="this.src='${fallback}'" class="footprint-img">
             <div class="footprint-overlay" style="background:rgba(255,255,255,0.05); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);">
               <h4 style="color:#fff; font-family:'Ma Shan Zheng', cursive; font-size:1.4rem;">${d.title}</h4>
@@ -290,6 +326,39 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error("Footprints fetch error:", e);
     }
   }
+
+  // --- 👣 Footprint Detail Modal Logic ---
+  window.showFootprintDetail = (title, date, desc) => {
+    let m = document.getElementById('footprintModal');
+    if (!m) {
+      m = document.createElement('div');
+      m.id = 'footprintModal';
+      m.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(15px); padding:20px; transition:0.3s; opacity:0;";
+      m.onclick = (e) => { if(e.target === m) hideFootprintModal(); };
+      document.body.appendChild(m);
+    }
+    
+    m.innerHTML = `
+      <div style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(30px); border-radius:30px; padding:2.5rem; max-width:500px; width:100%; box-shadow:0 30px 60px rgba(0,0,0,0.4); text-align:center;">
+        <h2 style="color:var(--gold); font-family:'Ma Shan Zheng', cursive; font-size:2.5rem; margin-bottom:1rem;">${title}</h2>
+        <p style="color:rgba(255,255,255,0.5); font-size:0.9rem; margin-bottom:1.5rem; letter-spacing:2px;">${date}</p>
+        <div style="height:1px; background:rgba(255,255,255,0.1); margin-bottom:1.5rem;"></div>
+        <p style="color:#fff; line-height:1.8; font-size:1rem; white-space:pre-wrap;">${desc || '正在加载详细描述...'}</p>
+        <button onclick="hideFootprintModal()" class="btn-frosted-white" style="margin-top:2rem; width:100%;">关 闭 CLOSE</button>
+      </div>`;
+    
+    m.style.display = 'flex';
+    setTimeout(() => m.style.opacity = '1', 10);
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.hideFootprintModal = () => {
+    const m = document.getElementById('footprintModal');
+    if(m) {
+      m.style.opacity = '0';
+      setTimeout(() => { m.style.display = 'none'; document.body.style.overflow = ''; }, 300);
+    }
+  };
 
   function spawnSingleNote(element) {
     const symbols = ['♪', '♫', '♬', '♩'];

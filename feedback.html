@@ -194,89 +194,87 @@
 
     function init3DEngine() {
       scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 2000);
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      const isMobile = window.innerWidth <= 768;
+      camera = new THREE.PerspectiveCamera(isMobile ? 95 : 75, window.innerWidth / window.innerHeight, 1, 3000);
+      camera.position.z = isMobile ? 1200 : 500;
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
 
-      camera.position.z = 100;
-
-      // 1. Create Starfield Background
-      const starGeometry = new THREE.BufferGeometry();
-      const starPositions = [];
-      for(let i=0; i<3000; i++) {
-        starPositions.push((Math.random()-0.5)*2000, (Math.random()-0.5)*2000, (Math.random()-0.5)*2000);
-      }
-      starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-      const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1.5, transparent: true, opacity: 0.8 });
-      starField = new THREE.Points(starGeometry, starMaterial);
-      scene.add(starField);
+      const echoes = [];
+      window.currentEchoes = echoes; // Share with other functions
+      const MAX_ECHOES = 40;
 
       animate();
     }
 
-    function createEchoSprite(text, isNew = false) {
+    function createEchoSprite(message, isPrimary = false) {
+      const isMobile = window.innerWidth <= 768;
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      canvas.width = 512; canvas.height = 128;
+      canvas.width = 1024;
+      canvas.height = 128;
       
-      // Draw Frosted Glass Capsule Background
-      ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
-      ctx.beginPath();
-      ctx.roundRect(10, 10, 492, 108, 50);
-      ctx.fill();
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Text
-      ctx.fillStyle = "white";
-      ctx.font = "bold 32px 'Ma Shan Zheng', cursive, 'Microsoft YaHei'";
-      ctx.textAlign = "center";
-      ctx.fillText(text, 256, 75);
+      const fontSize = isPrimary ? 64 : 42;
+      ctx.font = `300 ${fontSize}px "Microsoft YaHei", sans-serif`;
+      ctx.fillStyle = isPrimary ? '#f6d28a' : 'rgba(255,255,255,0.7)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = isPrimary ? '#f6d28a' : '#fff';
+      
+      ctx.fillText(message, 512, 64);
 
       const texture = new THREE.CanvasTexture(canvas);
       const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
       const sprite = new THREE.Sprite(material);
       
-      sprite.scale.set(40, 10, 1);
+      const scaleBase = isMobile ? 0.35 : 1.0;
+      sprite.scale.set(isPrimary ? (10 * scaleBase) : (6 * scaleBase), isPrimary ? (1.25 * scaleBase) : (0.75 * scaleBase), 1);
       
-      const side = Math.random() > 0.5 ? 1 : -1;
-      const xOffset = side * (80 + Math.random() * 120); 
+      const boundX = isMobile ? 300 : 800;
+      const boundY = isMobile ? 500 : 600;
 
-      if(isNew) {
-        sprite.position.set(-500, (Math.random()-0.5)*300, 50); 
+      if(isPrimary) {
+        sprite.position.set(0, 0, 200);
         sprite.userData = { speed: Math.random()*0.1 + 0.1, rot: 0.02, axis: new THREE.Vector3(0,0,1) };
       } else {
-        sprite.position.set((Math.random()-0.5)*1000, (Math.random()-0.5)*600, (Math.random()-0.5)*400);
+        sprite.position.set((Math.random()-0.5)*boundX*2, (Math.random()-0.5)*boundY, (Math.random()-0.5)*400);
         sprite.userData = { speed: Math.random()*0.05 + 0.05, rot: (Math.random()-0.5)*0.01 };
       }
 
       scene.add(sprite);
-      echoes.push(sprite);
-      if(echoes.length > MAX_ECHOES) {
-        scene.remove(echoes.shift());
+      if(!window.currentEchoes) window.currentEchoes = [];
+      window.currentEchoes.push(sprite);
+      if(window.currentEchoes.length > 40) {
+        scene.remove(window.currentEchoes.shift());
       }
     }
 
     function animate() {
       requestAnimationFrame(animate);
+      const isMobile = window.innerWidth <= 768;
       
       scene.rotation.y += 0.0003;
       scene.rotation.x += 0.0001;
 
-      echoes.forEach(e => {
-        if(e.userData.speed) {
-          e.position.x += e.userData.speed * 4; // Horizontal Drift
-          e.rotation.z += (e.userData.rot || 0) * 0.1;
-          
-          if(e.position.x > 600) {
-            e.position.x = -600;
-            e.position.y = (Math.random()-0.5)*600;
+      const resetBound = isMobile ? 350 : 600;
+
+      if(window.currentEchoes) {
+        window.currentEchoes.forEach(e => {
+          if(e.userData.speed) {
+            e.position.x += e.userData.speed * (isMobile ? 2 : 4);
+            e.rotation.z += (e.userData.rot || 0) * 0.1;
+            
+            if(e.position.x > resetBound) {
+              e.position.x = -resetBound;
+              e.position.y = (Math.random()-0.5)* (isMobile ? 800 : 600);
+            }
           }
-        }
-      });
+        });
+      }
 
       renderer.render(scene, camera);
     }
