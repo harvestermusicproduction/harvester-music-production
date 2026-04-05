@@ -242,20 +242,20 @@
       const isMobile = window.innerWidth <= 768;
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      canvas.width = 1200; // Wider for better resolution
-      canvas.height = 200;
+      canvas.width = 1600; // Increased resolution for larger fonts
+      canvas.height = 300;
       
-      const fontSize = isPrimary ? 110 : 80;
-      ctx.font = `400 ${fontSize}px "Ma Shan Zheng", "Inter", sans-serif`;
+      const fontSize = isPrimary ? 160 : 120; // GARGANTUAN FONT
+      ctx.font = `500 ${fontSize}px "Ma Shan Zheng", "Inter", sans-serif`;
       
-      // Stronger Glow Effect for Legibility
-      ctx.shadowBlur = 35;
-      ctx.shadowColor = isPrimary ? 'rgba(246, 210, 138, 0.9)' : 'rgba(255,255,255,0.5)';
-      ctx.fillStyle = isPrimary ? '#f6d28a' : 'rgba(255,255,255,0.85)';
+      // Ultra Strong Glow Effect
+      ctx.shadowBlur = 45;
+      ctx.shadowColor = isPrimary ? 'rgba(246, 210, 138, 1.0)' : 'rgba(255,255,255,0.6)';
+      ctx.fillStyle = isPrimary ? '#f6d28a' : 'rgba(255,255,255,0.95)';
       
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(message, 600, 100);
+      ctx.fillText(message, 800, 150);
 
       const texture = new THREE.CanvasTexture(canvas);
       const material = new THREE.SpriteMaterial({ 
@@ -266,11 +266,11 @@
       });
       
       const sprite = new THREE.Sprite(material);
-      const scaleBase = isMobile ? 0.8 : 2.0; // DOUBLED SCALE
-      sprite.scale.set(isPrimary ? (15 * scaleBase) : (8 * scaleBase), isPrimary ? (2.5 * scaleBase) : (1.35 * scaleBase), 1);
+      const scaleBase = isMobile ? 1.4 : 3.5; // GARGANTUAN SCALE
+      sprite.scale.set(isPrimary ? (18 * scaleBase) : (9 * scaleBase), isPrimary ? (3.2 * scaleBase) : (1.8 * scaleBase), 1);
       
-      const boundX = isMobile ? 500 : 1200;
-      const boundY = isMobile ? 700 : 900;
+      const boundX = isMobile ? 600 : 1400;
+      const boundY = isMobile ? 800 : 1000;
 
       if(isPrimary) {
         sprite.position.set(0, 0, 350);

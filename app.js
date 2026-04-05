@@ -1,6 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("💎 Harvester Diamond V1.7: Engine Active");
 
+  // --- 📱 Global UX UI Controllers (Priority One) ---
+  window.toggleMobileMenu = () => {
+    const overlay = document.getElementById('mobileNavOverlay');
+    if (!overlay) return;
+    const isActive = overlay.classList.toggle('active');
+    document.body.style.overflow = isActive ? 'hidden' : '';
+  };
+  
+  // Close menu when clicking a link
+  document.getElementById('mobileNavOverlay')?.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') window.toggleMobileMenu();
+  });
+
   // --- 0. Supabase Initialization ---
   const db = window.supabase;
   if(!db) { console.error("❌ Harvester Engine: Supabase Client NOT found!"); return; }
@@ -83,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) { console.warn("Supabase Config Error:", err.message); }
   }
 
-    function applyHydration() {
+  function applyHydration() {
     const aboutContainer = document.getElementById('cfg_about_media_container');
     if (aboutContainer && siteConfigs['cfg_about_video']) {
       const videoUrl = siteConfigs['cfg_about_video'];
@@ -106,18 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- 📱 Mobile Menu Controller ---
-  window.toggleMobileMenu = () => {
-    const overlay = document.getElementById('mobileNavOverlay');
-    if (!overlay) return;
-    overlay.classList.toggle('active');
-    document.body.style.overflow = overlay.classList.contains('active') ? 'hidden' : '';
-  };
-  
-  // Close menu when clicking a link
-  document.getElementById('mobileNavOverlay')?.addEventListener('click', (e) => {
-    if (e.target.tagName === 'A') toggleMobileMenu();
-  });
+  syncSiteContent();
 
   async function fetchLatestMusicForHome() {
     // 🛡️ TRIPLE-LAYER FETCH FOR LATEST MUSIC (Schema-Safe)
