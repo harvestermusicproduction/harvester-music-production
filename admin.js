@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const adminDashboard = document.getElementById('adminDashboard');
   const btnLogin = document.getElementById('btnLogin');
 
+  // --- Global Error Handler ---
+  window.addEventListener('error', (e) => {
+    console.error("Global Error Caught:", e);
+    alert(`⚠️ 脚本运行出错 [Global Error]:\n${e.message}\n文件: ${e.filename.split('/').pop()}\n行号: ${e.lineno}`);
+  });
+
   // --- Auth Listener ---
   db.auth.onAuthStateChange((event, session) => {
     if(loadingText) loadingText.style.display = 'none';
@@ -180,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <!-- 第二排：操作按钮 -->
             <div style="display:flex; gap:10px; justify-content: flex-end;">
-              <button class="btn-tiny" style="padding:8px 25px;" onclick='openMusicModal(${JSON.stringify({ ...s, force_latest: s.id === latestId })}.replace(/'/g, "&apos;"))'>⚙️ 编辑详细资料 (Edit)</button>
+              <button class="btn-tiny" style="padding:8px 25px;" onclick="openMusicModal('${s.id}')">⚙️ 编辑详细资料 (Edit)</button>
               <button class="btn-tiny danger" style="padding:8px 15px;" onclick="deleteItem('music_works', '${s.id}')">🗑️ 删除 (Delete)</button>
             </div>
 
@@ -190,57 +196,75 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  window.openMusicModal = (s = null) => {
-    const isEdit = !!s;
-    const modal = document.createElement('div');
-    modal.id = 'musicEditModal';
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(10px); padding:20px;";
-    modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,1);">
-        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑详细资料' : '发布新单曲'}</h2>
-        
-        <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222;">
-          <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem;">封面照片 (Cover Image)</label>
-          <img id="m_prev" src="${s?.cover_url || 'https://via.placeholder.com/300x300?text=Harvester+Cover'}" style="width:120px; height:120px; object-fit:cover; border-radius:8px; display:block; margin:0 auto 15px; border:1px solid #333; background:#222;">
-          <input type="file" id="mf_up" style="font-size:0.8rem; color:#888;">
-          <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('mf_up', 'm_url', 'm_prev')">📤 上传封面图</button>
-          <input type="hidden" id="m_url" value="${s?.cover_url || ''}">
-        </div>
+  window.openMusicModal = async (id = null) => {
+    const btn = event.currentTarget;
+    const originalText = btn.innerText;
+    if (id) { btn.innerText = "⏳ 正在拉取数据..."; btn.disabled = true; }
 
-        <div style="margin-bottom:15px;">
-          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲名字 (Title)</label>
-          <input type="text" id="m_t" value="${s?.title || ''}" placeholder="歌曲名称" style="width:100%; padding:10px;">
-        </div>
+    try {
+      let s = null;
+      if (id) {
+        const { data, error } = await db.from('music_works').select('*').eq('id', id).single();
+        if (error) throw error;
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_latest_music_id').maybeSingle();
+        s = { ...data, force_latest: data.id === cfg?.value };
+      }
+      const isEdit = !!s;
+      const modal = document.createElement('div');
+      modal.id = 'musicEditModal';
+      modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(10px); padding:20px;";
+      modal.innerHTML = `
+        <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,1);">
+          <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑详细资料' : '发布新单曲'}</h2>
+          
+          <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222;">
+            <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem;">封面照片 (Cover Image)</label>
+            <img id="m_prev" src="${s?.cover_url || 'https://via.placeholder.com/300x300?text=Harvester+Cover'}" style="width:120px; height:120px; object-fit:cover; border-radius:8px; display:block; margin:0 auto 15px; border:1px solid #333; background:#222;">
+            <input type="file" id="mf_up" style="font-size:0.8rem; color:#888;">
+            <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('mf_up', 'm_url', 'm_prev')">📤 上传封面图</button>
+            <input type="hidden" id="m_url" value="${s?.cover_url || ''}">
+          </div>
 
-        <div style="margin-bottom:15px;">
-          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">YouTube 链接</label>
-          <input type="text" id="m_a" value="${s?.audio_url || ''}" placeholder="https://youtube.com/..." style="width:100%; padding:10px;">
-        </div>
+          <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲名字 (Title)</label>
+            <input type="text" id="m_t" value="${s?.title || ''}" placeholder="歌曲名称" style="width:100%; padding:10px;">
+          </div>
 
-        <div style="margin-bottom:15px;">
-          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Google Drive 歌谱链接</label>
-          <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="https://drive.google.com/..." style="width:100%; padding:10px;">
-        </div>
+          <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">YouTube 链接</label>
+            <input type="text" id="m_a" value="${s?.audio_url || ''}" placeholder="https://youtube.com/..." style="width:100%; padding:10px;">
+          </div>
 
-        <div style="margin-bottom:15px;">
-          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲简介 (Description)</label>
-          <textarea id="m_d" placeholder="简单介绍一下这首作品..." style="width:100%; height:80px; padding:10px;">${s?.description || ''}</textarea>
-        </div>
+          <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Google Drive 歌谱链接</label>
+            <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="https://drive.google.com/..." style="width:100%; padding:10px;">
+          </div>
 
-        <div style="margin: 15px 0;">
-          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--gold);">
-            <input type="checkbox" id="m_latest" ${s?.force_latest || s?.is_latest ? 'checked' : ''} style="width:auto;"> 
-            设为最新歌曲 (首页首屏展示)
-          </label>
-        </div>
+          <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲简介 (Description)</label>
+            <textarea id="m_d" placeholder="简单介绍一下这首作品..." style="width:100%; height:80px; padding:10px;">${s?.description || ''}</textarea>
+          </div>
 
-        <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
-          <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveMusic('${s?.id || ''}')">💾 保存作品信息</button>
-          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#musicEditModal').remove()">取消</button>
+          <div style="margin: 15px 0;">
+            <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--gold);">
+              <input type="checkbox" id="m_latest" ${s?.force_latest || s?.is_latest ? 'checked' : ''} style="width:auto;"> 
+              设为最新歌曲 (首页首屏展示)
+            </label>
+          </div>
+
+          <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
+            <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveMusic('${s?.id || ''}')">💾 保存作品信息</button>
+            <button class="btn-tiny" style="flex:1;" onclick="this.closest('#musicEditModal').remove()">取消</button>
+          </div>
         </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
+      `;
+      document.body.appendChild(modal);
+    } catch (err) {
+      console.error("openMusicModal Fail:", err);
+      alert("❌ 无法加载数据: " + (err.message || err));
+    } finally {
+      if (id) { btn.innerText = originalText; btn.disabled = false; }
+    }
   };
 
   window.saveMusic = async(id) => {
@@ -328,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3 style="margin:0; color:var(--gold);">${e.title}</h3>
             <p style="color:#888; font-size:0.85rem; margin:0;"><i class="fas fa-calendar-alt"></i> ${e.event_date || '未设置日期'} | <i class="fas fa-clock"></i> ${e.event_time || '未设置时间'}</p>
             <div style="display:flex; gap:10px; margin-top:10px; justify-content:flex-end;">
-              <button class="btn-tiny" onclick='openEventModal(${JSON.stringify(e).replace(/'/g, "&apos;")})'>编辑</button>
+              <button class="btn-tiny" onclick="openEventModal('${e.id}')">编辑</button>
               <button class="btn-tiny danger" onclick="deleteItem('events', '${e.id}')">删除</button>
             </div>
           </div>
@@ -337,60 +361,93 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  window.openEventModal = (e = null) => {
-    const isEdit = !!e;
-    const modal = document.createElement('div');
-    modal.id = "eventEditModal";
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
-    modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; position:relative; box-shadow: 0 20px 60px rgba(0,0,0,1);">
-        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑活动详情' : '发布新活动'}</h2>
-        
-        <div style="margin-bottom:20px; background: #0a0a0a; padding: 15px; border-radius: 12px; border:1px solid #222;">
-          <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">活动海报预览</label>
-          <img id="ev_prev" src="${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}" style="width:100%; max-height:180px; object-fit:cover; border-radius:8px; margin-bottom:10px; border:1px solid #333;">
-          <input type="file" id="f_ev" style="font-size:0.8rem; color:#888;">
-          <button class="btn-tiny" style="margin-top:10px; width:100%; padding:8px;" onclick="uploadFile('f_ev', 'ev_url', 'ev_prev')">📤 上传活动海报</button>
-          <input type="hidden" id="ev_url" value="${e?.image_url || ''}">
-        </div>
+  window.openEventModal = async (id = null) => {
+    const btn = event.currentTarget;
+    const originalText = btn.innerText;
+    if (id) { btn.innerText = "⏳ 正在拉取..."; btn.disabled = true; }
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
-          <div>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动名称</label>
-            <input type="text" id="ev_t" value="${e?.title || ''}" placeholder="例如：赞美祭" style="width:100%; padding:10px;">
+    try {
+      let e = null;
+      if (id) {
+        const { data, error } = await db.from('events').select('*').eq('id', id).single();
+        if (error) throw error;
+        e = data;
+        // Handle meta parsing if description has it
+        if (e.description?.includes('EXT_META:')) {
+           const metaMatch = e.description.match(/EXT_META:(.*?)\|\|/);
+           if (metaMatch) {
+              try {
+                const meta = JSON.parse(metaMatch[1]);
+                e = {
+                  ...e,
+                  event_date: meta.d || e.event_date,
+                  event_time: meta.tm || e.event_time,
+                  image_url: meta.img || e.image_url,
+                  description: e.description.replace(metaMatch[0], '').trim()
+                };
+              } catch(err) {}
+           }
+        }
+      }
+      const isEdit = !!e;
+      const modal = document.createElement('div');
+      modal.id = "eventEditModal";
+      modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
+      modal.innerHTML = `
+        <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; position:relative; box-shadow: 0 20px 60px rgba(0,0,0,1);">
+          <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑活动详情' : '发布新活动'}</h2>
+          
+          <div style="margin-bottom:20px; background: #0a0a0a; padding: 15px; border-radius: 12px; border:1px solid #222;">
+            <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">活动海报预览</label>
+            <img id="ev_prev" src="${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}" style="width:100%; max-height:180px; object-fit:cover; border-radius:8px; margin-bottom:10px; border:1px solid #333;">
+            <input type="file" id="f_ev" style="font-size:0.8rem; color:#888;">
+            <button class="btn-tiny" style="margin-top:10px; width:100%; padding:8px;" onclick="uploadFile('f_ev', 'ev_url', 'ev_prev')">📤 上传活动海报</button>
+            <input type="hidden" id="ev_url" value="${e?.image_url || ''}">
           </div>
-          <div>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动地点 (名称)</label>
-            <input type="text" id="ev_l" value="${e?.location || ''}" placeholder="例如：吉隆坡大礼堂" style="width:100%; padding:10px;">
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+            <div>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动名称</label>
+              <input type="text" id="ev_t" value="${e?.title || ''}" placeholder="例如：赞美祭" style="width:100%; padding:10px;">
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动地点 (名称)</label>
+              <input type="text" id="ev_l" value="${e?.location || ''}" placeholder="例如：吉隆坡大礼堂" style="width:100%; padding:10px;">
+            </div>
+          </div>
+
+          <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Google Map 链接 (可选)</label>
+            <input type="text" id="ev_ml" value="${e?.map_url || ''}" placeholder="https://goo.gl/maps/..." style="width:100%; padding:10px;">
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+            <div>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动日期</label>
+              <input type="date" id="ev_d" value="${e?.event_date || ''}" style="width:100%; padding:10px;">
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">开始时间</label>
+              <input type="time" id="ev_tm" value="${e?.event_time || ''}" style="width:100%; padding:10px;">
+            </div>
+          </div>
+
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动详情描述</label>
+          <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:100px; margin-bottom:20px; padding:10px;">${e?.description || ''}</textarea>
+
+          <div style="display:flex; gap:15px; position:sticky; bottom:0; background:#111; padding-top:10px; border-top:1px solid #222;">
+            <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveEvent('${e?.id || ''}')">🚀 立即保存</button>
+            <button class="btn-tiny" style="flex:1;" onclick="this.closest('#eventEditModal').remove()">取消</button>
           </div>
         </div>
-
-        <div style="margin-bottom:15px;">
-          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Google Map 链接 (可选)</label>
-          <input type="text" id="ev_ml" value="${e?.map_url || ''}" placeholder="https://goo.gl/maps/..." style="width:100%; padding:10px;">
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
-          <div>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动日期</label>
-            <input type="date" id="ev_d" value="${e?.event_date || ''}" style="width:100%; padding:10px;">
-          </div>
-          <div>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">开始时间</label>
-            <input type="time" id="ev_tm" value="${e?.event_time || ''}" style="width:100%; padding:10px;">
-          </div>
-        </div>
-
-        <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动详情描述</label>
-        <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:100px; margin-bottom:20px; padding:10px;">${e?.description || ''}</textarea>
-
-        <div style="display:flex; gap:15px; position:sticky; bottom:0; background:#111; padding-top:10px; border-top:1px solid #222;">
-          <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveEvent('${e?.id || ''}')">🚀 立即保存</button>
-          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#eventEditModal').remove()">取消</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
+      `;
+      document.body.appendChild(modal);
+    } catch (err) {
+      console.error("openEventModal Fail:", err);
+      alert("😰 无法加载活动数据: " + (err.message || err));
+    } finally {
+      if (id) { btn.innerText = originalText; btn.disabled = false; }
+    }
   };
 
   window.saveEvent = async(id) => {
@@ -462,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <img src="${f.image_url || 'https://via.placeholder.com/400x300?text=No+Photo'}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:8px; border:1px solid #333;">
             <p style="color:#888; font-size:0.85rem; height:40px; overflow:hidden;">${f.description || '无描述'}</p>
             <div style="display:flex; gap:10px; justify-content:flex-end;">
-              <button class="btn-tiny" onclick='openFootprintModal(${JSON.stringify(f).replace(/'/g, "&apos;")})'>编辑</button>
+              <button class="btn-tiny" onclick="openFootprintModal('${f.id}')">编辑</button>
               <button class="btn-tiny danger" onclick="deleteItem('footprints', '${f.id}')">删除</button>
             </div>
           </div>
@@ -471,29 +528,45 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  window.openFootprintModal = (f = null) => {
-    const isEdit = !!f;
-    const modal = document.createElement('div');
-    modal.id = 'footprintModal';
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
-    modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;">
-        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑足迹' : '添加足迹'}</h2>
-        <div style="margin-bottom:20px;">
-          <img id="fp_prev" src="${f?.image_url || 'https://via.placeholder.com/400x300?text=Preview'}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px; margin-bottom:15px; border:1px solid #333;">
-          <input type="file" id="f_fp">
-          <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('f_fp', 'fp_url', 'fp_prev')">上传照片</button>
-          <input type="hidden" id="fp_url" value="${f?.image_url || ''}">
+  window.openFootprintModal = async (id = null) => {
+    const btn = event.currentTarget;
+    const originalText = btn.innerText;
+    if (id) { btn.innerText = "⏳..."; btn.disabled = true; }
+
+    try {
+      let f = null;
+      if (id) {
+        const { data, error } = await db.from('footprints').select('*').eq('id', id).single();
+        if (error) throw error;
+        f = data;
+      }
+      const isEdit = !!f;
+      const modal = document.createElement('div');
+      modal.id = 'footprintModal';
+      modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
+      modal.innerHTML = `
+        <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;">
+          <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑足迹' : '添加足迹'}</h2>
+          <div style="margin-bottom:20px;">
+            <img id="fp_prev" src="${f?.image_url || 'https://via.placeholder.com/400x300?text=Preview'}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px; margin-bottom:15px; border:1px solid #333;">
+            <input type="file" id="f_fp">
+            <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('f_fp', 'fp_url', 'fp_prev')">上传照片</button>
+            <input type="hidden" id="fp_url" value="${f?.image_url || ''}">
+          </div>
+          <label>照片描述 (悬浮显示)</label>
+          <textarea id="fp_desc" placeholder="请输入照片描述..." style="width:100%; height:80px; margin-bottom:20px;">${f?.description || ''}</textarea>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-submit" style="flex:2;" onclick="saveFootprint('${f?.id || ''}')">确认保存</button>
+            <button class="btn-tiny" style="flex:1;" onclick="this.closest('#footprintModal').remove()">取消</button>
+          </div>
         </div>
-        <label>照片描述 (悬浮显示)</label>
-        <textarea id="fp_desc" placeholder="请输入照片描述..." style="width:100%; height:80px; margin-bottom:20px;">${f?.description || ''}</textarea>
-        <div style="display:flex; gap:10px;">
-          <button class="btn btn-submit" style="flex:2;" onclick="saveFootprint('${f?.id || ''}')">确认保存</button>
-          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#footprintModal').remove()">取消</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
+      `;
+      document.body.appendChild(modal);
+    } catch (err) {
+      alert("错误: " + err.message);
+    } finally {
+      if (id) { btn.innerText = originalText; btn.disabled = false; }
+    }
   };
 
   window.saveFootprint = async(id) => {
@@ -509,99 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCMS();
   };
 
-  // --- 🎙️ SINGERS MODULE ---
-  async function renderSingers(container) {
-    const { data: singers } = await db.from('singers').select('*').order('created_at', {ascending: false});
-    container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-        <h1 style="color:var(--gold);">福音歌手管理 (Singers)</h1>
-        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openSingerModal()">+ 新建歌手</button>
-      </div>
-      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
-        ${singers?.map(s => `
-          <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:12px;">
-            <img src="${s.image_url || 'https://via.placeholder.com/300x400?text=Avatar'}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:8px; border:1px solid #333;">
-            <h3 style="margin:0; color:var(--gold);">${s.name}</h3>
-            <p style="color:#888; font-size:0.85rem; line-height:1.4; height:60px; overflow:hidden;">${s.bio || '无简介'}</p>
-            <div style="display:flex; gap:10px; justify-content:flex-end;">
-              <button class="btn-tiny" onclick='openSingerModal(${JSON.stringify(s).replace(/'/g, "&apos;")})'>编辑</button>
-              <button class="btn-tiny danger" onclick="deleteItem('singers', '${s.id}')">删除</button>
-            </div>
-          </div>
-        `).join('') || '<p>暂无歌手，请点击右上角新建。</p>'}
-      </div>
-    `;
-  }
 
-  window.openSingerModal = (s = null) => {
-    const isEdit = !!s;
-    const modal = document.createElement('div');
-    modal.id = 'singerModal';
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
-    modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;">
-        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑歌手' : '发布新歌手'}</h2>
-        <div style="margin-bottom:20px;">
-          <img id="s_prev" src="${s?.image_url || 'https://via.placeholder.com/300x400?text=Preview'}" style="width:120px; aspect-ratio:3/4; object-fit:cover; border-radius:8px; display:block; margin:0 auto 15px; border:1px solid #333;">
-          <input type="file" id="f_s">
-          <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('f_s', 's_url', 's_prev')">上传歌手照片</button>
-          <input type="hidden" id="s_url" value="${s?.image_url || ''}">
-        </div>
-        <label>歌手名字</label>
-        <input type="text" id="s_n" value="${s?.name || ''}" placeholder="姓名" style="width:100%; margin-bottom:15px;">
-        <label>个人简介 (建议一段话)</label>
-        <textarea id="s_b" placeholder="请输入歌手简介..." style="width:100%; height:100px; margin-bottom:20px;">${s?.bio || ''}</textarea>
-        <div style="display:flex; gap:10px;">
-          <button class="btn btn-submit" style="flex:2;" onclick="saveSinger('${s?.id || ''}')">确认保存</button>
-          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#singerModal').remove()">取消</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-  };
-
-  window.saveSinger = async(id) => {
-    const payload = {
-      name: document.getElementById('s_n').value,
-      bio: document.getElementById('s_b').value,
-      image_url: document.getElementById('s_url').value
-    };
-    if(id) await db.from('singers').update(payload).eq('id', id);
-    else await db.from('singers').insert([payload]);
-    renderCMS();
-  };
-  async function renderDiary(container) {
-    const { data: albums } = await db.from('diary_albums').select('*').order('date', {ascending: false});
-    container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-        <h1 style="color:var(--gold);">田野日记管理</h1>
-        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openDiaryModal()">+ 新建相册</button>
-      </div>
-      
-      <div style="display:flex; flex-direction:column; gap:20px;">
-        ${albums?.map(a => `
-          <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px;">
-            <!-- 第一排：相册封面与基本信息 -->
-            <div style="display:flex; gap:20px; align-items:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid #1a1a1a;">
-               <img src="${a.cover_url || 'https://via.placeholder.com/150x150?text=Diary'}" style="width:100px; height:100px; object-fit:cover; border-radius:8px; border:1px solid #333;">
-               <div style="flex:1;">
-                  <h3 style="margin:0; color:#fff; font-size:1.2rem;">${a.title}</h3>
-                  <p style="margin:5px 0; color:#666; font-size:0.85rem;">发布日期: ${a.date || '未知'}</p>
-                  <p style="margin:0; color:#444; font-size:0.8rem;">记录音乐背后的每一个动人瞬间。</p>
-               </div>
-            </div>
-
-            <!-- 第二排：操作按钮 -->
-            <div style="display:flex; gap:10px; justify-content: flex-end;">
-              <button class="btn-tiny" style="padding:8px 15px;" onclick='openDiaryModal(${JSON.stringify(a).replace(/'/g, "&apos;")})'>✏️ 编辑详情 (Edit Details)</button>
-              <button class="btn-tiny" style="padding:8px 25px;" onclick="managePhotos('${a.id}')">🖼️ 管理相册照片 (Manage Photos)</button>
-              <button class="btn-tiny danger" style="padding:8px 15px;" onclick="deleteItem('diary_albums', '${a.id}')">🗑️ 删除相册 (Delete)</button>
-            </div>
-          </div>
-        `).join('') || '<p style="text-align:center; color:#444;">暂无日记数据</p>'}
-      </div>
-    `;
-  }
 
   // --- 🎙️ SINGER MODULE ---
   async function renderSingers(container) {
@@ -977,35 +958,56 @@ document.addEventListener('DOMContentLoaded', () => {
     alert("所有页面海报及背景图更新成功!");
   };
   
-  window.openDiaryModal = (a = null) => {
-    const isEdit = !!a;
-    const modal = document.createElement('div');
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
-    modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;">
-        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑日记相册' : '新建日记相册'}</h2>
-        
-        <div style="margin-bottom:20px;">
-          <label>相册封面 (Cover Image)</label>
-          <img id="da_prev" src="${a?.cover_url || 'https://via.placeholder.com/400x300?text=Preview'}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px; margin-bottom:15px; border:1px solid #333;">
-          <input type="file" id="f_da_cover">
-          <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('f_da_cover', 'da_url', 'da_prev')">上传封面</button>
-          <input type="hidden" id="da_url" value="${a?.cover_url || ''}">
+  window.openDiaryModal = async (id = null) => {
+    const btn = event.currentTarget;
+    const originalText = btn.innerText;
+    if (id) { btn.innerText = "⏳..."; btn.disabled = true; }
+
+    try {
+      let a = null;
+      if (id) {
+        const { data, error } = await db.from('diary_albums').select('*').eq('id', id).single();
+        if (error) throw error;
+        a = data;
+      }
+      const isEdit = !!a;
+      const modal = document.createElement('div');
+      modal.id = 'diaryAlbumModal';
+      modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
+      modal.innerHTML = `
+        <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,1);">
+          <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑日记相册' : '新建日记相册'}</h2>
+          
+          <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222;">
+            <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem;">相册封面 (Album Cover)</label>
+            <img id="da_prev" src="${a?.cover_url || 'https://via.placeholder.com/600x400?text=Album+Cover'}" style="width:100%; aspect-ratio:1.6/1; object-fit:cover; border-radius:8px; display:block; margin:0 auto 15px; border:1px solid #333; background:#222;">
+            <input type="file" id="daf_up" style="font-size:0.8rem; color:#888;">
+            <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('daf_up', 'da_url', 'da_prev')">📤 上传相册封面图</button>
+            <input type="hidden" id="da_url" value="${a?.cover_url || ''}">
+          </div>
+
+          <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">相册名称 (Album Name)</label>
+            <input type="text" id="da_title" value="${a?.title || ''}" placeholder="例如：2026 巴生谷田野调查" style="width:100%; padding:10px;">
+          </div>
+
+          <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">相册日期 (Album Date)</label>
+            <input type="date" id="da_date" value="${a?.date || ''}" style="width:100%; padding:10px;">
+          </div>
+
+          <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
+            <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveDiaryAlbum('${a?.id || ''}')">💾 保存相册信息</button>
+            <button class="btn-tiny" style="flex:1;" onclick="this.closest('#diaryAlbumModal').remove()">取消</button>
+          </div>
         </div>
-
-        <label>文件夹名称 (Folder Title)</label>
-        <input type="text" id="da_title" value="${a?.title || ''}" placeholder="例如: 某某现场记录" style="width:100%; margin-bottom:15px;">
-
-        <label>发生日期 (Event Date)</label>
-        <input type="date" id="da_date" value="${a?.date || ''}" style="width:100%; margin-bottom:20px;">
-
-        <div style="display:flex; gap:10px;">
-          <button class="btn btn-submit" style="flex:2;" onclick="saveDiaryAlbum('${a?.id || ''}')">确认保存</button>
-          <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.remove()">取消</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
+      `;
+      document.body.appendChild(modal);
+    } catch (err) {
+      alert("日记加载失败: " + err.message);
+    } finally {
+      if (id) { btn.innerText = originalText; btn.disabled = false; }
+    }
   };
 
   window.saveDiaryAlbum = async(id) => {

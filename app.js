@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (aboutContainer && siteConfigs['cfg_about_video']) {
       const videoUrl = siteConfigs['cfg_about_video'];
       const finalUrl = videoUrl + (videoUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
-      aboutContainer.innerHTML = `<video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; display:block; background:#000;"><source src="${finalUrl}"></video>`;
+      aboutContainer.innerHTML = `<video controls autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; display:block; background:#000;"><source src="${finalUrl}"></video>`;
       // Force play after insertion
       setTimeout(() => { aboutContainer.querySelector('video')?.play().catch(e => console.log("Autoplay block checked: ", e)); }, 100);
     }
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           ytBtn.innerHTML = `
             ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-premium"><i class="fab fa-youtube"></i> Watch on YouTube</a>` : ''}
-            ${scoreLink ? `<a href="${scoreLink}" target="_blank" class="btn-premium" style="background:#fff; color:#0e0e0e;"><i class="fas fa-file-pdf"></i> Download Scores</a>` : ''}
+            ${scoreLink ? `<a href="${scoreLink}" target="_blank" class="btn-premium"><i class="fas fa-file-pdf"></i> Download Scores</a>` : ''}
           `;
         }
       }
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
                <div class="song-card-actions">
                 ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-yt"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
                 ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-score"><i class="fas fa-file-pdf"></i> 下载歌谱集</a>` : ''}
-                <a href="feedback.html?id=${s.id}" class="btn-frosted-white" style="padding: 10px 15px; font-size: 0.75rem;"><i class="fas fa-bullhorn"></i> 回声 (Echo)</a>
+                <a href="feedback.html?id=${s.id}" class="btn-frosted-white"><i class="fas fa-bullhorn"></i> 回声 (Echo)</a>
               </div>
             </div>
           </div>`;
