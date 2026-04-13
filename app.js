@@ -100,10 +100,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const aboutContainer = document.getElementById('cfg_about_media_container');
     if (aboutContainer && siteConfigs['cfg_about_video']) {
       const videoUrl = siteConfigs['cfg_about_video'];
+      const chaptersRaw = siteConfigs['cfg_about_video_chapters'] || '[]';
       const finalUrl = videoUrl + (videoUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
-      aboutContainer.innerHTML = `<video controls autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; display:block; background:#000;"><source src="${finalUrl}"></video>`;
-      // Force play after insertion
-      setTimeout(() => { aboutContainer.querySelector('video')?.play().catch(e => console.log("Autoplay block checked: ", e)); }, 100);
+      
+      aboutContainer.classList.add('v-container');
+      aboutContainer.innerHTML = `
+        <video id="aboutVideo" playsinline style="width:100%; height:100%; object-fit:cover;">
+          <source src="${finalUrl}">
+        </video>
+        <div class="v-controls">
+          <div class="v-progress-wrapper" id="vProgressWrapper">
+            <div class="v-progress-bar" id="vProgressBar"></div>
+            <div id="vMarkers"></div>
+          </div>
+          <div class="v-btn-row">
+            <button class="v-btn" id="vPlayBtn"><i class="fas fa-play"></i></button>
+            <button class="v-btn" id="vMuteBtn"><i class="fas fa-volume-up"></i></button>
+            <span class="v-time" id="vTime">00:00 / 00:00</span>
+          </div>
+        </div>
+      `;
+      initCustomVideoPlayer(aboutContainer, chaptersRaw);
     }
     document.querySelectorAll('[id^="cfg_"]').forEach(el => {
       let key = el.id;
@@ -120,6 +137,64 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   syncSiteContent();
+
+  function initCustomVideoPlayer(container, chaptersRaw) {
+    const video = container.querySelector('video');
+    const playBtn = container.querySelector('#vPlayBtn');
+    const muteBtn = container.querySelector('#vMuteBtn');
+    const progressWrapper = container.querySelector('#vProgressWrapper');
+    const progressBar = container.querySelector('#vProgressBar');
+    const timeDisplay = container.querySelector('#vTime');
+    const markersContainer = container.querySelector('#vMarkers');
+
+    let chapters = [];
+    try { chapters = JSON.parse(chaptersRaw); } catch(e) { console.warn("Chapters JSON error:", e); }
+
+    const formatTime = (s) => {
+      const min = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    };
+
+    video.addEventListener('loadedmetadata', () => {
+      timeDisplay.innerText = `0:00 / ${formatTime(video.duration)}`;
+      // Render Markers
+      markersContainer.innerHTML = '';
+      chapters.forEach(ch => {
+        const marker = document.createElement('div');
+        marker.className = 'v-marker';
+        marker.style.left = `${(ch.t / video.duration) * 100}%`;
+        marker.innerHTML = `<div class="v-tooltip">${ch.title}</div>`;
+        marker.onclick = (e) => { e.stopPropagation(); video.currentTime = ch.t; if(video.paused) video.play(); };
+        markersContainer.appendChild(marker);
+      });
+      video.play().catch(() => playBtn.innerHTML = '<i class="fas fa-play"></i>');
+    });
+
+    video.addEventListener('timeupdate', () => {
+      const pct = (video.currentTime / video.duration) * 100;
+      progressBar.style.width = pct + '%';
+      timeDisplay.innerText = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+    });
+
+    playBtn.onclick = () => {
+      if (video.paused) { video.play(); playBtn.innerHTML = '<i class="fas fa-pause"></i>'; }
+      else { video.pause(); playBtn.innerHTML = '<i class="fas fa-play"></i>'; }
+    };
+    
+    video.onclick = () => playBtn.click();
+
+    muteBtn.onclick = () => {
+      video.muted = !video.muted;
+      muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+    };
+
+    progressWrapper.onclick = (e) => {
+      const rect = progressWrapper.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      video.currentTime = pct * video.duration;
+    };
+  }
 
   async function fetchLatestMusicForHome() {
     // 🛡️ TRIPLE-LAYER FETCH FOR LATEST MUSIC (Schema-Safe)

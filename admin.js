@@ -885,6 +885,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="hidden" id="url_about_v" value="${c['cfg_about_video']||''}">
           </div>
 
+          <div class="banner-edit-item" style="grid-column: 1 / -1; border-top: 1px solid #222; padding-top: 15px;">
+            <label style="color:var(--gold);"><i class="fas fa-bookmark"></i> 视频章节标记 (Video Chapters JSON)</label>
+            <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">请输入 JSON 数组。例如: <code>[{"t":0, "title":"开场"}, {"t":60, "title":"核心愿景"}]</code></p>
+            <textarea id="cfg_about_video_chapters" style="width:100%; height:80px; background:#0a0a0a; border:1px solid #333; color:var(--gold); font-family:monospace; padding:10px; font-size:0.8rem;">${c['cfg_about_video_chapters'] || '[{"t":0,"title":"开始"}]'}</textarea>
+          </div>
+
           <div class="banner-edit-item">
             <label>联系我们 背景</label>
             <img id="prev_contact" src="${c['cfg_contact_banner']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0;">
@@ -947,6 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.saveBanners = async() => {
     const banners = [
       {k: 'cfg_about_video', v: document.getElementById('url_about_v').value},
+      {k: 'cfg_about_video_chapters', v: document.getElementById('cfg_about_video_chapters').value},
       {k: 'cfg_contact_banner', v: document.getElementById('url_contact').value},
       {k: 'cfg_submit_poster', v: document.getElementById('url_submit').value},
       {k: 'cfg_submit_btn_link', v: document.getElementById('cfg_submit_btn_link').value},
