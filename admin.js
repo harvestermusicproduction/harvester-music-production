@@ -1110,32 +1110,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function renderEchoes(container) {
     const { data: echoes } = await db.from('contact_messages').select('*').ilike('message', '[ECHO]%').order('created_at', {ascending: false});
+    
+    // 🛡️ Fetch approved IDs for moderation UI
+    const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
+    const approvedIds = cfg?.value ? cfg.value.split(',') : [];
+
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-        <h1 style="color:var(--gold);">回声空间留言管理 (Echo Space)</h1>
-        <p style="color:#666;">管理您的 3D 宇宙中的感悟记录</p>
+        <h1 style="color:var(--gold);">回声空间留言管理 (Echo Moderation)</h1>
+        <p style="color:#666;">审核通过的留言将以 X 轴漂浮方式呈现在“回声空间” 3D 宇宙中。</p>
       </div>
-      <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px;">
-        <table style="width:100%; border-collapse:collapse; color:#eee;">
+      <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px; overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; color:#eee; min-width:600px;">
           <thead>
-            <tr style="border-bottom:1px solid #333; text-align:left;">
-              <th style="padding:15px;">日期</th>
-              <th style="padding:15px;">发送者</th>
-              <th style="padding:15px;">感悟回声 (Message)</th>
-              <th style="padding:15px; text-align:right;">操作</th>
+            <tr style="border-bottom:1px solid #333; text-align:left; background:#111;">
+              <th style="padding:15px; font-size:0.8rem; color:#666;">日期 (Date)</th>
+              <th style="padding:15px; font-size:0.8rem; color:#666;">发送者 (Sender)</th>
+              <th style="padding:15px; font-size:0.8rem; color:#666;">留言内容 (Echo Message)</th>
+              <th style="padding:15px; font-size:0.8rem; color:#666;">状态 (Status)</th>
+              <th style="padding:15px; font-size:0.8rem; color:#666; text-align:right;">管理操作 (Actions)</th>
             </tr>
           </thead>
           <tbody>
-            ${echoes?.map(e => `
-              <tr style="border-bottom:1px solid #1a1a1a;">
-                <td style="padding:15px; font-size:0.85rem; color:#666;">${new Date(e.created_at).toLocaleString()}</td>
-                <td style="padding:15px; color:var(--gold);">${e.name || 'Anonymous'}</td>
-                <td style="padding:15px; font-style:italic;">"${e.message.replace('[ECHO] ', '')}"</td>
-                <td style="padding:15px; text-align:right;">
-                  <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${e.id}')">🗑️ 删除回声 (Delete)</button>
-                </td>
-              </tr>
-            `).join('') || '<tr><td colspan="4" style="padding:30px; text-align:center; color:#444;">宇宙中还没有回声...</td></tr>'}
+            ${echoes?.map(e => {
+              const isApproved = approvedIds.includes(e.id.toString());
+              return `
+                <tr style="border-bottom:1px solid #1a1a1a; transition:0.3s;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
+                  <td style="padding:15px; font-size:0.8rem; color:#555;">${new Date(e.created_at).toLocaleDateString()}</td>
+                  <td style="padding:15px; color:var(--gold); font-weight:500;">${e.name || '神秘听众'}</td>
+                  <td style="padding:15px; font-style:italic; color:#ccc;">"${e.message.replace('[ECHO]', '').trim()}"</td>
+                  <td style="padding:15px;">
+                    <span style="padding:4px 10px; border-radius:50px; font-size:0.7rem; background:${isApproved ? 'rgba(100,210,138,0.1)' : 'rgba(255,255,255,0.05)'}; color:${isApproved ? '#64D28A' : '#444'}; border:1px solid ${isApproved ? 'rgba(100,210,138,0.2)' : 'rgba(255,255,255,0.1)'};">
+                      ${isApproved ? '● 已在宇宙呈现' : '○ 待审核/隐藏'}
+                    </span>
+                  </td>
+                  <td style="padding:15px; text-align:right; white-space:nowrap;">
+                    <button class="btn-tiny" style="margin-right:5px; border-color:${isApproved ? '#444' : 'var(--gold)'}; color:${isApproved ? '#888' : 'var(--gold)'};" onclick="toggleEchoApproval('${e.id}', ${isApproved})">
+                      ${isApproved ? '隐藏回声' : '批准呈现'}
+                    </button>
+                    <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${e.id}')">🗑️</button>
+                  </td>
+                </tr>
+              `;
+            }).join('') || '<tr><td colspan="5" style="padding:50px; text-align:center; color:#444;">宇宙中还没有回声...</td></tr>'}
           </tbody>
         </table>
       </div>
