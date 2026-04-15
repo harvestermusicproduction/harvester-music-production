@@ -348,9 +348,14 @@ header.scrolled {
   font-weight: 500 !important;
 }
 
-.btn-frosted-yt { border-color: rgba(255, 0, 0, 0.4) !important; }
-.btn-frosted-score { border-color: rgba(246, 210, 138, 0.4) !important; }
-.btn-frosted-white { border-color: rgba(246, 210, 138, 0.4) !important; }
+.btn-frosted-yt, .btn-frosted-score, .btn-frosted-white { 
+  border-color: rgba(255, 255, 255, 0.25) !important; 
+}
+.btn-frosted-yt:hover, .btn-frosted-score:hover, .btn-frosted-white:hover {
+  border-color: #fff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
 
 [class*="btn-frosted"]:hover, .btn-dl:hover {
   background: rgba(246, 210, 138, 0.15) !important;

@@ -277,32 +277,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('musicContainer');
     if(!container) return;
     try {
+      console.log("🎵 Harvester Music: Fetching works from DB...");
       const { data: docs, error } = await db.from('music_works').select('*').order('created_at', { ascending: false });
-      if (error) throw error;
+      
+      if (error) {
+        console.error("❌ Supabase DB Error:", error);
+        container.innerHTML = `<div style="text-align:center; padding: 4rem; color: #888;">抱歉，无法连接到乐库 (${error.message || 'Unknown Error'})</div>`;
+        return;
+      }
+
+      if (!docs || docs.length === 0) {
+        console.warn("⚠️ Harvester Music: No works found in database.");
+        container.innerHTML = `<div style="text-align:center; padding: 4rem; color: #888;">目前还没有在此发布作品。</div>`;
+        return;
+      }
+
       let html = "";
       docs.forEach(s => {
-        const ytLink = s.audio_url || s.youtube_url; 
-        const fallback = 'assets/logo.png';
-        const coverImg = s.cover_url || s.image_url || fallback;
+        try {
+          const ytLink = s.audio_url || s.youtube_url; 
+          const fallback = 'assets/logo.png';
+          const coverImg = s.cover_url || s.image_url || fallback;
 
-        html += `<div class="song-work-card fade-in visible">
-            <div class="mini-vinyl-wrap" style="position:relative;" onmouseenter="startNotes(this)" onmouseleave="stopNotes(this)">
-                <div class="mini-vinyl"><img src="${coverImg}" onerror="this.src='${fallback}'"></div>
-            </div>
-            <div class="song-content-area">
-              <h3 class="song-card-title">${s.title || 'Untitled'}</h3>
-              <p class="song-card-desc">${s.description || ''}</p>
-               <div class="song-card-actions">
-                ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-yt"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
-                ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-score"><i class="fas fa-file-pdf"></i> 下载歌谱集</a>` : ''}
-                <a href="feedback.html?id=${s.id}" class="btn-frosted-white"><i class="fas fa-bullhorn"></i> 回声 (Echo)</a>
+          html += `<div class="song-work-card fade-in visible">
+              <div class="mini-vinyl-wrap" style="position:relative;" onmouseenter="startNotes(this)" onmouseleave="stopNotes(this)">
+                  <div class="mini-vinyl"><img src="${coverImg}" onerror="this.src='${fallback}'"></div>
               </div>
-            </div>
-          </div>`;
+              <div class="song-content-area">
+                <h3 class="song-card-title">${s.title || 'Untitled'}</h3>
+                <p class="song-card-desc">${s.description || ''}</p>
+                 <div class="song-card-actions">
+                  ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-yt"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
+                  ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-score"><i class="fas fa-file-pdf"></i> 下载歌谱集</a>` : ''}
+                  <a href="feedback.html?id=${s.id}" class="btn-frosted-white"><i class="fas fa-bullhorn"></i> 回声 (Echo)</a>
+                </div>
+              </div>
+            </div>`;
+        } catch (cardErr) {
+          console.error("❌ Song Card Render Error:", cardErr);
+        }
       });
       container.innerHTML = html;
       refreshObserver();
-    } catch (err) {}
+      console.log(`✅ Harvester Music: ${docs.length} works rendered.`);
+    } catch (err) {
+      console.error("❌ fetchMusic Critical Error:", err);
+      container.innerHTML = `<div style="text-align:center; padding: 4rem; color: #888;">加载失败，请刷新页面。</div>`;
+    }
   }
 
   async function fetchEvents() {
