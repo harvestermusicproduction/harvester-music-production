@@ -127,7 +127,7 @@ header.scrolled {
   transition: 0.3s;
 }
 .nav-logo { 
-  height: 20px !important; 
+  height: 35px !important; 
   width: auto; 
   object-fit: contain; 
   display: block; 
@@ -285,7 +285,7 @@ header.scrolled {
 .ppt-header {
   position: relative;
   max-width: 1200px;
-  margin: 4rem auto 3rem;
+  margin: 4rem auto 1.5rem;
   padding: 0 2rem;
   text-align: left;
 }
@@ -1687,7 +1687,7 @@ body.harvest-active {
   /* 🔋 Tablet Specific Polish */
   .ppt-header { padding: 3rem 4rem 2rem; }
   .ppt-title { font-size: 2.8rem; }
-  .nav-logo { height: 20px; }
+  .nav-logo { height: 35px; }
   .logo { font-size: 1.6rem; }
 }
 
@@ -1702,7 +1702,7 @@ body.harvest-active {
   }
   
   header { padding: 1rem 1.5rem !important; }
-  .nav-logo { height: 20px; }
+  .nav-logo { height: 35px; }
   .logo { font-size: 1.4rem !important; }
   
   /* Show Toggle */

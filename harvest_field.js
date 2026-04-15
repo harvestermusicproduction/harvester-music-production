@@ -3,7 +3,7 @@
  * Features: High-performance 3D field with interactive hover-to-reveal singer profiles.
  */
 
-const db = window.supabase;
+let db;
 let scene, camera, renderer, raycaster, mouse;
 let wheatMesh, singerMesh;
 let singers = [];
@@ -20,6 +20,13 @@ const CONFIG = {
 };
 
 async function init() {
+  // 0. Database Connection
+  db = window.supabase;
+  if (!db) {
+    console.error("Supabase client not found. Retrying in 1s...");
+    setTimeout(init, 1000);
+    return;
+  }
   // 1. Scene Setup
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x050508);
@@ -91,10 +98,22 @@ function createField() {
 }
 
 async function loadSingers() {
-  const { data, error } = await db.from('singers').select('*');
-  if (error || !data) return;
-  allSingers = data;
-  renderSingers('all');
+  try {
+    const { data, error } = await db.from('singers').select('*');
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      console.warn("No singers found in database.");
+      return;
+    }
+    allSingers = data;
+    renderSingers('all');
+    // Hide loading screen if it exists
+    const loader = document.getElementById('scene-loader');
+    if(loader) loader.style.opacity = '0';
+    setTimeout(() => { if(loader) loader.remove(); }, 1000);
+  } catch (err) {
+    console.error("LoadSingers error:", err);
+  }
 }
 
 function renderSingers(category) {
