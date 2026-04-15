@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://harvester-music.com/</loc><priority>1.0</priority></url>
-  <url><loc>https://harvester-music.com/music.html</loc><priority>0.9</priority></url>
-  <url><loc>https://harvester-music.com/events.html</loc><priority>0.8</priority></url>
-  <url><loc>https://harvester-music.com/about.html</loc><priority>0.8</priority></url>
-  <url><loc>https://harvester-music.com/singers.html</loc><priority>0.8</priority></url>
-  <url><loc>https://harvester-music.com/feedback.html</loc><priority>0.7</priority></url>
-  <url><loc>https://harvester-music.com/diary.html</loc><priority>0.7</priority></url>
-  <url><loc>https://harvester-music.com/submit.html</loc><priority>0.6</priority></url>
-  <url><loc>https://harvester-music.com/support.html</loc><priority>0.5</priority></url>
-  <url><loc>https://harvester-music.com/contact.html</loc><priority>0.5</priority></url>
+  <url><loc>https://www.harvestermusic.my/</loc><priority>1.0</priority></url>
+  <url><loc>https://www.harvestermusic.my/music.html</loc><priority>0.9</priority></url>
+  <url><loc>https://www.harvestermusic.my/events.html</loc><priority>0.8</priority></url>
+  <url><loc>https://www.harvestermusic.my/about.html</loc><priority>0.8</priority></url>
+  <url><loc>https://www.harvestermusic.my/singers.html</loc><priority>0.8</priority></url>
+  <url><loc>https://www.harvestermusic.my/feedback.html</loc><priority>0.7</priority></url>
+  <url><loc>https://www.harvestermusic.my/diary.html</loc><priority>0.7</priority></url>
+  <url><loc>https://www.harvestermusic.my/submit.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.harvestermusic.my/support.html</loc><priority>0.5</priority></url>
+  <url><loc>https://www.harvestermusic.my/contact.html</loc><priority>0.5</priority></url>
 </urlset>
