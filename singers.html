@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>福音歌手 - Harvester Music Production</title>
+  <title>歌手 Singers - Harvester Music Production</title>
   <link rel="stylesheet" href="styles.css?v=4.6.3">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -15,7 +15,9 @@
   <!-- Navigation Layer -->
   <header style="z-index:1000; position: fixed; width: 100%; top: 0; left: 0; background: transparent;">
     <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem; padding: 1rem 2rem;">
-      <a href="index.html" class="logo" style="text-decoration:none; color:var(--gold); pointer-events: auto;">Harvester</a>
+      <a href="index.html" class="logo" style="text-decoration:none;">
+        <img src="assets/logo.png" alt="Harvester" class="nav-logo" style="height: 80px;">
+      </a>
     </div>
     <div class="menu-toggle" onclick="toggleMobileMenu()" style="pointer-events: auto; padding: 1rem 2rem;">
       <span></span>
@@ -28,7 +30,7 @@
       <a href="feedback.html">回声空间</a>
       <a href="events.html">活动</a>
       <a href="diary.html">田野日志</a>
-      <a href="singers.html" class="active">福音歌手</a>
+      <a href="singers.html" class="active">歌手</a>
       <a href="submit.html">我要投稿</a>
       <a href="about.html">关于我们</a>
       <a href="support.html">支持我们</a>
@@ -42,7 +44,7 @@
     <a href="feedback.html">回声空间</a>
     <a href="events.html">活动</a>
     <a href="diary.html">田野日志</a>
-    <a href="singers.html" class="active">福音歌手</a>
+    <a href="singers.html" class="active">歌手</a>
     <a href="submit.html">我要投稿</a>
     <a href="about.html">关于我们</a>
     <a href="support.html">支持我们</a>
@@ -54,11 +56,58 @@
     <div class="ppt-line"></div>
     <div class="ppt-meta">
       <span class="ppt-number">05</span>
-      <span>COMMUNITY / 福音歌手</span>
+      <span>COMMUNITY / 歌手</span>
     </div>
-    <h1 class="ppt-title" style="color:var(--gold);">福音歌手</h1>
+    <h1 class="ppt-title" style="color:var(--gold);">歌手系统</h1>
     <p class="ppt-subtitle">THE VOICES OF HARVEST FIELD</p>
   </div>
+
+  <!-- Category Selection Tabs -->
+  <div class="singer-categories fade-in" style="position:fixed; top:18rem; left:50%; transform:translateX(-50%); z-index:1000; display:flex; gap:2rem;">
+    <button onclick="switchCategory('all')" id="tab-all" class="tab-btn active">全部作品</button>
+    <button onclick="switchCategory('福音')" id="tab-gospel" class="tab-btn">福音歌手</button>
+    <button onclick="switchCategory('敬拜')" id="tab-worship" class="tab-btn">敬拜歌手</button>
+  </div>
+
+  <style>
+    .singer-categories {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: 0.3s;
+      padding: 5px 15px;
+      position: relative;
+    }
+    .tab-btn.active {
+      color: var(--gold);
+      font-weight: 500;
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+    .tab-btn:hover {
+      color: #fff;
+    }
+  </style>
 
   <!-- Detail Card Overlay (Glassmorphism) -->
   <div id="singer-card-overlay" class="hidden">

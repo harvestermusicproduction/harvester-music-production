@@ -7,6 +7,7 @@ const db = window.supabase;
 let scene, camera, renderer, raycaster, mouse;
 let wheatMesh, singerMesh;
 let singers = [];
+let allSingers = []; // Master list
 let hoverId = -1;
 let currentDepth = 0;
 let targetDepth = 0;
@@ -92,8 +93,24 @@ function createField() {
 async function loadSingers() {
   const { data, error } = await db.from('singers').select('*');
   if (error || !data) return;
-  singers = data;
+  allSingers = data;
+  renderSingers('all');
+}
 
+function renderSingers(category) {
+  // 1. Cleanup old mesh
+  if (singerMesh) scene.remove(singerMesh);
+
+  // 2. Filter data
+  if (category === 'all') {
+    singers = allSingers;
+  } else {
+    singers = allSingers.filter(s => (s.role || '').includes(category));
+  }
+
+  if (singers.length === 0) return;
+
+  // 3. Create Instanced Mesh
   const geometry = new THREE.SphereGeometry(12, 16, 16);
   const material = new THREE.MeshStandardMaterial({ 
     color: 0xffffff,
@@ -116,6 +133,20 @@ async function loadSingers() {
   });
 
   scene.add(singerMesh);
+}
+
+// Exposed to global for HTML buttons
+window.switchCategory = function(category) {
+  // Update Tab UI
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  const targetId = category === 'all' ? 'tab-all' : (category === '福音' ? 'tab-gospel' : 'tab-worship');
+  document.getElementById(targetId)?.classList.add('active');
+
+  // Re-render 3D
+  renderSingers(category);
+  
+  // Reset depth for a "fresh" feel
+  targetDepth = 0;
 }
 
 function onMouseMove(event) {

@@ -64,8 +64,23 @@ header.scrolled {
   background: rgba(10, 10, 10, 0.98);
   padding: 1rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.05);
 }
-.logo { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text); }
-.nav-logo { height: 48px; width: auto; object-fit: contain; display: block; }
+.logo { 
+  font-family: var(--font-display); 
+  font-size: 2rem; 
+  letter-spacing: 2px; 
+  text-transform: uppercase; 
+  color: var(--text); 
+  display: flex;
+  align-items: center;
+  transition: 0.3s;
+}
+.nav-logo { 
+  height: 80px; 
+  width: auto; 
+  object-fit: contain; 
+  display: block; 
+  transition: 0.3s;
+}
 .nav-links { display: flex; gap: 0.5rem; font-size: 0.75rem; letter-spacing: 1px; flex-wrap: nowrap; align-items: center; }
 .nav-links a {
   text-decoration: none;
@@ -1616,18 +1631,27 @@ body.harvest-active {
   letter-spacing: 1px;
 }
 
+@media (max-width: 1024px) {
+  /* 🔋 Tablet Specific Polish */
+  .ppt-header { padding: 3rem 4rem 2rem; }
+  .ppt-title { font-size: 2.8rem; }
+  .nav-logo { height: 65px; }
+  .logo { font-size: 1.6rem; }
+}
+
 @media (max-width: 900px) {
-  section { padding: 3rem 1.5rem !important; }
-  h1 { font-size: 2.5rem !important; }
-  h2 { font-size: 2rem !important; }
+  section { padding: 3.5rem 2rem !important; }
+  h1 { font-size: 2.8rem !important; }
+  h2 { font-size: 2.2rem !important; }
   
   .res-grid {
     grid-template-columns: 1fr !important;
-    gap: 2.5rem !important;
+    gap: 3rem !important;
   }
   
-  header { padding: 1.2rem 1.5rem !important; }
-  .logo { font-size: 1.2rem !important; }
+  header { padding: 1rem 1.5rem !important; }
+  .nav-logo { height: 50px; }
+  .logo { font-size: 1.4rem !important; }
   
   /* Show Toggle */
   .menu-toggle { display: flex !important; }
