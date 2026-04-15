@@ -292,10 +292,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="song-content-area">
               <h3 class="song-card-title">${s.title || 'Untitled'}</h3>
               <p class="song-card-desc">${s.description || ''}</p>
-               <div class="song-card-actions" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;">
-                ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-music-action"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
-                ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-music-action"><i class="fas fa-file-pdf"></i> 下载歌谱集</a>` : ''}
-                <a href="feedback.html?id=${s.id}" class="btn-music-action" style="background:transparent !important; border:1px solid #ddd !important; color:#444 !important;"><i class="fas fa-bullhorn"></i> 回声 (Echo)</a>
+               <div class="song-card-actions">
+                ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-yt"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
+                ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-score"><i class="fas fa-file-pdf"></i> 下载歌谱集</a>` : ''}
+                <a href="feedback.html?id=${s.id}" class="btn-frosted-white"><i class="fas fa-bullhorn"></i> 回声 (Echo)</a>
               </div>
             </div>
           </div>`;
