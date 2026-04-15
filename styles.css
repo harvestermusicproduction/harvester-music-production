@@ -127,7 +127,7 @@ header.scrolled {
   transition: 0.3s;
 }
 .nav-logo { 
-  height: 80px; 
+  height: 20px !important; 
   width: auto; 
   object-fit: contain; 
   display: block; 
@@ -1687,7 +1687,7 @@ body.harvest-active {
   /* 🔋 Tablet Specific Polish */
   .ppt-header { padding: 3rem 4rem 2rem; }
   .ppt-title { font-size: 2.8rem; }
-  .nav-logo { height: 65px; }
+  .nav-logo { height: 20px; }
   .logo { font-size: 1.6rem; }
 }
 
@@ -1702,7 +1702,7 @@ body.harvest-active {
   }
   
   header { padding: 1rem 1.5rem !important; }
-  .nav-logo { height: 50px; }
+  .nav-logo { height: 20px; }
   .logo { font-size: 1.4rem !important; }
   
   /* Show Toggle */
