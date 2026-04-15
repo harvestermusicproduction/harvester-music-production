@@ -367,14 +367,36 @@ header.scrolled {
 }
 
 /* ⚪ Special White Frosted Style for Echo Space/Feedback */
-.btn-frosted-white {
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
-}
 .btn-frosted-white:hover {
   background: rgba(255, 255, 255, 0.1) !important;
   border-color: #fff !important;
   color: #fff !important;
+}
+
+/* 🏆 Premium Solid Gold Button for Music Actions (Worship) */
+.btn-music-action {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--gold) !important;
+  color: #111 !important;
+  border: 1px solid var(--gold) !important;
+  border-radius: 50px !important;
+  padding: 10px 20px !important;
+  font-family: var(--font-body) !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 1px;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(246, 210, 138, 0.15);
+}
+.btn-music-action:hover {
+  background: #000 !important;
+  color: var(--gold) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 /* 🎼 All Cards - White Ceramic (SOLID / ZERO-DISTORTION) */
