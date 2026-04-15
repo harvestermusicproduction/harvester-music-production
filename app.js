@@ -158,42 +158,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
     video.addEventListener('loadedmetadata', () => {
       timeDisplay.innerText = `0:00 / ${formatTime(video.duration)}`;
-      // Render Markers
+      renderMarkers();
+    });
+
+    function renderMarkers() {
+      if (!video.duration || !chapters.length) return;
       markersContainer.innerHTML = '';
       chapters.forEach(ch => {
         const marker = document.createElement('div');
         marker.className = 'v-marker';
         marker.style.left = `${(ch.t / video.duration) * 100}%`;
         marker.innerHTML = `<div class="v-tooltip">${ch.title}</div>`;
-        marker.onclick = (e) => { e.stopPropagation(); video.currentTime = ch.t; if(video.paused) video.play(); };
+        marker.onclick = (e) => {
+          e.stopPropagation();
+          video.currentTime = ch.t;
+          video.play();
+        };
         markersContainer.appendChild(marker);
       });
-      video.play().catch(() => playBtn.innerHTML = '<i class="fas fa-play"></i>');
-    });
+    }
 
     video.addEventListener('timeupdate', () => {
-      const pct = (video.currentTime / video.duration) * 100;
-      progressBar.style.width = pct + '%';
+      if (!video.duration) return;
+      const p = (video.currentTime / video.duration) * 100;
+      progressBar.style.width = `${p}%`;
       timeDisplay.innerText = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
     });
 
-    playBtn.onclick = () => {
-      if (video.paused) { video.play(); playBtn.innerHTML = '<i class="fas fa-pause"></i>'; }
-      else { video.pause(); playBtn.innerHTML = '<i class="fas fa-play"></i>'; }
-    };
-    
-    video.onclick = () => playBtn.click();
+    playBtn.addEventListener('click', () => {
+      if (video.paused) {
+        video.play();
+        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+      } else {
+        video.pause();
+        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+      }
+    });
 
-    muteBtn.onclick = () => {
+    muteBtn.addEventListener('click', () => {
       video.muted = !video.muted;
       muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-    };
+    });
 
-    progressWrapper.onclick = (e) => {
+    progressWrapper.addEventListener('click', (e) => {
       const rect = progressWrapper.getBoundingClientRect();
       const pct = (e.clientX - rect.left) / rect.width;
       video.currentTime = pct * video.duration;
-    };
+    });
+
+    window.addEventListener('resize', renderMarkers);
   }
 
   async function fetchLatestMusicForHome() {

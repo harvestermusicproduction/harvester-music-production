@@ -7,7 +7,7 @@ echo "🚀 Starting Deployment to GitHub..."
 git add .
 
 # 2. Commit with professional update message
-git commit -m "💎 Diamond Edition: Visual Polish, Interactive 3D Field & Admin Controls Upgrade"
+git commit -m "💎 Diamond Edition: PPT-Style Headers, Unified Action Buttons & Video Interactivity Upgrade"
 
 # 3. Rename branch to main if not already
 git branch -M main
