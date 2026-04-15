@@ -1680,5 +1680,10 @@ body.harvest-active {
   .start-overlay-deprecated, #startAudioOverlay, #startOverlay, [id*="startOverlay"], [class*="play-circle"] { display: none !important; opacity: 0 !important; pointer-events: none !important; visibility: hidden !important; }
   .btn-social-pill { min-width: 60px !important; width: 60px !important; height: 60px !important; }
   .about-social-row { flex-wrap: nowrap !important; overflow-x: auto !important; }
-  .home-hero-logo { height: 160px !important; }
+  .home-hero-logo { height: 200px !important; }
+  .header-socials { display: none !important; }
 }
+
+/* 🎥 Video Control Killing */
+video::-webkit-media-controls { display:none !important; }
+video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
