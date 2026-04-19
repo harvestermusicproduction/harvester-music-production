@@ -61,7 +61,7 @@ export default async function handler(req, res) {
       // Resolve content
       const customContent = emailTemplates[reminder.eventId] 
         ? `<div style="margin: 20px 0; padding:15px; background: #fafafa; border-left: 4px solid #c9933b;">${emailTemplates[reminder.eventId]}</div>` 
-        : `<p>期待您的到来，共同在这个空间中见证灵之火的燃烧。</p>`;
+        : `<p>明天见，我们已经准备好等你了 🙌</p><p>期待您的到来</p>`;
 
       // Send Email via Resend
       const { data: emailData, error: emailErr } = await resend.emails.send({
