@@ -356,21 +356,20 @@ document.addEventListener('DOMContentLoaded', () => {
           ? `<a href="${murl}" target="_blank" style="color:var(--gold); text-decoration:underline;"><i class="fas fa-map-marker-alt"></i> ${loc}</a>`
           : (loc ? `<span><i class="fas fa-map-marker-alt"></i> ${loc}</span>` : '');
 
-        const isSpecial = e.title.includes('成就筹款活动');
-        const contentColor = isSpecial ? '#fff' : '#444';
-        const titleColor = isSpecial ? 'var(--gold)' : '#111';
-        const textAlign = isSpecial ? 'center' : 'left';
-        const justifyAlignment = isSpecial ? 'center' : 'flex-start';
+        const contentColor = '#fff';
+        const titleColor = 'var(--gold)';
+        const textAlign = 'center';
+        const justifyAlignment = 'center';
 
-        html += `<div class="event-card fade-in visible ${goldClass}" style="box-shadow: 0 15px 45px rgba(0,0,0,0.1); text-align: ${textAlign} !important;">
+        html += `<div class="event-card fade-in visible gold-theme" style="box-shadow: 0 15px 45px rgba(0,0,0,0.1); text-align: center !important;">
             <div>
-              <div style="color:${contentColor}; font-size:1.1rem; font-weight: 500; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px; justify-content: ${justifyAlignment};">
+              <div style="color:${contentColor}; font-size:1.1rem; font-weight: 500; letter-spacing:1px; margin-bottom:1.2rem; display:flex; flex-wrap:wrap; gap:15px; justify-content: center;">
                 <span><i class="fas fa-calendar-alt"></i> ${date || 'TBA'}</span>
                 <span><i class="fas fa-clock"></i> ${time}</span>
                 ${locHtml}
               </div>
-              <h3 style="color:${titleColor}; font-size:1.8rem; font-family: var(--font-display); margin-bottom: 0.8rem;">${e.title}</h3>
-              <p style="color:${contentColor}; line-height:1.7; font-size:0.9rem;">${desc}</p>
+              <h3 style="color:var(--gold); font-size:1.8rem; font-family: var(--font-display); margin-bottom: 0.8rem;">${e.title}</h3>
+              <p style="color:#fff; line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
             <div class="event-actions" style="display:flex; justify-content:center; margin-top:25px;">
               <button class="btn-score-premium" style="border-radius:100px; padding:14px 0; font-family: var(--font-display); letter-spacing: 2px; width:100%; white-space: nowrap;" onclick="openReminderModal('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.event_date || e.date}')">
