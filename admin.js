@@ -330,6 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
             event_date: meta.d || e.event_date,
             event_time: meta.tm || e.event_time,
             image_url: meta.img || e.image_url,
+            email_template: meta.et || e.email_template,
             description: desc.replace(metaMatch[0], '').trim()
           };
         } catch (err) {
@@ -383,6 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   event_date: meta.d || e.event_date,
                   event_time: meta.tm || e.event_time,
                   image_url: meta.img || e.image_url,
+                  email_template: meta.et || e.email_template,
                   description: e.description.replace(metaMatch[0], '').trim()
                 };
               } catch(err) {}
@@ -433,7 +435,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动详情描述</label>
-          <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:100px; margin-bottom:20px; padding:10px;">${e?.description || ''}</textarea>
+          <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:100px; margin-bottom:15px; padding:10px;">${e?.description || ''}</textarea>
+
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">提醒邮件定制内容 (如果不填则使用系统默认)</label>
+          <textarea id="ev_email" placeholder="支持自动换行。例：请记得明天穿白色上衣出席哦！" style="width:100%; height:80px; margin-bottom:20px; padding:10px;">${e?.email_template || ''}</textarea>
 
           <div style="display:flex; gap:15px; position:sticky; bottom:0; background:#111; padding-top:10px; border-top:1px solid #222;">
             <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveEvent('${e?.id || ''}')">🚀 立即保存</button>
@@ -463,6 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
       location: document.getElementById('ev_l').value,
       map_url: document.getElementById('ev_ml').value,
       image_url: document.getElementById('ev_url').value,
+      email_template: document.getElementById('ev_email').value,
       description: document.getElementById('ev_desc').value
     };
 
@@ -480,7 +486,8 @@ document.addEventListener('DOMContentLoaded', () => {
           tm: payload.event_time,
           loc: payload.location,
           murl: payload.map_url,
-          img: payload.image_url
+          img: payload.image_url,
+          et: payload.email_template
         };
         const fallbackPayload = {
           title: payload.title,

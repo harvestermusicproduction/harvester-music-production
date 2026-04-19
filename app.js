@@ -372,8 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
               <h3 style="color:${titleColor}; font-size:1.8rem; font-family: var(--font-display); margin-bottom: 0.8rem;">${e.title}</h3>
               <p style="color:${contentColor}; line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
-            <div class="event-actions" style="display:flex; gap:12px; margin-top:25px;">
-              <button class="btn-score-premium" style="flex:1; border-radius:30px; padding:12px 0; font-family: var(--font-display); letter-spacing: 1px;" onclick="openReminderModal('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.date}')">
+            <div class="event-actions" style="display:flex; justify-content:center; margin-top:25px;">
+              <button class="btn-score-premium" style="border-radius:100px; padding:15px 60px; font-family: var(--font-display); letter-spacing: 1px; min-width: 250px;" onclick="openReminderModal('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.event_date || e.date}')">
                 <span style="display: flex; flex-direction: column; align-items: center; line-height: 1.4;"><span>我要参与</span><span style="font-size: 0.85rem; opacity: 0.8;">提醒我</span></span>
               </button>
             </div>
@@ -545,6 +545,8 @@ document.addEventListener('DOMContentLoaded', () => {
          <p id="rem_t" style="color:#555; margin-bottom:1.5rem; letter-spacing:2px; font-size:0.95rem;"></p>
          <input type="email" id="rem_email" placeholder="输入您的邮箱地址..." style="width:100%; margin-bottom:1.8rem; padding:16px; border-radius:50px; background:rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.1); color:#222; outline:none; text-align:center;">
          <input type="hidden" id="rem_id">
+         <input type="hidden" id="rem_title">
+         <input type="hidden" id="rem_date">
          <div style="display:flex; gap:15px;">
            <button class="btn btn-submit" style="flex:2; border-radius:50px; background:var(--gold); color:#000; font-weight:bold; border:none; padding:16px;" onclick="submitReminder()">🔔 提醒我</button>
            <button class="frosted-glass-white" style="flex:1; border-radius:50px; padding:16px; font-size:0.9rem; background:rgba(0,0,0,0.05);" onclick="document.getElementById('reminderModal').classList.remove('active')">取消</button>
@@ -554,14 +556,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if(document.getElementById('rem_t')) document.getElementById('rem_t').innerText=`我要参与《${title}》`;
     if(document.getElementById('rem_id')) document.getElementById('rem_id').value=id; 
+    if(document.getElementById('rem_title')) document.getElementById('rem_title').value=title; 
+    if(document.getElementById('rem_date')) document.getElementById('rem_date').value=date||''; 
     m.classList.add('active');
   };
 
   window.submitReminder = async () => {
     const id=document.getElementById('rem_id').value; const email=document.getElementById('rem_email').value;
+    const title=document.getElementById('rem_title').value; const date=document.getElementById('rem_date').value;
     if(!email) return alert("请输入邮箱");
-    const { error } = await db.from('submissions').insert([{ type: 'event_reminder', content: `Email: ${email} | EventID: ${id}` }]);
-    alert("✅ 提醒设置成功！哈麦音乐届时将通知您。"); document.getElementById('reminderModal').classList.remove('active');
+    const { error } = await db.from('event_reminders').insert([{ eventId: id, userEmail: email, eventTitle: title, eventDate: date, reminderSent: false }]);
+    alert("✅ 提醒设置成功！收割机届时将通知您。"); document.getElementById('reminderModal').classList.remove('active');
   };
 
   syncSiteContent();

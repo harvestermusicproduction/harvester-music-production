@@ -39,9 +39,30 @@ export default async function handler(req, res) {
       return res.status(200).json({ message: 'No reminders to send for ' + dateStr });
     }
 
+    // Attempt to pull custom email templates via EXT_META
+    const eventIds = [...new Set(reminders.map(r => r.eventId))];
+    const { data: events } = await supabase.from('events').select('id, description').in('id', eventIds);
+    const emailTemplates = {};
+    events?.forEach(ev => {
+      if (ev.description?.includes('EXT_META:')) {
+        const metaMatch = ev.description.match(/EXT_META:(.*?)\\|\\|/);
+        if (metaMatch) {
+          try {
+             const meta = JSON.parse(metaMatch[1]);
+             if (meta.et) emailTemplates[ev.id] = meta.et.replace(/\\n/g, '<br>');
+          } catch(e) {}
+        }
+      }
+    });
+
     let sentCount = 0;
 
     for (const reminder of reminders) {
+      // Resolve content
+      const customContent = emailTemplates[reminder.eventId] 
+        ? `<div style="margin: 20px 0; padding:15px; background: #fafafa; border-left: 4px solid #c9933b;">${emailTemplates[reminder.eventId]}</div>` 
+        : `<p>期待您的到来，共同在这个空间中见证灵之火的燃烧。</p>`;
+
       // Send Email via Resend
       const { data: emailData, error: emailErr } = await resend.emails.send({
         from: 'Harvester Music <no-reply@harvestermusic.my>', // Make sure this domain is verified in Resend
@@ -53,7 +74,7 @@ export default async function handler(req, res) {
             <h2 style="color: #c9933b;">活动提醒</h2>
             <p>亲爱的朋友，平安：</p>
             <p>您报名的活动 <strong>《${reminder.eventTitle}》</strong> 即将在这一个美好的明天 (<strong>${reminder.eventDate}</strong>) 举行。</p>
-            <p>期待您的到来，共同在这个空间中见证灵之火的燃烧。</p>
+            ${customContent}
             <p style="margin-top: 30px; font-size: 0.9em; color: #888;">
               — Harvester Music Production 收割机音乐工作坊<br>
               <a href="https://www.harvestermusic.my">官网主页</a>
