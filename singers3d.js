@@ -153,25 +153,53 @@ function handleEnd() {
   targetScrollX = -constrainedIndex * cardSpacing;
 }
 
+let allRawSingers = []; // Store all from DB
+let currentCategory = 'all';
+
 // 5. Initial Init
 async function startSpace() {
   initThreeJS();
   try {
     const { data: live, error } = await db.from('singers').select('*').order('display_order', { ascending: true });
     if (error) throw error;
-    if (live && live.length > 0) teamData = live;
-    else teamData = fallbackTeam;
+    if (live && live.length > 0) allRawSingers = live;
+    else allRawSingers = fallbackTeam;
   } catch (err) {
     console.warn("Using fallback team data:", err);
-    teamData = fallbackTeam;
+    allRawSingers = fallbackTeam;
   }
+  
+  teamData = [...allRawSingers];
   initSpaceDOM();
+
   function animate() {
     updateSpace();
     requestAnimationFrame(animate);
   }
   animate();
 }
+
+window.switchCategory = (category, btnId) => {
+  currentCategory = category;
+  
+  // Update Tab Styling
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  if (btnId) document.getElementById(btnId).classList.add('active');
+
+  // Filter Data
+  if (category === 'all') {
+    teamData = [...allRawSingers];
+  } else {
+    teamData = allRawSingers.filter(s => s.category === category);
+  }
+
+  // Reset scroll
+  targetScrollX = 0;
+  currentScrollX = 0;
+
+  // Re-init DOM
+  initSpaceDOM();
+};
 
 document.addEventListener('DOMContentLoaded', startSpace);
 window.addEventListener('mousedown', handleStart);

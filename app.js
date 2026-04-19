@@ -373,11 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
               <p style="color:${contentColor}; line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
             <div class="event-actions" style="display:flex; gap:12px; margin-top:25px;">
-              <button class="btn-score-premium" style="flex:1; border-radius:30px; padding:12px 0;" onclick="registerAndAddCalendar('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.date}', '${e.time}', '${e.location ? e.location.replace(/'/g, "\\'") : ''}', '${e.description ? e.description.replace(/'/g, "\\'").substring(0,200) : ''}')">
-                我要参与
-              </button>
-              <button class="btn-score-premium" style="flex:1; border-radius:30px; padding:12px 0; background:transparent; border:1px solid var(--gold); color:var(--gold);" onclick="openReminderModal('${e.id}', '${e.title.replace(/'/g, "\\'")}')">
-                提醒我
+              <button class="btn-score-premium" style="flex:1; border-radius:30px; padding:12px 0; font-family: var(--font-display); letter-spacing: 1px;" onclick="openReminderModal('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.date}')">
+                我要参与 <br> 提醒我
               </button>
             </div>
           </div>`;
@@ -388,39 +385,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- 📅 Google Calendar & Reminder Integration ---
-  window.registerAndAddCalendar = async (id, title, date, time, location, description) => {
-    openReminderModal(id, title, (email) => {
-      completeRegistration(id, title, date, time, location, description, email);
-    });
-  };
-
-  async function completeRegistration(id, title, date, time, location, description, email) {
-    try {
-      const { error } = await db.from('event_registrations').insert([
-        { event_id: id, email: email, event_title: title, event_date: date }
-      ]);
-      if (error) throw error;
-
-      const startDateTime = new Date(`${date}T${time || '08:00'}:00`).toISOString().replace(/-|:|\.\d\d\d/g, "");
-      const endDateTime = new Date(new Date(`${date}T${time || '08:00'}:00`).getTime() + 2 * 60 * 60 * 1000).toISOString().replace(/-|:|\.\d\d\d/g, "");
-      const gCalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(description + "\n\n注册邮箱: " + email)}&location=${encodeURIComponent(location || 'Online')}`;
-
-      const confirmAdd = confirm("报名成功！我们会通过电邮在活动前一天提醒您。\n\n是否现在就将此活动加入您的 Google 日历？");
-      if (confirmAdd) window.open(gCalUrl, '_blank');
-    } catch (err) {
-      console.error("Registration error:", err);
-      alert("报名成功！");
-    }
-  }
-
-  window.openReminderModal = (id, title, callback = null) => {
+  window.openReminderModal = (id, title, date) => {
     let m = document.getElementById('reminderModal');
     if(!m){
       m=document.createElement('div'); m.id='reminderModal'; m.className='reminder-modal';
       m.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:none; justify-content:center; align-items:center; backdrop-filter:blur(15px); padding:20px; transition:0.3s;";
       m.innerHTML=`<div class="reminder-content" style="background:rgba(255,255,255,0.9); backdrop-filter:blur(35px); -webkit-backdrop-filter:blur(35px); border:1px solid rgba(255,255,255,0.5); border-radius:40px; padding:2.5rem; box-shadow:0 40px 80px rgba(0,0,0,0.2); text-align:center; max-width:400px; width:100%;">
          <h2 style="color:#222; font-family:var(--font-chn-title); font-size:2rem; margin-bottom:1rem; letter-spacing:2px;">活动参与</h2>
-         <p id="rem_t" style="color:#555; margin-bottom:1.5rem; letter-spacing:1px; font-size:0.95rem;"></p>
+         <p style="color:#555; margin-bottom:1.5rem; letter-spacing:1px; font-size:0.95rem;">请输入你的电子邮箱，我们会在活动前一天发送提醒邮件给你。</p>
+         <p id="rem_t" style="color:#222; font-weight:bold; margin-bottom:1.5rem; font-size:1.1rem;"></p>
          <input type="email" id="rem_email" placeholder="输入您的邮箱地址..." style="width:100%; margin-bottom:1.8rem; padding:16px; border-radius:50px; background:rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.1); color:#222; outline:none; text-align:center;">
          <div style="display:flex; gap:15px;">
            <button id="rem_submit_btn" class="btn-score-premium" style="flex:2; border-radius:50px; background:var(--gold); color:#000; font-weight:bold; border:none; padding:16px;">🔔 提交</button>
@@ -429,7 +402,9 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>`;
       document.body.appendChild(m);
     }
-    document.getElementById('rem_t').innerText = `我要参与《${title}》`;
+    document.getElementById('rem_t').innerText = `《${title}》`;
+    document.getElementById('reminderModal').style.display = 'flex';
+    
     const emailInput = document.getElementById('rem_email');
     const submitBtn = document.getElementById('rem_submit_btn');
     
@@ -437,20 +412,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const email = emailInput.value;
       if(!email || !email.includes('@')) return alert("请输入有效的邮箱");
       
-      if(callback) {
-        callback(email);
-      } else {
-        // Dedicated reminder-only logic
-        try {
-          await db.from('event_registrations').insert([{ event_id: id, email: email, event_title: title }]);
-          alert("✅ 提醒设置成功！哈麦音乐届时将通知您。");
-        } catch(e) { alert("设置成功！"); }
-      }
-      m.style.display = 'none';
+      try {
+        await db.from('event_reminders').insert([{ 
+          eventId: id, 
+          eventTitle: title, 
+          eventDate: date,
+          userEmail: email,
+          reminderSent: false
+        }]);
+        alert("✅ 设置成功！我们会在活动前一天发送提醒邮件给您。");
+      } catch(e) { }
+      document.getElementById('reminderModal').style.display = 'none';
       emailInput.value = '';
     };
-    
-    m.style.display = 'flex';
   };
 
   async function fetchDiary() {

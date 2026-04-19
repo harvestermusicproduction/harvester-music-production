@@ -597,7 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="background:#1a1a1a; padding:20px; border-radius:12px; border:1px solid #222;">
             <img src="${s.image_url || 'https://via.placeholder.com/300x400?text=Singer'}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:8px; margin-bottom:15px;">
             <h3 style="margin:0; color:var(--gold);">${s.name}</h3>
-            <p style="color:#666; font-size:0.85rem; margin:10px 0;">${s.role || 'Gospel Singer'}</p>
+            <p style="color:#666; font-size:0.85rem; margin:5px 0 10px;">${s.role || 'Gospel Singer'} <span style="background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-left:10px;">${s.category === 'worship' ? '敬拜' : '福音'}</span></p>
             <div style="display:flex; gap:10px; margin-top:20px;">
               <button class="btn-tiny" style="flex:1;" onclick="editSinger('${s.id}')">编辑</button>
               <button class="btn-tiny danger" onclick="deleteItem('singers', '${s.id}')">删除</button>
@@ -616,10 +616,12 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3 style="color:var(--gold);">邀请新歌手 Invite New Singer</h3>
         <label>姓名 Name</label>
         <input type="text" id="s_n_new" placeholder="请输入姓名..." style="width:100%; margin-bottom:15px;">
-        <label>分类 Category</label>
-        <select id="s_r_new" style="width:100%; margin-bottom:15px; background: #222; color: #fff; padding: 10px; border: 1px solid #444;">
-          <option value="福音歌手">福音歌手 Gospel Singer</option>
-          <option value="敬拜歌手">敬拜歌手 Worship Singer</option>
+        <label>职称 Role (e.g. 音乐制作人 / 主唱)</label>
+        <input type="text" id="s_role_new" placeholder="请输入职称..." style="width:100%; margin-bottom:15px;" value="Gospel Singer">
+        <label>展示分类 Category</label>
+        <select id="s_cat_new" style="width:100%; margin-bottom:15px; background: #222; color: #fff; padding: 10px; border: 1px solid #444;">
+          <option value="gospel">福音歌手 Gospel</option>
+          <option value="worship">敬拜歌手 Worship</option>
         </select>
         <div style="margin-top:20px; display:flex; gap:10px;">
           <button class="btn btn-submit" style="flex:1;" onclick="submitNewSinger()">确认邀请</button>
@@ -632,34 +634,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.submitNewSinger = async() => {
     const name = document.getElementById('s_n_new').value.trim();
-    const role = document.getElementById('s_r_new').value;
+    const role = document.getElementById('s_role_new').value.trim();
+    const category = document.getElementById('s_cat_new').value;
     if(!name) return alert("请输入姓名");
-    await db.from('singers').insert([{ name, role }]);
+    await db.from('singers').insert([{ name, role, category }]);
     renderCMS();
   };
 
   window.editSinger = async(id) => {
     const { data: s } = await db.from('singers').select('*').eq('id', id).single();
     const modal = document.createElement('div');
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center;";
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center; overflow-y:auto; padding:20px;";
     modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:12px; padding:2rem; width:100%; max-width:500px;">
-        <h3 style="color:var(--gold);">编辑歌手: ${s.name}</h3>
-        <div style="margin-bottom:15px;">
-          <img id="s_prev" src="${s.image_url || ''}" style="width:120px; height:160px; object-fit:cover; display:block; margin-bottom:10px; background:#222; border-radius:4px;">
-          <input type="file" id="sf_up">
-          <button class="btn-tiny" style="margin-top:5px; width:100%;" onclick="uploadFile('sf_up', 's_url', 's_prev')">上传照片 Update Photo</button>
-          <input type="hidden" id="s_url" value="${s.image_url || ''}">
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:600px; margin:auto;">
+        <h2 style="color:var(--gold); margin-bottom:1.5rem;">编辑歌手档案</h2>
+        
+        <div style="margin-bottom:20px; text-align:center;">
+          <img id="sprev" src="${s.image_url || 'https://via.placeholder.com/300x400'}" style="width:150px; aspect-ratio:3/4; object-fit:cover; border-radius:8px; margin-bottom:10px; background:#222;">
+          <input type="file" id="sfup" style="display:block; margin:0 auto;">
+          <button class="btn-tiny" style="margin-top:10px;" onclick="uploadFile('sfup', 'surl', 'sprev')">上传照片</button>
+          <input type="hidden" id="surl" value="${s.image_url || ''}">
         </div>
-        <label>姓名 Name</label><input type="text" id="s_n" value="${s.name}" style="width:100%; margin-bottom:10px;">
-        <label>分类 Category</label>
-        <select id="s_r" style="width:100%; margin-bottom:10px; background: #222; color: #fff; padding: 10px; border: 1px solid #444;">
-          <option value="福音歌手" ${s.role === '福音歌手' ? 'selected' : ''}>福音歌手 Gospel Singer</option>
-          <option value="敬拜歌手" ${s.role === '敬拜歌手' ? 'selected' : ''}>敬拜歌手 Worship Singer</option>
+
+        <label>姓名 Name</label>
+        <input type="text" id="sn" value="${s.name}" style="width:100%; margin-bottom:15px;">
+        
+        <label>职称 Role (e.g. 音乐制作人 / 主唱)</label>
+        <input type="text" id="sr" value="${s.role || ''}" style="width:100%; margin-bottom:15px;">
+        
+        <label>展示分类 Category</label>
+        <select id="scat" style="width:100%; margin-bottom:15px; background: #222; color: #fff; padding: 10px; border: 1px solid #444;">
+          <option value="gospel" ${s.category === 'gospel' ? 'selected' : ''}>福音歌手 Gospel</option>
+          <option value="worship" ${s.category === 'worship' ? 'selected' : ''}>敬拜歌手 Worship</option>
         </select>
-        <label>个人简介 Bio</label><textarea id="s_b" style="width:100%; height:80px;">${s.bio || ''}</textarea>
-        <div style="margin-top:20px; display:flex; gap:10px;">
-          <button class="btn btn-submit" style="flex:1;" onclick="saveSinger('${id}')">保存 Save</button>
+        
+        <label>简介 Bio</label>
+        <textarea id="sb" style="width:100%; height:80px; margin-bottom:15px;">${s.bio || ''}</textarea>
+        
+        <label>排位顺序 Order (越小越靠前)</label>
+        <input type="number" id="so" value="${s.display_order || 0}" style="width:100%; margin-bottom:20px;">
+
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-submit" style="flex:2;" onclick="saveSinger('${id}')">💾 保存档案</button>
           <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.parentElement.remove()">取消</button>
         </div>
       </div>
@@ -669,10 +685,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.saveSinger = async(id) => {
     const p = {
-      name: document.getElementById('s_n').value,
-      role: document.getElementById('s_r').value,
-      bio: document.getElementById('s_b').value,
-      image_url: document.getElementById('s_url').value
+      name: document.getElementById('sn').value,
+      bio: document.getElementById('sb').value,
+      role: document.getElementById('sr').value,
+      category: document.getElementById('scat').value,
+      image_url: document.getElementById('surl').value,
+      display_order: parseInt(document.getElementById('so').value) || 0
     };
     await db.from('singers').update(p).eq('id', id);
     renderCMS();
@@ -993,6 +1011,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     alert("所有页面海报及背景图更新成功!");
   };
+
+  // --- 📂 DIARY MODULE ---
+  async function renderDiary(container) {
+    const { data: albums } = await db.from('diary_albums').select('*').order('date', {ascending: false});
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <h1 style="color:var(--gold);">田野日志 Diary Management</h1>
+        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openDiaryModal()">+ 新建相册</button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
+        ${albums?.map(a => `
+          <div style="background:#1a1a1a; padding:20px; border-radius:12px; border:1px solid #222; position:relative;">
+            <img src="${a.cover_url || 'https://via.placeholder.com/600x400?text=No+Cover'}" style="width:100%; aspect-ratio:1.6/1; object-fit:cover; border-radius:8px; margin-bottom:15px; border:1px solid #333;">
+            <h3 style="margin:0; color:var(--gold);">${a.title}</h3>
+            <p style="color:#666; font-size:0.85rem; margin:5px 0;">${a.date || ''}</p>
+            
+            <div style="display:flex; gap:10px; margin-top:20px;">
+              <button class="btn-submit" style="flex:1; padding:8px;" onclick="managePhotos('${a.id}')">📷 照片管理</button>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+              <button class="btn-tiny" style="flex:1;" onclick="openDiaryModal('${a.id}')">编辑相册信息</button>
+              <button class="btn-tiny danger" onclick="deleteItem('diary_albums', '${a.id}')">删除整个相册</button>
+            </div>
+          </div>
+        `).join('') || '<p>暂无日记相册，立即创建一个吧。</p>'}
+      </div>
+    `;
+  }
   
   window.openDiaryModal = async (id = null) => {
     const btn = event.currentTarget;
