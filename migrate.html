@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Harvester 自动化搬家工具 - Firebase to Supabase</title>
+  <link rel="stylesheet" href="styles.css?v=4.6.3">
+  <style>
+    body { background: #0a0a0a; color: #fff; padding: 3rem; font-family: sans-serif; }
+    .migrator-card {
+      max-width: 600px; margin: 0 auto; background: #111; padding: 2.5rem;
+      border: 1px solid var(--gold); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .status-item { margin-bottom: 1rem; font-size: 0.9rem; padding: 0.5rem; border-bottom: 1px solid #222; }
+    .success { color: #64D28A; }
+    .error { color: #ff4444; }
+    #progressBar { height: 4px; background: var(--gold); width: 0%; transition: width 0.3s; margin: 1rem 0; }
+  </style>
+
+  <!-- SDKs -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="migrator-card">
+    <h2 class="text-gold">🚀 数据一键搬家工具</h2>
+    <p style="color: #888; margin-bottom: 2rem;">将您的 Firebase 数据全自动同步到新家的 Supabase 数据库中。</p>
+
+    <div id="log">
+      <div class="status-item">准备就绪，点击下方按钮开始...</div>
+    </div>
+
+    <div id="progressBar"></div>
+
+    <button id="btnStart" class="btn btn-submit" style="width:100%; padding:1.2rem; font-weight:bold; letter-spacing:2px;">
+      立即开始全自动搬迁 (START MIGRATION)
+    </button>
+
+    <p style="font-size: 0.75rem; color: #555; text-align: center; margin-top: 1.5rem;">
+      * 此工具仅限在您的本地开发环境运行，搬迁完成后可将其删除。
+    </p>
+  </div>
+
+  <script>
+    // --- Configuration (Injected from your provided keys) ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyBMIXISIi1r07AYGcUB16lVc_uRG_Ruvh0",
+      authDomain: "harvester-mp.firebaseapp.com",
+      projectId: "harvester-mp"
+    };
+
+    const SUPABASE_URL = "https://ollfdarbmiahgjaqivpg.supabase.co";
+    const SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sbGZkYXJibWlhaGdqYXFpdnBnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTIxMjY5OCwiZXhwIjoyMDkwNzg4Njk4fQ.y5FOeM6WfFJTEce9Mu0XFhmEJXpof7cZH-Udo5TA0PY";
+
+    // --- Init ---
+    firebase.initializeApp(firebaseConfig);
+    const fs = firebase.firestore();
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    const logEl = document.getElementById('log');
+    const btnStart = document.getElementById('btnStart');
+    const progress = document.getElementById('progressBar');
+
+    function log(msg, type = '') {
+      const div = document.createElement('div');
+      div.className = `status-item ${type}`;
+      div.innerText = msg;
+      logEl.appendChild(div);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    btnStart.onclick = async () => {
+      btnStart.disabled = true;
+      btnStart.innerText = "🚧 正在努力搬运中...";
+      log("开始连接源数据库 (Firebase)...");
+
+      try {
+        // 1. Sync Site Config
+        progress.style.width = "10%";
+        log("1. 正在同步全站配置 Site Config...");
+        const configSnap = await fs.collection('site_config').doc('main').get();
+        if (configSnap.exists) {
+          const cfg = configSnap.data();
+          const rows = Object.entries(cfg).map(([k, v]) => ({ key: k, value: String(v) }));
+          await sb.from('site_config').upsert(rows, { onConflict: 'key' });
+          log("✅ 首页文案与社交链接同步完成", "success");
+        }
+
+        // 2. Sync Music (songs)
+        progress.style.width = "30%";
+        log("2. 正在提取原创曲目库 Music Works...");
+        const musicSnap = await fs.collection('songs').get();
+        const musicRows = [];
+        musicSnap.forEach(doc => {
+          const d = doc.data();
+          musicRows.push({
+            title: d.title || 'Untitled',
+            description: d.desc || '',
+            verse: d.verse || '',
+            cover_url: d.cover || '',
+            audio_url: d.youtube || d.audio || '',
+            score_url: d.pdf || ''
+          });
+        });
+        if (musicRows.length > 0) {
+          await sb.from('music_works').insert(musicRows);
+          log(`✅ 成功搬迁 ${musicRows.length} 首音乐作品`, "success");
+        }
+
+        // 3. Sync Team members
+        progress.style.width = "60%";
+        log("3. 正在同步 3D 歌手与团队资料 Team Members...");
+        const teamSnap = await fs.collection('team').get();
+        const teamRows = [];
+        teamSnap.forEach(doc => {
+          const d = doc.data();
+          teamRows.push({
+            name: d.name || 'Unknown',
+            role: d.role || '',
+            description: d.desc || '',
+            image_url: d.img || '',
+            order_index: d.order || 0
+          });
+        });
+        if (teamRows.length > 0) {
+          await sb.from('team_members').insert(teamRows);
+          log(`✅ 成功搬迁 ${teamRows.length} 位歌手团队成员`, "success");
+        }
+
+        // 4. Sync Diary (Folders & Media)
+        progress.style.width = "80%";
+        log("4. 正在搬迁日记相册（媒体文件较多，请稍候）...");
+        const diarySnap = await fs.collection('diary_events').get();
+        for (const doc of diarySnap.docs) {
+          const d = doc.data();
+          // Insert Album
+          const { data: album, error: albumError } = await sb.from('diary_albums').insert({
+            title: d.title || 'Untitled Archive',
+            date: d.date || '2026-04-01',
+            cover_url: d.cover || ''
+          }).select().single();
+
+          if (!albumError && album) {
+            const photos = d.photos || [];
+            if (photos.length > 0) {
+              const mediaRows = photos.map(p => ({
+                album_id: album.id,
+                media_url: p,
+                type: 'image'
+              }));
+              await sb.from('diary_media').insert(mediaRows);
+            }
+          }
+        }
+        log("✅ 所有历史日记与相册文件夹同步完成", "success");
+
+        // Finish
+        progress.style.width = "100%";
+        log("🎊 大功告成！搬家任务完美收官。", "success");
+        btnStart.innerText = "🏁 搬迁完成 (Finished)";
+        alert("搬迁成功！您的所有数据已安全入驻 Supabase。您可以关闭此页面并在网站上查看效果了。");
+
+      } catch (err) {
+        log("❌ 搬迁过程中断: " + err.message, "error");
+        console.error(err);
+        btnStart.disabled = false;
+        btnStart.innerText = "❌ 重试一次 (Retry)";
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta name="keywords" content="Harvester Music, 收割机音乐, CCM, 基督教音乐, 原创音乐, 福音音乐, 敬拜赞美, 赞美诗, 灵之火, 信仰艺术">
+  <meta name="description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我要投稿 Submit | Harvester Music Production 收割机创作工作坊</title>
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="我要投稿 Submit | Harvester Music Production 收割机创作工作坊">
+  <meta property="og:description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
+  <meta property="og:image" content="https://www.harvestermusic.my/assets/logo.png">
+  <link rel="stylesheet" href="styles.css?v=4.6.3">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @media (max-width: 768px) {
+      section { padding: 1rem !important; margin-top: 3rem !important; }
+      h1 { font-size: 2rem !important; margin-bottom: 1.5rem !important; }
+      #cfg_submit_text { padding: 1.5rem !important; font-size: 0.95rem !important; line-height: 1.6 !important; border-radius: 20px !important; }
+      #cfg_submit_text p { white-space: normal !important; margin-top: 0.5rem !important; }
+      .contact-form { padding: 1.5rem !important; margin-top: 2rem !important; }
+      .contact-form input, .contact-form textarea { padding: 10px !important; font-size: 0.9rem !important; }
+      .btn-submit { min-width: 160px !important; padding: 8px 25px !important; font-size: 0.85rem !important; }
+    }
+  </style>
+</head>
+<body style="position: relative;">
+  <canvas id="bgParticles"></canvas>
+    <header style="z-index:100;">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none;">
+        <img src="assets/logo.png" alt="Harvester" class="nav-logo">
+      </a>
+      <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 1.2rem;">
+        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="menu-toggle" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="feedback.html">回声空间</a>
+      <a href="events.html">活动</a>
+      <a href="diary.html">田野日志</a>
+      <a href="singers.html">歌手</a>
+      <a href="submit.html" class="active">我要投稿</a>
+      <a href="about.html">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="contact.html">联系我们</a>
+    </nav>
+  </header>
+
+  <div id="mobileNavOverlay">
+    <a href="index.html">主页</a>
+    <a href="music.html">音乐与歌谱集</a>
+    <a href="feedback.html">回声空间</a>
+    <a href="events.html">活动</a>
+    <a href="diary.html">田野日志</a>
+    <a href="singers.html">歌手</a>
+    <a href="submit.html" class="active">我要投稿</a>
+    <a href="about.html">关于我们</a>
+    <a href="support.html">支持我们</a>
+    <a href="contact.html">联系我们</a>
+  </div>
+
+  <div class="ppt-header fade-in">
+    <div class="ppt-line"></div>
+    <h1 class="ppt-title">我要投稿</h1>
+    <p class="ppt-subtitle">SUBMISSION GUIDELINES</p>
+  </div>
+
+  <section class="fade-in" style="max-width: 900px; margin-left: auto; margin-right: auto; padding: 2rem; padding-top: 0;">
+    
+    <div id="cfg_submit_text" style="padding: 0; line-height: 2.2; color: #444; font-size: 1.1rem; background: transparent !important; border: none; white-space: normal !important; text-align: left;">
+      <p style="margin-bottom: 1.5rem; font-weight: 500;">所有经收割机制作与发行的作品，词曲版权由收割机拥有七年。七年后归还作者。</p>
+      <p style="margin-bottom: 0.8rem;">🔸 所有作品将以「收割机EP」形式发行。</p>
+      <p style="margin-bottom: 0.8rem;">🔸 发行时将在 FB / IG / YouTube 标注所有创作者，给予应有尊重。</p>
+      <p style="margin-bottom: 0.8rem;">🔸 有兴趣投稿可以扫描图中QR，或点击我要投稿</p>
+      <p>🔸 若有任何疑问欢迎询问</p>
+    </div>
+    
+    <div style="margin-top: 3.5rem; display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+      <div style="background: transparent; padding: 0; width: 100%; text-align: center;">
+        <img id="cfg_submit_poster" src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80" alt="Submit Poster" style="width: 100%; height: auto; border-radius: 24px; display: block; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+      </div>
+      <a id="cfg_submit_btn_link" href="#" class="btn btn-submit" style="min-width: 180px; text-align: center; text-decoration: none; padding: 10px 35px; font-size: 0.9rem; letter-spacing: 2px; border-radius: 50px;">我要投稿</a>
+    </div>
+
+    <div class="contact" style="margin-top: 4rem;">
+        <form class="contact-form" onsubmit="event.preventDefault(); alert('作品已提交记录 (Simulation).');">
+          <input type="text" placeholder="您的真实姓名或乐队名称" required>
+          <input type="email" placeholder="您的联络邮箱" required>
+          <input type="url" placeholder="歌曲云端试听链接 (Soundcloud / Google Drive)" required>
+          <textarea placeholder="这首歌的由来与你的见证故事..." rows="6" required></textarea>
+          <button type="submit" class="btn btn-submit" style="border-radius: 50px;">确认并提交作品</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+    <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+    <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
+      <img src="assets/logo.png" alt="Harvester" style="height: 20px; display: block; margin: 0 auto 1.2rem;">
+    </a>
+    <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    document.querySelector('.contact-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const btn = this.querySelector('button');
+      btn.innerText = '提交中...';
+      btn.disabled = true;
+
+      const data = {
+        user_name: this.elements[0].value,
+        contact_info: this.elements[1].value,
+        file_url: this.elements[2].value,
+        message: this.elements[3].value
+      };
+
+      try {
+        const { error } = await window.supabase.from('submissions').insert([data]);
+        if (error) throw error;
+        alert('感谢您的投稿！收割机团队将尽快与您联络。');
+        this.reset();
+      } catch (err) {
+        alert('提交失败: ' + err.message);
+      } finally {
+        btn.innerText = '确认并提交作品';
+        btn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>

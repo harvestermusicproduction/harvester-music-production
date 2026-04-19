@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta name="keywords" content="Harvester Music, 收割机音乐, CCM, 基督教音乐, 原创音乐, 福音音乐, 敬拜赞美, 赞美诗, 灵之火, 信仰艺术">
+  <meta name="description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>活动与预告 Events | Harvester Music Production 收割机创作工作坊</title>
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="活动与预告 Events | Harvester Music Production 收割机创作工作坊">
+  <meta property="og:description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
+  <meta property="og:image" content="https://www.harvestermusic.my/assets/logo.png">
+  <link rel="stylesheet" href="styles.css?v=4.6.7">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Premium Footprints Gallery */
+    .footprints-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem;}
+    .footprint-item { 
+      position: relative; 
+      overflow: hidden; 
+      border-radius: 12px; 
+      aspect-ratio: 1/1; 
+      background: #000;
+      border: 1px solid rgba(246,210,138,0.1);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .footprint-img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), filter 0.5s; 
+      filter: grayscale(40%); 
+    }
+    .footprint-item:hover .footprint-img { 
+      transform: scale(1.1); 
+      filter: grayscale(0%); 
+    }
+    .footprint-overlay { 
+      position: absolute; 
+      bottom: 0; left: 0; right: 0; 
+      /* 底部 80% 白色，顶部 0% 全透明渐变 */
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 0) 100%) !important;
+      padding: 3rem 1.5rem 1.5rem; 
+      transform: translateY(100%); 
+      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); 
+      font-size: 0.95rem;
+      color: #111 !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    .footprint-item:hover .footprint-overlay { 
+      transform: translateY(0); 
+    }
+    .footprint-desc {
+      margin: 0;
+      line-height: 1.4;
+      font-family: 'Noto Serif SC', serif;
+      opacity: 0.9;
+    }
+    @media (max-width: 768px) {
+      .footprint-overlay {
+        padding: 1.5rem !important;
+        font-size: 0.85rem !important;
+      }
+      .text-gold { font-size: 1.8rem !important; }
+      p.text-center { font-size: 0.85rem !important; padding: 0 1rem; }
+    }
+  </style>
+</head>
+<body style="position: relative;">
+  <canvas id="bgParticles"></canvas>
+    <header style="z-index:100;">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none;">
+        <img src="assets/logo.png" alt="Harvester" class="nav-logo">
+      </a>
+      <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 1.2rem;">
+        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="menu-toggle" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="feedback.html">回声空间</a>
+      <a href="events.html" class="active">活动</a>
+      <a href="diary.html">田野日志</a>
+      <a href="singers.html">歌手</a>
+      <a href="submit.html">我要投稿</a>
+      <a href="about.html">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="contact.html">联系我们</a>
+    </nav>
+  </header>
+
+  <div id="mobileNavOverlay">
+    <a href="index.html">主页</a>
+    <a href="music.html">音乐与歌谱集</a>
+    <a href="feedback.html">回声空间</a>
+    <a href="events.html" class="active">活动</a>
+    <a href="diary.html">田野日志</a>
+    <a href="singers.html">歌手</a>
+    <a href="submit.html">我要投稿</a>
+    <a href="about.html">关于我们</a>
+    <a href="support.html">支持我们</a>
+    <a href="contact.html">联系我们</a>
+  </div>
+
+  <div class="ppt-header fade-in">
+    <div class="ppt-line"></div>
+    
+    <h1 class="ppt-title">精彩活动</h1>
+    <p class="ppt-subtitle">JOIN OUR GOSPEL JOURNEY</p>
+    <p style="text-align: center; font-size: 0.85rem; opacity: 0.7; margin-top: 10px; font-family: 'Noto Serif SC', serif; letter-spacing: 1px;">收割的脚步不停歇 敬请期待我们的下一个同行时刻</p>
+  </div>
+
+  <!-- 上半部：活动 -->
+  <section class="fade-in" style="min-height: 40vh; padding-top: 0;">
+    <div id="eventsContainer" class="footprints-grid">
+       <!-- Dynamic Content from app.js -->
+       <p style="text-align:center; grid-column: 1/-1; opacity:0.5;">正在加载精彩活动...</p>
+    </div>
+  </section>
+
+  <div class="ppt-header fade-in" style="margin-top: 2rem;">
+    <div class="ppt-line"></div>
+    
+    <h1 class="ppt-title">收割足迹</h1>
+    <p class="ppt-subtitle">DOCUMENTING GOD'S LEADING</p>
+  </div>
+
+  <section class="fade-in" style="min-height: 50vh; padding-top: 0;">
+    
+    <div id="footprintsContainer" class="footprints-grid">
+       <!-- Dynamic Content from app.js -->
+       <p style="text-align:center; grid-column: 1/-1; opacity:0.5;">正在加载珍贵足迹...</p>
+    </div>
+  </section>
+
+    <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+    <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
+      <img src="assets/logo.png" alt="Harvester" style="height: 20px; display: block; margin: 0 auto 1.2rem;">
+    </a>
+    <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+  <script src="app.js?v=4.6.7"></script>
+</body>
+</html>

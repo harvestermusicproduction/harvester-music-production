@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta name="keywords" content="Harvester Music, 收割机音乐, CCM, 基督教音乐, 原创音乐, 福音音乐, 敬拜赞美, 赞美诗, 灵之火, 信仰艺术">
+  <meta name="description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>田野日志 Field Diary | Harvester Music Production 收割机创作工作坊</title>
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="田野日志 Field Diary | Harvester Music Production 收割机创作工作坊">
+  <meta property="og:description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
+  <meta property="og:image" content="https://www.harvestermusic.my/assets/logo.png">
+  <link rel="stylesheet" href="styles.css?v=4.6.3">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+  <style>
+    .folder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; padding: 2rem; }
+    @media (max-width: 768px) {
+      main { padding-top: 80px !important; }
+      h1 { font-size: 2.2rem !important; }
+      .folder-grid { grid-template-columns: 1fr !important; padding: 1.5rem !important; gap: 1.5rem !important; }
+      footer { padding: 3rem 1.5rem !important; }
+    }
+  </style>
+</head>
+<body class="diary-body">
+  <!-- BG Particles -->
+  <canvas id="bgParticles"></canvas>
+
+    <header style="z-index:100;">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none;">
+        <img src="assets/logo.png" alt="Harvester" class="nav-logo">
+      </a>
+      <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 1.2rem;">
+        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="menu-toggle" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="feedback.html">回声空间</a>
+      <a href="events.html">活动</a>
+      <a href="diary.html" class="active">田野日志</a>
+      <a href="singers.html">歌手</a>
+      <a href="submit.html">我要投稿</a>
+      <a href="about.html">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="contact.html">联系我们</a>
+    </nav>
+  </header>
+
+  <div id="mobileNavOverlay">
+    <a href="index.html">主页</a>
+    <a href="music.html">音乐与歌谱集</a>
+    <a href="feedback.html">回声空间</a>
+    <a href="events.html">活动</a>
+    <a href="diary.html" class="active">田野日志</a>
+    <a href="singers.html">歌手</a>
+    <a href="submit.html">我要投稿</a>
+    <a href="about.html">关于我们</a>
+    <a href="support.html">支持我们</a>
+    <a href="contact.html">联系我们</a>
+  </div>
+
+  <div class="ppt-header fade-in">
+    <div class="ppt-line"></div>
+    
+    <h1 class="ppt-title">田野日志</h1>
+    <p class="ppt-subtitle">RECORD EVERY MOMENT</p>
+  </div>
+
+  <main style="padding-top: 0;">
+    <section>
+
+      <div id="diaryContainer" class="folder-grid">
+        <!-- Folders will be injected here by app.js -->
+        <div class="loading-pulse">正在整理回忆文件夹...</div>
+      </div>
+    </section>
+  </main>
+
+    <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+    <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
+      <img src="assets/logo.png" alt="Harvester" style="height: 20px; display: block; margin: 0 auto 1.2rem;">
+    </a>
+    <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
+  </footer>
+
+  <script src="visualizer.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Specific initialization for this page
+    document.addEventListener('DOMContentLoaded', () => {
+      // fetchDiary is called inside app.js if it detects diaryContainer
+    });
+  </script>
+</body>
+</html>

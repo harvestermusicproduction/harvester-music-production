@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta name="keywords" content="Harvester Music, 收割机音乐, CCM, 基督教音乐, 原创音乐, 福音音乐, 敬拜赞美, 赞美诗, 灵之火, 信仰艺术">
+  <meta name="description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>关于我们 About Us | Harvester Music Production 收割机创作工作坊</title>
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="关于我们 About Us | Harvester Music Production 收割机创作工作坊">
+  <meta property="og:description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
+  <meta property="og:image" content="https://www.harvestermusic.my/assets/logo.png">
+  <link rel="stylesheet" href="styles.css?v=4.6.3">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="position: relative;">
+  <canvas id="bgParticles"></canvas>
+  <header style="z-index:100;">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none;">
+        <img src="assets/logo.png" alt="Harvester" class="nav-logo">
+      </a>
+      <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 1.2rem;">
+        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="menu-toggle" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="feedback.html">回声空间</a>
+      <a href="events.html">活动</a>
+      <a href="diary.html">田野日志</a>
+      <a href="singers.html">歌手</a>
+      <a href="submit.html">我要投稿</a>
+      <a href="about.html" class="active">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="contact.html">联系我们</a>
+    </nav>
+  </header>
+
+  <div id="mobileNavOverlay">
+    <a href="index.html">主页</a>
+    <a href="music.html">音乐与歌谱集</a>
+    <a href="feedback.html">回声空间</a>
+    <a href="events.html">活动</a>
+    <a href="diary.html">田野日志</a>
+    <a href="singers.html">歌手</a>
+    <a href="submit.html">我要投稿</a>
+    <a href="about.html" class="active">关于我们</a>
+    <a href="support.html">支持我们</a>
+    <a href="contact.html">联系我们</a>
+  </div>
+
+  <div class="ppt-header fade-in">
+    <div class="ppt-line"></div>
+    <h1 class="ppt-title">关于我们</h1>
+    <p class="ppt-subtitle">ABOUT US</p>
+  </div>
+
+  <section class="about fade-in" style="min-height: 60vh; text-align:center; padding: 0 2rem; padding-top: 0;">
+    
+    <!-- Cinematic Video Container (16:9) -->
+    <div id="cfg_about_media_container" style="width: 100%; max-width: 1100px; aspect-ratio: 16 / 9; margin: 0 auto 3rem; overflow: hidden; border-radius: 12px; border: 1px solid rgba(246,210,138,0.15); background: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
+      <img id="cfg_about_banner" src="https://images.unsplash.com/photo-1514525253361-9ee1a07b7ec2?auto=format&fit=crop&w=1200&q=80" alt="正在加载媒体..." style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    
+    <div style="max-width: 900px; margin: 0 auto 4rem; padding: 0 1rem;">
+      <p id="cfg_about_text" class="kaiti-quote" style="font-size: 1.2rem; line-height: 1.8; color: #eee; text-align: center;">
+        正在加载品牌故事...
+      </p>
+    </div>
+
+    <!-- Social Connect Section -->
+    <div style="margin-top: 4rem; padding: 3rem; border-top: 1px solid rgba(255,255,255,0.05);">
+        <h3 class="text-gold mb-4" style="font-weight: 300; letter-spacing: 4px;">CONNECT WITH US</h3>
+        <div class="about-social-row" style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: nowrap; overflow-x: auto; padding: 10px 0;">
+            <a id="cfg_social_fb" href="#" target="_blank" class="btn-premium btn-social-pill" style="min-width: 65px; width: 65px; height: 65px; padding: 0;">
+                <i class="fab fa-facebook-f" style="font-size: 1.3rem;"></i>
+            </a>
+            <a id="cfg_social_ig" href="#" target="_blank" class="btn-premium btn-social-pill" style="min-width: 65px; width: 65px; height: 65px; padding: 0;">
+                <i class="fab fa-instagram" style="font-size: 1.3rem;"></i>
+            </a>
+            <a id="cfg_social_yt" href="#" target="_blank" class="btn-premium btn-youtube-premium" style="min-width: 65px; width: 65px; height: 65px; padding: 0;">
+                <i class="fab fa-youtube" style="font-size: 1.3rem;"></i>
+            </a>
+        </div>
+    </div>
+  </section>
+
+  <script>
+    // Fail-safe for About Video Autoplay
+    window.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('cfg_about_media_container');
+      const checkVideo = setInterval(() => {
+        const video = container.querySelector('video');
+        if (video) {
+          video.play().catch(() => {
+            // If blocked, try again on first user interaction
+            document.addEventListener('touchstart', () => video.play(), { once: true });
+          });
+          clearInterval(checkVideo);
+        }
+      }, 500);
+    });
+  </script>
+
+    <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+    <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
+      <img src="assets/logo.png" alt="Harvester" style="height: 20px; display: block; margin: 0 auto 1.2rem;">
+    </a>
+    <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+  <script src="app.js?v=4.6.7"></script>
+</body>
+</html>

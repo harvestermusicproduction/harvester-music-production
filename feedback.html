@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta name="keywords" content="Harvester Music, 收割机音乐, CCM, 基督教音乐, 原创音乐, 福音音乐, 敬拜赞美, 赞美诗, 灵之火, 信仰艺术">
+  <meta name="description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>回声空间 Echo Space | Harvester Music Production 收割机创作工作坊</title>
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="回声空间 Echo Space | Harvester Music Production 收割机创作工作坊">
+  <meta property="og:description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
+  <meta property="og:image" content="https://www.harvestermusic.my/assets/logo.png">
+  <link rel="stylesheet" href="styles.css?v=4.6.7">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* --- 💎 3D Echo Universe Standard --- */
+    body { 
+      margin: 0; overflow: hidden; background: #000; 
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    /* Overlay UI - Upgraded to Light White Frosted */
+    .ui-layer {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding-bottom: 0;
+    }
+
+    .interactive-card {
+      background: rgba(255, 255, 255, 0.1) !important;
+      backdrop-filter: blur(30px) !important;
+      -webkit-backdrop-filter: blur(30px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-radius: 40px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      pointer-events: auto;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .interactive-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.3); }
+
+    .btn-echo {
+      background: rgba(0, 0, 0, 0.2) !important;
+      border: 1px solid rgba(246, 210, 138, 0.3) !important;
+      color: #fff !important;
+      padding: 12px 22px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+      font-size: 1rem;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-echo:hover {
+      background: rgba(246, 210, 138, 0.15) !important;
+      transform: translateY(-5px) scale(1.05);
+      border-color: var(--gold) !important;
+      box-shadow: 0 0 20px rgba(246, 210, 138, 0.2);
+    }
+
+    .input-box {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 18px;
+      color: #fff;
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    /* UI Animations */
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Standard Header with Pure Chinese Nav */
+    header {
+      position: absolute; top:0; left:0; width:100%; z-index: 100 !important;
+      pointer-events: auto;
+    }
+
+    #scroll-hint {
+      position: absolute; bottom: 30px; left: 30px; color: rgba(255,255,255,0.3);
+      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+    }
+    @media (max-width: 600px) {
+      .interactive-card {
+        width: 92% !important;
+        padding: 1.5rem !important;
+        margin: 0 auto !important;
+      }
+      .btn-echo { font-size: 0.85rem !important; padding: 10px 18px !important; }
+      .input-box { padding: 12px !important; font-size: 0.9rem !important; }
+      .ui-layer { padding-bottom: 2rem !important; }
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Standard Navigation -->
+    <header style="z-index:100;">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none;">
+        <img src="assets/logo.png" alt="Harvester" class="nav-logo">
+      </a>
+      <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 1.2rem;">
+        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="menu-toggle" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="feedback.html" class="active">回声空间</a>
+      <a href="events.html">活动</a>
+      <a href="diary.html">田野日志</a>
+      <a href="singers.html">歌手</a>
+      <a href="submit.html">我要投稿</a>
+      <a href="about.html">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="contact.html">联系我们</a>
+    </nav>
+  </header>
+
+  <div id="mobileNavOverlay">
+    <a href="index.html">主页</a>
+    <a href="music.html">音乐与歌谱集</a>
+    <a href="feedback.html" class="active">回声空间</a>
+    <a href="events.html">活动</a> 
+    <a href="diary.html">田野日志</a>
+    <a href="singers.html">歌手</a>
+    <a href="submit.html">我要投稿</a>
+    <a href="about.html">关于我们</a>
+    <a href="support.html">支持我们</a>
+    <a href="contact.html">联系我们</a>
+  </div>
+
+  <div id="scroll-hint">USE SCROLL WHEEL TO EXPLORE SPACE</div>
+
+  <div class="ui-layer">
+    <div class="interactive-card">
+      <div class="ppt-header" style="margin:0 0 1.5rem 0; padding:0; max-width:none; border:none;">
+        <div class="ppt-meta" style="margin-bottom:0; justify-content:center; border:none;">
+          <span style="font-size: 1.2rem; letter-spacing: 5px; color: var(--gold); font-weight: 300;">ECHO SPACE / 回声空间</span>
+        </div>
+      </div>
+      
+      <div id="reaction-group" style="display: flex; justify-content: center; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap;">
+        <button class="btn-echo" onclick="postReaction('❤️', '被触动')">❤️ 被触动</button>
+        <button class="btn-echo" onclick="postReaction('🙏', '被安慰')">🙏 被安慰</button>
+        <button class="btn-echo" onclick="postReaction('🔥', '很真实')">🔥 很真实</button>
+        <button class="btn-echo" onclick="postReaction('🎧', '单曲循环')">🎧 单曲循环</button>
+        <button class="btn-echo" id="btnCustomTrigger" onclick="toggleCustomUI()">➕ 自定义</button>
+      </div>
+
+      <!-- Custom Reaction UI (Initially Hidden) -->
+      <div id="customReactionUI" style="display: none; margin-top: 1.5rem; animation: slideDown 0.4s ease;">
+        <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+          <input id="customEmoji" placeholder="😊" style="width: 60px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 15px; padding: 12px; color: #fff; text-align: center; outline: none; font-size: 1.2rem;">
+          <input id="customText" placeholder="写个短语..." style="flex:1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 15px; padding: 12px; color: #fff; outline: none;">
+          <button class="btn-echo" style="padding: 12px 20px; border-color: var(--gold);" onclick="handleCustomSubmit()">🔥 触发</button>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <input id="echoInput" class="input-box" maxlength="20" placeholder="写下你的感悟，融入这片回声..." />
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin: 1.5rem 0;">
+          <input type="checkbox" id="echoAnon" checked style="width:auto; transform: scale(1.2);">
+          <label for="echoAnon" style="color:#888; font-size: 0.9rem;">匿名共吟</label>
+        </div>
+        <button class="btn btn-submit" style="width: 100%; border-radius: 60px; padding: 18px; font-size: 1.1rem; color: #f6d28a !important; font-weight: 400 !important; text-align: center; border: 1px solid rgba(246, 210, 138, 0.4); background: rgba(0,0,0,0.6);" onclick="postEcho()">发 布 回 声</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js?v=3.9"></script>
+  <script src="app.js?v=4.6.7"></script>
+  <script>
+    // --- 🔮 3DEngine & High-Fidelity Interactive Logic ---
+    let scene, camera, renderer, starField;
+    let mouseX = 0, mouseY = 0;
+    const echoes = [];
+    const MAX_ECHOES = 60;
+
+    function init3DEngine() {
+      // 1. Core Scene Setup
+      scene = new THREE.Scene();
+      const isMobile = window.innerWidth <= 768;
+      camera = new THREE.PerspectiveCamera(isMobile ? 90 : 75, window.innerWidth / window.innerHeight, 1, 4000);
+      camera.position.z = isMobile ? 1000 : 500;
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // 2. ✨ The Absolute StarField (Restoring Space Feel)
+      const starGeo = new THREE.BufferGeometry();
+      const starCoords = [];
+      for (let i = 0; i < 6000; i++) {
+        starCoords.push((Math.random() - 0.5) * 2500, (Math.random() - 0.5) * 2500, (Math.random() - 0.5) * 3000);
+      }
+      starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
+      const starMat = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: isMobile ? 1.5 : 0.8,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+      });
+      starField = new THREE.Points(starGeo, starMat);
+      scene.add(starField);
+
+      // 3. Subtle Ambient Glow
+      const light = new THREE.PointLight(0xf6d28a, 0.5, 2000);
+      light.position.set(0, 0, 500);
+      scene.add(light);
+
+      window.currentEchoes = [];
+
+      // Mouse Parallax Track
+      document.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX - window.innerWidth / 2) * 0.05;
+        mouseY = (e.clientY - window.innerHeight / 2) * 0.05;
+      });
+
+      animate();
+    }
+
+    function createEchoSprite(message, isPrimary = false) {
+      const isMobile = window.innerWidth <= 768;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 1600; // Increased resolution for larger fonts
+      canvas.height = 300;
+      
+      const fontSize = isPrimary ? 160 : 120; // GARGANTUAN FONT
+      ctx.font = `500 ${fontSize}px "Ma Shan Zheng", "Inter", sans-serif`;
+      
+      // Ultra Strong Glow Effect
+      ctx.shadowBlur = 45;
+      ctx.shadowColor = isPrimary ? 'rgba(246, 210, 138, 1.0)' : 'rgba(255,255,255,0.6)';
+      ctx.fillStyle = isPrimary ? '#f6d28a' : 'rgba(255,255,255,0.95)';
+      
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(message, 800, 150);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const material = new THREE.SpriteMaterial({ 
+        map: texture, 
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending
+      });
+      
+      const sprite = new THREE.Sprite(material);
+      const scaleBase = isMobile ? 1.4 : 3.5; // GARGANTUAN SCALE
+      sprite.scale.set(isPrimary ? (18 * scaleBase) : (9 * scaleBase), isPrimary ? (3.2 * scaleBase) : (1.8 * scaleBase), 1);
+      
+      const boundX = isMobile ? 600 : 1400;
+      const boundY = isMobile ? 800 : 1000;
+
+      if(isPrimary) {
+        sprite.position.set(0, 0, 350);
+        sprite.userData = { speed: 0.18, drift: (Math.random()-0.5)*0.2, fade: 0, life: 1.0 };
+      } else {
+        sprite.position.set((Math.random()-0.5)*boundX, (Math.random()-0.5)*boundY, (Math.random()-0.5)*1000);
+        sprite.userData = { speed: Math.random()*0.05 + 0.03, drift: (Math.random()-0.5)*0.05, fade: 0 };
+      }
+
+      scene.add(sprite);
+      window.currentEchoes.push(sprite);
+      
+      if(window.currentEchoes.length > MAX_ECHOES) {
+        const old = window.currentEchoes.shift();
+        scene.remove(old);
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const isMobile = window.innerWidth <= 768;
+      
+      // Dynamic Scene Rotation
+      scene.rotation.y += (mouseX * 0.0001) + 0.0002;
+      scene.rotation.x += (mouseY * 0.0001) + 0.0001;
+
+      // StarField Breathing
+      if(starField) {
+        starField.rotation.z += 0.0001;
+      }
+
+      if(window.currentEchoes) {
+        window.currentEchoes.forEach(e => {
+          // Movement
+          e.position.x += e.userData.speed || 0.05;
+          e.position.y += e.userData.drift || 0;
+          
+          // Fade In
+          if(e.material.opacity < 1) e.material.opacity += 0.02;
+
+          const resetBound = isMobile ? 500 : 1200;
+          if(e.position.x > resetBound) {
+            e.position.x = -resetBound;
+            e.position.y = (Math.random()-0.5) * (isMobile ? 1000 : 800);
+          }
+        });
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    function toggleCustomUI() {
+      const ui = document.getElementById('customReactionUI');
+      ui.style.display = ui.style.display === 'none' ? 'block' : 'none';
+      if(ui.style.display === 'block') document.getElementById('customEmoji').focus();
+    }
+
+    function handleCustomSubmit() {
+      const emoji = document.getElementById('customEmoji').value.trim() || '✨';
+      const text = document.getElementById('customText').value.trim();
+      if(!text) return alert("请写一点感悟文字吧");
+      
+      postReaction(emoji, text);
+      toggleCustomUI(); 
+      document.getElementById('customEmoji').value = '';
+      document.getElementById('customText').value = '';
+    }
+
+    function postReaction(emoji, text = "") {
+      const fullText = text ? (emoji + " " + text) : emoji;
+      createEchoSprite(fullText, true);
+      // Also potentially save to DB if you want persistent reactions
+    }
+
+    window.addEventListener('wheel', (e) => {
+      camera.position.z += e.deltaY * 0.2;
+      if(camera.position.z < -200) camera.position.z = -200;
+      if(camera.position.z > 1500) camera.position.z = 1500;
+      
+      // Zoom effect on starfield
+      if(starField) starField.scale.setScalar(1 + (camera.position.z / 2000));
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    async function postEcho() {
+      const input = document.getElementById("echoInput");
+      const text = input.value.trim();
+      const isAnon = document.getElementById("echoAnon").checked;
+      if(!text) return;
+
+      const btn = event.target;
+      btn.innerText = "✨ 正在让回声在宇宙中回荡...";
+      btn.disabled = true;
+
+      const db = window.supabase;
+      const data = { name: isAnon?"Anonymous":"", message: "[ECHO] " + text };
+      try {
+        await db.from('contact_messages').insert([data]);
+        createEchoSprite(text, true);
+        input.value = "";
+      } catch(e) { console.error("Echo failed", e); }
+      finally {
+        btn.innerText = "发 布 回 声";
+        btn.disabled = false;
+      }
+    }
+
+    async function fetchEchoes() {
+      const db = window.supabase;
+      try {
+        // 1. Fetch the curated list of Approved IDs from site_config
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
+        const approvedIds = cfg?.value ? cfg.value.split(',') : [];
+        
+        if (approvedIds.length === 0) {
+          console.log("No approved echoes found yet.");
+          return;
+        }
+
+        // 2. Fetch only the messages that are in the approved list
+        const { data, error } = await db.from('contact_messages')
+          .select('*')
+          .in('id', approvedIds)
+          .order('created_at', {ascending:false});
+          
+        if(error) throw error;
+        if(data) {
+          data.forEach(e => {
+            const cleanMessage = e.message.replace("[ECHO] ", "");
+            createEchoSprite(cleanMessage);
+          });
+        }
+      } catch(e) { 
+        console.error("Echo fetch error:", e);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      init3DEngine();
+      fetchEchoes();
+      
+      // Subtle Intro Animation
+      document.querySelector('.interactive-card').style.opacity = '0';
+      setTimeout(() => {
+        if(document.querySelector('.interactive-card')) {
+          document.querySelector('.interactive-card').style.transition = '2s opacity ease';
+          document.querySelector('.interactive-card').style.opacity = '1';
+        }
+      }, 500);
+    });
+  </script>
+</body>
+</html>

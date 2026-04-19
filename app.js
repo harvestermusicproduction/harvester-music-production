@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="event-actions" style="display:flex; gap:12px; margin-top:25px;">
               <button class="btn-score-premium" style="flex:1; border-radius:30px; padding:12px 0; font-family: var(--font-display); letter-spacing: 1px;" onclick="openReminderModal('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.date}')">
-                我要参与 <br> 提醒我
+                <span style="display: flex; flex-direction: column; align-items: center; line-height: 1.4;"><span>我要参与</span><span style="font-size: 0.85rem; opacity: 0.8;">提醒我</span></span>
               </button>
             </div>
           </div>`;
