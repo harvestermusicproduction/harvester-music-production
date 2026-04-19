@@ -373,8 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
               <p style="color:${contentColor}; line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
             <div class="event-actions" style="display:flex; justify-content:center; margin-top:25px;">
-              <button class="btn-score-premium" style="border-radius:100px; padding:15px 60px; font-family: var(--font-display); letter-spacing: 1px; min-width: 250px;" onclick="openReminderModal('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.event_date || e.date}')">
-                <span style="display: flex; flex-direction: column; align-items: center; line-height: 1.4;"><span>我要参与</span><span style="font-size: 0.85rem; opacity: 0.8;">提醒我</span></span>
+              <button class="btn-score-premium" style="border-radius:100px; padding:12px 40px; font-family: var(--font-display); letter-spacing: 2px; min-width: 240px; white-space: nowrap;" onclick="openReminderModal('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.event_date || e.date}')">
+                我要参与 / 提醒我
               </button>
             </div>
           </div>`;
