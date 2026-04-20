@@ -82,15 +82,49 @@ document.addEventListener('DOMContentLoaded', () => {
     else body.innerHTML = `<h2>${currentModule.toUpperCase()}</h2><p>功能开发中...</p>`;
   }
 
+  // --- Frontend Image Compression Helper ---
+  const compressImage = (file, maxWidth=2000, maxHeight=2000, quality=0.85) => {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith('image/')) return resolve(file);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = event => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width; let height = img.height;
+          if (width > height && width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
+          else if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; }
+          canvas.width = width; canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(blob => {
+            if(!blob) return resolve(file);
+            resolve(new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", { type: 'image/jpeg' }));
+          }, 'image/jpeg', quality);
+        };
+        img.onerror = error => resolve(file);
+      };
+      reader.onerror = error => resolve(file);
+    });
+  };
+
   // --- SHARED Uploader ---
   window.uploadFile = async (fileInputId, targetId, previewId) => {
-    const file = document.getElementById(fileInputId).files[0];
+    let file = document.getElementById(fileInputId).files[0];
     if(!file) return alert("请选择文件");
-    // Sanitize filename to avoid "Invalid key" errors (e.g., Chinese characters)
+    
+    const btn = event.target;
+    btn.innerText = "自动压缩中...";
+    
+    if (file.type.startsWith('image/')) {
+        file = await compressImage(file);
+    }
+
     const safeName = file.name.replace(/[^\w.-]/g, "_");
     const path = `uploads/${Date.now()}-${safeName}`;
-    const btn = event.target;
-    btn.innerText = "上传中...";
+    btn.innerText = "高速上传中...";
     const { data, error } = await db.storage.from('harvester-media').upload(path, file);
     if(error) return alert("上传失败: " + error.message);
     const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
@@ -1148,12 +1182,17 @@ document.addEventListener('DOMContentLoaded', () => {
   window.uploadDiaryPhoto = async (aid) => {
     const fileInput = document.getElementById('d_up');
     const stat = document.getElementById('up_stat');
-    if(!fileInput.files[0]) return alert("请先选择照片");
+    let file = fileInput.files[0];
+    if(!file) return alert("请先选择照片");
     
-    stat.innerText = "⏳ 正在上传并同步数据库...";
+    stat.innerText = "🎨 正在自动无损压缩照片体积...";
+    if (file.type.startsWith('image/')) {
+        file = await compressImage(file);
+    }
+    
+    stat.innerText = "⚡ 正在极速上传并同步数据库...";
     
     // Use the global uploadFile logic but handle the DB entry here
-    const file = fileInput.files[0];
     const safeName = file.name.replace(/[^\w.-]/g, "_");
     const path = `diary/${Date.now()}-${safeName}`;
     
