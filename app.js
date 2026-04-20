@@ -371,8 +371,8 @@ document.addEventListener('DOMContentLoaded', () => {
               <h3 style="color:var(--gold); font-size:1.8rem; font-family: var(--font-display); margin-bottom: 0.8rem;">${e.title}</h3>
               <p style="color:#fff; line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
-            <div class="event-actions" style="display:flex; justify-content:center; margin-top:25px; margin-left:-6rem; margin-right:-6rem;">
-              <button class="btn-score-premium" style="border-radius:100px; padding:14px 0; font-family: var(--font-display); letter-spacing: 2px; width:100%; white-space: nowrap;" onclick="openReminderModal('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.event_date || e.date}')">
+            <div class="event-actions" style="display:flex; justify-content:center; margin-top:25px; margin-left:-6rem; margin-right:-6rem; position:relative; z-index:50;">
+              <button class="btn-score-premium" style="border-radius:100px; padding:14px 0; font-family: var(--font-display); letter-spacing: 2px; width:100%; white-space: nowrap; pointer-events:auto;" onclick="openReminderModal('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.event_date || e.date}')">
                 我要参与 / 提醒我
               </button>
             </div>
@@ -388,7 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let m = document.getElementById('reminderModal');
     if(!m){
       m=document.createElement('div'); m.id='reminderModal'; m.className='reminder-modal';
-      m.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:none; justify-content:center; align-items:center; backdrop-filter:blur(15px); padding:20px; transition:0.3s;";
+      m.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:999999; display:none; justify-content:center; align-items:center; backdrop-filter:blur(15px); padding:20px; transition:0.3s;";
       m.innerHTML=`<div class="reminder-content" style="background:rgba(255,255,255,0.9); backdrop-filter:blur(35px); -webkit-backdrop-filter:blur(35px); border:1px solid rgba(255,255,255,0.5); border-radius:40px; padding:2.5rem; box-shadow:0 40px 80px rgba(0,0,0,0.2); text-align:center; max-width:400px; width:100%;">
          <h2 style="color:#222; font-family:var(--font-chn-title); font-size:2rem; margin-bottom:1rem; letter-spacing:2px;">活动参与</h2>
          <p style="color:#555; margin-bottom:1.5rem; letter-spacing:1px; font-size:0.95rem;">请输入你的电子邮箱，我们会在活动前一天发送提醒邮件给你。</p>
@@ -431,9 +431,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!container) return;
     try {
       const { data: albums } = await db.from('diary_albums').select('*, diary_media(media_url)').order('date', { ascending: false });
+      const optimizeUrl = (u) => u && u.includes('/object/public/harvester-media/') ? u.replace('/object/public/', '/render/image/public/') + "?width=1000&quality=80" : u;
       container.innerHTML = albums.map(d => {
         const photos = (d.diary_media || []).slice(0, 3).map((m, idx) => 
-          `<img src="${m.media_url}" class="peek-photo peek-${idx+1}">`
+          `<img src="${optimizeUrl(m.media_url)}" class="peek-photo peek-${idx+1}">`
         ).join('');
         return `
           <div class="folder-card fade-in visible" onclick="location.href='event.html?id=${d.id}'">
@@ -455,9 +456,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!container) return;
     try {
       const { data: albums } = await db.from('diary_albums').select('*').order('date', { ascending: false });
+      const optimizeUrl = (u) => u && u.includes('/object/public/harvester-media/') ? u.replace('/object/public/', '/render/image/public/') + "?width=800&quality=80" : u;
       const fallback = 'assets/logo.png';
       container.innerHTML = albums.map(d => {
-        const coverImg = d.cover_url || fallback;
+        const coverImg = optimizeUrl(d.cover_url) || fallback;
         return `
           <div class="footprint-item fade-in visible" onclick="showFootprintDetail('${d.title.replace(/'/g, "\\'")}', '${d.date}', '${(d.description || "").replace(/'/g, "\\'").replace(/\n/g, " ")}')">
             <img src="${coverImg}" onerror="this.src='${fallback}'" class="footprint-img">

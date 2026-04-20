@@ -1131,12 +1131,14 @@ document.addEventListener('DOMContentLoaded', () => {
            <div id="up_stat" style="font-size:0.7rem; color:var(--gold); margin-top:5px;"></div>
         </div>
         <div id="photoGridCMS" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:15px;">
-          ${photos?.map(p => `
+          ${photos?.map(p => {
+             const optimized = p.media_url && p.media_url.includes('/object/public/harvester-media/') ? p.media_url.replace('/object/public/', '/render/image/public/') + "?width=400&quality=80" : p.media_url;
+             return `
             <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden;">
-              <img src="${p.media_url}" style="width:100%; height:100%; object-fit:cover;">
+              <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;">
               <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color:white; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
             </div>
-          `).join('') || '<p style="grid-column:1/-1; text-align:center; opacity:0.3;">暂无内容</p>'}
+          `}).join('') || '<p style="grid-column:1/-1; text-align:center; opacity:0.3;">暂无内容</p>'}
         </div>
       </div>
     `;
@@ -1172,12 +1174,14 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Refresh the specific photo grid without closing the modal
       const { data: newPhotos } = await db.from('diary_media').select('*').eq('album_id', aid);
-      document.getElementById('photoGridCMS').innerHTML = newPhotos.map(p => `
+      document.getElementById('photoGridCMS').innerHTML = newPhotos.map(p => {
+        const optimized = p.media_url && p.media_url.includes('/object/public/harvester-media/') ? p.media_url.replace('/object/public/', '/render/image/public/') + "?width=400&quality=80" : p.media_url;
+        return `
         <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden;">
-          <img src="${p.media_url}" style="width:100%; height:100%; object-fit:cover;">
+          <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;">
           <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color:white; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
         </div>
-      `).join('');
+      `}).join('');
       
       fileInput.value = ""; // Clear input
     } catch (e) {
