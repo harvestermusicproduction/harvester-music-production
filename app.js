@@ -372,13 +372,22 @@ document.addEventListener('DOMContentLoaded', () => {
               <p style="color:#fff; line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
             <div class="event-actions" style="display:flex; justify-content:center; margin-top:25px; position:relative; z-index:50; width:100%;">
-              <button class="btn-score-premium" style="border-radius:100px; padding:14px 0; font-family:var(--font-display); letter-spacing:2px; width:calc(100% + 40px); margin-left:-20px; white-space:nowrap; pointer-events:auto;" onclick="try{ openReminderModal('${e.id}', '${e.title.replace(/'/g, "\\'")}', '${e.event_date || e.date}'); }catch(err){alert(err);}">
+              <button class="btn-score-premium reminder-btn" data-event-id="${e.id}" data-event-title="${encodeURIComponent(e.title)}" data-event-date="${e.event_date || e.date}" style="border-radius:100px; padding:14px 0; font-family:var(--font-display); letter-spacing:2px; width:calc(100% + 40px); margin-left:-20px; white-space:nowrap; pointer-events:auto; cursor:pointer;">
                 我要参与 / 提醒我
               </button>
             </div>
           </div>`;
       });
       container.innerHTML = html;
+      // Use event delegation - attach ONE listener to container, avoid per-button onclick issues
+      container.addEventListener('click', function(ev) {
+        const btn = ev.target.closest('.reminder-btn');
+        if (!btn) return;
+        const id = btn.dataset.eventId;
+        const title = decodeURIComponent(btn.dataset.eventTitle);
+        const date = btn.dataset.eventDate;
+        openReminderModal(id, title, date);
+      });
       refreshObserver();
     } catch (err) { console.error("FetchEvents error:", err); }
   }
