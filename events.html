@@ -6,71 +6,115 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>活动与预告 Events | Harvester Music Production 收割机创作工作坊</title>
-  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="活动与预告 Events | Harvester Music Production 收割机创作工作坊">
   <meta property="og:description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
   <meta property="og:image" content="https://www.harvestermusic.my/assets/logo.png">
-  <link rel="stylesheet" href="styles.css?v=4.7.7">
+  <link rel="stylesheet" href="styles.css?v=4.7.8">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* Premium Footprints Gallery */
-    .footprints-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem;}
-    .footprint-item { 
-      position: relative; 
-      overflow: hidden; 
-      border-radius: 12px; 
-      aspect-ratio: 1/1; 
-      background: #000;
-      border: 1px solid rgba(246,210,138,0.1);
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Events Grid */
+    #eventsContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      max-width: 750px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
     }
-    .footprint-img { 
-      width: 100%; 
-      height: 100%; 
-      object-fit: cover; 
-      transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), filter 0.5s; 
-      filter: grayscale(40%); 
+
+    /* Individual Event Card */
+    .ev-card {
+      background: #111;
+      border: 2px solid var(--gold, #f6d28a);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
-    .footprint-item:hover .footprint-img { 
-      transform: scale(1.1); 
-      filter: grayscale(0%); 
-    }
-    .footprint-overlay { 
-      position: absolute; 
-      bottom: 0; left: 0; right: 0; 
-      /* 底部 80% 白色，顶部 0% 全透明渐变 */
-      background: linear-gradient(to top, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 0) 100%) !important;
-      padding: 3rem 1.5rem 1.5rem; 
-      transform: translateY(100%); 
-      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); 
+    .ev-card-meta {
+      color: #ccc;
       font-size: 0.95rem;
-      color: #111 !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
     }
-    .footprint-item:hover .footprint-overlay { 
-      transform: translateY(0); 
-    }
-    .footprint-desc {
+    .ev-card-title {
+      color: #f6d28a;
+      font-size: 1.8rem;
       margin: 0;
-      line-height: 1.4;
-      font-family: 'Noto Serif SC', serif;
-      opacity: 0.9;
     }
-    @media (max-width: 768px) {
-      .footprint-overlay {
-        padding: 1.5rem !important;
-        font-size: 0.85rem !important;
-      }
-      .text-gold { font-size: 1.8rem !important; }
-      p.text-center { font-size: 0.85rem !important; padding: 0 1rem; }
+    .ev-card-desc {
+      color: #eee;
+      line-height: 1.7;
+      font-size: 0.9rem;
+    }
+    .ev-remind-btn {
+      margin-top: 0.5rem;
+      background: #f6d28a;
+      color: #000;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      border-radius: 100px;
+      padding: 14px 2rem;
+      cursor: pointer;
+      width: 100%;
+      letter-spacing: 2px;
+      transition: opacity 0.2s;
+    }
+    .ev-remind-btn:hover { opacity: 0.85; }
+    .ev-remind-btn:active { opacity: 0.7; }
+
+    /* Reminder Modal */
+    #reminderOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+    #reminderOverlay.open { display: flex; }
+    #reminderBox {
+      background: #fff;
+      border-radius: 24px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    #reminderBox h2 { color: #111; margin: 0 0 0.5rem; font-size: 1.5rem; }
+    #reminderBox p  { color: #555; margin: 0 0 1.2rem; font-size: 0.9rem; }
+    #reminderBox #rem_event_name { color: #111; font-weight: 700; margin-bottom: 1rem; font-size: 1rem; }
+    #rem_email_input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 50px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .rem-btns { display: flex; gap: 10px; }
+    #rem_submit { flex: 2; background: #f6d28a; color: #000; font-weight: 700; border: none; border-radius: 50px; padding: 13px; cursor: pointer; font-size: 0.95rem; }
+    #rem_cancel { flex: 1; background: #eee; color: #333; border: none; border-radius: 50px; padding: 13px; cursor: pointer; font-size: 0.9rem; }
+
+    @media (max-width: 600px) {
+      .ev-card { padding: 1.5rem; }
+      .ev-card-title { font-size: 1.4rem; }
     }
   </style>
 </head>
 <body style="position: relative;">
   <canvas id="bgParticles"></canvas>
-    <header style="z-index:100;">
+  <header style="z-index:100;">
     <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
       <a href="index.html" class="logo" style="text-decoration:none;">
         <img src="assets/logo.png" alt="Harvester" class="nav-logo">
@@ -82,9 +126,7 @@
       </div>
     </div>
     <div class="menu-toggle" onclick="toggleMobileMenu()">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </div>
     <nav class="nav-links">
       <a href="index.html">主页</a>
@@ -115,31 +157,156 @@
 
   <div class="ppt-header fade-in">
     <div class="ppt-line"></div>
-    
     <h1 class="ppt-title">精彩活动</h1>
     <p class="ppt-subtitle">JOIN OUR GOSPEL JOURNEY</p>
     <p style="text-align: center; font-size: 0.85rem; opacity: 0.7; margin-top: 10px; font-family: 'Noto Serif SC', serif; letter-spacing: 1px;">收割的脚步不停歇 敬请期待我们的下一个同行时刻</p>
   </div>
 
-  <!-- 上半部：活动 -->
-  <section class="fade-in" style="min-height: 40vh; padding-top: 0;">
-    <div id="eventsContainer" class="footprints-grid">
-       <!-- Dynamic Content from app.js -->
-       <p style="text-align:center; grid-column: 1/-1; opacity:0.5;">正在加载精彩活动...</p>
+  <!-- Events will be injected here -->
+  <div id="eventsContainer">
+    <p style="text-align:center; opacity:0.5;">正在加载精彩活动...</p>
+  </div>
+
+  <!-- Reminder Modal (self-contained, no z-index conflicts) -->
+  <div id="reminderOverlay">
+    <div id="reminderBox">
+      <h2>活动参与</h2>
+      <p>我们会在活动前一天发送提醒邮件给你。</p>
+      <p id="rem_event_name"></p>
+      <input type="email" id="rem_email_input" placeholder="输入您的邮箱地址...">
+      <div class="rem-btns">
+        <button id="rem_submit">🔔 提交</button>
+        <button id="rem_cancel">取消</button>
+      </div>
     </div>
-  </section>
+  </div>
 
-
-    <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+  <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
       <img src="assets/logo.png" alt="Harvester" style="height: 20px; display: block; margin: 0 auto 1.2rem;">
     </a>
     <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
   </footer>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=4.7.7"></script>
+  <script src="app.js?v=4.7.8"></script>
+
+  <!-- Self-contained events logic: does NOT depend on app.js loading correctly -->
+  <script>
+    (function() {
+      const SUPABASE_URL = "https://ollfdarbmiahgjaqivpg.supabase.co";
+      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sbGZkYXJibWlhaGdqYXFpdnBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTI2OTgsImV4cCI6MjA5MDc4ODY5OH0.hn7JoD3dX3wiQ3ia_A1GQMsGwfRwiNUQ_2Nu4UdstfI";
+
+      let currentEventId = null;
+      let currentEventTitle = null;
+      let currentEventDate = null;
+
+      // Modal logic
+      const overlay = document.getElementById('reminderOverlay');
+      const cancelBtn = document.getElementById('rem_cancel');
+      const submitBtn = document.getElementById('rem_submit');
+      const emailInput = document.getElementById('rem_email_input');
+      const eventNameEl = document.getElementById('rem_event_name');
+
+      cancelBtn.addEventListener('click', function() {
+        overlay.classList.remove('open');
+      });
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) overlay.classList.remove('open');
+      });
+
+      submitBtn.addEventListener('click', async function() {
+        const email = emailInput.value.trim();
+        if (!email || !email.includes('@')) {
+          alert('请输入有效的邮箱地址');
+          return;
+        }
+        submitBtn.textContent = '提交中...';
+        submitBtn.disabled = true;
+        try {
+          const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          await db.from('event_reminders').insert([{
+            eventId: currentEventId,
+            eventTitle: currentEventTitle,
+            eventDate: currentEventDate,
+            userEmail: email,
+            reminderSent: false
+          }]);
+          alert('✅ 提醒设置成功！收割机届时将通知您。');
+          overlay.classList.remove('open');
+          emailInput.value = '';
+        } catch(err) {
+          alert('提交失败，请稍后再试：' + err.message);
+        }
+        submitBtn.textContent = '🔔 提交';
+        submitBtn.disabled = false;
+      });
+
+      // Load events
+      async function loadEvents() {
+        const container = document.getElementById('eventsContainer');
+        try {
+          const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          const { data: events, error } = await db.from('events').select('*').order('date', { ascending: true });
+          if (error) throw error;
+          if (!events || events.length === 0) {
+            container.innerHTML = '<p style="text-align:center; opacity:0.5; color:#fff;">暂无活动，敬请期待。</p>';
+            return;
+          }
+
+          container.innerHTML = events.map(function(e) {
+            const date = e.date ? new Date(e.date).toLocaleDateString('zh-CN') : 'TBA';
+            const time = e.time || '';
+            let desc = (e.description || '').replace(/EXT_META:.*?\|\|/g, '').trim();
+            const loc = e.location || '';
+            const mapUrl = e.map_url || '';
+            const locHtml = loc
+              ? (mapUrl
+                  ? '<a href="' + mapUrl + '" target="_blank" style="color:#f6d28a;"><i class="fas fa-map-marker-alt"></i> ' + loc + '</a>'
+                  : '<span><i class="fas fa-map-marker-alt"></i> ' + loc + '</span>')
+              : '';
+            const eventDate = e.event_date || e.date || '';
+
+            return '<div class="ev-card">' +
+              '<div class="ev-card-meta">' +
+                '<span><i class="fas fa-calendar-alt"></i> ' + date + '</span>' +
+                (time ? '<span><i class="fas fa-clock"></i> ' + time + '</span>' : '') +
+                (locHtml ? locHtml : '') +
+              '</div>' +
+              '<h3 class="ev-card-title">' + e.title + '</h3>' +
+              (desc ? '<p class="ev-card-desc">' + desc + '</p>' : '') +
+              '<button class="ev-remind-btn" data-id="' + e.id + '" data-title="' + encodeURIComponent(e.title) + '" data-date="' + eventDate + '">我要参与 / 提醒我</button>' +
+            '</div>';
+          }).join('');
+
+          // Attach click events
+          container.querySelectorAll('.ev-remind-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              currentEventId = btn.getAttribute('data-id');
+              currentEventTitle = decodeURIComponent(btn.getAttribute('data-title'));
+              currentEventDate = btn.getAttribute('data-date');
+              eventNameEl.textContent = '《' + currentEventTitle + '》';
+              emailInput.value = '';
+              overlay.classList.add('open');
+            });
+          });
+
+        } catch(err) {
+          container.innerHTML = '<p style="text-align:center; color:#f88; opacity:0.8;">加载失败：' + err.message + '</p>';
+        }
+      }
+
+      // Wait for supabase to be available
+      function waitAndLoad() {
+        if (typeof supabase !== 'undefined' && supabase.createClient) {
+          loadEvents();
+        } else {
+          setTimeout(waitAndLoad, 100);
+        }
+      }
+      waitAndLoad();
+    })();
+  </script>
 </body>
 </html>
