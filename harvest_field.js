@@ -168,19 +168,34 @@ function createCardUITexture(singer) {
   // Bottom Right
   ctx.beginPath(); ctx.moveTo(w-10-len, h-10); ctx.lineTo(w-10, h-10); ctx.lineTo(w-10, h-10-len); ctx.stroke();
 
-  // Name
+  // Name (Moved Up)
   ctx.textAlign = 'left';
   ctx.fillStyle = '#ffffff';
   ctx.font = 'bold 50px Courier, monospace';
   ctx.shadowColor = '#00f3ff';
   ctx.shadowBlur = 0;
-  ctx.fillText(singer.name.toUpperCase(), 35, h - 100);
+  ctx.fillText(singer.name.toUpperCase(), 35, h - 180);
 
-  // Bio (Directly below name)
+  // Bio (Multi-line support)
   ctx.font = '22px Courier, monospace';
   ctx.fillStyle = CFG.GOLD;
-  const bioSnippet = singer.role || singer.bio || '';
-  ctx.fillText(bioSnippet.substring(0, 32) + (bioSnippet.length > 32 ? '...' : ''), 35, h - 55);
+  const bioText = singer.role || singer.bio || '';
+  
+  // Simple Wrap logic
+  const words = bioText.split('');
+  let line1 = '', line2 = '';
+  const maxLine = 22;
+  
+  if (words.length > maxLine) {
+    line1 = bioText.substring(0, maxLine);
+    line2 = bioText.substring(maxLine, maxLine + maxLine);
+    if(bioText.length > maxLine * 2) line2 += '...';
+  } else {
+    line1 = bioText;
+  }
+
+  ctx.fillText(line1, 35, h - 130);
+  if(line2) ctx.fillText(line2, 35, h - 95);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.anisotropy = 4;
