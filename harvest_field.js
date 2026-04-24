@@ -171,13 +171,13 @@ function createCardUITexture(singer) {
   // Name (Moved Up)
   ctx.textAlign = 'left';
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 50px Courier, monospace';
+  ctx.font = 'normal 50px "Kaiti SC", "STKaiti", "KaiTi", "楷体", serif';
   ctx.shadowColor = '#00f3ff';
   ctx.shadowBlur = 0;
   ctx.fillText(singer.name.toUpperCase(), 35, h - 180);
 
   // Bio (Multi-line support)
-  ctx.font = '22px Courier, monospace';
+  ctx.font = '22px "Kaiti SC", "STKaiti", "KaiTi", "楷体", serif';
   ctx.fillStyle = CFG.GOLD;
   const bioText = singer.role || singer.bio || '';
   
