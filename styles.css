@@ -1771,3 +1771,86 @@ body.harvest-active {
 /* 🎥 Video Control Killing */
 video::-webkit-media-controls { display:none !important; }
 video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
+
+/* --- Singer Dropdown Navigation --- */
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-dropdown .dropbtn {
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.dropdown-content {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  top: 150%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(15px);
+  min-width: 140px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  z-index: 1001;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+}
+
+.nav-dropdown:hover .dropdown-content {
+  opacity: 1;
+  visibility: visible;
+  top: 100%;
+  transform: translateX(-50%) translateY(10px);
+}
+
+.dropdown-content a {
+  color: #ccc;
+  padding: 12px 20px;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  font-size: 0.95rem;
+  transition: 0.2s;
+  letter-spacing: 1px;
+}
+
+.dropdown-content a:hover {
+  background: rgba(201, 147, 59, 0.2);
+  color: var(--gold);
+}
+
+/* Mobile Dropdown styles */
+.mobile-dropdown {
+  width: 100%;
+  text-align: center;
+}
+.mobile-dropdown-content {
+  display: none;
+  background: rgba(0,0,0,0.3);
+  margin-top: 10px;
+  border-radius: 8px;
+  padding: 10px 0;
+}
+.mobile-dropdown-content.show {
+  display: block;
+}
+.mobile-dropdown-content a {
+  font-size: 1.2rem !important;
+  color: #aaa !important;
+  padding: 10px !important;
+}
+.mobile-dropdown-content a:hover {
+  color: var(--gold) !important;
+}

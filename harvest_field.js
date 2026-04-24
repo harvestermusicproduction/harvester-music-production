@@ -106,8 +106,18 @@ async function loadSingers() {
       return;
     }
     allSingers = data;
-    renderSingers('all');
-    // Hide loading screen if it exists
+    
+    // Check URL parameters for direct category navigation
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab === 'gospel') {
+      window.switchCategory('福音');
+    } else if (tab === 'worship') {
+      window.switchCategory('敬拜');
+    } else {
+      renderSingers('all');
+    }
+    
     const loader = document.getElementById('scene-loader');
     if(loader) loader.style.opacity = '0';
     setTimeout(() => { if(loader) loader.remove(); }, 1000);

@@ -134,7 +134,13 @@
       <a href="feedback.html">回声空间</a>
       <a href="events.html" class="active">活动</a>
       <a href="diary.html">田野日志</a>
-      <a href="singers.html">歌手</a>
+      <div class="nav-dropdown">
+        <a href="singers.html">歌手 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
+        <div class="dropdown-content">
+          <a href="singers.html?tab=gospel">福音歌手</a>
+          <a href="singers.html?tab=worship">敬拜歌手</a>
+        </div>
+      </div>
       <a href="submit.html">我要投稿</a>
       <a href="about.html">关于我们</a>
       <a href="support.html">支持我们</a>
@@ -148,7 +154,13 @@
     <a href="feedback.html">回声空间</a>
     <a href="events.html" class="active">活动</a>
     <a href="diary.html">田野日志</a>
-    <a href="singers.html">歌手</a>
+    <div class="mobile-dropdown">
+      <a href="#" onclick="event.preventDefault(); this.nextElementSibling.classList.toggle('show');">歌手 <i class="fas fa-caret-down"></i></a>
+      <div class="mobile-dropdown-content">
+        <a href="singers.html?tab=gospel">福音歌手</a>
+        <a href="singers.html?tab=worship">敬拜歌手</a>
+      </div>
+    </div>
     <a href="submit.html">我要投稿</a>
     <a href="about.html">关于我们</a>
     <a href="support.html">支持我们</a>

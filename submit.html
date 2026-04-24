@@ -49,7 +49,13 @@
       <a href="feedback.html">回声空间</a>
       <a href="events.html">活动</a>
       <a href="diary.html">田野日志</a>
-      <a href="singers.html">歌手</a>
+      <div class="nav-dropdown">
+        <a href="singers.html">歌手 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
+        <div class="dropdown-content">
+          <a href="singers.html?tab=gospel">福音歌手</a>
+          <a href="singers.html?tab=worship">敬拜歌手</a>
+        </div>
+      </div>
       <a href="submit.html" class="active">我要投稿</a>
       <a href="about.html">关于我们</a>
       <a href="support.html">支持我们</a>
@@ -63,7 +69,13 @@
     <a href="feedback.html">回声空间</a>
     <a href="events.html">活动</a>
     <a href="diary.html">田野日志</a>
-    <a href="singers.html">歌手</a>
+    <div class="mobile-dropdown">
+      <a href="#" onclick="event.preventDefault(); this.nextElementSibling.classList.toggle('show');">歌手 <i class="fas fa-caret-down"></i></a>
+      <div class="mobile-dropdown-content">
+        <a href="singers.html?tab=gospel">福音歌手</a>
+        <a href="singers.html?tab=worship">敬拜歌手</a>
+      </div>
+    </div>
     <a href="submit.html" class="active">我要投稿</a>
     <a href="about.html">关于我们</a>
     <a href="support.html">支持我们</a>
@@ -78,7 +90,7 @@
 
   <section class="fade-in" style="max-width: 900px; margin-left: auto; margin-right: auto; padding: 2rem; padding-top: 0;">
     
-    <div id="cfg_submit_text" style="padding: 0; line-height: 2.2; color: #444; font-size: 1.1rem; background: transparent !important; border: none; white-space: normal !important; text-align: left;">
+    <div id="cfg_submit_text" style="padding: 0; line-height: 2.2; color: #fff; font-size: 1.1rem; background: transparent !important; border: none; white-space: normal !important; text-align: left; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
       <p style="margin-bottom: 1.5rem; font-weight: 500;">所有经收割机制作与发行的作品，词曲版权由收割机拥有七年。七年后归还作者。</p>
       <p style="margin-bottom: 0.8rem;">🔸 所有作品将以「收割机EP」形式发行。</p>
       <p style="margin-bottom: 0.8rem;">🔸 发行时将在 FB / IG / YouTube 标注所有创作者，给予应有尊重。</p>
@@ -93,15 +105,6 @@
       <a id="cfg_submit_btn_link" href="#" class="btn btn-submit" style="min-width: 180px; text-align: center; text-decoration: none; padding: 10px 35px; font-size: 0.9rem; letter-spacing: 2px; border-radius: 50px;">我要投稿</a>
     </div>
 
-    <div class="contact" style="margin-top: 4rem;">
-        <form class="contact-form" onsubmit="event.preventDefault(); alert('作品已提交记录 (Simulation).');">
-          <input type="text" placeholder="您的真实姓名或乐队名称" required>
-          <input type="email" placeholder="您的联络邮箱" required>
-          <input type="url" placeholder="歌曲云端试听链接 (Soundcloud / Google Drive)" required>
-          <textarea placeholder="这首歌的由来与你的见证故事..." rows="6" required></textarea>
-          <button type="submit" class="btn btn-submit" style="border-radius: 50px;">确认并提交作品</button>
-        </form>
-      </div>
     </div>
   </section>
 
@@ -116,32 +119,5 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
-  <script>
-    document.querySelector('.contact-form').onsubmit = async function(e) {
-      e.preventDefault();
-      const btn = this.querySelector('button');
-      btn.innerText = '提交中...';
-      btn.disabled = true;
-
-      const data = {
-        user_name: this.elements[0].value,
-        contact_info: this.elements[1].value,
-        file_url: this.elements[2].value,
-        message: this.elements[3].value
-      };
-
-      try {
-        const { error } = await window.supabase.from('submissions').insert([data]);
-        if (error) throw error;
-        alert('感谢您的投稿！收割机团队将尽快与您联络。');
-        this.reset();
-      } catch (err) {
-        alert('提交失败: ' + err.message);
-      } finally {
-        btn.innerText = '确认并提交作品';
-        btn.disabled = false;
-      }
-    };
-  </script>
 </body>
 </html>
