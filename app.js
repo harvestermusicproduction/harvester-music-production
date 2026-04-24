@@ -425,13 +425,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if(!email || !email.includes('@')) return alert("请输入有效的邮箱");
       
       try {
-        await db.from('event_reminders').insert([{ 
+        const { error } = await db.from('event_reminders').insert([{ 
           eventId: id, 
           eventTitle: title, 
           eventDate: date,
           userEmail: email,
           reminderSent: false
         }]);
+        if (error) throw error;
         alert("✅ 提醒设置成功！收割机届时将通知您。");
       } catch(e) {
         alert("❌ 提交失败：" + (e.message || JSON.stringify(e)));
