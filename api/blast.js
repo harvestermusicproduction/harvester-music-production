@@ -42,6 +42,7 @@ export default async function handler(req, res) {
     });
 
     let sentCount = 0;
+    let fallbackError = '';
 
     for (const reminder of reminders) {
       // Resolve content
@@ -51,7 +52,7 @@ export default async function handler(req, res) {
 
       // Send Email via Resend
       const { data: emailData, error: emailErr } = await resend.emails.send({
-        from: 'Harvester Music <no-reply@harvestermusic.my>', // Sender Domain MUST be verified in Resend Dashboard
+        from: 'Harvester Music <onboarding@resend.dev>', // Temporary fallback to Resend default to avoid unverified domain errors
         to: reminder.userEmail,
         subject: `温馨提醒：千万别错过《${reminder.eventTitle}》`,
         html: `
@@ -80,7 +81,12 @@ export default async function handler(req, res) {
         sentCount++;
       } else {
         console.error(`Failed to send email to ${reminder.userEmail}`, emailErr);
+        fallbackError = emailErr.message;
       }
+    }
+
+    if (sentCount === 0 && reminders.length > 0) {
+      return res.status(200).json({ message: `发送被拦截：0封成功。Resend拦截原因: ${fallbackError}\n(如果你使用的是免费的Resend测试账号，必须在后台先验证域名，并且只能发送到你自己的注册邮箱！)` });
     }
 
     return res.status(200).json({ message: `🚀 成功一键发送了 ${sentCount} 封提醒邮件！` });
