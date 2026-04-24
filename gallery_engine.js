@@ -24,9 +24,8 @@ async function fetchArtists() {
     // Check URL params for initial category
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
-    if (tab === 'gospel') switchCategory('福音');
-    else if (tab === 'worship') switchCategory('敬拜');
-    else renderGrid(allArtists);
+    if (tab === 'worship') switchCategory('敬拜');
+    else switchCategory('福音'); 
     
   } catch (err) {
     console.error("Gallery Fetch Error:", err);
