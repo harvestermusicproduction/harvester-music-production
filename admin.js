@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="javascript:void(0)" onclick="switchModule('singers')" style="color:${currentModule==='singers'?'var(--gold)':'#888'}">🎙️ 歌手 Singers</a>
             <a href="javascript:void(0)" onclick="switchModule('diary')" style="color:${currentModule==='diary'?'var(--gold)':'#888'}">📂 田野日记 Diary</a>
             <a href="javascript:void(0)" onclick="switchModule('echo')" style="color:${currentModule==='echo'?'var(--gold)':'#888'}">🌌 回声空间 Echo</a>
+            <a href="javascript:void(0)" onclick="switchModule('reminders')" style="color:${currentModule==='reminders'?'var(--gold)':'#888'}">⏰ 提醒订阅 Reminders</a>
             <a href="javascript:void(0)" onclick="switchModule('submissions')" style="color:${currentModule==='submissions'?'var(--gold)':'#888'}">📮 投稿中心 Inbox</a>
             <a href="javascript:void(0)" onclick="switchModule('config')" style="color:${currentModule==='config'?'var(--gold)':'#888'}">⚙️ 系统配置 Config</a>
           </nav>
@@ -77,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (currentModule === 'singers') renderSingers(body);
     else if (currentModule === 'diary') renderDiary(body);
     else if (currentModule === 'echo') renderEchoes(body);
+    else if (currentModule === 'reminders') renderReminders(body);
     else if (currentModule === 'submissions') renderSubmissions(body);
     else if (currentModule === 'config') renderConfig(body);
     else body.innerHTML = `<h2>${currentModule.toUpperCase()}</h2><p>功能开发中...</p>`;
@@ -737,7 +739,41 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCMS();
   };
 
-  // --- 📮 SUBMISSIONS MODULE ---
+  // --- ⏰ REMINDERS MODULE (活动提醒记录) ---
+  async function renderReminders(container) {
+    const { data: reminders } = await db.from('event_reminders').select('*').order('created_at', {ascending: false});
+    
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <h1 style="color:var(--gold);">⏰ 提醒订阅管理 (Event Reminders)</h1>
+        <button class="btn-tiny" onclick="switchModule('reminders')">刷新数据</button>
+      </div>
+
+      <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222; margin-top:15px;">
+        <table style="width:100%; text-align:left; border-collapse:collapse;">
+          <tr style="background:#151515; color:#666; font-size:0.8rem;">
+            <th style="padding:15px;">提交日期</th>
+            <th>关联活动</th>
+            <th>目标邮箱</th>
+            <th>发送状态</th>
+            <th>操作</th>
+          </tr>
+          ${reminders?.map(r => `
+            <tr style="border-bottom:1px solid #222;">
+              <td style="padding:15px; font-size:0.8rem; color:#888;">${new Date(r.created_at).toLocaleDateString()} ${new Date(r.created_at).toLocaleTimeString().substring(0,5)}</td>
+              <td style="color:var(--gold); font-weight:bold;">《${r.eventTitle}》<br><small style="color:#666; font-weight:normal;">时间: ${r.eventDate}</small></td>
+              <td style="color:#fff;">${r.userEmail}</td>
+              <td><span style="color:${r.reminderSent?'#64D28A':'#e5b05a'}; background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:4px; font-size:0.75rem;">${r.reminderSent ? '✅ 已发邮件' : '⏳ 等待发送'}</span></td>
+              <td>
+                <button class="btn-tiny danger" onclick="deleteItem('event_reminders', '${r.id}')">删除</button>
+              </td>
+            </tr>
+          `).join('') || '<tr><td colspan="5" style="padding:30px; text-align:center;">暂无任何用户订阅提醒</td></tr>'}
+        </table>
+      </div>
+    `;
+  }
+
   // --- 📮 SUBMISSIONS MODULE ---
   async function renderSubmissions(container) {
     const { data: subs } = await db.from('submissions').select('*').order('created_at', {ascending: false});
