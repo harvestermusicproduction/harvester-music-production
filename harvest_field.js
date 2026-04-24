@@ -126,71 +126,80 @@ async function loadSingers() {
     }
   } catch (e) {
     console.error("Loader Error:", e);
+    alert("System Boot Error: " + e.message);
+    const loader = document.getElementById('scene-loader');
+    if(loader) loader.style.display = 'none';
   }
 }
 
-// Build or Rebuild the Cards Timeline
 function buildCards(dataArray) {
-  // Cleanup old cards
-  cards.forEach(c => cardsGroup.remove(c));
-  cards = [];
-  hoverIdx = -1;
-  hideOverlay();
+  try {
+    // Cleanup old cards
+    cards.forEach(c => cardsGroup.remove(c));
+    cards = [];
+    hoverIdx = -1;
+    hideOverlay();
 
-  // Reset Camera
-  targetZ = Math.max(500, CONFIG.Z_SPACING);
-  gsap.to(camera.position, { z: targetZ, duration: 1.5, ease: "power3.out" });
+    // Reset Camera
+    targetZ = Math.max(500, CONFIG.Z_SPACING);
+    gsap.to(camera.position, { z: targetZ, duration: 1.5, ease: "power3.out" });
 
-  const geo = new THREE.PlaneGeometry(CONFIG.CARD_WIDTH, CONFIG.CARD_HEIGHT);
-  
-  dataArray.forEach((singer, i) => {
-    // Alternating Zig-Zag layout: Left, Right, Center...
-    const sideOffset = i === 0 ? 0 : (i % 2 === 0 ? 150 : -150);
-    const zPos = -(i * CONFIG.Z_SPACING);
+    const geo = new THREE.PlaneGeometry(CONFIG.CARD_WIDTH, CONFIG.CARD_HEIGHT);
+    
+    // Ensure array is valid
+    if (!dataArray || !Array.isArray(dataArray)) dataArray = [];
 
-    // Default Material
-    const mat = new THREE.MeshStandardMaterial({ 
-      color: 0xcccccc, 
-      roughness: 0.1,
-      metalness: 0.2,
-      side: THREE.DoubleSide
+    dataArray.forEach((singer, i) => {
+      const sideOffset = i === 0 ? 0 : (i % 2 === 0 ? 150 : -150);
+      const zPos = -(i * CONFIG.Z_SPACING);
+
+      const mat = new THREE.MeshStandardMaterial({ 
+        color: 0xcccccc, 
+        roughness: 0.1,
+        metalness: 0.2,
+        side: THREE.DoubleSide
+      });
+
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(sideOffset, 0, zPos);
+      
+      mesh.rotation.z = (Math.random() - 0.5) * 0.1;
+      mesh.rotation.y = (sideOffset > 0) ? -0.1 : (sideOffset < 0 ? 0.1 : 0);
+      
+      const imgUrl = singer.image_url && String(singer.image_url).startsWith('http') ? singer.image_url : 'assets/logo.png';
+      
+      try {
+        textureLoader.load(imgUrl, (tex) => {
+          tex.minFilter = THREE.LinearFilter;
+          mesh.material.map = tex;
+          mesh.material.color.setHex(0xffffff);
+          mesh.material.needsUpdate = true;
+        });
+      } catch (texErr) {
+        console.warn("Texture error:", texErr);
+      }
+
+      mesh.userData = { singer: singer, index: i, baseRotX: mesh.rotation.x, baseRotY: mesh.rotation.y, baseRotZ: mesh.rotation.z };
+      
+      cardsGroup.add(mesh);
+      cards.push(mesh);
+
+      gsap.from(mesh.position, {
+        y: -500,
+        opacity: 0,
+        duration: 1.5,
+        delay: i * 0.1,
+        ease: "power3.out"
+      });
     });
 
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(sideOffset, 0, zPos);
-    
-    // Slight randomized rotation for organic feel
-    mesh.rotation.z = (Math.random() - 0.5) * 0.1;
-    mesh.rotation.y = (sideOffset > 0) ? -0.1 : (sideOffset < 0 ? 0.1 : 0);
-    
-    // Load Texture dynamically
-    const imgUrl = singer.image_url && singer.image_url.startsWith('http') ? singer.image_url : 'assets/logo.png';
-    textureLoader.load(imgUrl, (tex) => {
-      tex.minFilter = THREE.LinearFilter;
-      mesh.material.map = tex;
-      mesh.material.color.setHex(0xffffff); // Illuminate fully once loaded
-      mesh.material.needsUpdate = true;
-    });
+    const maxZ = -(dataArray.length > 0 ? dataArray.length - 1 : 0) * CONFIG.Z_SPACING;
+    cardsGroup.userData.maxZ = maxZ;
 
-    mesh.userData = { singer: singer, index: i, baseRotX: mesh.rotation.x, baseRotY: mesh.rotation.y, baseRotZ: mesh.rotation.z };
-    
-    cardsGroup.add(mesh);
-    cards.push(mesh);
-
-    // Entrance Animation
-    gsap.from(mesh.position, {
-      y: -500,
-      opacity: 0,
-      duration: 1.5,
-      delay: i * 0.1,
-      ease: "power3.out"
-    });
-  });
-
-  // Calculate Bounds to prevent scrolling infinitely into the void
-  const maxZ = -(dataArray.length - 1) * CONFIG.Z_SPACING;
-  // Expose for wheel boundary
-  cardsGroup.userData.maxZ = maxZ;
+  } catch(err) {
+    console.error("buildCards Error:", err);
+    alert("Build Error: " + err.message);
+  }
 }
 
 // Global hook for Navigation Filters
