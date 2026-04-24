@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <p style="color:#fff; line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
             <div class="event-actions" style="display:flex; justify-content:center; margin-top:25px; position:relative; z-index:50; width:100%;">
-              <button class="btn-score-premium reminder-btn" data-event-id="${e.id}" data-event-title="${encodeURIComponent(e.title)}" data-event-date="${e.event_date || e.date}" style="border-radius:100px; padding:14px 0; font-family:var(--font-display); letter-spacing:2px; width:100%; max-width:320px; margin:0 auto; white-space:nowrap; pointer-events:auto; cursor:pointer;">
+              <button class="btn-score-premium reminder-btn" data-event-id="${e.id}" data-event-title="${encodeURIComponent(e.title)}" data-event-date="${e.event_date || e.date}" style="border-radius:100px; padding:12px 0; font-family:var(--font-display); letter-spacing:1px; width:100%; max-width:240px; font-size: 0.95rem; margin:0 auto; white-space:nowrap; pointer-events:auto; cursor:pointer;">
                 我要参与 / 提醒我
               </button>
             </div>
