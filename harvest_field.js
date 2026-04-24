@@ -181,7 +181,8 @@ function createCardUITexture(singer) {
   ctx.fillStyle = '#888';
   ctx.fillText('TARGET IDENTIFIED // ' + (singer.category || 'ARTIST'), 35, h - 70);
   ctx.fillStyle = CFG.GOLD;
-  ctx.fillText('STATUS: ENCRYPTED', 35, h - 40);
+  const bioSnippet = singer.role || singer.bio || 'STABLE SIGNAL';
+  ctx.fillText(bioSnippet.substring(0, 25) + (bioSnippet.length > 25 ? '...' : ''), 35, h - 40);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.anisotropy = 4;
