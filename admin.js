@@ -740,13 +740,32 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // --- ⏰ REMINDERS MODULE (活动提醒记录) ---
+  window.triggerEmailBlast = async () => {
+    if(!confirm("确定要立即给下面列表里所有「等待发送」的用户发送提醒邮件吗？")) return;
+    const btn = document.getElementById('blastBtn');
+    if(btn) { btn.innerText = "🚀 疯狂发信中..."; btn.disabled = true; }
+    
+    try {
+      const res = await fetch('/api/blast', { method: 'POST' });
+      const data = await res.json();
+      alert(data.message || data.error);
+      renderCMS();
+    } catch(e) {
+      alert("发信系统出错: " + e.message);
+      if(btn) { btn.innerText = "🚀 一键群发所有待发提醒"; btn.disabled = false; }
+    }
+  };
+
   async function renderReminders(container) {
     const { data: reminders } = await db.from('event_reminders').select('*').order('created_at', {ascending: false});
     
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
         <h1 style="color:var(--gold);">⏰ 提醒订阅管理 (Event Reminders)</h1>
-        <button class="btn-tiny" onclick="switchModule('reminders')">刷新数据</button>
+        <div>
+           <button id="blastBtn" class="btn btn-submit" style="padding:10px 20px; background:linear-gradient(135deg, #64D28A 0%, #3ca85f 100%); margin-right:10px;" onclick="triggerEmailBlast()">🚀 一键群发所有待发提醒</button>
+           <button class="btn-tiny" onclick="switchModule('reminders')" style="padding:10px;">刷新数据</button>
+        </div>
       </div>
 
       <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222; margin-top:15px;">
