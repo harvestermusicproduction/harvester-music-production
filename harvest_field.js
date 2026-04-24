@@ -1,291 +1,306 @@
 /**
- * Harvest Field v4.0 - VibeCoding Minimalist Z-Axis 3D Gallery
- * Transforms the viewport into a deep space tunnel gallery with hovering cards.
+ * Harvest Field v5.0 - Z-Axis Space Gallery (Rebuilt)
+ * All globals initialized inside init() to prevent load-order crashes.
  */
 
-let db;
-let scene, camera, renderer, raycaster, mouse;
-let starMesh, gridHelper;
-let allSingers = [];
-let cardsGroup = new THREE.Group();
+// Declare references only — no THREE calls until init()
+let db, scene, camera, renderer, raycaster, mouse;
+let starMesh, gridHelper, cardsGroup;
 let cards = [];
+let allSingers = [];
 let hoverIdx = -1;
-let targetZ = 500;
+let targetCamZ = 500;
 let textureLoader;
+let initiated = false;
 
-const CONFIG = {
-  Z_SPACING: 800,        // Space between cards
-  CARD_WIDTH: 220,
-  CARD_HEIGHT: 330,
-  GOLD: 0xc9933b,
-  DARK: 0x050508
+const CFG = {
+  Z_GAP: 900,
+  W: 240,
+  H: 360,
+  GOLD_HEX: 0xc9933b,
+  BG: 0x050508
 };
 
-async function init() {
-  db = window.supabase;
-  if (!db) {
-    setTimeout(init, 500);
+// ─────────────────────────────────────────
+// BOOT: wait for both Three.js AND Supabase
+// ─────────────────────────────────────────
+function waitAndInit() {
+  if (typeof THREE === 'undefined' || typeof window.supabase === 'undefined') {
+    console.log('[HF] Waiting for dependencies...');
+    setTimeout(waitAndInit, 200);
     return;
   }
+  if (!initiated) {
+    initiated = true;
+    init();
+  }
+}
 
-  // 1. Core Setup
+document.addEventListener('DOMContentLoaded', waitAndInit);
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+async function init() {
+  console.log('[HF] init() started');
+  db = window.supabase;
+
+  // Scene
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(CONFIG.DARK);
-  // Add heavy fog for depth transition
-  scene.fog = new THREE.FogExp2(CONFIG.DARK, 0.0006);
+  scene.background = new THREE.Color(CFG.BG);
+  scene.fog = new THREE.FogExp2(CFG.BG, 0.0005);
 
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 15000);
-  camera.position.set(0, 0, targetZ);
+  // Camera
+  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 20000);
+  camera.position.set(0, 0, targetCamZ);
 
-  renderer = new THREE.WebGLRenderer({
-    canvas: document.getElementById('harvest-canvas'),
-    antialias: true,
-    alpha: true
-  });
+  // Renderer
+  const canvas = document.getElementById('harvest-canvas');
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+  // Raycaster + Mouse
   raycaster = new THREE.Raycaster();
-  mouse = new THREE.Vector2();
+  mouse = new THREE.Vector2(-9999, -9999); // off-screen default
+
+  // TextureLoader
   textureLoader = new THREE.TextureLoader();
 
-  // 2. Lighting (Moody, cinematic)
-  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-  scene.add(ambient);
-  
-  const spotLight = new THREE.SpotLight(0xffffff, 1.5);
-  spotLight.position.set(0, 500, 500);
-  spotLight.angle = Math.PI / 4;
-  spotLight.penumbra = 0.5;
-  scene.add(spotLight);
-
+  // Cards group
+  cardsGroup = new THREE.Group();
   scene.add(cardsGroup);
 
-  // 3. Environment: Stars & Grid
-  createEnvironment();
+  // Lighting
+  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+  const spot = new THREE.SpotLight(0xffffff, 1.5);
+  spot.position.set(0, 600, 600);
+  spot.angle = Math.PI / 4;
+  spot.penumbra = 0.6;
+  scene.add(spot);
 
-  // 4. Fetch & Build Data
-  await loadSingers();
+  buildEnvironment();
 
-  // 5. Events
+  // Events
   window.addEventListener('resize', onResize);
   window.addEventListener('wheel', onWheel, { passive: false });
   window.addEventListener('mousemove', onMouseMove);
-  
   const closeBtn = document.querySelector('.close-card');
-  if(closeBtn) closeBtn.onclick = hideOverlay;
+  if (closeBtn) closeBtn.onclick = hideOverlay;
 
-  // Render Loop
-  gsap.ticker.add(animate);
+  // Render loop — use native requestAnimationFrame
+  renderLoop();
+
+  // Load data
+  await loadData();
 }
 
-function createEnvironment() {
-  // Deep Perspective Grid
-  gridHelper = new THREE.GridHelper(20000, 200, CONFIG.GOLD, 0x111111);
-  gridHelper.position.y = -CONFIG.CARD_HEIGHT;
+// ─────────────────────────────────────────
+// ENVIRONMENT
+// ─────────────────────────────────────────
+function buildEnvironment() {
+  // Grid floor
+  gridHelper = new THREE.GridHelper(30000, 300, CFG.GOLD_HEX, 0x111111);
+  gridHelper.position.y = -CFG.H * 0.6;
   scene.add(gridHelper);
 
-  // Subtle Star Particles
+  // Stars
   const geo = new THREE.BufferGeometry();
-  const verts = [];
-  for(let i=0; i<3000; i++) {
-    verts.push(
-      (Math.random() - 0.5) * 4000,
-      (Math.random() - 0.5) * 4000,
-      (Math.random() - 0.5) * 10000
+  const pos = [];
+  for (let i = 0; i < 4000; i++) {
+    pos.push(
+      (Math.random() - 0.5) * 6000,
+      (Math.random() - 0.5) * 3000,
+      (Math.random() - 0.5) * 15000
     );
   }
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
-  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 2, transparent: true, opacity: 0.4 });
-  starMesh = new THREE.Points(geo, mat);
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  starMesh = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffffff, size: 2, transparent: true, opacity: 0.35 }));
   scene.add(starMesh);
 }
 
-async function loadSingers() {
+// ─────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────
+async function loadData() {
   try {
     const { data, error } = await db.from('singers').select('*');
     if (error) throw error;
     allSingers = data || [];
-    
-    // Check URL Route
-    const params = new URLSearchParams(window.location.search);
-    const tab = params.get('tab');
-    if (tab === 'gospel') {
-      window.switchCategory('福音');
-    } else if (tab === 'worship') {
-      window.switchCategory('敬拜');
-    } else {
-      buildCards(allSingers);
-    }
-    
-    // Fade out loader
+    console.log('[HF] Singers loaded:', allSingers.length);
+
+    // URL tab param
+    const tab = new URLSearchParams(window.location.search).get('tab');
+    if (tab === 'gospel') window.switchCategory('福音');
+    else if (tab === 'worship') window.switchCategory('敬拜');
+    else buildCards(allSingers);
+
+  } catch (err) {
+    console.error('[HF] loadData error:', err);
+    alert('数据库错误: ' + err.message);
+  } finally {
+    // Always hide loader
     const loader = document.getElementById('scene-loader');
-    if(loader) {
+    if (loader) {
+      loader.style.transition = 'opacity 0.8s';
       loader.style.opacity = '0';
-      setTimeout(() => loader.remove(), 1000);
+      setTimeout(() => { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 900);
     }
-  } catch (e) {
-    console.error("Loader Error:", e);
-    alert("System Boot Error: " + e.message);
-    const loader = document.getElementById('scene-loader');
-    if(loader) loader.style.display = 'none';
   }
 }
 
+// ─────────────────────────────────────────
+// BUILD CARDS
+// ─────────────────────────────────────────
 function buildCards(dataArray) {
-  try {
-    // Cleanup old cards
-    cards.forEach(c => cardsGroup.remove(c));
-    cards = [];
-    hoverIdx = -1;
-    hideOverlay();
+  // Clear previous
+  while (cardsGroup.children.length) cardsGroup.remove(cardsGroup.children[0]);
+  cards = [];
+  hoverIdx = -1;
+  hideOverlay();
 
-    // Reset Camera
-    targetZ = Math.max(500, CONFIG.Z_SPACING);
-    gsap.to(camera.position, { z: targetZ, duration: 1.5, ease: "power3.out" });
+  if (!dataArray || dataArray.length === 0) {
+    dataArray = [{
+      name: '暂无歌手 (No Singers)',
+      role: '',
+      bio: '管理员尚未添加此分类的歌手，请到后台管理面板添加！',
+      image_url: '',
+      category: 'gospel'
+    }];
+  }
 
-    const geo = new THREE.PlaneGeometry(CONFIG.CARD_WIDTH, CONFIG.CARD_HEIGHT);
-    
-    // Ensure array is valid
-    if (!dataArray || !Array.isArray(dataArray)) dataArray = [];
-    
-    if (dataArray.length === 0) {
-      dataArray.push({
-        name: "尚未收录 (No Data)",
-        role: "",
-        bio: "你还没有在后台存入这类歌手。请去 Admin 面板添加！\nIf you see this, the filter found 0 items.",
-        image_url: "https://via.placeholder.com/300x400?text=Empty"
-      });
-    }
+  // Reset camera
+  targetCamZ = 500;
+  camera.position.z = targetCamZ;
 
-    dataArray.forEach((singer, i) => {
-      const sideOffset = i === 0 ? 0 : (i % 2 === 0 ? 150 : -150);
-      const zPos = -(i * CONFIG.Z_SPACING);
+  const planeGeo = new THREE.PlaneGeometry(CFG.W, CFG.H);
 
-      const mat = new THREE.MeshStandardMaterial({ 
-        color: 0xcccccc, 
-        roughness: 0.1,
-        metalness: 0.2,
-        side: THREE.DoubleSide
-      });
+  dataArray.forEach((singer, i) => {
+    const mat = new THREE.MeshStandardMaterial({
+      color: 0x888888,
+      roughness: 0.2,
+      metalness: 0.1,
+    });
 
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.position.set(sideOffset, 0, zPos);
-      
-      mesh.rotation.z = (Math.random() - 0.5) * 0.1;
-      mesh.rotation.y = (sideOffset > 0) ? -0.1 : (sideOffset < 0 ? 0.1 : 0);
-      
-      const imgUrl = singer.image_url && String(singer.image_url).startsWith('http') ? singer.image_url : 'assets/logo.png';
-      
-      try {
-        textureLoader.load(imgUrl, (tex) => {
+    const mesh = new THREE.Mesh(planeGeo, mat);
+
+    // Zigzag layout
+    const xOffset = i === 0 ? 0 : (i % 2 === 0 ? 200 : -200);
+    mesh.position.set(xOffset, 0, -(i * CFG.Z_GAP));
+    mesh.rotation.z = (Math.random() - 0.5) * 0.06;
+    mesh.rotation.y = xOffset > 0 ? -0.12 : (xOffset < 0 ? 0.12 : 0);
+
+    mesh.userData = {
+      singer,
+      index: i,
+      baseRotX: mesh.rotation.x,
+      baseRotY: mesh.rotation.y,
+      baseRotZ: mesh.rotation.z
+    };
+
+    // Load texture
+    const imgUrl = singer.image_url && singer.image_url.startsWith('http')
+      ? singer.image_url
+      : null;
+
+    if (imgUrl) {
+      textureLoader.load(
+        imgUrl,
+        (tex) => {
           tex.minFilter = THREE.LinearFilter;
           mesh.material.map = tex;
           mesh.material.color.setHex(0xffffff);
           mesh.material.needsUpdate = true;
-        });
-      } catch (texErr) {
-        console.warn("Texture error:", texErr);
-      }
+        },
+        undefined,
+        () => {
+          // On error — show gold placeholder
+          mesh.material.color.setHex(CFG.GOLD_HEX);
+        }
+      );
+    } else {
+      mesh.material.color.setHex(CFG.GOLD_HEX);
+    }
 
-      mesh.userData = { singer: singer, index: i, baseRotX: mesh.rotation.x, baseRotY: mesh.rotation.y, baseRotZ: mesh.rotation.z };
-      
-      cardsGroup.add(mesh);
-      cards.push(mesh);
+    cardsGroup.add(mesh);
+    cards.push(mesh);
 
-      gsap.from(mesh.position, {
-        y: -500,
-        opacity: 0,
-        duration: 1.5,
-        delay: i * 0.1,
-        ease: "power3.out"
-      });
-    });
+    // Entrance animation via GSAP if available
+    if (typeof gsap !== 'undefined') {
+      const origY = mesh.position.y;
+      mesh.position.y = origY - 400;
+      gsap.to(mesh.position, { y: origY, duration: 1.2, delay: i * 0.08, ease: 'power3.out' });
+    }
+  });
 
-    const maxZ = -(dataArray.length > 0 ? dataArray.length - 1 : 0) * CONFIG.Z_SPACING;
-    cardsGroup.userData.maxZ = maxZ;
-
-  } catch(err) {
-    console.error("buildCards Error:", err);
-    alert("Build Error: " + err.message);
-  }
+  // Store scroll bounds
+  cardsGroup.userData.minZ = -(dataArray.length - 1) * CFG.Z_GAP - 800;
+  console.log('[HF] Built', cards.length, 'cards');
 }
 
-// Global hook for Navigation Filters
-window.switchCategory = function(cat) {
-  // Active UI Class Toggle
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  let id = 'tab-all';
+// ─────────────────────────────────────────
+// CATEGORY SWITCH (global hook)
+// ─────────────────────────────────────────
+window.switchCategory = function (cat) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   let dbKey = 'all';
-  if(cat === '福音') { id = 'tab-gospel'; dbKey = 'gospel'; }
-  if(cat === '敬拜') { id = 'tab-worship'; dbKey = 'worship'; }
-  document.getElementById(id)?.classList.add('active');
+  if (cat === '福音') { document.getElementById('tab-gospel')?.classList.add('active'); dbKey = 'gospel'; }
+  else if (cat === '敬拜') { document.getElementById('tab-worship')?.classList.add('active'); dbKey = 'worship'; }
+  else document.getElementById('tab-all')?.classList.add('active');
 
-  const filtered = dbKey === 'all' 
-    ? allSingers 
-    : allSingers.filter(s => s.category === dbKey);
-    
+  const filtered = dbKey === 'all' ? allSingers : allSingers.filter(s => s.category === dbKey);
   buildCards(filtered);
 };
 
-// Scroll = Move Camera Forward (Z-axis drive)
+// ─────────────────────────────────────────
+// SCROLL = Camera Drive
+// ─────────────────────────────────────────
 function onWheel(e) {
   e.preventDefault();
-  // Multiply factor for speed feeling
-  targetZ += e.deltaY * 1.5; 
+  targetCamZ -= e.deltaY * 1.5;
 
-  // Boundaries: don't reverse past start, don't go infinitely deep
-  const startBound = 500;
-  const endBound = (cardsGroup.userData.maxZ || -1000) - 800; // allow passing the last card slightly
+  const minZ = cardsGroup?.userData?.minZ || -2000;
+  if (targetCamZ > 600) targetCamZ = 600;
+  if (targetCamZ < minZ) targetCamZ = minZ;
 
-  if (targetZ > startBound) targetZ = startBound;
-  if (targetZ < endBound) targetZ = endBound;
-
-  // Smooth cinematic camera drive
-  gsap.to(camera.position, {
-    z: targetZ,
-    duration: 1.2,
-    ease: "power3.out"
-  });
+  if (typeof gsap !== 'undefined') {
+    gsap.to(camera.position, { z: targetCamZ, duration: 1.2, ease: 'power3.out', overwrite: true });
+  } else {
+    camera.position.z = targetCamZ;
+  }
 }
 
+// ─────────────────────────────────────────
+// MOUSE
+// ─────────────────────────────────────────
 function onMouseMove(e) {
   mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(cards);
+  const hits = raycaster.intersectObjects(cards);
 
-  if (intersects.length > 0) {
-    const object = intersects[0].object;
-    const idx = object.userData.index;
+  if (hits.length > 0) {
+    const hit = hits[0];
+    const mesh = hit.object;
+    const idx = mesh.userData.index;
 
     if (hoverIdx !== idx) {
-      document.body.style.cursor = 'pointer';
-      
-      // On new hover, revert the old hovered
-      if(hoverIdx !== -1) revertCard(cards[hoverIdx]);
-      
+      if (hoverIdx !== -1 && cards[hoverIdx]) revertCard(cards[hoverIdx]);
       hoverIdx = idx;
-      focusCard(object);
-
-      // Show HTML DOM Meta Layer
-      showOverlay(object.userData.singer);
+      focusCard(mesh);
+      showOverlay(mesh.userData.singer);
+      document.body.style.cursor = 'pointer';
     }
 
-    // 3D Tilt Parallax Effect relative to mouse on the card!
-    const uv = intersects[0].uv; // 0.0 to 1.0 across the plane
-    if (uv) {
-      const tiltX = (uv.y - 0.5) * -0.5; // Up/Down
-      const tiltY = (uv.x - 0.5) * 0.5;  // Left/Right
-      gsap.to(object.rotation, {
-        x: object.userData.baseRotX + tiltX,
-        y: object.userData.baseRotY + tiltY,
-        duration: 0.3,
-        ease: "power2.out"
+    // 3D tilt via UV
+    if (hit.uv && typeof gsap !== 'undefined') {
+      gsap.to(mesh.rotation, {
+        x: mesh.userData.baseRotX + (hit.uv.y - 0.5) * -0.4,
+        y: mesh.userData.baseRotY + (hit.uv.x - 0.5) * 0.4,
+        duration: 0.25, ease: 'power2.out'
       });
     }
-
   } else {
     if (hoverIdx !== -1) {
       revertCard(cards[hoverIdx]);
@@ -297,81 +312,75 @@ function onMouseMove(e) {
 }
 
 function focusCard(mesh) {
-  // Elevate and Glow
-  gsap.to(mesh.scale, { x: 1.15, y: 1.15, z: 1.15, duration: 0.5, ease: "back.out(1.5)" });
-  mesh.material.emissive.setHex(CONFIG.GOLD);
-  mesh.material.emissiveIntensity = 0.4;
-  
-  // Dim others (Defocus effect without expensive post-processing)
+  if (typeof gsap !== 'undefined') {
+    gsap.to(mesh.scale, { x: 1.12, y: 1.12, z: 1.12, duration: 0.4, ease: 'back.out(2)' });
+  }
+  mesh.material.emissive = new THREE.Color(CFG.GOLD_HEX);
+  mesh.material.emissiveIntensity = 0.35;
   cards.forEach(c => {
-    if (c !== mesh) {
-      gsap.to(c.material.color, { r: 0.2, g: 0.2, b: 0.2, duration: 0.4 });
+    if (c !== mesh && typeof gsap !== 'undefined') {
+      gsap.to(c.material.color, { r: 0.25, g: 0.25, b: 0.25, duration: 0.3 });
     }
   });
 }
 
 function revertCard(mesh) {
-  // Reset geometry
-  gsap.to(mesh.scale, { x: 1, y: 1, z: 1, duration: 0.5, ease: "power3.out" });
-  gsap.to(mesh.rotation, { 
-    x: mesh.userData.baseRotX, 
-    y: mesh.userData.baseRotY, 
-    z: mesh.userData.baseRotZ, 
-    duration: 0.5 
-  });
-  mesh.material.emissiveIntensity = 0;
-  
-  // Brighten others back
+  if (typeof gsap !== 'undefined') {
+    gsap.to(mesh.scale, { x: 1, y: 1, z: 1, duration: 0.4 });
+    gsap.to(mesh.rotation, {
+      x: mesh.userData.baseRotX,
+      y: mesh.userData.baseRotY,
+      z: mesh.userData.baseRotZ,
+      duration: 0.4
+    });
+  }
+  if (mesh.material.emissive) mesh.material.emissiveIntensity = 0;
   cards.forEach(c => {
-    gsap.to(c.material.color, { r: 1, g: 1, b: 1, duration: 0.4 });
+    if (typeof gsap !== 'undefined') {
+      gsap.to(c.material.color, { r: 1, g: 1, b: 1, duration: 0.3 });
+    }
   });
 }
 
-function showOverlay(data) {
+// ─────────────────────────────────────────
+// OVERLAY
+// ─────────────────────────────────────────
+function showOverlay(singer) {
   const overlay = document.getElementById('singer-card-overlay');
-  if(!overlay) return;
+  if (!overlay) return;
   overlay.classList.remove('hidden');
-  
-  document.getElementById('card-name').innerText = data.name;
-  document.getElementById('card-role').innerText = data.role || 'Gospel Singer';
-  document.getElementById('card-bio').innerText = data.bio || '';
-  
-  // Animate it entering via CSS overrides combined with GSAP
-  gsap.fromTo(overlay, 
-    { opacity: 0, x: 20 }, 
-    { opacity: 1, x: 0, duration: 0.4 }
-  );
+  const el = id => document.getElementById(id);
+  if (el('card-name')) el('card-name').innerText = singer.name || '';
+  if (el('card-role')) el('card-role').innerText = singer.role || '';
+  if (el('card-bio')) el('card-bio').innerText = singer.bio || '';
+  if (typeof gsap !== 'undefined') gsap.fromTo(overlay, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.35 });
 }
 
 function hideOverlay() {
   const overlay = document.getElementById('singer-card-overlay');
-  if(overlay) {
-    gsap.to(overlay, { 
-      opacity: 0, x: 20, duration: 0.3, 
-      onComplete: () => overlay.classList.add('hidden')
-    });
+  if (!overlay) return;
+  if (typeof gsap !== 'undefined') {
+    gsap.to(overlay, { opacity: 0, x: 20, duration: 0.25, onComplete: () => overlay.classList.add('hidden') });
+  } else {
+    overlay.classList.add('hidden');
   }
 }
 
+// ─────────────────────────────────────────
+// RESIZE
+// ─────────────────────────────────────────
 function onResize() {
+  if (!camera || !renderer) return;
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function animate() {
-  // Move grid endlessly to simulate passive forward motion if needed, 
-  // or just tie it to camera movement
-  if(gridHelper) {
-    // gridHelper.position.z = (camera.position.z % 200); // 200 is grid size, creates infinite floor
-  }
-  
-  // Parallax stars
-  if(starMesh) {
-    starMesh.rotation.y += 0.0002;
-  }
-
+// ─────────────────────────────────────────
+// RENDER LOOP
+// ─────────────────────────────────────────
+function renderLoop() {
+  requestAnimationFrame(renderLoop);
+  if (starMesh) starMesh.rotation.y += 0.00015;
   renderer.render(scene, camera);
 }
-
-document.addEventListener('DOMContentLoaded', init);
