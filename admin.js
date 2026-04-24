@@ -655,8 +655,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.createElement('div');
     modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center;";
     modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:12px; padding:2rem; width:100%; max-width:500px;">
+      <div style="background:#111; border:1px solid var(--gold); border-radius:12px; padding:2rem; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;">
         <h3 style="color:var(--gold);">邀请新歌手 Invite New Singer</h3>
+        
+        <div style="margin-bottom:20px; text-align:center;">
+          <img id="sprev_new" src="https://via.placeholder.com/300x400?text=Upload+Photo" style="width:150px; aspect-ratio:3/4; object-fit:cover; border-radius:8px; margin-bottom:10px; background:#222;">
+          <input type="file" id="sfup_new" style="display:block; margin:0 auto;">
+          <button class="btn-tiny" style="margin-top:10px;" onclick="uploadFile('sfup_new', 'surl_new', 'sprev_new')">上传照片</button>
+          <input type="hidden" id="surl_new" value="">
+        </div>
+
         <label>姓名 Name</label>
         <input type="text" id="s_n_new" placeholder="请输入姓名..." style="width:100%; margin-bottom:15px;">
         <label>简介 Bio</label>
@@ -667,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <option value="worship">敬拜歌手 Worship</option>
         </select>
         <div style="margin-top:20px; display:flex; gap:10px;">
-          <button class="btn btn-submit" style="flex:1;" onclick="submitNewSinger()">确认邀请</button>
+          <button class="btn btn-submit" style="flex:1;" onclick="submitNewSinger(this)">确认邀请</button>
           <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.parentElement.remove()">取消</button>
         </div>
       </div>
@@ -675,13 +683,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(modal);
   };
 
-  window.submitNewSinger = async() => {
+  window.submitNewSinger = async(btn) => {
     const name = document.getElementById('s_n_new').value.trim();
     const role = document.getElementById('s_role_new').value.trim();
     const category = document.getElementById('s_cat_new').value;
+    const image_url = document.getElementById('surl_new').value;
     if(!name) return alert("请输入姓名");
-    await db.from('singers').insert([{ name, role, category }]);
-    renderCMS();
+    
+    try {
+      if(btn) btn.innerText = "处理中...";
+      const { error } = await db.from('singers').insert([{ name, role, category, image_url }]);
+      if (error) throw error;
+      if(btn) btn.closest('div').parentElement.parentElement.remove();
+      renderCMS();
+    } catch (e) {
+      alert("添加失败: " + e.message);
+      if(btn) btn.innerText = "确认邀请";
+    }
   };
 
   window.editSinger = async(id) => {
@@ -718,7 +736,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <input type="number" id="so" value="${s.display_order || 0}" style="width:100%; margin-bottom:20px;">
 
         <div style="display:flex; gap:10px;">
-          <button class="btn btn-submit" style="flex:2;" onclick="saveSinger('${id}')">💾 保存档案</button>
+          <button class="btn btn-submit" style="flex:2;" onclick="saveSinger('${id}', this)">💾 保存档案</button>
           <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.parentElement.remove()">取消</button>
         </div>
       </div>
@@ -726,7 +744,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(modal);
   };
 
-  window.saveSinger = async(id) => {
+  window.saveSinger = async(id, btn) => {
     const p = {
       name: document.getElementById('sn').value,
       bio: document.getElementById('sb').value,
@@ -735,8 +753,16 @@ document.addEventListener('DOMContentLoaded', () => {
       image_url: document.getElementById('surl').value,
       display_order: parseInt(document.getElementById('so').value) || 0
     };
-    await db.from('singers').update(p).eq('id', id);
-    renderCMS();
+    try {
+      if(btn) btn.innerText = "保存中...";
+      const { error } = await db.from('singers').update(p).eq('id', id);
+      if (error) throw error;
+      if(btn) btn.closest('div').parentElement.parentElement.remove();
+      renderCMS();
+    } catch(e) {
+      alert("保存失败: " + e.message);
+      if(btn) btn.innerText = "💾 保存档案";
+    }
   };
 
   // --- ⏰ REMINDERS MODULE (活动提醒记录) ---
