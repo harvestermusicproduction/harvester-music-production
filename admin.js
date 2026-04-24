@@ -380,7 +380,10 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
         <h1 style="color:var(--gold);">活动预告管理</h1>
-        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openEventModal()">+ 新建活动</button>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-submit" style="width:auto; padding:10px 25px; background:#444;" onclick="triggerBlast()">🚀 一键发送提醒</button>
+          <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openEventModal()">+ 新建活动</button>
+        </div>
       </div>
       <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
         ${events?.map(e => `
@@ -397,7 +400,22 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
   }
-
+  
+  window.triggerBlast = async () => {
+    if(!confirm("确定要立即发送所有处于‘未发送’状态的活动提醒邮件吗？")) return;
+    const originalText = event.currentTarget.innerText;
+    event.currentTarget.innerText = "⏳ 正在发送中...";
+    try {
+      const res = await fetch('/api/blast');
+      const data = await res.json();
+      alert(data.message || "发送指令已下达！");
+    } catch(e) {
+      alert("发送失败: " + e.message);
+    } finally {
+      event.currentTarget.innerText = originalText;
+    }
+  };
+  
   window.openEventModal = async (id = null) => {
     const btn = event.currentTarget;
     const originalText = btn.innerText;

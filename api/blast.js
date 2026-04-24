@@ -2,8 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
 export default async function handler(req, res) {
-  // Allow only POST to prevent pre-fetching accidental triggers
-  if (req.method !== 'POST') {
+  // Allow GET for manual debugging/triggering
+  if (req.method !== 'POST' && req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
