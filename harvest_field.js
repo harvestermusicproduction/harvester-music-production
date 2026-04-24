@@ -207,13 +207,14 @@ window.switchCategory = function(cat) {
   // Active UI Class Toggle
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
   let id = 'tab-all';
-  if(cat === '福音') id = 'tab-gospel';
-  if(cat === '敬拜') id = 'tab-worship';
+  let dbKey = 'all';
+  if(cat === '福音') { id = 'tab-gospel'; dbKey = 'gospel'; }
+  if(cat === '敬拜') { id = 'tab-worship'; dbKey = 'worship'; }
   document.getElementById(id)?.classList.add('active');
 
-  const filtered = cat === 'all' 
+  const filtered = dbKey === 'all' 
     ? allSingers 
-    : allSingers.filter(s => (s.role||'').includes(cat));
+    : allSingers.filter(s => s.category === dbKey);
     
   buildCards(filtered);
 };
