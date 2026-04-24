@@ -54,20 +54,40 @@ export default async function handler(req, res) {
       const { data: emailData, error: emailErr } = await resend.emails.send({
         from: 'Harvester Music <office@harvestermusic.my>', 
         to: reminder.userEmail,
-        subject: `温馨提醒：千万别错过《${reminder.eventTitle}》`,
+        subject: `活动提醒：请准时参与明日活动《${reminder.eventTitle}》`,
         html: `
-          <div style="font-family: sans-serif; padding: 20px; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-top: 4px solid #c9933b; border-radius: 8px;">
-            <div style="text-align: center; margin-bottom: 20px;">
-              <img src="https://www.harvestermusic.my/assets/logo.png" style="max-height: 50px;">
+          <div style="font-family: 'Microsoft YaHei', sans-serif; padding: 30px; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-top: 5px solid #c9933b; border-radius: 12px; line-height: 1.8;">
+            <div style="text-align: center; margin-bottom: 25px;">
+              <img src="https://www.harvestermusic.my/assets/logo.png" style="max-height: 55px;" alt="Harvester Music">
             </div>
-            <h2 style="color: #c9933b; text-align: center;">活动温馨提醒</h2>
-            <p style="font-size: 16px; line-height: 1.6;">亲爱的朋友，平安：</p>
-            <p style="font-size: 16px; line-height: 1.6;">您订阅提醒的活动 <strong>《${reminder.eventTitle}》</strong> 就要在 <strong>${reminder.eventDate}</strong> 举行了哦。</p>
-            ${customContent}
-            <p style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; font-size: 0.9em; color: #888; text-align: center;">
-              — Harvester Music Production 收割机音乐工作坊<br>
-              <a href="https://www.harvestermusic.my" style="color: #c9933b; text-decoration: none;">访问官网主页</a>
-            </p>
+            
+            <h3 style="color: #c9933b; margin-top: 0;">尊敬的参与者：</h3>
+            <p>您好！</p>
+            <p>特此提醒您，您报名参加的活动将于明日举行，敬请您提前安排时间并准时参与。</p>
+            
+            <div style="background: #fafafa; border: 1px solid #eee; border-radius: 10px; padding: 20px; margin: 25px 0;">
+              <h4 style="margin-top: 0; color: #c9933b; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px;">📌 活动信息如下：</h4>
+              <ul style="list-style: none; padding: 0; margin: 0; font-size: 15px;">
+                <li style="margin-bottom: 8px;"><strong>活动名称：</strong> ${reminder.eventTitle}</li>
+                <li style="margin-bottom: 8px;"><strong>日期：</strong> ${reminder.eventDate}</li>
+                <li style="margin-bottom: 8px;"><strong>时间：</strong> ${reminder.eventTime}</li>
+                <li style="margin-bottom: 8px;"><strong>地点：</strong> ${reminder.eventLocation || '见详情页面'}</li>
+              </ul>
+            </div>
+
+            ${customContent ? '<div style="margin-bottom: 20px;">' + customContent + '</div>' : ''}
+
+            <p style="font-size: 15px; color: #555;">请您提前 <strong>10–15 分钟</strong> 进入会场（或抵达现场），以确保活动顺利开始。如为线上活动，请提前检查网络与设备。</p>
+            <p style="font-size: 15px; color: #555;">如您因特殊情况无法出席，请提前与我们联系。</p>
+            
+            <p style="margin-top: 30px; font-weight: bold;">期待您的参与！</p>
+            <p>祝好</p>
+            <p style="color: #c9933b; font-weight: bold;">收割机创作工作坊</p>
+
+            <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; font-size: 12px; color: #999; text-align: center;">
+              © 2026 Harvester Music Production<br>
+              <a href="https://www.harvestermusic.my" style="color: #c9933b; text-decoration: none;">访问官网</a> | 本邮件由系统自动发出，请勿直接回复
+            </div>
           </div>
         `
       });
