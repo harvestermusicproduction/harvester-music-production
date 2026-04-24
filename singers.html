@@ -275,13 +275,7 @@
       <a href="feedback.html">回声空间</a>
       <a href="events.html">活动</a>
       <a href="diary.html">田野日志</a>
-      <div class="nav-dropdown">
-        <a href="javascript:void(0)" class="active">歌手 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
-        <div class="dropdown-content">
-          <a href="singers.html?tab=gospel">福音歌手</a>
-          <a href="singers.html?tab=worship">敬拜歌手</a>
-        </div>
-      </div>
+      <a href="singers.html" class="active">歌手</a>
       <a href="submit.html">我要投稿</a>
       <a href="about.html">关于我们</a>
       <a href="support.html">支持我们</a>
@@ -289,7 +283,18 @@
     </nav>
   </header>
 
-  <div id="mobileNavOverlay">...</div>
+  <div id="mobileNavOverlay">
+    <a href="index.html">主页</a>
+    <a href="music.html">音乐与歌谱集</a>
+    <a href="feedback.html">回声空间</a>
+    <a href="events.html">活动</a>
+    <a href="diary.html">田野日志</a>
+    <a href="singers.html" class="active">歌手</a>
+    <a href="submit.html">我要投稿</a>
+    <a href="about.html">关于我们</a>
+    <a href="support.html">支持我们</a>
+    <a href="contact.html">联系我们</a>
+  </div>
 
   <!-- Editorial Content -->
   <main>
@@ -304,8 +309,8 @@
 
     <!-- Filter -->
     <div class="filter-section">
-      <button class="tab-btn active" onclick="switchCategory('福音')" id="tab-gospel">Gospel Artists</button>
-      <button class="tab-btn" onclick="switchCategory('敬拜')" id="tab-worship">Worship Leaders</button>
+      <button class="tab-btn active" onclick="switchCategory('福音')" id="tab-gospel">福音歌手</button>
+      <button class="tab-btn" onclick="switchCategory('敬拜')" id="tab-worship">敬拜赞美歌手</button>
     </div>
 
     <!-- Artist Grid Container -->
