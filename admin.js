@@ -659,8 +659,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3 style="color:var(--gold);">邀请新歌手 Invite New Singer</h3>
         <label>姓名 Name</label>
         <input type="text" id="s_n_new" placeholder="请输入姓名..." style="width:100%; margin-bottom:15px;">
-        <label>职称 Role (e.g. 音乐制作人 / 主唱)</label>
-        <input type="text" id="s_role_new" placeholder="请输入职称..." style="width:100%; margin-bottom:15px;" value="Gospel Singer">
+        <label>简介 Bio</label>
+        <input type="text" id="s_role_new" placeholder="请输入简介..." style="width:100%; margin-bottom:15px;" value="">
         <label>展示分类 Category</label>
         <select id="s_cat_new" style="width:100%; margin-bottom:15px; background: #222; color: #fff; padding: 10px; border: 1px solid #444;">
           <option value="gospel">福音歌手 Gospel</option>
@@ -702,7 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <label>姓名 Name</label>
         <input type="text" id="sn" value="${s.name}" style="width:100%; margin-bottom:15px;">
         
-        <label>职称 Role (e.g. 音乐制作人 / 主唱)</label>
+        <label>简介 Bio</label>
         <input type="text" id="sr" value="${s.role || ''}" style="width:100%; margin-bottom:15px;">
         
         <label>展示分类 Category</label>
@@ -711,7 +711,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <option value="worship" ${s.category === 'worship' ? 'selected' : ''}>敬拜歌手 Worship</option>
         </select>
         
-        <label>简介 Bio</label>
+        <label>详细资料 Details</label>
         <textarea id="sb" style="width:100%; height:80px; margin-bottom:15px;">${s.bio || ''}</textarea>
         
         <label>排位顺序 Order (越小越靠前)</label>
