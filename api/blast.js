@@ -52,7 +52,7 @@ export default async function handler(req, res) {
 
       // Send Email via Resend
       const { data: emailData, error: emailErr } = await resend.emails.send({
-        from: 'Harvester Music <onboarding@resend.dev>', // Temporary fallback to Resend default to avoid unverified domain errors
+        from: 'Harvester Music <office@harvestermusic.my>', 
         to: reminder.userEmail,
         subject: `温馨提醒：千万别错过《${reminder.eventTitle}》`,
         html: `
