@@ -1,39 +1,41 @@
 /**
- * Harvest Field v3.0 - Immersive Team Showcase
- * Features: High-performance 3D field with interactive hover-to-reveal singer profiles.
+ * Harvest Field v4.0 - VibeCoding Minimalist Z-Axis 3D Gallery
+ * Transforms the viewport into a deep space tunnel gallery with hovering cards.
  */
 
 let db;
 let scene, camera, renderer, raycaster, mouse;
-let wheatMesh, singerMesh;
-let singers = [];
-let allSingers = []; // Master list
-let hoverId = -1;
-let currentDepth = 0;
-let targetDepth = 0;
+let starMesh, gridHelper;
+let allSingers = [];
+let cardsGroup = new THREE.Group();
+let cards = [];
+let hoverIdx = -1;
+let targetZ = 500;
+let textureLoader;
 
 const CONFIG = {
-  FIELD_SIZE: 5000,
-  STALKS_COUNT: 4000,
-  GOLD_COLOR: 0xf6d28a,
-  DEPTH_SPEED: 8.0
+  Z_SPACING: 800,        // Space between cards
+  CARD_WIDTH: 220,
+  CARD_HEIGHT: 330,
+  GOLD: 0xc9933b,
+  DARK: 0x050508
 };
 
 async function init() {
-  // 0. Database Connection
   db = window.supabase;
   if (!db) {
-    console.error("Supabase client not found. Retrying in 1s...");
-    setTimeout(init, 1000);
+    setTimeout(init, 500);
     return;
   }
-  // 1. Scene Setup
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x050508);
-  scene.fog = new THREE.FogExp2(0x050508, 0.0003);
 
-  camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 10000);
-  camera.position.set(0, 180, 1200);
+  // 1. Core Setup
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(CONFIG.DARK);
+  // Add heavy fog for depth transition
+  scene.fog = new THREE.FogExp2(CONFIG.DARK, 0.0006);
+
+  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 15000);
+  camera.position.set(0, 0, targetZ);
 
   renderer = new THREE.WebGLRenderer({
     canvas: document.getElementById('harvest-canvas'),
@@ -45,69 +47,67 @@ async function init() {
 
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
+  textureLoader = new THREE.TextureLoader();
 
-  // 2. Lights
-  const ambient = new THREE.HemisphereLight(0xffffff, 0x000000, 0.4);
+  // 2. Lighting (Moody, cinematic)
+  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
   scene.add(ambient);
+  
+  const spotLight = new THREE.SpotLight(0xffffff, 1.5);
+  spotLight.position.set(0, 500, 500);
+  spotLight.angle = Math.PI / 4;
+  spotLight.penumbra = 0.5;
+  scene.add(spotLight);
 
-  const sunset = new THREE.PointLight(0xffa500, 2, 4000);
-  sunset.position.set(0, 500, -2000);
-  scene.add(sunset);
+  scene.add(cardsGroup);
 
-  // 3. Elements
-  createField();
+  // 3. Environment: Stars & Grid
+  createEnvironment();
+
+  // 4. Fetch & Build Data
   await loadSingers();
 
-  // 4. Events
+  // 5. Events
   window.addEventListener('resize', onResize);
-  window.addEventListener('mousemove', onMouseMove);
-  window.addEventListener('mousedown', onSelect);
   window.addEventListener('wheel', onWheel, { passive: false });
+  window.addEventListener('mousemove', onMouseMove);
   
   const closeBtn = document.querySelector('.close-card');
-  if(closeBtn) closeBtn.onclick = closeDetail;
+  if(closeBtn) closeBtn.onclick = hideOverlay;
 
-  animate();
+  // Render Loop
+  gsap.ticker.add(animate);
 }
 
-function createField() {
-  const geometry = new THREE.CylinderGeometry(0.1, 1.5, 90, 4);
-  geometry.translate(0, 45, 0); 
+function createEnvironment() {
+  // Deep Perspective Grid
+  gridHelper = new THREE.GridHelper(20000, 200, CONFIG.GOLD, 0x111111);
+  gridHelper.position.y = -CONFIG.CARD_HEIGHT;
+  scene.add(gridHelper);
 
-  const material = new THREE.MeshStandardMaterial({
-    color: CONFIG.GOLD_COLOR,
-    roughness: 0.9,
-    metalness: 0.0
-  });
-
-  wheatMesh = new THREE.InstancedMesh(geometry, material, CONFIG.STALKS_COUNT);
-  const dummy = new THREE.Object3D();
-
-  for (let i = 0; i < CONFIG.STALKS_COUNT; i++) {
-    const x = (Math.random() - 0.5) * CONFIG.FIELD_SIZE;
-    const z = (Math.random() - 0.5) * CONFIG.FIELD_SIZE;
-    const s = 0.6 + Math.random() * 0.8;
-    
-    dummy.position.set(x, 0, z);
-    dummy.rotation.y = Math.random() * Math.PI;
-    dummy.scale.set(s, s, s);
-    dummy.updateMatrix();
-    wheatMesh.setMatrixAt(i, dummy.matrix);
+  // Subtle Star Particles
+  const geo = new THREE.BufferGeometry();
+  const verts = [];
+  for(let i=0; i<3000; i++) {
+    verts.push(
+      (Math.random() - 0.5) * 4000,
+      (Math.random() - 0.5) * 4000,
+      (Math.random() - 0.5) * 10000
+    );
   }
-  scene.add(wheatMesh);
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 2, transparent: true, opacity: 0.4 });
+  starMesh = new THREE.Points(geo, mat);
+  scene.add(starMesh);
 }
 
 async function loadSingers() {
   try {
     const { data, error } = await db.from('singers').select('*');
     if (error) throw error;
-    if (!data || data.length === 0) {
-      console.warn("No singers found in database.");
-      return;
-    }
-    allSingers = data;
+    allSingers = data || [];
     
-    // Check URL parameters for direct category navigation
+    // Check URL Route
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
     if (tab === 'gospel') {
@@ -115,133 +115,223 @@ async function loadSingers() {
     } else if (tab === 'worship') {
       window.switchCategory('敬拜');
     } else {
-      renderSingers('all');
+      buildCards(allSingers);
     }
     
+    // Fade out loader
     const loader = document.getElementById('scene-loader');
-    if(loader) loader.style.opacity = '0';
-    setTimeout(() => { if(loader) loader.remove(); }, 1000);
-  } catch (err) {
-    console.error("LoadSingers error:", err);
-  }
-}
-
-function renderSingers(category) {
-  // 1. Cleanup old mesh
-  if (singerMesh) scene.remove(singerMesh);
-
-  // 2. Filter data
-  if (category === 'all') {
-    singers = allSingers;
-  } else {
-    singers = allSingers.filter(s => (s.role || '').includes(category));
-  }
-
-  if (singers.length === 0) return;
-
-  // 3. Create Instanced Mesh
-  const geometry = new THREE.SphereGeometry(12, 16, 16);
-  const material = new THREE.MeshStandardMaterial({ 
-    color: 0xffffff,
-    emissive: CONFIG.GOLD_COLOR,
-    emissiveIntensity: 0.8 
-  });
-  
-  singerMesh = new THREE.InstancedMesh(geometry, material, singers.length);
-  const dummy = new THREE.Object3D();
-
-  singers.forEach((s, i) => {
-    const angle = (i / singers.length) * Math.PI * 2 + (Math.random() * 0.5);
-    const radius = 600 + Math.random() * 1200;
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
-    
-    dummy.position.set(x, 80, z);
-    dummy.updateMatrix();
-    singerMesh.setMatrixAt(i, dummy.matrix);
-  });
-
-  scene.add(singerMesh);
-}
-
-// Exposed to global for HTML buttons
-window.switchCategory = function(category) {
-  // Update Tab UI
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  const targetId = category === 'all' ? 'tab-all' : (category === '福音' ? 'tab-gospel' : 'tab-worship');
-  document.getElementById(targetId)?.classList.add('active');
-
-  // Re-render 3D
-  renderSingers(category);
-  
-  // Reset depth for a "fresh" feel
-  targetDepth = 0;
-}
-
-function onMouseMove(event) {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-  
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObject(singerMesh);
-  
-  if (intersects.length > 0) {
-    const idx = intersects[0].instanceId;
-    if (hoverId !== idx) {
-      hoverId = idx;
-      document.body.style.cursor = 'pointer';
-      showHUD(singers[idx].name, event.clientX, event.clientY);
+    if(loader) {
+      loader.style.opacity = '0';
+      setTimeout(() => loader.remove(), 1000);
     }
+  } catch (e) {
+    console.error("Loader Error:", e);
+  }
+}
+
+// Build or Rebuild the Cards Timeline
+function buildCards(dataArray) {
+  // Cleanup old cards
+  cards.forEach(c => cardsGroup.remove(c));
+  cards = [];
+  hoverIdx = -1;
+  hideOverlay();
+
+  // Reset Camera
+  targetZ = Math.max(500, CONFIG.Z_SPACING);
+  gsap.to(camera.position, { z: targetZ, duration: 1.5, ease: "power3.out" });
+
+  const geo = new THREE.PlaneGeometry(CONFIG.CARD_WIDTH, CONFIG.CARD_HEIGHT);
+  
+  dataArray.forEach((singer, i) => {
+    // Alternating Zig-Zag layout: Left, Right, Center...
+    const sideOffset = i === 0 ? 0 : (i % 2 === 0 ? 150 : -150);
+    const zPos = -(i * CONFIG.Z_SPACING);
+
+    // Default Material
+    const mat = new THREE.MeshStandardMaterial({ 
+      color: 0xcccccc, 
+      roughness: 0.1,
+      metalness: 0.2,
+      side: THREE.DoubleSide
+    });
+
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(sideOffset, 0, zPos);
+    
+    // Slight randomized rotation for organic feel
+    mesh.rotation.z = (Math.random() - 0.5) * 0.1;
+    mesh.rotation.y = (sideOffset > 0) ? -0.1 : (sideOffset < 0 ? 0.1 : 0);
+    
+    // Load Texture dynamically
+    const imgUrl = singer.image_url && singer.image_url.startsWith('http') ? singer.image_url : 'assets/logo.png';
+    textureLoader.load(imgUrl, (tex) => {
+      tex.minFilter = THREE.LinearFilter;
+      mesh.material.map = tex;
+      mesh.material.color.setHex(0xffffff); // Illuminate fully once loaded
+      mesh.material.needsUpdate = true;
+    });
+
+    mesh.userData = { singer: singer, index: i, baseRotX: mesh.rotation.x, baseRotY: mesh.rotation.y, baseRotZ: mesh.rotation.z };
+    
+    cardsGroup.add(mesh);
+    cards.push(mesh);
+
+    // Entrance Animation
+    gsap.from(mesh.position, {
+      y: -500,
+      opacity: 0,
+      duration: 1.5,
+      delay: i * 0.1,
+      ease: "power3.out"
+    });
+  });
+
+  // Calculate Bounds to prevent scrolling infinitely into the void
+  const maxZ = -(dataArray.length - 1) * CONFIG.Z_SPACING;
+  // Expose for wheel boundary
+  cardsGroup.userData.maxZ = maxZ;
+}
+
+// Global hook for Navigation Filters
+window.switchCategory = function(cat) {
+  // Active UI Class Toggle
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  let id = 'tab-all';
+  if(cat === '福音') id = 'tab-gospel';
+  if(cat === '敬拜') id = 'tab-worship';
+  document.getElementById(id)?.classList.add('active');
+
+  const filtered = cat === 'all' 
+    ? allSingers 
+    : allSingers.filter(s => (s.role||'').includes(cat));
+    
+  buildCards(filtered);
+};
+
+// Scroll = Move Camera Forward (Z-axis drive)
+function onWheel(e) {
+  e.preventDefault();
+  // Multiply factor for speed feeling
+  targetZ += e.deltaY * 1.5; 
+
+  // Boundaries: don't reverse past start, don't go infinitely deep
+  const startBound = 500;
+  const endBound = (cardsGroup.userData.maxZ || -1000) - 800; // allow passing the last card slightly
+
+  if (targetZ > startBound) targetZ = startBound;
+  if (targetZ < endBound) targetZ = endBound;
+
+  // Smooth cinematic camera drive
+  gsap.to(camera.position, {
+    z: targetZ,
+    duration: 1.2,
+    ease: "power3.out"
+  });
+}
+
+function onMouseMove(e) {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(cards);
+
+  if (intersects.length > 0) {
+    const object = intersects[0].object;
+    const idx = object.userData.index;
+
+    if (hoverIdx !== idx) {
+      document.body.style.cursor = 'pointer';
+      
+      // On new hover, revert the old hovered
+      if(hoverIdx !== -1) revertCard(cards[hoverIdx]);
+      
+      hoverIdx = idx;
+      focusCard(object);
+
+      // Show HTML DOM Meta Layer
+      showOverlay(object.userData.singer);
+    }
+
+    // 3D Tilt Parallax Effect relative to mouse on the card!
+    const uv = intersects[0].uv; // 0.0 to 1.0 across the plane
+    if (uv) {
+      const tiltX = (uv.y - 0.5) * -0.5; // Up/Down
+      const tiltY = (uv.x - 0.5) * 0.5;  // Left/Right
+      gsap.to(object.rotation, {
+        x: object.userData.baseRotX + tiltX,
+        y: object.userData.baseRotY + tiltY,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    }
+
   } else {
-    hoverId = -1;
-    document.body.style.cursor = 'default';
-    hideHUD();
+    if (hoverIdx !== -1) {
+      revertCard(cards[hoverIdx]);
+      hoverIdx = -1;
+      document.body.style.cursor = 'default';
+      hideOverlay();
+    }
   }
 }
 
-function showHUD(text, x, y) {
-  const label = document.getElementById('harvest-label');
-  if(!label) return;
-  label.innerText = text;
-  label.style.left = (x + 25) + 'px';
-  label.style.top = (y - 15) + 'px';
-  label.classList.add('visible');
+function focusCard(mesh) {
+  // Elevate and Glow
+  gsap.to(mesh.scale, { x: 1.15, y: 1.15, z: 1.15, duration: 0.5, ease: "back.out(1.5)" });
+  mesh.material.emissive.setHex(CONFIG.GOLD);
+  mesh.material.emissiveIntensity = 0.4;
+  
+  // Dim others (Defocus effect without expensive post-processing)
+  cards.forEach(c => {
+    if (c !== mesh) {
+      gsap.to(c.material.color, { r: 0.2, g: 0.2, b: 0.2, duration: 0.4 });
+    }
+  });
 }
 
-function hideHUD() {
-  const label = document.getElementById('harvest-label');
-  if(label) label.classList.remove('visible');
+function revertCard(mesh) {
+  // Reset geometry
+  gsap.to(mesh.scale, { x: 1, y: 1, z: 1, duration: 0.5, ease: "power3.out" });
+  gsap.to(mesh.rotation, { 
+    x: mesh.userData.baseRotX, 
+    y: mesh.userData.baseRotY, 
+    z: mesh.userData.baseRotZ, 
+    duration: 0.5 
+  });
+  mesh.material.emissiveIntensity = 0;
+  
+  // Brighten others back
+  cards.forEach(c => {
+    gsap.to(c.material.color, { r: 1, g: 1, b: 1, duration: 0.4 });
+  });
 }
 
-function onSelect(event) {
-  if (hoverId !== -1) {
-    showSingerCard(singers[hoverId]);
-  }
-}
-
-function showSingerCard(singer) {
+function showOverlay(data) {
   const overlay = document.getElementById('singer-card-overlay');
   if(!overlay) return;
-  
-  const imgPath = singer.image_url && singer.image_url.startsWith('http') ? singer.image_url : 'assets/logo.png';
-  document.getElementById('card-img').src = imgPath;
-  document.getElementById('card-name').innerText = singer.name;
-  document.getElementById('card-role').innerText = singer.role || '福音歌手';
-  document.getElementById('card-bio').innerText = singer.bio || '用心灵和诚实收割每一刻感动的声音。';
-  
   overlay.classList.remove('hidden');
-  gsap.fromTo(".singer-card", 
-    { opacity: 0, scale: 0.9, y: 30 }, 
-    { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "power3.out" }
+  
+  document.getElementById('card-name').innerText = data.name;
+  document.getElementById('card-role').innerText = data.role || 'Gospel Singer';
+  document.getElementById('card-bio').innerText = data.bio || '';
+  
+  // Animate it entering via CSS overrides combined with GSAP
+  gsap.fromTo(overlay, 
+    { opacity: 0, x: 20 }, 
+    { opacity: 1, x: 0, duration: 0.4 }
   );
 }
 
-function closeDetail() {
+function hideOverlay() {
   const overlay = document.getElementById('singer-card-overlay');
-  gsap.to(".singer-card", { 
-    opacity: 0, scale: 0.9, y: 30, duration: 0.3, 
-    onComplete: () => overlay.classList.add('hidden') 
-  });
+  if(overlay) {
+    gsap.to(overlay, { 
+      opacity: 0, x: 20, duration: 0.3, 
+      onComplete: () => overlay.classList.add('hidden')
+    });
+  }
 }
 
 function onResize() {
@@ -250,18 +340,18 @@ function onResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function onWheel(event) {
-  event.preventDefault();
-  targetDepth += event.deltaY * CONFIG.DEPTH_SPEED * 0.5;
-  targetDepth = Math.max(-10000, Math.min(10000, targetDepth));
-}
-
 function animate() {
-  requestAnimationFrame(animate);
-  currentDepth += (targetDepth - currentDepth) * 0.05;
-  camera.position.z = 1200 + currentDepth;
+  // Move grid endlessly to simulate passive forward motion if needed, 
+  // or just tie it to camera movement
+  if(gridHelper) {
+    // gridHelper.position.z = (camera.position.z % 200); // 200 is grid size, creates infinite floor
+  }
   
-  if(wheatMesh) wheatMesh.rotation.z = Math.sin(Date.now() * 0.001) * 0.015;
+  // Parallax stars
+  if(starMesh) {
+    starMesh.rotation.y += 0.0002;
+  }
+
   renderer.render(scene, camera);
 }
 

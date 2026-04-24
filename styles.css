@@ -1854,3 +1854,47 @@ video::-webkit-media-controls-start-playback-button { display: none !important; 
 .mobile-dropdown-content a:hover {
   color: var(--gold) !important;
 }
+
+/* --- Z-Axis Space Gallery specific UI --- */
+#singer-card-overlay {
+  position: fixed;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 400px;
+  background: rgba(10, 10, 12, 0.6);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 3px solid var(--gold);
+  border-radius: 20px;
+  padding: 2.5rem;
+  z-index: 1000;
+  color: white;
+  pointer-events: none; /* Let canvas get mouse */
+}
+#singer-card-overlay.hidden {
+  display: none;
+}
+#singer-card-overlay .card-content .card-left { display: none; /* Hide image in overlay since card IS image */ }
+#card-name { font-size: 2.5rem; margin-bottom: 0.5rem; }
+#card-role { font-size: 1.1rem; letter-spacing: 2px; color: #aaa; margin-bottom: 1.5rem; }
+#card-bio { font-size: 1rem; line-height: 1.8; color: #ccc; }
+
+.scroll-hint {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  letter-spacing: 4px;
+  z-index: 100;
+  text-transform: uppercase;
+  animation: pulseHint 2s infinite;
+  pointer-events: none;
+}
+@keyframes pulseHint {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
