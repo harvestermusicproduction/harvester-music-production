@@ -307,9 +307,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h3 class="song-card-title">${s.title || 'Untitled'}</h3>
                 <p class="song-card-desc">${s.description || ''}</p>
                  <div class="song-card-actions">
-                  ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-yt"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
-                  ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-score"><i class="fas fa-file-pdf"></i> 下载歌谱集</a>` : ''}
-                  <a href="feedback.html?id=${s.id}" class="btn-frosted-white"><i class="fas fa-bullhorn"></i> 回声 (Echo)</a>
+                  ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-gold"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
+                  ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-gold"><i class="fas fa-file-pdf"></i> 下载歌谱集</a>` : ''}
+                  <a href="feedback.html?id=${s.id}" class="btn-frosted-gold"><i class="fas fa-bullhorn"></i> 回声 (Echo)</a>
                 </div>
               </div>
             </div>`;

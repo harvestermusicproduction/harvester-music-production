@@ -248,7 +248,7 @@ header.scrolled {
 }
 
 
-.btn-dl:hover, .btn-frosted-yt:hover, .btn-frosted-dl:hover {
+.btn-dl:hover, .btn-frosted-gold:hover {
   background: rgba(255, 255, 255, 0.25) !important;
   border-color: #fff !important;
   transform: translateY(-3px);
@@ -348,13 +348,13 @@ header.scrolled {
   font-weight: 500 !important;
 }
 
-.btn-frosted-yt, .btn-frosted-score, .btn-frosted-white { 
-  border-color: rgba(255, 255, 255, 0.25) !important; 
+.btn-frosted-gold { 
+  border-color: rgba(246, 210, 138, 0.3) !important;
 }
-.btn-frosted-yt:hover, .btn-frosted-score:hover, .btn-frosted-white:hover {
-  border-color: #fff !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: #fff !important;
+.btn-frosted-gold:hover {
+  border-color: var(--gold) !important;
+  background: rgba(246, 210, 138, 0.15) !important;
+  color: var(--gold) !important;
 }
 
 [class*="btn-frosted"]:hover, .btn-dl:hover {
@@ -365,18 +365,7 @@ header.scrolled {
   color: var(--gold) !important;
   opacity: 1 !important;
 }
-.btn-frosted-white:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: #fff !important;
-  border-color: #fff !important;
-}
-
-/* ⚪ Special White Frosted Style for Echo Space/Feedback */
-.btn-frosted-white:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: #fff !important;
-  color: #fff !important;
-}
+/* Unified Gold Theme active for all frosted buttons */
 
 /* 🏆 Premium Solid Gold Button for Music Actions (Worship) */
 .btn-music-action {
