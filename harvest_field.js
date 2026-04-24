@@ -14,6 +14,11 @@ let mouseLook = { x: 0, y: 0 };
 let textureLoader;
 let initiated = false;
 
+// Drag State
+let isDragging = false;
+let startX = 0;
+let scrollAtStart = 0;
+
 const CFG = {
   X_GAP: 600,            // Distance between cards sideways
   W: 320,                // Card width
@@ -74,7 +79,15 @@ async function init() {
   window.addEventListener('resize', onResize);
   window.addEventListener('wheel', onWheel, { passive: false });
   window.addEventListener('mousemove', onMouseMove);
-  window.addEventListener('mousedown', onClick);
+  
+  // Drag Support
+  window.addEventListener('mousedown', onPointerDown);
+  window.addEventListener('touchstart', onPointerDown, { passive: false });
+  window.addEventListener('mousemove', onPointerMove);
+  window.addEventListener('touchmove', onPointerMove, { passive: false });
+  window.addEventListener('mouseup', onPointerUp);
+  window.addEventListener('touchend', onPointerUp);
+  window.addEventListener('click', onClick);
   
   const closeBtn = document.querySelector('.close-card');
   if (closeBtn) closeBtn.onclick = hideOverlay;
@@ -260,16 +273,44 @@ window.switchCategory = function (cat) {
   }});
 };
 
-// Horizontal Scroll
+// Horizontal Scroll (Snappier)
 function onWheel(e) {
   e.preventDefault();
-  targetCamX += e.deltaY * 1.5;
+  // Sensitivity boosted to 2.5, duration reduced to 0.7s
+  targetCamX += e.deltaY * 2.5;
+  applyBounds();
+  gsap.to(camera.position, { x: targetCamX, duration: 0.7, ease: 'power2.out', overwrite: true });
+}
 
+// Drag & Swipe Mechanism
+function onPointerDown(e) {
+  isDragging = true;
+  startX = e.clientX || (e.touches && e.touches[0].clientX);
+  scrollAtStart = targetCamX;
+  document.body.style.cursor = 'grabbing';
+}
+
+function onPointerMove(e) {
+  if (!isDragging) return;
+  const currentX = e.clientX || (e.touches && e.touches[0].clientX);
+  const diff = (startX - currentX) * 2.5; // Drag sensitivity
+  targetCamX = scrollAtStart + diff;
+  applyBounds();
+  camera.position.x = targetCamX; // Instant feedback while dragging
+}
+
+function onPointerUp() {
+  if (!isDragging) return;
+  isDragging = false;
+  document.body.style.cursor = 'default';
+  // Final smooth settle
+  gsap.to(camera.position, { x: targetCamX, duration: 0.8, ease: 'power3.out', overwrite: true });
+}
+
+function applyBounds() {
   const maxX = cardsGroup.userData.maxX || 0;
   if (targetCamX < 0) targetCamX = 0;
   if (targetCamX > maxX) targetCamX = maxX;
-
-  gsap.to(camera.position, { x: targetCamX, duration: 1.2, ease: 'power3.out' });
 }
 
 // FPS Mouse Look
