@@ -433,7 +433,13 @@ document.addEventListener('DOMContentLoaded', () => {
           reminderSent: false
         }]);
         alert("✅ 提醒设置成功！收割机届时将通知您。");
-      } catch(e) { }
+      } catch(e) {
+        alert("❌ 提交失败：" + (e.message || JSON.stringify(e)));
+        document.getElementById('reminderModal').classList.remove('active');
+        btn.innerText = originalText;
+        btn.disabled = false;
+        return;
+      }
       document.getElementById('reminderModal').classList.remove('active');
       emailInput.value = '';
     };
