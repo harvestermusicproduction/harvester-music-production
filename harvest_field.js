@@ -174,15 +174,13 @@ function createCardUITexture(singer) {
   ctx.font = 'bold 50px Courier, monospace';
   ctx.shadowColor = '#00f3ff';
   ctx.shadowBlur = 0;
-  ctx.fillText(singer.name.toUpperCase(), 35, h - 110);
+  ctx.fillText(singer.name.toUpperCase(), 35, h - 100);
 
-  // Meta Info
-  ctx.font = '20px Courier, monospace';
-  ctx.fillStyle = '#888';
-  ctx.fillText('TARGET IDENTIFIED // ' + (singer.category || 'ARTIST'), 35, h - 70);
+  // Bio (Directly below name)
+  ctx.font = '22px Courier, monospace';
   ctx.fillStyle = CFG.GOLD;
-  const bioSnippet = singer.role || singer.bio || 'STABLE SIGNAL';
-  ctx.fillText(bioSnippet.substring(0, 25) + (bioSnippet.length > 25 ? '...' : ''), 35, h - 40);
+  const bioSnippet = singer.role || singer.bio || '';
+  ctx.fillText(bioSnippet.substring(0, 32) + (bioSnippet.length > 32 ? '...' : ''), 35, h - 55);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.anisotropy = 4;
