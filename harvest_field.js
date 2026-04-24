@@ -1,7 +1,7 @@
 /**
- * Harvest Field v7.0 - Professional 3D Space Gallery
- * Layered Mesh Architecture: Separation of UI (Canvas) and Photo (Texture)
- * Fixed Photo Loading & Display Issues
+ * Harvest Field v8.0 - MISSION CONTROL ALPHA (Horizontal FPS Gallery)
+ * Cinematic Horizontal 3D Space Gallery with FPS-style Camera & Crosshair HUD.
+ * Tech: Vanilla Three.js + GSAP + CSS HUD
  */
 
 let db, scene, camera, renderer, raycaster, mouse;
@@ -9,17 +9,18 @@ let starMesh, gridHelper, cardsGroup;
 let cards = [];
 let allSingers = [];
 let hoverIdx = -1;
-let targetCamZ = 500;
+let targetCamX = 0;
+let mouseLook = { x: 0, y: 0 };
 let textureLoader;
 let initiated = false;
 
 const CFG = {
-  Z_GAP: 1000,
-  W: 240,
-  H: 360,
-  GOLD_HEX: 0xc9933b,
-  BG_HEX: 0x07070a,
-  PHOTO_H_RATIO: 0.68
+  X_GAP: 600,            // Distance between cards sideways
+  W: 320,                // Card width
+  H: 480,                // Card height
+  GOLD: 0xc9933b,
+  DARK: 0x050508,
+  GLOW: 0x00f3ff         // Cyber blue glow for "Locked" state
 };
 
 function waitAndInit() {
@@ -37,37 +38,43 @@ document.addEventListener('DOMContentLoaded', waitAndInit);
 
 async function init() {
   db = window.supabase;
+  
+  // 1. Scene Setup
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(CFG.BG_HEX);
-  scene.fog = new THREE.FogExp2(CFG.BG_HEX, 0.0004);
+  scene.background = new THREE.Color(CFG.DARK);
+  scene.fog = new THREE.FogExp2(CFG.DARK, 0.0003);
 
-  camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
-  camera.position.set(0, 0, targetCamZ);
+  // 2. Camera: FPS View
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 30000);
+  camera.position.set(0, 0, 1000); // Start back a bit
 
+  // 3. Renderer
   const canvas = document.getElementById('harvest-canvas');
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   raycaster = new THREE.Raycaster();
-  mouse = new THREE.Vector2(-9999, -9999);
+  mouse = new THREE.Vector2(0, 0); // Raycast from CENTER (Crosshair)
   textureLoader = new THREE.TextureLoader();
   textureLoader.setCrossOrigin('anonymous');
 
   cardsGroup = new THREE.Group();
   scene.add(cardsGroup);
 
-  // High quality lighting
-  scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-  const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
-  dirLight.position.set(1, 2, 1);
-  scene.add(dirLight);
+  // 4. Lighting
+  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+  const flash = new THREE.PointLight(0xffffff, 1);
+  flash.position.set(0, 500, 1500);
+  scene.add(flash);
 
   buildEnvironment();
 
+  // 5. Interaction Listeners
   window.addEventListener('resize', onResize);
   window.addEventListener('wheel', onWheel, { passive: false });
   window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mousedown', onClick);
   
   const closeBtn = document.querySelector('.close-card');
   if (closeBtn) closeBtn.onclick = hideOverlay;
@@ -77,19 +84,19 @@ async function init() {
 }
 
 function buildEnvironment() {
-  // Far perspective grid
-  gridHelper = new THREE.GridHelper(40000, 200, 0x222222, 0x111111);
+  // Deep Perspective Grid (Horizontal direction)
+  gridHelper = new THREE.GridHelper(50000, 200, 0x333333, 0x111111);
   gridHelper.position.y = -CFG.H * 0.8;
   scene.add(gridHelper);
 
-  // Subtle star field
+  // Star Particles
   const geo = new THREE.BufferGeometry();
   const pos = [];
-  for (let i = 0; i < 6000; i++) {
-    pos.push((Math.random() - 0.5) * 10000, (Math.random() - 0.5) * 5000, (Math.random() - 0.5) * 20000);
+  for (let i = 0; i < 8000; i++) {
+    pos.push((Math.random() - 0.5) * 30000, (Math.random() - 0.5) * 10000, (Math.random() - 0.5) * 10000);
   }
   geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  starMesh = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffffff, size: 1.5, transparent: true, opacity: 0.3 }));
+  starMesh = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffffff, size: 2, transparent: true, opacity: 0.3 }));
   scene.add(starMesh);
 }
 
@@ -105,7 +112,7 @@ async function loadData() {
     else buildCards(allSingers);
 
   } catch (err) {
-    console.error('[HF] Data Error:', err);
+    console.error('[MissionControl] Data Error:', err);
   } finally {
     const loader = document.getElementById('scene-loader');
     if (loader) {
@@ -116,44 +123,52 @@ async function loadData() {
 }
 
 /**
- * Creates the UI Texture for the card (Name, Bio, Borders)
+ * High-End Cyber UI Texture for Card Back
  */
-function createUITexture(singer) {
+function createCardUITexture(singer) {
   const w = 512, h = 768;
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
 
-  // Glass-like background
-  ctx.fillStyle = '#0a0a0f';
-  ctx.roundRect(0, 0, w, h, 24);
-  ctx.fill();
+  // Dark Panel
+  ctx.fillStyle = '#0a0a0c';
+  ctx.fillRect(0, 0, w, h);
 
-  // Premium Gold Frame
-  ctx.strokeStyle = '#c9933b';
+  // Grid background pattern
+  ctx.strokeStyle = '#1a1a1f';
+  ctx.lineWidth = 1;
+  for(let i=0; i<w; i+=40) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,h); ctx.stroke(); }
+  for(let j=0; j<h; j+=40) { ctx.beginPath(); ctx.moveTo(0,j); ctx.lineTo(w,j); ctx.stroke(); }
+
+  // Cyber Borders
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(10, 10, w - 20, h - 20);
+
+  // Corner Accents
+  ctx.strokeStyle = '#fff';
   ctx.lineWidth = 4;
-  ctx.roundRect(6, 6, w - 12, h - 12, 20);
-  ctx.stroke();
+  const len = 40;
+  // Top Left
+  ctx.beginPath(); ctx.moveTo(10, 10+len); ctx.lineTo(10,10); ctx.lineTo(10+len,10); ctx.stroke();
+  // Bottom Right
+  ctx.beginPath(); ctx.moveTo(w-10-len, h-10); ctx.lineTo(w-10, h-10); ctx.lineTo(w-10, h-10-len); ctx.stroke();
 
-  // Name Label
-  ctx.textAlign = 'center';
+  // Name
+  ctx.textAlign = 'left';
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 52px "PingFang SC", sans-serif';
-  const nameY = h * CFG.PHOTO_H_RATIO + 80;
-  ctx.fillText(singer.name || 'Harvester', w / 2, nameY);
+  ctx.font = 'bold 50px Courier, monospace';
+  ctx.shadowColor = '#00f3ff';
+  ctx.shadowBlur = 0;
+  ctx.fillText(singer.name.toUpperCase(), 35, h - 110);
 
-  // Category Subtitle
-  ctx.fillStyle = '#c9933b';
-  ctx.font = '26px "PingFang SC", sans-serif';
-  const catStr = singer.category === 'worship' ? '敬拜歌手 Worship' : '福音歌手 Gospel';
-  ctx.fillText(catStr, w / 2, nameY + 45);
-
-  // Small decoration line
-  ctx.strokeStyle = 'rgba(201,147,59,0.3)';
-  ctx.beginPath();
-  ctx.moveTo(w * 0.3, h - 40);
-  ctx.lineTo(w * 0.7, h - 40);
-  ctx.stroke();
+  // Meta Info
+  ctx.font = '20px Courier, monospace';
+  ctx.fillStyle = '#888';
+  ctx.fillText('TARGET IDENTIFIED // ' + (singer.category || 'ARTIST'), 35, h - 70);
+  ctx.fillStyle = CFG.GOLD;
+  ctx.fillText('STATUS: ENCRYPTED', 35, h - 40);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.anisotropy = 4;
@@ -161,76 +176,72 @@ function createUITexture(singer) {
 }
 
 function buildCards(dataArray) {
-  // Cleanup
+  // Reset
   cards.forEach(c => {
-    c.traverse(child => {
-      if (child.material) {
-        if (child.material.map) child.material.map.dispose();
-        child.material.dispose();
-      }
-    });
+    c.traverse(child => { if(child.material) { if(child.material.map) child.material.map.dispose(); child.material.dispose(); } });
     cardsGroup.remove(c);
   });
   cards = [];
   hoverIdx = -1;
 
   if (!dataArray || dataArray.length === 0) {
-    dataArray = [{ name: '收割机音乐', category: 'gospel', bio: '欢迎来到收割机空间' }];
+    dataArray = [{ name: 'EMPTY CACHE', category: 'SYSTEM' }];
   }
 
-  targetCamZ = 500;
-  camera.position.z = targetCamZ;
+  targetCamX = 0;
+  camera.position.x = 0;
 
   dataArray.forEach((singer, i) => {
-    const cardBase = new THREE.Group();
-    const xOff = i === 0 ? 0 : (i % 2 === 0 ? 240 : -240);
-    const zPos = -(i * CFG.Z_GAP);
-    cardBase.position.set(xOff, 0, zPos);
-    cardBase.rotation.y = xOff > 0 ? -0.15 : (xOff < 0 ? 0.15 : 0);
+    const cardGroup = new THREE.Group();
+    const xPos = i * CFG.X_GAP;
+    // Layered Depth: staggered to create 3D paralax
+    const zPos = (Math.random() - 0.5) * 100; 
+    cardGroup.position.set(xPos, 0, zPos);
     
-    // 1. Backplane (UI)
+    // 1. MAIN PANEL (Back)
     const uiGeo = new THREE.PlaneGeometry(CFG.W, CFG.H);
     const uiMat = new THREE.MeshStandardMaterial({ 
-      map: createUITexture(singer),
+      map: createCardUITexture(singer),
       transparent: true,
-      roughness: 0.3,
-      metalness: 0.2
+      side: THREE.DoubleSide
     });
     const uiMesh = new THREE.Mesh(uiGeo, uiMat);
-    cardBase.add(uiMesh);
+    cardGroup.add(uiMesh);
 
-    // 2. Frontplane (Photo)
-    const photoW = CFG.W - 24;
-    const photoH = CFG.H * CFG.PHOTO_H_RATIO - 20;
-    const photoGeo = new THREE.PlaneGeometry(photoW, photoH);
-    const photoMat = new THREE.MeshStandardMaterial({ 
-      color: 0x111111,
-      roughness: 0.5
-    });
-    const photoMesh = new THREE.Mesh(photoGeo, photoMat);
-    // Slightly in front and at the top
-    photoMesh.position.set(0, (CFG.H / 2) - (photoH / 2) - 12, 0.5); 
-    cardBase.add(photoMesh);
+    // 2. PHOTO PORT (Front)
+    const pW = CFG.W - 50;
+    const pH = CFG.H - 180;
+    const pGeo = new THREE.PlaneGeometry(pW, pH);
+    const pMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 1 });
+    const pMesh = new THREE.Mesh(pGeo, pMat);
+    pMesh.position.set(0, 60, 2);
+    cardGroup.add(pMesh);
 
-    // Load Image via TextureLoader (Handles CORS and timing better)
-    if (singer.image_url) {
-      textureLoader.load(singer.image_url, (tex) => {
-        tex.anisotropy = 4;
-        photoMat.map = tex;
-        photoMat.color.setHex(0xffffff);
-        photoMat.needsUpdate = true;
+    // Load Photo
+    if(singer.image_url) {
+      textureLoader.load(singer.image_url, (t) => {
+        pMat.map = t;
+        pMat.color.setHex(0xffffff);
+        pMat.needsUpdate = true;
       });
     }
 
-    cardBase.userData = { singer, index: i, baseRotY: cardBase.rotation.y };
-    cardsGroup.add(cardBase);
-    cards.push(cardBase);
+    // 3. SCANLINE EFFECT (Hidden by default)
+    const sMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff, transparent: true, opacity: 0 });
+    const sMesh = new THREE.Mesh(new THREE.PlaneGeometry(CFG.W, 2), sMat);
+    sMesh.position.z = 5;
+    cardGroup.add(sMesh);
 
-    // GSAP Entry
-    gsap.from(cardBase.position, { y: -500, duration: 1.5, delay: i * 0.1, ease: 'power4.out' });
+    cardGroup.userData = { singer, index: i, scanline: sMesh, photo: pMesh };
+    cardsGroup.add(cardGroup);
+    cards.push(cardGroup);
+
+    // Entry animation: Fade in from distance
+    gsap.from(cardGroup.position, { z: -1000, opacity: 0, duration: 1.5, delay: i * 0.1, ease: 'power3.out' });
   });
 
-  cardsGroup.userData.minZ = -(dataArray.length - 1) * CFG.Z_GAP - 1200;
+  // Limits
+  cardsGroup.userData.maxX = (dataArray.length - 1) * CFG.X_GAP;
 }
 
 window.switchCategory = function (cat) {
@@ -241,61 +252,118 @@ window.switchCategory = function (cat) {
   else document.getElementById('tab-all')?.classList.add('active');
 
   const filtered = key === 'all' ? allSingers : allSingers.filter(s => s.category === key);
-  buildCards(filtered);
+  
+  // Transition
+  gsap.to(cardsGroup.position, { z: -1000, opacity: 0, duration: 0.5, onComplete: () => {
+    buildCards(filtered);
+    gsap.to(cardsGroup.position, { z: 0, opacity: 1, duration: 1 });
+  }});
 };
 
+// Horizontal Scroll
 function onWheel(e) {
   e.preventDefault();
-  targetCamZ -= e.deltaY * 1.5;
-  const minZ = cardsGroup.userData.minZ || -2000;
-  if (targetCamZ > 600) targetCamZ = 600;
-  if (targetCamZ < minZ) targetCamZ = minZ;
-  gsap.to(camera.position, { z: targetCamZ, duration: 1.2, ease: 'power3.out' });
+  targetCamX += e.deltaY * 1.5;
+
+  const maxX = cardsGroup.userData.maxX || 0;
+  if (targetCamX < 0) targetCamX = 0;
+  if (targetCamX > maxX) targetCamX = maxX;
+
+  gsap.to(camera.position, { x: targetCamX, duration: 1.2, ease: 'power3.out' });
 }
 
+// FPS Mouse Look
 function onMouseMove(e) {
-  const rect = renderer.domElement.getBoundingClientRect();
-  mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-  mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  // 1. Update Look Target (Rotation)
+  const x = (e.clientX / window.innerWidth) * 2 - 1;
+  const y = -(e.clientY / window.innerHeight) * 2 + 1;
+  mouseLook.x = x * 0.2; // Max yaw
+  mouseLook.y = y * 0.15; // Max pitch
 
-  raycaster.setFromCamera(mouse, camera);
-  const hits = raycaster.intersectObjects(cards, true); // Search recursively into children
+  // 2. HUD Crosshair move slightly (Lag effect)
+  const crosshair = document.getElementById('crosshair');
+  if(crosshair) {
+    gsap.to(crosshair, { x: x * 20, y: -y * 20, duration: 0.2 });
+  }
+}
+
+function onClick() {
+  if (hoverIdx !== -1) {
+    showOverlay(cards[hoverIdx].userData.singer);
+  }
+}
+
+function renderLoop() {
+  requestAnimationFrame(renderLoop);
+
+  // 1. Apply FPS Rotation
+  camera.rotation.y += (mouseLook.x - camera.rotation.y) * 0.05;
+  camera.rotation.x += (-mouseLook.y - camera.rotation.x) * 0.05;
+
+  // 2. Raycast from SCREEN CENTER (FPS Crosshair)
+  raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+  const hits = raycaster.intersectObjects(cards, true);
 
   if (hits.length > 0) {
-    // Find the parent card base
     let obj = hits[0].object;
     while(obj.parent && !obj.userData.singer) obj = obj.parent;
     
     if (obj.userData.singer && hoverIdx !== obj.userData.index) {
       if (hoverIdx !== -1 && cards[hoverIdx]) revertCard(cards[hoverIdx]);
       hoverIdx = obj.userData.index;
-      focusCard(obj);
-      showOverlay(obj.userData.singer);
-      document.body.style.cursor = 'pointer';
+      lockCard(obj);
+      document.body.style.cursor = 'crosshair';
+      updateSystemHUD(obj.userData.singer, true);
     }
+    
+    // Animate Scanline
+    const card = cards[hoverIdx];
+    if(card && card.userData.scanline) {
+      card.userData.scanline.position.y = Math.sin(Date.now() * 0.005) * (CFG.H/2);
+      card.userData.scanline.material.opacity = 0.8;
+    }
+
   } else if (hoverIdx !== -1) {
     revertCard(cards[hoverIdx]);
     hoverIdx = -1;
     document.body.style.cursor = 'default';
-    hideOverlay();
+    updateSystemHUD(null, false);
   }
+
+  // Environment animation
+  if (starMesh) starMesh.rotation.y += 0.0001;
+  
+  renderer.render(scene, camera);
 }
 
-function focusCard(m) {
-  gsap.to(m.scale, { x: 1.15, y: 1.15, z: 1.15, duration: 0.4, ease: 'back.out' });
-  m.traverse(child => {
-    if (child.material) {
-      child.material.emissive = new THREE.Color(CFG.GOLD_HEX);
-      child.material.emissiveIntensity = 0.3;
-    }
-  });
+function lockCard(m) {
+  gsap.to(m.scale, { x: 1.1, y: 1.1, duration: 0.3 });
+  gsap.to(m.position, { z: 50, duration: 0.3 }); // Pop out
+  
+  // HUD Elements
+  const hud = document.getElementById('fps-target-info');
+  if(hud) hud.classList.add('detected');
 }
 
 function revertCard(m) {
-  gsap.to(m.scale, { x: 1, y: 1, z: 1, duration: 0.4 });
-  m.traverse(child => {
-    if (child.material) child.material.emissiveIntensity = 0;
-  });
+  gsap.to(m.scale, { x: 1, y: 1, duration: 0.4 });
+  gsap.to(m.position, { z: 0, duration: 0.4 });
+  if(m.userData.scanline) m.userData.scanline.material.opacity = 0;
+  
+  const hud = document.getElementById('fps-target-info');
+  if(hud) hud.classList.remove('detected');
+}
+
+function updateSystemHUD(singer, detected) {
+  const label = document.getElementById('fps-target-name');
+  if(!label) return;
+  if(detected) {
+    label.innerText = 'TARGET: ' + singer.name.toUpperCase();
+    document.getElementById('crosshair').classList.add('locking');
+  } else {
+    label.innerText = 'SCANNING FOR TARGET...';
+    document.getElementById('crosshair').classList.remove('locking');
+  }
 }
 
 function showOverlay(s) {
@@ -305,22 +373,16 @@ function showOverlay(s) {
   document.getElementById('card-name').innerText = s.name || '';
   document.getElementById('card-role').innerText = s.role || '';
   document.getElementById('card-bio').innerText = s.bio || '';
-  gsap.fromTo(o, { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.4 });
+  gsap.fromTo(o, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out' });
 }
 
 function hideOverlay() {
   const o = document.getElementById('singer-card-overlay');
-  if (o) gsap.to(o, { opacity: 0, x: 30, duration: 0.3, onComplete: () => o.classList.add('hidden') });
+  if (o) gsap.to(o, { opacity: 0, scale: 1.1, duration: 0.3, onComplete: () => o.classList.add('hidden') });
 }
 
 function onResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-function renderLoop() {
-  requestAnimationFrame(renderLoop);
-  if (starMesh) starMesh.rotation.y += 0.0001;
-  renderer.render(scene, camera);
 }
