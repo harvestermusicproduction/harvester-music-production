@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <p style="color:#fff; line-height:1.7; font-size:0.9rem;">${desc}</p>
             </div>
             <div class="event-actions" style="display:flex; justify-content:center; margin-top:25px; position:relative; z-index:50; width:100%;">
-              <button class="btn-score-premium reminder-btn" data-event-id="${e.id}" data-event-title="${encodeURIComponent(e.title)}" data-event-date="${e.event_date || e.date}" style="border-radius:100px; padding:14px 0; font-family:var(--font-display); letter-spacing:2px; width:calc(100% + 40px); margin-left:-20px; white-space:nowrap; pointer-events:auto; cursor:pointer;">
+              <button class="btn-score-premium reminder-btn" data-event-id="${e.id}" data-event-title="${encodeURIComponent(e.title)}" data-event-date="${e.event_date || e.date}" style="border-radius:100px; padding:14px 0; font-family:var(--font-display); letter-spacing:2px; width:100%; max-width:320px; margin:0 auto; white-space:nowrap; pointer-events:auto; cursor:pointer;">
                 我要参与 / 提醒我
               </button>
             </div>
@@ -397,7 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let m = document.getElementById('reminderModal');
     if(!m){
       m=document.createElement('div'); m.id='reminderModal'; m.className='reminder-modal';
-      m.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:999999; display:none; justify-content:center; align-items:center; backdrop-filter:blur(15px); padding:20px; transition:0.3s;";
+      m.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:999999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(15px); padding:20px; transition:opacity 0.3s;";
       m.innerHTML=`<div class="reminder-content" style="background:rgba(255,255,255,0.9); backdrop-filter:blur(35px); -webkit-backdrop-filter:blur(35px); border:1px solid rgba(255,255,255,0.5); border-radius:40px; padding:2.5rem; box-shadow:0 40px 80px rgba(0,0,0,0.2); text-align:center; max-width:400px; width:100%;">
          <h2 style="color:#222; font-family:var(--font-chn-title); font-size:2rem; margin-bottom:1rem; letter-spacing:2px;">活动参与</h2>
          <p style="color:#555; margin-bottom:1.5rem; letter-spacing:1px; font-size:0.95rem;">请输入你的电子邮箱，我们会在活动前一天发送提醒邮件给你。</p>
@@ -405,13 +405,17 @@ document.addEventListener('DOMContentLoaded', () => {
          <input type="email" id="rem_email" placeholder="输入您的邮箱地址..." style="width:100%; margin-bottom:1.8rem; padding:16px; border-radius:50px; background:rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.1); color:#222; outline:none; text-align:center;">
          <div style="display:flex; gap:15px;">
            <button id="rem_submit_btn" class="btn-score-premium" style="flex:2; border-radius:50px; background:var(--gold); color:#000; font-weight:bold; border:none; padding:16px;">🔔 提交</button>
-           <button style="flex:1; border-radius:50px; padding:16px; font-size:0.9rem; background:rgba(0,0,0,0.05); border:none; cursor:pointer;" onclick="document.getElementById('reminderModal').style.display='none'">取消</button>
+           <button style="flex:1; border-radius:50px; padding:16px; font-size:0.9rem; background:rgba(0,0,0,0.05); border:none; cursor:pointer;" onclick="document.getElementById('reminderModal').classList.remove('active')">取消</button>
          </div>
       </div>`;
       document.body.appendChild(m);
     }
     document.getElementById('rem_t').innerText = `《${title}》`;
-    document.getElementById('reminderModal').style.display = 'flex';
+    
+    // Use a tiny timeout to allow display:flex to apply if it was just created, before transitioning opacity
+    setTimeout(() => {
+      document.getElementById('reminderModal').classList.add('active');
+    }, 10);
     
     const emailInput = document.getElementById('rem_email');
     const submitBtn = document.getElementById('rem_submit_btn');
@@ -430,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }]);
         alert("✅ 提醒设置成功！收割机届时将通知您。");
       } catch(e) { }
-      document.getElementById('reminderModal').style.display = 'none';
+      document.getElementById('reminderModal').classList.remove('active');
       emailInput.value = '';
     };
   };

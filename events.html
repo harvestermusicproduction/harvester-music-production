@@ -18,7 +18,7 @@
       display: flex;
       flex-direction: column;
       gap: 2rem;
-      max-width: 750px;
+      max-width: 600px;
       margin: 3rem auto;
       padding: 0 1.5rem;
     }
@@ -167,19 +167,7 @@
     <p style="text-align:center; opacity:0.5;">正在加载精彩活动...</p>
   </div>
 
-  <!-- Reminder Modal (self-contained, no z-index conflicts) -->
-  <div id="reminderOverlay">
-    <div id="reminderBox">
-      <h2>活动参与</h2>
-      <p>我们会在活动前一天发送提醒邮件给你。</p>
-      <p id="rem_event_name"></p>
-      <input type="email" id="rem_email_input" placeholder="输入您的邮箱地址...">
-      <div class="rem-btns">
-        <button id="rem_submit">🔔 提交</button>
-        <button id="rem_cancel">取消</button>
-      </div>
-    </div>
-  </div>
+
 
   <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
@@ -190,123 +178,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=4.7.8"></script>
+  <script src="app.js?v=4.8.1"></script>
 
-  <!-- Self-contained events logic: does NOT depend on app.js loading correctly -->
-  <script>
-    (function() {
-      const SUPABASE_URL = "https://ollfdarbmiahgjaqivpg.supabase.co";
-      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sbGZkYXJibWlhaGdqYXFpdnBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTI2OTgsImV4cCI6MjA5MDc4ODY5OH0.hn7JoD3dX3wiQ3ia_A1GQMsGwfRwiNUQ_2Nu4UdstfI";
 
-      let currentEventId = null;
-      let currentEventTitle = null;
-      let currentEventDate = null;
-
-      // Modal logic
-      const overlay = document.getElementById('reminderOverlay');
-      const cancelBtn = document.getElementById('rem_cancel');
-      const submitBtn = document.getElementById('rem_submit');
-      const emailInput = document.getElementById('rem_email_input');
-      const eventNameEl = document.getElementById('rem_event_name');
-
-      cancelBtn.addEventListener('click', function() {
-        overlay.classList.remove('open');
-      });
-      overlay.addEventListener('click', function(e) {
-        if (e.target === overlay) overlay.classList.remove('open');
-      });
-
-      submitBtn.addEventListener('click', async function() {
-        const email = emailInput.value.trim();
-        if (!email || !email.includes('@')) {
-          alert('请输入有效的邮箱地址');
-          return;
-        }
-        submitBtn.textContent = '提交中...';
-        submitBtn.disabled = true;
-        try {
-          const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-          await db.from('event_reminders').insert([{
-            eventId: currentEventId,
-            eventTitle: currentEventTitle,
-            eventDate: currentEventDate,
-            userEmail: email,
-            reminderSent: false
-          }]);
-          alert('✅ 提醒设置成功！收割机届时将通知您。');
-          overlay.classList.remove('open');
-          emailInput.value = '';
-        } catch(err) {
-          alert('提交失败，请稍后再试：' + err.message);
-        }
-        submitBtn.textContent = '🔔 提交';
-        submitBtn.disabled = false;
-      });
-
-      // Load events
-      async function loadEvents() {
-        const container = document.getElementById('eventsContainer');
-        try {
-          const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-          const { data: events, error } = await db.from('events').select('*').order('date', { ascending: true });
-          if (error) throw error;
-          if (!events || events.length === 0) {
-            container.innerHTML = '<p style="text-align:center; opacity:0.5; color:#fff;">暂无活动，敬请期待。</p>';
-            return;
-          }
-
-          container.innerHTML = events.map(function(e) {
-            const date = e.date ? new Date(e.date).toLocaleDateString('zh-CN') : 'TBA';
-            const time = e.time || '';
-            let desc = (e.description || '').replace(/EXT_META:.*?\|\|/g, '').trim();
-            const loc = e.location || '';
-            const mapUrl = e.map_url || '';
-            const locHtml = loc
-              ? (mapUrl
-                  ? '<a href="' + mapUrl + '" target="_blank" style="color:#f6d28a;"><i class="fas fa-map-marker-alt"></i> ' + loc + '</a>'
-                  : '<span><i class="fas fa-map-marker-alt"></i> ' + loc + '</span>')
-              : '';
-            const eventDate = e.event_date || e.date || '';
-
-            return '<div class="ev-card">' +
-              '<div class="ev-card-meta">' +
-                '<span><i class="fas fa-calendar-alt"></i> ' + date + '</span>' +
-                (time ? '<span><i class="fas fa-clock"></i> ' + time + '</span>' : '') +
-                (locHtml ? locHtml : '') +
-              '</div>' +
-              '<h3 class="ev-card-title">' + e.title + '</h3>' +
-              (desc ? '<p class="ev-card-desc">' + desc + '</p>' : '') +
-              '<button class="ev-remind-btn" data-id="' + e.id + '" data-title="' + encodeURIComponent(e.title) + '" data-date="' + eventDate + '">我要参与 / 提醒我</button>' +
-            '</div>';
-          }).join('');
-
-          // Attach click events
-          container.querySelectorAll('.ev-remind-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-              currentEventId = btn.getAttribute('data-id');
-              currentEventTitle = decodeURIComponent(btn.getAttribute('data-title'));
-              currentEventDate = btn.getAttribute('data-date');
-              eventNameEl.textContent = '《' + currentEventTitle + '》';
-              emailInput.value = '';
-              overlay.classList.add('open');
-            });
-          });
-
-        } catch(err) {
-          container.innerHTML = '<p style="text-align:center; color:#f88; opacity:0.8;">加载失败：' + err.message + '</p>';
-        }
-      }
-
-      // Wait for supabase to be available
-      function waitAndLoad() {
-        if (typeof supabase !== 'undefined' && supabase.createClient) {
-          loadEvents();
-        } else {
-          setTimeout(waitAndLoad, 100);
-        }
-      }
-      waitAndLoad();
-    })();
-  </script>
 </body>
 </html>
