@@ -148,6 +148,15 @@ function buildCards(dataArray) {
     
     // Ensure array is valid
     if (!dataArray || !Array.isArray(dataArray)) dataArray = [];
+    
+    if (dataArray.length === 0) {
+      dataArray.push({
+        name: "尚未收录 (No Data)",
+        role: "",
+        bio: "你还没有在后台存入这类歌手。请去 Admin 面板添加！\nIf you see this, the filter found 0 items.",
+        image_url: "https://via.placeholder.com/300x400?text=Empty"
+      });
+    }
 
     dataArray.forEach((singer, i) => {
       const sideOffset = i === 0 ? 0 : (i % 2 === 0 ? 150 : -150);
