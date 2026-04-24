@@ -1,9 +1,8 @@
 /**
- * Harvest Field v5.0 - Z-Axis Space Gallery (Rebuilt)
- * All globals initialized inside init() to prevent load-order crashes.
+ * Harvest Field v6.0 - High Fidelity 3D Space Gallery
+ * Implements Z-axis scrolling, CanvasTextures for card details, and stable loading.
  */
 
-// Declare references only — no THREE calls until init()
 let db, scene, camera, renderer, raycaster, mouse;
 let starMesh, gridHelper, cardsGroup;
 let cards = [];
@@ -14,19 +13,15 @@ let textureLoader;
 let initiated = false;
 
 const CFG = {
-  Z_GAP: 900,
+  Z_GAP: 950,
   W: 240,
   H: 360,
   GOLD_HEX: 0xc9933b,
   BG: 0x050508
 };
 
-// ─────────────────────────────────────────
-// BOOT: wait for both Three.js AND Supabase
-// ─────────────────────────────────────────
 function waitAndInit() {
   if (typeof THREE === 'undefined' || typeof window.supabase === 'undefined') {
-    console.log('[HF] Waiting for dependencies...');
     setTimeout(waitAndInit, 200);
     return;
   }
@@ -38,349 +33,269 @@ function waitAndInit() {
 
 document.addEventListener('DOMContentLoaded', waitAndInit);
 
-// ─────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────
 async function init() {
-  console.log('[HF] init() started');
   db = window.supabase;
-
-  // Scene
   scene = new THREE.Scene();
   scene.background = new THREE.Color(CFG.BG);
-  scene.fog = new THREE.FogExp2(CFG.BG, 0.0005);
+  scene.fog = new THREE.FogExp2(CFG.BG, 0.0004);
 
-  // Camera
   camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 20000);
   camera.position.set(0, 0, targetCamZ);
 
-  // Renderer
   const canvas = document.getElementById('harvest-canvas');
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  // Raycaster + Mouse
   raycaster = new THREE.Raycaster();
-  mouse = new THREE.Vector2(-9999, -9999); // off-screen default
-
-  // TextureLoader
+  mouse = new THREE.Vector2(-9999, -9999);
   textureLoader = new THREE.TextureLoader();
 
-  // Cards group
   cardsGroup = new THREE.Group();
   scene.add(cardsGroup);
 
-  // Lighting
-  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-  const spot = new THREE.SpotLight(0xffffff, 1.5);
-  spot.position.set(0, 600, 600);
-  spot.angle = Math.PI / 4;
-  spot.penumbra = 0.6;
+  scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+  const spot = new THREE.SpotLight(0xffffff, 1.2);
+  spot.position.set(0, 800, 800);
   scene.add(spot);
 
   buildEnvironment();
 
-  // Events
   window.addEventListener('resize', onResize);
   window.addEventListener('wheel', onWheel, { passive: false });
   window.addEventListener('mousemove', onMouseMove);
   const closeBtn = document.querySelector('.close-card');
   if (closeBtn) closeBtn.onclick = hideOverlay;
 
-  // Render loop — use native requestAnimationFrame
   renderLoop();
-
-  // Load data
   await loadData();
 }
 
-// ─────────────────────────────────────────
-// ENVIRONMENT
-// ─────────────────────────────────────────
 function buildEnvironment() {
-  // Grid floor
-  gridHelper = new THREE.GridHelper(30000, 300, CFG.GOLD_HEX, 0x111111);
-  gridHelper.position.y = -CFG.H * 0.6;
+  gridHelper = new THREE.GridHelper(30000, 200, CFG.GOLD_HEX, 0x111111);
+  gridHelper.position.y = -CFG.H * 0.7;
   scene.add(gridHelper);
 
-  // Stars
   const geo = new THREE.BufferGeometry();
   const pos = [];
-  for (let i = 0; i < 4000; i++) {
-    pos.push(
-      (Math.random() - 0.5) * 6000,
-      (Math.random() - 0.5) * 3000,
-      (Math.random() - 0.5) * 15000
-    );
+  for (let i = 0; i < 5000; i++) {
+    pos.push((Math.random() - 0.5) * 8000, (Math.random() - 0.5) * 4000, (Math.random() - 0.5) * 20000);
   }
   geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  starMesh = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffffff, size: 2, transparent: true, opacity: 0.35 }));
+  starMesh = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffffff, size: 2, transparent: true, opacity: 0.4 }));
   scene.add(starMesh);
 }
 
-// ─────────────────────────────────────────
-// DATA
-// ─────────────────────────────────────────
 async function loadData() {
   try {
-    const { data, error } = await db.from('singers').select('*');
+    const { data, error } = await db.from('singers').select('*').order('display_order', { ascending: true });
     if (error) throw error;
     allSingers = data || [];
-    console.log('[HF] Singers loaded:', allSingers.length);
-
-    // URL tab param
+    
     const tab = new URLSearchParams(window.location.search).get('tab');
     if (tab === 'gospel') window.switchCategory('福音');
     else if (tab === 'worship') window.switchCategory('敬拜');
     else buildCards(allSingers);
 
   } catch (err) {
-    console.error('[HF] loadData error:', err);
-    alert('数据库错误: ' + err.message);
+    console.error('Data error:', err);
   } finally {
-    // Always hide loader
     const loader = document.getElementById('scene-loader');
     if (loader) {
-      loader.style.transition = 'opacity 0.8s';
       loader.style.opacity = '0';
-      setTimeout(() => { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 900);
+      setTimeout(() => loader.remove(), 1000);
     }
   }
 }
 
-// ─────────────────────────────────────────
-// BUILD CARDS
-// ─────────────────────────────────────────
-function buildCards(dataArray) {
-  // Clear previous
-  while (cardsGroup.children.length) cardsGroup.remove(cardsGroup.children[0]);
-  cards = [];
-  hoverIdx = -1;
-  hideOverlay();
+// Draw content onto a 2D canvas then use as 3D texture
+function createCardTexture(singer, photo) {
+  const w = 512, h = 768;
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
 
-  if (!dataArray || dataArray.length === 0) {
-    dataArray = [{
-      name: '暂无歌手 (No Singers)',
-      role: '',
-      bio: '管理员尚未添加此分类的歌手，请到后台管理面板添加！',
-      image_url: '',
-      category: 'gospel'
-    }];
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, '#151525');
+  grad.addColorStop(1, '#050510');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Borders
+  ctx.strokeStyle = '#c9933b';
+  ctx.lineWidth = 10;
+  ctx.strokeRect(5, 5, w - 10, h - 10);
+
+  // Photo
+  const imgH = h * 0.65;
+  if (photo) {
+    const ratio = photo.width / photo.height;
+    const targetRatio = w / imgH;
+    let sw = photo.width, sh = photo.height, sx = 0, sy = 0;
+    if (ratio > targetRatio) { sw = sh * targetRatio; sx = (photo.width - sw) / 2; }
+    else { sh = sw / targetRatio; sy = (photo.height - sh) / 2; }
+    ctx.drawImage(photo, sx, sy, sw, sh, 10, 10, w - 20, imgH - 10);
+  } else {
+    ctx.fillStyle = '#222';
+    ctx.fillRect(10, 10, w - 20, imgH - 10);
+    ctx.fillStyle = '#c9933b';
+    ctx.font = '80px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('HM', w / 2, imgH / 2 + 30);
   }
 
-  // Reset camera
+  // Name
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 50px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(singer.name || 'Unknown', w / 2, imgH + 80);
+
+  // Role snippet
+  ctx.fillStyle = '#c9933b';
+  ctx.font = '24px Arial';
+  const roleStr = singer.category === 'worship' ? '敬拜歌手 Worship' : '福音歌手 Gospel';
+  ctx.fillText(roleStr, w / 2, imgH + 130);
+
+  return new THREE.CanvasTexture(canvas);
+}
+
+function buildCards(dataArray) {
+  cards.forEach(c => {
+    if (c.material.map) c.material.map.dispose();
+    c.material.dispose();
+    cardsGroup.remove(c);
+  });
+  cards = [];
+  hoverIdx = -1;
+
+  if (!dataArray || dataArray.length === 0) {
+    dataArray = [{ name: '暂无歌手', category: 'all' }];
+  }
+
   targetCamZ = 500;
   camera.position.z = targetCamZ;
 
-  const planeGeo = new THREE.PlaneGeometry(CFG.W, CFG.H);
+  const geo = new THREE.PlaneGeometry(CFG.W, CFG.H);
 
   dataArray.forEach((singer, i) => {
-    const mat = new THREE.MeshStandardMaterial({
-      color: 0x888888,
-      roughness: 0.2,
-      metalness: 0.1,
-    });
-
-    const mesh = new THREE.Mesh(planeGeo, mat);
-
-    // Zigzag layout
-    const xOffset = i === 0 ? 0 : (i % 2 === 0 ? 200 : -200);
-    mesh.position.set(xOffset, 0, -(i * CFG.Z_GAP));
-    mesh.rotation.z = (Math.random() - 0.5) * 0.06;
-    mesh.rotation.y = xOffset > 0 ? -0.12 : (xOffset < 0 ? 0.12 : 0);
-
-    mesh.userData = {
-      singer,
-      index: i,
-      baseRotX: mesh.rotation.x,
-      baseRotY: mesh.rotation.y,
-      baseRotZ: mesh.rotation.z
-    };
-
-    // Load texture
-    const imgUrl = singer.image_url && singer.image_url.startsWith('http')
-      ? singer.image_url
-      : null;
-
-    if (imgUrl) {
-      textureLoader.load(
-        imgUrl,
-        (tex) => {
-          tex.minFilter = THREE.LinearFilter;
-          mesh.material.map = tex;
-          mesh.material.color.setHex(0xffffff);
-          mesh.material.needsUpdate = true;
-        },
-        undefined,
-        () => {
-          // On error — show gold placeholder
-          mesh.material.color.setHex(CFG.GOLD_HEX);
-        }
-      );
-    } else {
-      mesh.material.color.setHex(CFG.GOLD_HEX);
-    }
+    const mat = new THREE.MeshStandardMaterial({ color: 0x888888 });
+    const mesh = new THREE.Mesh(geo, mat);
+    const xOff = i === 0 ? 0 : (i % 2 === 0 ? 220 : -220);
+    mesh.position.set(xOff, 0, -(i * CFG.Z_GAP));
+    mesh.rotation.y = xOff > 0 ? -0.15 : (xOff < 0 ? 0.15 : 0);
+    mesh.userData = { singer, index: i, baseRotY: mesh.rotation.y };
 
     cardsGroup.add(mesh);
     cards.push(mesh);
 
-    // Entrance animation via GSAP if available
-    if (typeof gsap !== 'undefined') {
-      const origY = mesh.position.y;
-      mesh.position.y = origY - 400;
-      gsap.to(mesh.position, { y: origY, duration: 1.2, delay: i * 0.08, ease: 'power3.out' });
-    }
+    // Dynamic texture
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      mesh.material.map = createCardTexture(singer, img);
+      mesh.material.color.setHex(0xffffff);
+      mesh.material.needsUpdate = true;
+    };
+    img.onerror = () => {
+      mesh.material.map = createCardTexture(singer, null);
+      mesh.material.color.setHex(0xffffff);
+      mesh.material.needsUpdate = true;
+    };
+    img.src = singer.image_url || '';
+    if (!singer.image_url) img.onerror();
   });
 
-  // Store scroll bounds
-  cardsGroup.userData.minZ = -(dataArray.length - 1) * CFG.Z_GAP - 800;
-  console.log('[HF] Built', cards.length, 'cards');
+  cardsGroup.userData.minZ = -(dataArray.length - 1) * CFG.Z_GAP - 1000;
 }
 
-// ─────────────────────────────────────────
-// CATEGORY SWITCH (global hook)
-// ─────────────────────────────────────────
 window.switchCategory = function (cat) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  let dbKey = 'all';
-  if (cat === '福音') { document.getElementById('tab-gospel')?.classList.add('active'); dbKey = 'gospel'; }
-  else if (cat === '敬拜') { document.getElementById('tab-worship')?.classList.add('active'); dbKey = 'worship'; }
+  let key = 'all';
+  if (cat === '福音') { document.getElementById('tab-gospel')?.classList.add('active'); key = 'gospel'; }
+  else if (cat === '敬拜') { document.getElementById('tab-worship')?.classList.add('active'); key = 'worship'; }
   else document.getElementById('tab-all')?.classList.add('active');
 
-  const filtered = dbKey === 'all' ? allSingers : allSingers.filter(s => s.category === dbKey);
+  const filtered = key === 'all' ? allSingers : allSingers.filter(s => s.category === key);
   buildCards(filtered);
 };
 
-// ─────────────────────────────────────────
-// SCROLL = Camera Drive
-// ─────────────────────────────────────────
 function onWheel(e) {
   e.preventDefault();
   targetCamZ -= e.deltaY * 1.5;
-
-  const minZ = cardsGroup?.userData?.minZ || -2000;
+  const minZ = cardsGroup.userData.minZ || -2000;
   if (targetCamZ > 600) targetCamZ = 600;
   if (targetCamZ < minZ) targetCamZ = minZ;
-
-  if (typeof gsap !== 'undefined') {
-    gsap.to(camera.position, { z: targetCamZ, duration: 1.2, ease: 'power3.out', overwrite: true });
-  } else {
-    camera.position.z = targetCamZ;
-  }
+  gsap.to(camera.position, { z: targetCamZ, duration: 1.2, ease: 'power3.out' });
 }
 
-// ─────────────────────────────────────────
-// MOUSE
-// ─────────────────────────────────────────
 function onMouseMove(e) {
-  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  const rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
   const hits = raycaster.intersectObjects(cards);
 
   if (hits.length > 0) {
-    const hit = hits[0];
-    const mesh = hit.object;
-    const idx = mesh.userData.index;
-
-    if (hoverIdx !== idx) {
+    const mesh = hits[0].object;
+    if (hoverIdx !== mesh.userData.index) {
       if (hoverIdx !== -1 && cards[hoverIdx]) revertCard(cards[hoverIdx]);
-      hoverIdx = idx;
+      hoverIdx = mesh.userData.index;
       focusCard(mesh);
       showOverlay(mesh.userData.singer);
       document.body.style.cursor = 'pointer';
     }
-
-    // 3D tilt via UV
-    if (hit.uv && typeof gsap !== 'undefined') {
-      gsap.to(mesh.rotation, {
-        x: mesh.userData.baseRotX + (hit.uv.y - 0.5) * -0.4,
-        y: mesh.userData.baseRotY + (hit.uv.x - 0.5) * 0.4,
-        duration: 0.25, ease: 'power2.out'
+    if (hits[0].uv) {
+      gsap.to(mesh.rotation, { 
+        x: (hits[0].uv.y - 0.5) * -0.4, 
+        y: mesh.userData.baseRotY + (hits[0].uv.x - 0.5) * 0.4, 
+        duration: 0.3 
       });
     }
-  } else {
-    if (hoverIdx !== -1) {
-      revertCard(cards[hoverIdx]);
-      hoverIdx = -1;
-      document.body.style.cursor = 'default';
-      hideOverlay();
-    }
+  } else if (hoverIdx !== -1) {
+    revertCard(cards[hoverIdx]);
+    hoverIdx = -1;
+    document.body.style.cursor = 'default';
+    hideOverlay();
   }
 }
 
-function focusCard(mesh) {
-  if (typeof gsap !== 'undefined') {
-    gsap.to(mesh.scale, { x: 1.12, y: 1.12, z: 1.12, duration: 0.4, ease: 'back.out(2)' });
-  }
-  mesh.material.emissive = new THREE.Color(CFG.GOLD_HEX);
-  mesh.material.emissiveIntensity = 0.35;
-  cards.forEach(c => {
-    if (c !== mesh && typeof gsap !== 'undefined') {
-      gsap.to(c.material.color, { r: 0.25, g: 0.25, b: 0.25, duration: 0.3 });
-    }
-  });
+function focusCard(m) {
+  gsap.to(m.scale, { x: 1.15, y: 1.15, z: 1.15, duration: 0.4, ease: 'back.out' });
+  m.material.emissive = new THREE.Color(CFG.GOLD_HEX);
+  m.material.emissiveIntensity = 0.4;
 }
 
-function revertCard(mesh) {
-  if (typeof gsap !== 'undefined') {
-    gsap.to(mesh.scale, { x: 1, y: 1, z: 1, duration: 0.4 });
-    gsap.to(mesh.rotation, {
-      x: mesh.userData.baseRotX,
-      y: mesh.userData.baseRotY,
-      z: mesh.userData.baseRotZ,
-      duration: 0.4
-    });
-  }
-  if (mesh.material.emissive) mesh.material.emissiveIntensity = 0;
-  cards.forEach(c => {
-    if (typeof gsap !== 'undefined') {
-      gsap.to(c.material.color, { r: 1, g: 1, b: 1, duration: 0.3 });
-    }
-  });
+function revertCard(m) {
+  gsap.to(m.scale, { x: 1, y: 1, z: 1, duration: 0.4 });
+  gsap.to(m.rotation, { x: 0, y: m.userData.baseRotY, duration: 0.4 });
+  m.material.emissiveIntensity = 0;
 }
 
-// ─────────────────────────────────────────
-// OVERLAY
-// ─────────────────────────────────────────
-function showOverlay(singer) {
-  const overlay = document.getElementById('singer-card-overlay');
-  if (!overlay) return;
-  overlay.classList.remove('hidden');
-  const el = id => document.getElementById(id);
-  if (el('card-name')) el('card-name').innerText = singer.name || '';
-  if (el('card-role')) el('card-role').innerText = singer.role || '';
-  if (el('card-bio')) el('card-bio').innerText = singer.bio || '';
-  if (typeof gsap !== 'undefined') gsap.fromTo(overlay, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.35 });
+function showOverlay(s) {
+  const o = document.getElementById('singer-card-overlay');
+  if (!o) return;
+  o.classList.remove('hidden');
+  document.getElementById('card-name').innerText = s.name || '';
+  document.getElementById('card-role').innerText = s.role || '';
+  document.getElementById('card-bio').innerText = s.bio || '';
+  gsap.fromTo(o, { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.4 });
 }
 
 function hideOverlay() {
-  const overlay = document.getElementById('singer-card-overlay');
-  if (!overlay) return;
-  if (typeof gsap !== 'undefined') {
-    gsap.to(overlay, { opacity: 0, x: 20, duration: 0.25, onComplete: () => overlay.classList.add('hidden') });
-  } else {
-    overlay.classList.add('hidden');
-  }
+  const o = document.getElementById('singer-card-overlay');
+  if (o) gsap.to(o, { opacity: 0, x: 30, duration: 0.3, onComplete: () => o.classList.add('hidden') });
 }
 
-// ─────────────────────────────────────────
-// RESIZE
-// ─────────────────────────────────────────
 function onResize() {
-  if (!camera || !renderer) return;
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// ─────────────────────────────────────────
-// RENDER LOOP
-// ─────────────────────────────────────────
 function renderLoop() {
   requestAnimationFrame(renderLoop);
-  if (starMesh) starMesh.rotation.y += 0.00015;
+  if (starMesh) starMesh.rotation.y += 0.0002;
   renderer.render(scene, camera);
 }
