@@ -1,83 +1,282 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="space-active">
+<html lang="zh-CN">
 <head>
-  <meta name="keywords" content="Harvester Music, 收割机音乐, CCM, 基督教音乐, 原创音乐, 福音音乐, 敬拜赞美, 赞美诗, 灵之火, 信仰艺术">
-  <meta name="description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>歌手阵容 Team | Harvester Music Production 收割机创作工作坊</title>
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="歌手阵容 Team | Harvester Music Production 收割机创作工作坊">
-  <meta property="og:description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
-  <meta property="og:image" content="https://www.harvestermusic.my/assets/logo.png">
-  <link rel="stylesheet" href="styles.css?v=4.6.3">
+  <title>Artists & Creators | Harvester Music Production</title>
+  <link rel="stylesheet" href="styles.css?v=4.6.4">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="harvest-active" style="margin:0; overflow:hidden; background:#050508;">
-
-  <!-- Mission Control HUD Layer -->
-  <div id="crosshair" style="position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:60px; height:60px; pointer-events:none; z-index:2000; border:1px solid rgba(0, 243, 255, 0.3); border-radius:50%;">
-      <div style="position:absolute; top:50%; left:-10px; width:10px; height:1px; background:#00f3ff;"></div>
-      <div style="position:absolute; top:50%; right:-10px; width:10px; height:1px; background:#00f3ff;"></div>
-      <div style="position:absolute; left:50%; top:-10px; width:1px; height:10px; background:#00f3ff;"></div>
-      <div style="position:absolute; left:50%; bottom:-10px; width:1px; height:10px; background:#00f3ff;"></div>
-      <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:2px; height:2px; background:#fff; border-radius:50%;"></div>
-  </div>
-
-  <div id="fps-target-info" style="position:fixed; bottom:4rem; left:50%; transform:translateX(-50%); z-index:2000; text-align:center; pointer-events:none; font-family: 'Courier New', Courier, monospace; letter-spacing:3px;">
-      <div id="fps-target-name" style="color:rgba(0, 243, 255, 0.7); font-size:0.9rem; margin-bottom:5px;">SCANNING FOR TARGETS...</div>
-      <div class="hud-line" style="width:200px; height:1px; background:linear-gradient(90deg, transparent, #00f3ff, transparent); margin:0 auto;"></div>
-  </div>
-
   <style>
-    #crosshair.locking {
-        width: 40px; height: 40px;
-        border-color: #ff4444;
-        background: rgba(255, 68, 68, 0.1);
-        box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
-        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    :root {
+      --bg: #f9f7f2;
+      --card-bg: #ffffff;
+      --text-main: #222;
+      --text-muted: #666;
+      --accent: #c9933b;
+      --font-kai: "Kaiti SC", "STKaiti", "KaiTi", "楷体", serif;
+      --shadow: 0 10px 30px rgba(0,0,0,0.05);
     }
-    #fps-target-info.detected #fps-target-name { 
-        color: #ff4444 !important; 
-        text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      overflow-x: hidden;
+      margin: 0;
+      font-family: var(--font-kai);
+      /* Override any lingering dark styles from styles.css */
     }
+
+    /* Editorial Header */
+    .gallery-header {
+      padding: 140px 5% 60px;
+      text-align: center;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .gallery-header .subtitle {
+      font-size: 1rem;
+      color: var(--accent);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 6px;
+      display: block;
+    }
+    .gallery-header h1 {
+      font-size: clamp(3rem, 10vw, 5.5rem);
+      margin: 0;
+      font-weight: 401;
+      letter-spacing: -2px;
+      line-height: 1;
+      color: #111;
+    }
+    .gallery-header .curator-note {
+      margin: 40px auto 0;
+      max-width: 650px;
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 1.8;
+      font-size: 1.1rem;
+    }
+
+    /* Filter Section - Exhibition Style */
+    .filter-section {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      padding: 25px 0;
+      border-top: 1px solid #e0ddd7;
+      border-bottom: 1px solid #e0ddd7;
+      margin: 20px 5% 80px;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+      position: relative;
+      padding: 8px 0;
+      transition: color 0.3s;
+      letter-spacing: 1px;
+    }
+    .tab-btn:hover { color: var(--text-main); }
+    .tab-btn.active {
+      color: var(--text-main);
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: var(--text-main);
+    }
+
+    /* Artist Grid */
+    .artist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 80px 40px;
+      padding: 0 5% 120px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .artist-card {
+      background: transparent;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .artist-card:hover {
+      transform: translateY(-10px);
+    }
+    
+    .img-wrapper {
+      width: 100%;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      background: #eee;
+      border-radius: 4px;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .artist-card:hover .img-wrapper {
+      box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+    }
+    .artist-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .artist-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .artist-meta {
+      padding: 30px 10px;
+      text-align: center;
+    }
+    .artist-meta .tag {
+      font-size: 0.85rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 15px;
+      display: block;
+    }
+    .artist-meta h3 {
+      font-size: 1.8rem;
+      margin: 0 0 12px;
+      font-weight: 400;
+      color: #111;
+    }
+    .artist-meta .statement {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 90%;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+
+    /* Modal Overlay - Minimalist */
+    #detail-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(249, 247, 242, 0.98);
+      z-index: 10000;
+      display: none;
+      padding: 50px;
+      overflow-y: auto;
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      display: flex;
+      gap: 70px;
+      align-items: flex-start;
+      position: relative;
+    }
+    .close-modal {
+      position: fixed;
+      top: 50px; right: 50px;
+      background: none; border: none;
+      font-size: 2.5rem; cursor: pointer;
+      color: #ccc; transition: 0.3s;
+    }
+    .close-modal:hover { color: var(--text-main); }
+
+    .modal-image {
+      flex: 1;
+      max-width: 480px;
+      position: sticky;
+      top: 50px;
+    }
+    .modal-image img {
+      width: 100%;
+      border-radius: 4px;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.12);
+    }
+    .modal-content {
+      flex: 1.3;
+      padding-top: 20px;
+    }
+    .modal-content .tag {
+      color: var(--accent);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 20px;
+    }
+    .modal-content h2 {
+      font-size: 4rem;
+      margin: 0 0 40px;
+      line-height: 1;
+      font-weight: 400;
+    }
+    .modal-content .bio {
+      font-size: 1.25rem;
+      line-height: 2;
+      color: #333;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 900px) {
+      .modal-container { flex-direction: column; gap: 40px; margin-top: 60px; }
+      .modal-image { position: relative; top: 0; max-width: 100%; }
+      .modal-content h2 { font-size: 2.5rem; }
+      .gallery-header { padding: 100px 5% 40px; }
+      .gallery-header h1 { font-size: 3.5rem; }
+    }
+
+    /* Fixed Nav Customizations for Light Mode */
+    body.gallery-mode header {
+      background: rgba(249, 247, 242, 0.9) !important;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    body.gallery-mode .nav-links a { color: #444 !important; }
+    body.gallery-mode .nav-links a.active { color: var(--accent) !important; }
+    body.gallery-mode .logo-group .nav-logo { filter: invert(1); } /* Assuming dark logo for light bg */
+    body.gallery-mode .header-socials a { color: #444 !important; }
+    body.gallery-mode .menu-toggle span { background: #444 !important; }
   </style>
-
-  <!-- Loading Overlay -->
-  <div id="scene-loader" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#050508; z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: opacity 1s ease;">
-    <div class="loader-inner" style="width:40px; height:40px; border:2px solid rgba(246,210,138,0.2); border-top-color:var(--gold); border-radius:50%; animation: spin 1s linear infinite;"></div>
-  </div>
-  <style> @keyframes spin { to { transform: rotate(360deg); } } </style>
-  
-  <!-- Immersive Canvas -->
-  <canvas id="harvest-canvas" style="position:fixed; top:0; left:0; width:100%; height:100%;"></canvas>
-
-  <!-- Navigation Layer -->
-  <header style="z-index:1000;">
+</head>
+<body class="gallery-mode">
+  <!-- Standard Site Navigation -->
+  <header>
     <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem; padding: 1rem 2rem;">
       <a href="index.html" class="logo" style="text-decoration:none;">
-        <img src="assets/logo.png" alt="Harvester" class="nav-logo">
+        <img src="assets/logo.png" alt="Harvester" class="nav-logo" style="max-height:40px;">
       </a>
       <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 1.2rem;">
-        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
-        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
-        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+        <a id="cfg_nav_fb" href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="#" target="_blank"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
-    <div class="menu-toggle" onclick="toggleMobileMenu()" style="pointer-events: auto;">
+    <div class="menu-toggle" onclick="toggleMobileMenu()">
       <span></span>
       <span></span>
       <span></span>
     </div>
-    <nav class="nav-links" style="pointer-events: auto;">
+    <nav class="nav-links">
       <a href="index.html">主页</a>
       <a href="music.html">音乐与歌谱集</a>
       <a href="feedback.html">回声空间</a>
       <a href="events.html">活动</a>
       <a href="diary.html">田野日志</a>
       <div class="nav-dropdown">
-        <a href="javascript:void(0)" class="active">歌手 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
+        <a href="javascript:void(0)" class="active">艺术家 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
         <div class="dropdown-content">
           <a href="singers.html?tab=gospel">福音歌手</a>
           <a href="singers.html?tab=worship">敬拜歌手</a>
@@ -90,93 +289,57 @@
     </nav>
   </header>
 
-  <div id="mobileNavOverlay">
-    <a href="index.html">主页</a>
-    <a href="music.html">音乐与歌谱集</a>
-    <a href="feedback.html">回声空间</a>
-    <a href="events.html">活动</a>
-    <a href="diary.html">田野日志</a>
-    <div class="mobile-dropdown">
-      <a href="#" class="active" onclick="event.preventDefault(); this.nextElementSibling.classList.toggle('show');">歌手 <i class="fas fa-caret-down"></i></a>
-      <div class="mobile-dropdown-content">
-        <a href="singers.html?tab=gospel">福音歌手</a>
-        <a href="singers.html?tab=worship">敬拜歌手</a>
-      </div>
+  <div id="mobileNavOverlay">...</div>
+
+  <!-- Editorial Content -->
+  <main>
+    <section class="gallery-header">
+      <span class="subtitle">Harvester Creative Workshop</span>
+      <h1>Artists & Creators</h1>
+      <p class="curator-note">
+        A curated collection of voices and creative practitioners turning silence into narrative space. 
+        Exploring the resonance between faith, sound design, and visual memory.
+      </p>
+    </section>
+
+    <!-- Filter -->
+    <div class="filter-section">
+      <button class="tab-btn active" onclick="switchCategory('all')" id="tab-all">All Collections</button>
+      <button class="tab-btn" onclick="switchCategory('福音')" id="tab-gospel">Gospel Artists</button>
+      <button class="tab-btn" onclick="switchCategory('敬拜')" id="tab-worship">Worship Leaders</button>
     </div>
-    <a href="submit.html">我要投稿</a>
-    <a href="about.html">关于我们</a>
-    <a href="support.html">支持我们</a>
-    <a href="contact.html">联系我们</a>
-  </div>
 
-  <!-- PPT Style Header -->
-  <div class="ppt-header fade-in" style="position:fixed; top:5rem; left:2rem; width:auto; z-index:100; pointer-events:none;">
-    <h1 class="ppt-title" style="color:var(--gold); font-family: Courier, monospace; margin:0;">MISSION CONTROL</h1>
-    <p class="ppt-subtitle" style="letter-spacing:5px;">ARCHIVE SYSTEM v1.0.8</p>
-  </div>
+    <!-- Artist Grid Container -->
+    <div class="artist-grid" id="artist-grid">
+      <!-- Dynamically Injected -->
+    </div>
+  </main>
 
-  <!-- Category Selection Tabs -->
-  <div class="singer-categories fade-in" style="position:fixed; top:5.5rem; right:2rem; z-index:1000; display:flex; gap:1.5rem;">
-    <button onclick="switchCategory('all')" id="tab-all" class="tab-btn active">ALL_RECORDS</button>
-    <button onclick="switchCategory('福音')" id="tab-gospel" class="tab-btn">GOSPEL_ARCHIVE</button>
-    <button onclick="switchCategory('敬拜')" id="tab-worship" class="tab-btn">WORSHIP_DATA</button>
-  </div>
-
-  <style>
-    .singer-categories {
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(10px);
-      padding: 0.5rem 1.5rem;
-      border-radius: 4px;
-      border: 1px solid rgba(0, 243, 255, 0.2);
-    }
-    .tab-btn {
-      background: none;
-      border: none;
-      color: #666;
-      font-family: Courier, monospace;
-      font-size: 0.8rem;
-      cursor: pointer;
-      padding: 5px 10px;
-      transition: 0.3s;
-    }
-    .tab-btn.active { color: #00f3ff; font-weight: bold; }
-    .tab-btn:hover { color: #fff; }
-  </style>
-
-  <!-- Detail Card Overlay (Cyber Glitch Style) -->
-  <div id="singer-card-overlay" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:3000; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
-    <div class="singer-card" style="background:#0a0a0c; border:1px solid #00f3ff; padding:2rem; width:90%; max-width:800px; position:relative; box-shadow: 0 0 50px rgba(0,243,255,0.15);">
-      <button class="close-card" style="position:absolute; top:20px; right:20px; background:none; border:none; color:#00f3ff; font-size:2rem; cursor:pointer;">&times;</button>
-      <div style="display:flex; gap:2rem; flex-wrap:wrap;">
-        <div style="flex:1; min-width:250px;">
-          <img id="card-img" src="" style="width:100%; aspect-ratio:3/4; object-fit:cover; border:1px solid rgba(255,255,255,0.1);">
-        </div>
-        <div style="flex:1.5;">
-          <div style="font-family:'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif; font-size:0.8rem; color:#00f3ff; margin-bottom:10px;">// ARCHIVE_ENTRY_IDENTIFIED</div>
-          <h2 id="card-name" style="color:#fff; font-size:2.5rem; margin-bottom:0.5rem; font-family:'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif;"></h2>
-          <div id="card-role" style="background:rgba(201,147,59,0.15); color:var(--gold); display:inline-block; padding:4px 12px; margin-bottom:20px; font-size:0.8rem; border:1px solid var(--gold);"></div>
-          <p id="card-bio" style="color:#aaa; line-height:1.6; font-size:1.1rem; font-family:'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif;"></p>
-          <div style="margin-top:2rem; padding-top:1rem; border-top:1px solid #222; font-family:'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif; font-size:0.7rem; color:#444;">
-             AUTHENTICATION: AUTHORIZED // HARVESTER_FIELD_SYS_v8
-          </div>
-        </div>
+  <!-- Modal -->
+  <div id="detail-overlay">
+    <button class="close-modal" onclick="hideOverlay()">&times;</button>
+    <div class="modal-container">
+      <div class="modal-image">
+        <img id="modal-img" src="" alt="">
+      </div>
+      <div class="modal-content">
+        <span id="modal-tag" class="tag"></span>
+        <h2 id="modal-name"></h2>
+        <p id="modal-bio" class="bio"></p>
       </div>
     </div>
   </div>
 
-  <!-- Audio Background (Optional) -->
-  <audio id="ambient-wind" loop>
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-light-wind-blowing-1165.mp3" type="audio/mpeg">
-  </audio>
-  
-  <div class="scroll-hint" style="font-family:'Kaiti SC', 'STKaiti', 'KaiTi', '楷体', serif; color:rgba(255,255,255,0.3); font-size:0.8rem;">HOLD AND DRAG TO VIEW THE SINGER’S BIO</div>
-  
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="harvest_field.js?v=8.1"></script>
+  <script src="gallery_engine.js?v=9.0"></script>
+  <script>
+    // Simple navigation helpers
+    function toggleMobileMenu() {
+      document.getElementById('mobileNavOverlay').classList.toggle('show');
+    }
+  </script>
 </body>
 </html>
