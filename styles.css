@@ -1938,3 +1938,56 @@ video::-webkit-media-controls-start-playback-button { display: none !important; 
   border-color: var(--gold) !important;
   box-shadow: 0 0 15px rgba(246, 210, 138, 0.3) !important;
 }
+
+/* 📱 Mobile & Tablet Optimizations */
+@media screen and (max-width: 768px) {
+  .song-work-card {
+    flex-direction: column !important;
+    text-align: center;
+    padding: 25px 15px !important;
+    gap: 15px !important;
+  }
+  
+  .song-vinyl-wrapper {
+    width: 140px !important;
+    height: 140px !important;
+    margin: 0 auto !important;
+  }
+  
+  .song-card-actions {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  #eventDate {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+  
+  #fb_link_exists {
+    margin-left: 0 !important;
+    width: 100%;
+    margin-top: 5px;
+  }
+  
+  .btn-social-fb {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Admin & Modal Fixes */
+  #diaryAlbumModal > div, #photoManagerModal > div {
+    width: 95% !important;
+    padding: 1.5rem !important;
+  }
+  
+  h1 { font-size: 1.8rem !important; }
+}
+
+@media screen and (max-width: 480px) {
+  .song-card-actions a {
+    width: 100% !important;
+  }
+  .song-content-area h3 { font-size: 1.2rem !important; }
+}
