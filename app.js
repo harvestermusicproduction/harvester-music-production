@@ -97,14 +97,15 @@ document.addEventListener('DOMContentLoaded', () => {
       container.innerHTML = docs.map(s => {
         const ytLink = s.audio_url || s.youtube_url;
         return `<div class="song-work-card fade-in">
-          <div class="mini-vinyl-wrap" onmouseenter="startNotes(this)" onmouseleave="stopNotes(this)">
+          <div class="mini-vinyl-wrap" onmouseenter="startNotes(this)" onmouseleave="stopNotes(this)" style="position:relative; overflow:visible;">
             <div class="mini-vinyl"><img src="${s.cover_url || 'assets/logo.png'}"></div>
           </div>
           <div class="song-content-area">
             <h3>${s.title}</h3>
             <div class="song-card-actions">
-              ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-gold">YOUTUBE</a>` : ''}
-              <a href="feedback.html?id=${s.id}" class="btn-frosted-gold">回声</a>
+              ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-gold"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
+              ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-gold"><i class="fas fa-file-pdf"></i> 歌谱</a>` : ''}
+              <a href="feedback.html?id=${s.id}" class="btn-frosted-gold"><i class="fas fa-bullhorn"></i> 回声</a>
             </div>
           </div>
         </div>`;
@@ -133,13 +134,41 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3 style="color:var(--gold); font-size:1.6rem; margin-bottom:0.8rem;">${e.title}</h3>
             <p style="line-height:1.6; font-size:0.95rem;">${desc}</p>
             <div style="margin-top:20px;">
-              <button class="btn-frosted-gold" style="width:100%; max-width:200px;" onclick="alert('即将上线: 活动提醒功能')">我要参与 / 提醒我</button>
+              <button class="btn-frosted-gold" style="width:100%; max-width:240px;" onclick="openReminderModal('${e.id}', '${e.title}', '${e.date}')">我要参与 / 提醒我</button>
             </div>
           </div>`;
       }).join('');
       refreshObserver();
     } catch(e) {}
   }
+
+  window.openReminderModal = (id, title, date) => {
+    let m = document.getElementById('reminderModal');
+    if(!m){
+      m=document.createElement('div'); m.id='reminderModal';
+      m.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(15px); padding:20px;";
+      m.innerHTML=`<div style="background:#fff; border-radius:30px; padding:2rem; text-align:center; max-width:400px; width:100%; color:#222;">
+         <h2 style="margin-bottom:0.5rem; font-family:var(--font-display);">活动参与</h2>
+         <p style="font-size:0.9rem; margin-bottom:1.5rem; color:#666;">请输入邮箱，我们会在活动前提醒你。</p>
+         <h4 id="rem_t" style="margin-bottom:1.5rem; color:var(--gold);"></h4>
+         <input type="email" id="rem_email" placeholder="your@email.com" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ccc; margin-bottom:1.5rem; text-align:center;">
+         <div style="display:flex; gap:10px;">
+           <button id="rem_submit" class="btn-frosted-gold" style="flex:2; background:#000; color:var(--gold); border:none; border-radius:10px; padding:12px; font-weight:bold;">🔔 提交</button>
+           <button style="flex:1; border-radius:10px; padding:12px; background:#eee; border:none; color:#666; cursor:pointer;" onclick="document.getElementById('reminderModal').style.display='none'">取消</button>
+         </div>
+      </div>`;
+      document.body.appendChild(m);
+    }
+    m.style.display = 'flex';
+    document.getElementById('rem_t').innerText = `《${title}》`;
+    document.getElementById('rem_submit').onclick = async () => {
+      const email = document.getElementById('rem_email').value;
+      if(!email || !email.includes('@')) return alert("请输入有效邮箱");
+      const { error } = await db.from('event_reminders').insert([{ eventId: id, eventTitle: title, userEmail: email }]);
+      if(!error) { alert("✅ 设置成功！届时系统将通知您。"); m.style.display = 'none'; }
+      else { alert("提交失败，请稍后重试。"); }
+    };
+  };
 
   async function fetchDiary() {
     const container = document.getElementById('diaryContainer');
