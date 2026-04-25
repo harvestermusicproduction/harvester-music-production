@@ -215,8 +215,8 @@ document.addEventListener('DOMContentLoaded', () => {
         link.id = 'fb_link_exists';
         link.style.marginLeft = "15px";
         link.innerHTML = `
-          <a href="${fbLink}" target="_blank" class="btn-social-fb" style="display:inline-block; width:auto; padding:8px 18px; font-size:0.75rem; vertical-align:middle; background:#1877F2; color:white; border-radius:100px; text-decoration:none; box-shadow:0 4px 12px rgba(24,119,242,0.3);">
-            <i class="fab fa-facebook"></i> 跳轉到 FB
+          <a href="${fbLink}" target="_blank" class="btn-social-fb" style="display:inline-block; width:auto; padding:4px 14px; font-size:0.7rem; vertical-align:middle; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:100px; text-decoration:none; backdrop-filter:blur(5px); letter-spacing:1px; transition:0.3s;">
+            <i class="fab fa-facebook-f" style="font-size:0.8rem; margin-right:5px;"></i> Facebook
           </a>
         `;
         document.getElementById('eventDate')?.appendChild(link);
