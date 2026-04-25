@@ -1162,13 +1162,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="date" id="da_date" value="${a?.date || ''}" style="width:100%; padding:10px;">
           </div>
 
-          <div style="margin-bottom:20px; padding:15px; background:rgba(24,119,242,0.1); border:1px solid rgba(24,119,242,0.3); border-radius:8px;">
-            <label style="display:block; margin-bottom:10px; color:#1877F2; font-weight:bold; font-size:0.9rem;">
-              <i class="fab fa-facebook"></i> Facebook 完整相册链接 (必填建议)
-            </label>
-            <input type="text" id="da_fb" value="${a?.fb_url || ''}" placeholder="在此粘贴 FB 相册的 https:// 完整链接..." style="width:100%; padding:12px; background:#000; border:1px solid #333; color:white; border-radius:4px;">
-          </div>
-
           <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
             <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveDiaryAlbum('${a?.id || ''}')">💾 保存相册信息</button>
             <button class="btn-tiny" style="flex:1;" onclick="this.closest('#diaryAlbumModal').remove()">取消</button>
@@ -1189,8 +1182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const payload = {
       title: document.getElementById('da_title').value,
       date: document.getElementById('da_date').value,
-      cover_url: document.getElementById('da_url').value,
-      fb_url: document.getElementById('da_fb').value
+      cover_url: document.getElementById('da_url').value
     };
     if(!payload.title) return alert("请输入名称");
     
