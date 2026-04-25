@@ -204,8 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const { data: album } = await db.from('diary_albums').select('*, diary_media(*)').eq('id', id).single();
-      document.getElementById('eventTitle').innerText = album.title;
-      document.getElementById('eventDate').innerText = album.date;
+      const dateEl = document.getElementById('eventDate');
+      if (dateEl) {
+        dateEl.style.display = 'flex';
+        dateEl.style.alignItems = 'center';
+        dateEl.innerHTML = `<span>${album.date}</span>`;
+      }
 
       // Use fallback chain for FB Link: Album Link -> Global Config -> Harvester Default
       const fbLink = album.fb_url || siteConfigs['cfg_diary_fb'] || "https://www.facebook.com/HarvesterMusicProduction";
@@ -213,13 +217,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!document.getElementById('fb_link_exists')) {
         const link = document.createElement('span');
         link.id = 'fb_link_exists';
+        link.style.display = 'inline-block';
+        link.style.lineHeight = '0';
         link.style.marginLeft = "15px";
         link.innerHTML = `
-          <a href="${fbLink}" target="_blank" class="btn-social-fb" style="display:inline-block; width:auto; padding:4px 14px; font-size:0.7rem; vertical-align:middle; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:100px; text-decoration:none; backdrop-filter:blur(5px); letter-spacing:1px; transition:0.3s;">
+          <a href="${fbLink}" target="_blank" class="btn-social-fb" style="display:inline-flex; width:auto; padding:4px 14px; font-size:0.7rem; vertical-align:middle; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:100px; text-decoration:none; backdrop-filter:blur(5px); letter-spacing:1px; transition:0.3s; margin:0; line-height:1;">
             <i class="fab fa-facebook-f" style="font-size:0.8rem; margin-right:5px;"></i> Facebook
           </a>
         `;
-        document.getElementById('eventDate')?.appendChild(link);
+        dateEl?.appendChild(link);
       }
 
       let list = [];
