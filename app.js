@@ -102,10 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="song-content-area">
             <h3>${s.title}</h3>
-            <div class="song-card-actions">
-              ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-gold"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
-              ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-gold"><i class="fas fa-file-pdf"></i> 歌谱</a>` : ''}
-              <a href="feedback.html?id=${s.id}" class="btn-frosted-gold"><i class="fas fa-bullhorn"></i> 回声</a>
+            <div class="song-card-actions" style="display:flex; gap:12px; margin-top:20px;">
+              ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-gold" style="background:rgba(246,210,138,0.05); color:var(--gold); border:1px solid rgba(246,210,138,0.2); padding:6px 18px; border-radius:50px; text-decoration:none; font-size:0.8rem;"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
+              ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-gold" style="background:rgba(246,210,138,0.05); color:var(--gold); border:1px solid rgba(246,210,138,0.2); padding:6px 18px; border-radius:50px; text-decoration:none; font-size:0.8rem;"><i class="fas fa-file-pdf"></i> 歌谱</a>` : ''}
+              <a href="feedback.html?id=${s.id}" class="btn-frosted-gold" style="background:rgba(246,210,138,0.05); color:var(--gold); border:1px solid rgba(246,210,138,0.2); padding:6px 18px; border-radius:50px; text-decoration:none; font-size:0.8rem;"><i class="fas fa-bullhorn"></i> 回声</a>
             </div>
           </div>
         </div>`;
