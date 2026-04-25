@@ -1924,3 +1924,17 @@ video::-webkit-media-controls-start-playback-button { display: none !important; 
   width: 100%;
   box-sizing: border-box;
 }
+
+/* 💎 FINAL OVERRIDE: Clear the persistent solid white backgrounds */
+.btn-frosted-gold {
+  background: rgba(246, 210, 138, 0.05) !important;
+  color: var(--gold) !important;
+  border: 1px solid rgba(246, 210, 138, 0.2) !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+.btn-frosted-gold:hover {
+  background: rgba(246, 210, 138, 0.2) !important;
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 15px rgba(246, 210, 138, 0.3) !important;
+}
