@@ -204,6 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const { data: album } = await db.from('diary_albums').select('*, diary_media(*)').eq('id', id).single();
+      const titleEl = document.getElementById('eventTitle');
+      if (titleEl) titleEl.innerText = album.title;
+      
       const dateEl = document.getElementById('eventDate');
       if (dateEl) {
         dateEl.style.display = 'flex';
