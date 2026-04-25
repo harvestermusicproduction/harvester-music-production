@@ -207,14 +207,16 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('eventTitle').innerText = album.title;
       document.getElementById('eventDate').innerText = album.date;
 
-      const fbLink = album.fb_url || siteConfigs['cfg_diary_fb'];
-      if (fbLink && !document.getElementById('fb_link_exists')) {
+      // Use fallback chain for FB Link: Album Link -> Global Config -> Harvester Default
+      const fbLink = album.fb_url || siteConfigs['cfg_diary_fb'] || "https://www.facebook.com/HarvesterMusicProduction";
+      
+      if (!document.getElementById('fb_link_exists')) {
         const link = document.createElement('span');
         link.id = 'fb_link_exists';
         link.style.marginLeft = "15px";
         link.innerHTML = `
-          <a href="${fbLink}" target="_blank" class="btn-social-fb" style="width:auto; padding:6px 16px; font-size:0.75rem; vertical-align:middle; background:#1877F2; border-radius:100px;">
-            <i class="fab fa-facebook"></i> 去 FB 看看
+          <a href="${fbLink}" target="_blank" class="btn-social-fb" style="display:inline-block; width:auto; padding:8px 18px; font-size:0.75rem; vertical-align:middle; background:#1877F2; color:white; border-radius:100px; text-decoration:none; box-shadow:0 4px 12px rgba(24,119,242,0.3);">
+            <i class="fab fa-facebook"></i> 跳轉到 FB
           </a>
         `;
         document.getElementById('eventDate')?.appendChild(link);
