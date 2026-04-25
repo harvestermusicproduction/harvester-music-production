@@ -180,11 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const fbLink = album.fb_url || siteConfigs['cfg_diary_fb'];
       if (fbLink && !document.getElementById('fb_link_exists')) {
-        const link = document.createElement('div');
+        const link = document.createElement('span');
         link.id = 'fb_link_exists';
-        link.style.cssText = "text-align:center; margin:20px 0 40px;";
-        link.innerHTML = `<a href="${fbLink}" target="_blank" class="btn-social-fb" style="width:auto; padding:12px 30px;"><i class="fab fa-facebook"></i> View Full Album</a>`;
-        document.getElementById('eventHeader').appendChild(link);
+        link.style.marginLeft = "15px";
+        link.innerHTML = `<a href="${fbLink}" target="_blank" class="btn-social-fb" style="width:auto; padding:5px 15px; font-size:0.8rem; vertical-align:middle;"><i class="fab fa-facebook"></i> 跳轉到 FB 帖子</a>`;
+        document.getElementById('eventDate')?.appendChild(link);
       }
 
       let list = [];
@@ -194,7 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
       container.innerHTML = list.map(p => `
         <div class="photo-item" onclick="openLightbox('${p.media_url}')">
           <img src="${p.media_url}">
-          ${p.is_cover ? '<span class="cover-tag" style="position:absolute; top:10px; left:10px; background:var(--gold); color:#000; padding:2px 8px; font-size:10px; border-radius:4px;">COVER</span>' : ''}
         </div>`).join('');
     } catch (e) { container.innerHTML = "加载失败。"; }
   }
