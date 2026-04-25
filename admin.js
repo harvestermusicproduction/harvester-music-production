@@ -50,38 +50,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function renderCMS() {
     adminDashboard.innerHTML = `
-      <div class="cms-layout" style="display:flex; height:100vh; background:#000; color:#fff; overflow:hidden;">
-        <aside style="width:250px; background:#0a0a0a; border-right:1px solid #222; padding:2rem; display:flex; flex-direction:column;">
-          <h2 style="color:var(--gold); margin-bottom:2rem;">Harvester CMS</h2>
-          <nav style="flex:1; display:flex; flex-direction:column; gap:10px;">
-            <a href="javascript:void(0)" onclick="switchModule('dashboard')" style="color:${currentModule==='dashboard'?'var(--gold)':'#888'}">📊 仪表盘 Dashboard</a>
-            <a href="javascript:void(0)" onclick="switchModule('music')" style="color:${currentModule==='music'?'var(--gold)':'#888'}">🎵 音乐作品 Music</a>
-            <a href="javascript:void(0)" onclick="switchModule('events')" style="color:${currentModule==='events'?'var(--gold)':'#888'}">📅 精彩活动 Events</a>
-            <a href="javascript:void(0)" onclick="switchModule('footprints')" style="color:${currentModule==='footprints'?'var(--gold)':'#888'}">👣 收割足迹 Footprints</a>
-            <a href="javascript:void(0)" onclick="switchModule('singers')" style="color:${currentModule==='singers'?'var(--gold)':'#888'}">🎙️ 歌手 Singers</a>
-            <a href="javascript:void(0)" onclick="switchModule('diary')" style="color:${currentModule==='diary'?'var(--gold)':'#888'}">📂 田野日记 Diary</a>
-            <a href="javascript:void(0)" onclick="switchModule('echo')" style="color:${currentModule==='echo'?'var(--gold)':'#888'}">🌌 回声空间 Echo</a>
-            <a href="javascript:void(0)" onclick="switchModule('reminders')" style="color:${currentModule==='reminders'?'var(--gold)':'#888'}">⏰ 提醒订阅 Reminders</a>
-            <a href="javascript:void(0)" onclick="switchModule('submissions')" style="color:${currentModule==='submissions'?'var(--gold)':'#888'}">📮 投稿中心 Inbox</a>
-            <a href="javascript:void(0)" onclick="switchModule('config')" style="color:${currentModule==='config'?'var(--gold)':'#888'}">⚙️ 系统配置 Config</a>
+      <div class="cms-layout" style="display:flex; height:100vh; background:#050505; color:#fff; overflow:hidden; font-family: 'Inter', -apple-system, sans-serif;">
+        <!-- Clean Professional Sidebar -->
+        <aside style="width:240px; background:#000; border-right:1px solid #1a1a1a; padding:2.5rem 1.2rem; display:flex; flex-direction:column;">
+          <div style="margin-bottom:3rem; padding-left:10px;">
+            <h2 style="color:var(--gold); font-size:1.4rem; letter-spacing:3px; margin:0; font-weight: 300;">HARVESTER</h2>
+            <p style="font-size:0.6rem; color:#1877F2; margin:5px 0 0; letter-spacing:2px; text-transform:uppercase; font-weight:bold;">DIAMOND EDGE V2.0 ACTIVE</p>
+          </div>
+          
+          <nav style="flex:1; display:flex; flex-direction:column; gap:6px;">
+            <p class="nav-section-title">Core Content</p>
+            <a href="javascript:void(0)" onclick="switchModule('dashboard')" class="nav-item ${currentModule==='dashboard'?'active':''}">📊 Overview</a>
+            <a href="javascript:void(0)" onclick="switchModule('music')" class="nav-item ${currentModule==='music'?'active':''}">🎵 Music</a>
+            <a href="javascript:void(0)" onclick="switchModule('singers')" class="nav-item ${currentModule==='singers'?'active':''}">🎙️ Singers</a>
+            <a href="javascript:void(0)" onclick="switchModule('events')" class="nav-item ${currentModule==='events'?'active':''}">📅 Events</a>
+            <a href="javascript:void(0)" onclick="switchModule('diary')" class="nav-item ${currentModule==='diary'?'active':''}">📂 Field Diary</a>
+
+            <p class="nav-section-title" style="margin-top:25px;">Interact</p>
+            <a href="javascript:void(0)" onclick="switchModule('echo')" class="nav-item ${currentModule==='echo'?'active':''}">🌌 Echo Space</a>
+            <a href="javascript:void(0)" onclick="switchModule('submissions')" class="nav-item ${currentModule==='submissions'?'active':''}">📮 Inbox</a>
+            <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ Subscriptions</a>
+            
+            <p class="nav-section-title" style="margin-top:25px;">Engine</p>
+            <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ Global Settings</a>
           </nav>
-          <button onclick="logoutAdmin()" class="btn-tiny" style="margin-top:20px;">安全退出 Logout</button>
+          
+          <button onclick="logoutAdmin()" style="background:none; border:none; color:#444; text-align:left; padding:10px; font-size:0.8rem; cursor:pointer; transition:0.3s; margin-top:20px; border-top:1px solid #111;">
+            <i class="fas fa-sign-out-alt"></i> SIGN OUT
+          </button>
         </aside>
-        <main id="moduleBody" style="flex:1; padding:3rem; overflow-y:auto; background:#111;"></main>
+
+        <main id="moduleBody" style="flex:1; padding:4rem 5rem; overflow-y:auto; background:#050505;"></main>
       </div>
+
+      <style>
+        .nav-section-title { font-size: 0.6rem; color: #2a2a2a; text-transform: uppercase; letter-spacing: 2.5px; margin: 10px 0 10px 10px; font-weight: bold; }
+        .nav-item {
+          color: #777;
+          text-decoration: none;
+          padding: 10px 15px;
+          border-radius: 6px;
+          font-size: 0.85rem;
+          transition: all 0.25s ease;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          letter-spacing: 0.5px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.02); color: #bbb; }
+        .nav-item.active { background: rgba(246, 210, 138, 0.08); color: var(--gold); font-weight: 500; }
+        
+        .cms-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 12px; padding: 2rem; }
+        .btn-tiny { background: #111; border: 1px solid #222; color: #888; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: 0.3s; }
+        .btn-tiny:hover { background: #222; color: #fff; border-color: #444; }
+        .btn-tiny.danger:hover { background: #422; color: #f44; border-color: #622; }
+      </style>
     `;
     const body = document.getElementById('moduleBody');
     if (currentModule === 'dashboard') renderDashboard(body);
     else if (currentModule === 'music') renderMusic(body);
     else if (currentModule === 'events') renderEvents(body);
-    else if (currentModule === 'footprints') renderFootprints(body);
     else if (currentModule === 'singers') renderSingers(body);
     else if (currentModule === 'diary') renderDiary(body);
     else if (currentModule === 'echo') renderEchoes(body);
     else if (currentModule === 'reminders') renderReminders(body);
     else if (currentModule === 'submissions') renderSubmissions(body);
     else if (currentModule === 'config') renderConfig(body);
-    else body.innerHTML = `<h2>${currentModule.toUpperCase()}</h2><p>功能开发中...</p>`;
+    else body.innerHTML = `<h2 style="color:#333;">${currentModule.toUpperCase()}</h2><p style="color:#222;">Migration in progress.</p>`;
   }
 
   // --- Frontend Image Compression Helper ---
@@ -566,85 +601,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // --- 👣 FOOTPRINTS MODULE ---
-  async function renderFootprints(container) {
-    const { data: footprints } = await db.from('footprints').select('*').order('created_at', {ascending: false});
-    container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-        <h1 style="color:var(--gold);">收割足迹管理 (Footprints)</h1>
-        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openFootprintModal()">+ 添加足迹照片</button>
-      </div>
-      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap:20px;">
-        ${footprints?.map(f => `
-          <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:10px;">
-            <img src="${f.image_url || 'https://via.placeholder.com/400x300?text=No+Photo'}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:8px; border:1px solid #333;">
-            <p style="color:#888; font-size:0.85rem; height:40px; overflow:hidden;">${f.description || '无描述'}</p>
-            <div style="display:flex; gap:10px; justify-content:flex-end;">
-              <button class="btn-tiny" onclick="openFootprintModal('${f.id}')">编辑</button>
-              <button class="btn-tiny danger" onclick="deleteItem('footprints', '${f.id}')">删除</button>
-            </div>
-          </div>
-        `).join('') || '<p>暂无足迹照片。</p>'}
-      </div>
-    `;
-  }
-
-  window.openFootprintModal = async (id = null) => {
-    const btn = event.currentTarget;
-    const originalText = btn.innerText;
-    if (id) { btn.innerText = "⏳..."; btn.disabled = true; }
-
-    try {
-      let f = null;
-      if (id) {
-        const { data, error } = await db.from('footprints').select('*').eq('id', id).single();
-        if (error) throw error;
-        f = data;
-      }
-      const isEdit = !!f;
-      const modal = document.createElement('div');
-      modal.id = 'footprintModal';
-      modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
-      modal.innerHTML = `
-        <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;">
-          <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑足迹' : '添加足迹'}</h2>
-          <div style="margin-bottom:20px;">
-            <img id="fp_prev" src="${f?.image_url || 'https://via.placeholder.com/400x300?text=Preview'}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px; margin-bottom:15px; border:1px solid #333;">
-            <input type="file" id="f_fp">
-            <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('f_fp', 'fp_url', 'fp_prev')">上传照片</button>
-            <input type="hidden" id="fp_url" value="${f?.image_url || ''}">
-          </div>
-          <label>照片描述 (悬浮显示)</label>
-          <textarea id="fp_desc" placeholder="请输入照片描述..." style="width:100%; height:80px; margin-bottom:20px;">${f?.description || ''}</textarea>
-          <div style="display:flex; gap:10px;">
-            <button class="btn btn-submit" style="flex:2;" onclick="saveFootprint('${f?.id || ''}')">确认保存</button>
-            <button class="btn-tiny" style="flex:1;" onclick="this.closest('#footprintModal').remove()">取消</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-    } catch (err) {
-      alert("错误: " + err.message);
-    } finally {
-      if (id) { btn.innerText = originalText; btn.disabled = false; }
-    }
-  };
-
-  window.saveFootprint = async(id) => {
-    const payload = {
-      image_url: document.getElementById('fp_url').value,
-      description: document.getElementById('fp_desc').value
-    };
-    if(id) await db.from('footprints').update(payload).eq('id', id);
-    else await db.from('footprints').insert([payload]);
-    // Close modal manually if needed
-    const modal = document.getElementById('footprintModal');
-    if(modal) modal.remove();
-    renderCMS();
-  };
-
-
-
   // --- 🎙️ SINGER MODULE ---
   async function renderSingers(container) {
     const { data: singers } = await db.from('singers').select('*').order('display_order', {ascending: true});
@@ -747,8 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <option value="worship" ${s.category === 'worship' ? 'selected' : ''}>敬拜歌手 Worship</option>
         </select>
         
-        <label>详细资料 Details</label>
-        <textarea id="sb" style="width:100%; height:80px; margin-bottom:15px;">${s.bio || ''}</textarea>
+        <!-- Details removed as per request -->
         
         <label>排位顺序 Order (越小越靠前)</label>
         <input type="number" id="so" value="${s.display_order || 0}" style="width:100%; margin-bottom:20px;">
@@ -765,7 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.saveSinger = async(id, btn) => {
     const p = {
       name: document.getElementById('sn').value,
-      bio: document.getElementById('sb').value,
+      // bio field removed as per request
       role: document.getElementById('sr').value,
       category: document.getElementById('scat').value,
       image_url: document.getElementById('surl').value,
@@ -997,20 +952,8 @@ document.addEventListener('DOMContentLoaded', () => {
       <h1 style="color:var(--gold); margin-bottom:2rem;">全站内容管理 (CMS Configuration)</h1>
       
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-bottom:40px;">
-        <!-- Column 1: Core Content & Social -->
         <div style="background:#151515; padding:25px; border-radius:12px; border:1px solid #222;">
-          <h3 style="color:var(--gold); margin-top:0;"><i class="fas fa-magic"></i> 💎 装修中心 (Design Settings)</h3>
-          <p style="color:#888; font-size:0.75rem; margin-bottom:15px;">在这里切换官网的设计布局，修改后瞬间生效。</p>
-          
-          <div style="margin-bottom:20px;">
-            <label style="display:block; margin-bottom:8px;">活动页面展示模式 (Events Layout)</label>
-            <select id="cfg_event_layout" style="width:100%; background:#222; border:1px solid #444; color:#fff; padding:8px; border-radius:4px;">
-              <option value="photo" ${c['cfg_event_layout']==='photo'?'selected':''}>📸 经典大图模式 (Posters)</option>
-              <option value="minimal" ${c['cfg_event_layout']==='minimal'?'selected':''}>✨ 极简信息卡片 (Minimalist)</option>
-            </select>
-          </div>
-
-          <h3 style="color:var(--gold); margin-top:20px;"><i class="fas fa-edit"></i> 核心文案与社交链接</h3>
+          <h3 style="color:var(--gold); margin-top:0;"><i class="fas fa-edit"></i> 核心文案与社交链接</h3>
           
           <div style="margin-bottom:15px;">
             <label>关于我们描述 (About Text)</label>
@@ -1024,7 +967,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <div style="margin-bottom:15px; padding-top:15px; border-top:1px solid #222;">
             <h4 style="margin-bottom:10px;">社交媒体链接 (Social Links)</h4>
-            <label style="font-size:0.7rem; color:#666;">Facebook URL</label><input type="text" id="cfg_social_fb" value="${c['cfg_social_fb']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
+            <label style="font-size:0.7rem; color:#666;">Facebook URL (Global)</label><input type="text" id="cfg_social_fb" value="${c['cfg_social_fb']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
+            <label style="font-size:0.7rem; color:#1877F2;">Facebook URL (Diary Albums)</label><input type="text" id="cfg_diary_fb" value="${c['cfg_diary_fb']||''}" placeholder="每个相册默认跳转的 FB 链接..." style="width:100%; margin-bottom:10px; background:#111; border:1px solid #1877F2; color:#fff;">
             <label style="font-size:0.7rem; color:#666;">Instagram URL</label><input type="text" id="cfg_social_ig" value="${c['cfg_social_ig']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
             <label style="font-size:0.7rem; color:#666;">YouTube URL</label><input type="text" id="cfg_social_yt" value="${c['cfg_social_yt']||''}" style="width:100%; background:#222; border:1px solid #444; color:#fff;">
           </div>
@@ -1112,7 +1056,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.saveAllConfigs = async() => {
-    const keys = ['cfg_about_text', 'cfg_contact_email', 'cfg_social_fb', 'cfg_social_ig', 'cfg_social_yt', 'cfg_event_layout'];
+    const keys = ['cfg_about_text', 'cfg_contact_email', 'cfg_social_fb', 'cfg_diary_fb', 'cfg_social_ig', 'cfg_social_yt'];
     for(let k of keys) {
       const el = document.getElementById(k);
       if(el) {
@@ -1218,6 +1162,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="date" id="da_date" value="${a?.date || ''}" style="width:100%; padding:10px;">
           </div>
 
+          <div style="margin-bottom:20px; padding:15px; background:rgba(24,119,242,0.1); border:1px solid rgba(24,119,242,0.3); border-radius:8px;">
+            <label style="display:block; margin-bottom:10px; color:#1877F2; font-weight:bold; font-size:0.9rem;">
+              <i class="fab fa-facebook"></i> Facebook 完整相册链接 (必填建议)
+            </label>
+            <input type="text" id="da_fb" value="${a?.fb_url || ''}" placeholder="在此粘贴 FB 相册的 https:// 完整链接..." style="width:100%; padding:12px; background:#000; border:1px solid #333; color:white; border-radius:4px;">
+          </div>
+
           <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
             <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveDiaryAlbum('${a?.id || ''}')">💾 保存相册信息</button>
             <button class="btn-tiny" style="flex:1;" onclick="this.closest('#diaryAlbumModal').remove()">取消</button>
@@ -1233,20 +1184,38 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   window.saveDiaryAlbum = async(id) => {
+    // Robust Parsing/Saving: If fb_url doesn't exist in DB, we hide it in title or other field
+    // But for now, we try to save it normally. 
     const payload = {
       title: document.getElementById('da_title').value,
       date: document.getElementById('da_date').value,
-      cover_url: document.getElementById('da_url').value
+      cover_url: document.getElementById('da_url').value,
+      fb_url: document.getElementById('da_fb').value
     };
     if(!payload.title) return alert("请输入名称");
     
     if(id) await db.from('diary_albums').update(payload).eq('id', id);
     else await db.from('diary_albums').insert([payload]);
     
+    // Close modal & Refresh
+    if(document.getElementById('diaryAlbumModal')) document.getElementById('diaryAlbumModal').remove();
     renderCMS();
+    alert("相册信息已保存");
+  };
+
+  window.saveDiaryAlbumMinimal = async (id) => {
+    const fb = document.getElementById('da_fb_instant')?.value;
+    try {
+      const { error } = await db.from('diary_albums').update({ fb_url: fb }).eq('id', id);
+      if(error) throw error;
+      alert("✅ Facebook 链接已成功同步到官网！");
+    } catch(e) {
+      alert("同步失败：" + e.message);
+    }
   };
   
   window.managePhotos = async(id) => {
+    const { data: album } = await db.from('diary_albums').select('*').eq('id', id).single();
     const { data: photos } = await db.from('diary_media').select('*').eq('album_id', id);
     const modal = document.createElement('div');
     modal.id = 'photoManagerModal';
@@ -1257,6 +1226,19 @@ document.addEventListener('DOMContentLoaded', () => {
           <h3 style="color:var(--gold); margin:0;">正在管理相册照片 (Album Photos)</h3>
           <button class="btn-tiny" onclick="this.closest('#photoManagerModal').remove()">关闭</button>
         </div>
+
+        <!-- Added redundant Social Link field for ease of access -->
+        <div style="background:rgba(24,119,242,0.1); padding:20px; border-radius:12px; margin-bottom:20px; border:1px solid rgba(24,119,242,0.3);">
+          <label style="display:block; margin-bottom:10px; color:#1877F2; font-weight:bold; font-size:0.85rem;">
+            <i class="fab fa-facebook"></i> 同步至 Facebook 相册 (Social Cross-post Link)
+          </label>
+          <div style="display:flex; gap:10px;">
+            <input type="text" id="da_fb_instant" value="${album?.fb_url || ''}" placeholder="粘贴 FB 相册链接..." style="flex:1; padding:10px; background:#000; border:1px solid #333; color:white; border-radius:4px;">
+            <button class="btn-tiny" onclick="saveDiaryAlbumMinimal('${id}')" style="background:#1877F2; color:white; border:none; padding:0 20px;">更新链接</button>
+          </div>
+          <p style="font-size:0.65rem; color:#666; margin-top:8px;">此处修改后，官网详情页将立即显示 "View on Facebook" 按钮。</p>
+        </div>
+
         <div style="background:#0a0a0a; padding:20px; border-radius:12px; text-align:center; margin-bottom:20px; border:1px dashed #333;">
            <p style="color:#888; font-size:0.8rem; margin-bottom:10px;">选择想要上传的作品瞬间</p>
            <input type="file" id="d_up">
@@ -1265,10 +1247,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div id="photoGridCMS" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:15px;">
           ${photos?.map(p => {
-             const optimized = p.media_url && p.media_url.includes('/object/public/harvester-media/') ? p.media_url.replace('/object/public/', '/render/image/public/') + "?width=400&quality=80" : p.media_url;
+             const optimized = p.media_url; 
              return `
-            <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden;">
-              <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;">
+            <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #222;">
+              <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
               <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color:white; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
             </div>
           `}).join('') || '<p style="grid-column:1/-1; text-align:center; opacity:0.3;">暂无内容</p>'}
@@ -1313,10 +1295,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Refresh the specific photo grid without closing the modal
       const { data: newPhotos } = await db.from('diary_media').select('*').eq('album_id', aid);
       document.getElementById('photoGridCMS').innerHTML = newPhotos.map(p => {
-        const optimized = p.media_url && p.media_url.includes('/object/public/harvester-media/') ? p.media_url.replace('/object/public/', '/render/image/public/') + "?width=400&quality=80" : p.media_url;
+        const optimized = p.media_url;
         return `
-        <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden;">
-          <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;">
+        <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #222;">
+          <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
           <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color:white; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
         </div>
       `}).join('');
@@ -1372,18 +1354,18 @@ document.addEventListener('DOMContentLoaded', () => {
                   <td style="padding:15px; font-style:italic; color:#ccc;">"${e.message.replace('[ECHO]', '').trim()}"</td>
                   <td style="padding:15px;">
                     <span style="padding:4px 10px; border-radius:50px; font-size:0.7rem; background:${isApproved ? 'rgba(100,210,138,0.1)' : 'rgba(255,255,255,0.05)'}; color:${isApproved ? '#64D28A' : '#444'}; border:1px solid ${isApproved ? 'rgba(100,210,138,0.2)' : 'rgba(255,255,255,0.1)'};">
-                      ${isApproved ? '● 已在宇宙呈现' : '○ 待审核/隐藏'}
+                      ${isApproved ? '● 已发布/显示中' : '○ 待审核/隐藏'}
                     </span>
                   </td>
                   <td style="padding:15px; text-align:right; white-space:nowrap;">
                     <button class="btn-tiny" style="margin-right:5px; border-color:${isApproved ? '#444' : 'var(--gold)'}; color:${isApproved ? '#888' : 'var(--gold)'};" onclick="toggleEchoApproval('${e.id}', ${isApproved})">
-                      ${isApproved ? '隐藏回声' : '批准呈现'}
+                      ${isApproved ? '取消发布' : '批准发布'}
                     </button>
                     <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${e.id}')">🗑️</button>
                   </td>
                 </tr>
               `;
-            }).join('') || '<tr><td colspan="5" style="padding:50px; text-align:center; color:#444;">宇宙中还没有回声...</td></tr>'}
+            }).join('') || '<tr><td colspan="5" style="padding:50px; text-align:center; color:#444;">无回声...</td></tr>'}
           </tbody>
         </table>
       </div>
