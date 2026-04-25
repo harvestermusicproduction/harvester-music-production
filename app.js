@@ -226,10 +226,9 @@ document.addEventListener('DOMContentLoaded', () => {
         dateEl.innerHTML = `<span>${album.date}</span>`;
       }
 
-      // Use fallback chain for FB Link: Album Link -> Global Config -> Harvester Default
-      const fbLink = album.fb_url || siteConfigs['cfg_diary_fb'] || "https://www.facebook.com/HarvesterMusicProduction";
+      const fbLink = album.fb_url;
       
-      if (!document.getElementById('fb_link_exists')) {
+      if (fbLink && !document.getElementById('fb_link_exists')) {
         const link = document.createElement('span');
         link.id = 'fb_link_exists';
         link.style.display = 'inline-block';

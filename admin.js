@@ -968,7 +968,6 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="margin-bottom:15px; padding-top:15px; border-top:1px solid #222;">
             <h4 style="margin-bottom:10px;">社交媒体链接 (Social Links)</h4>
             <label style="font-size:0.7rem; color:#666;">Facebook URL (Global)</label><input type="text" id="cfg_social_fb" value="${c['cfg_social_fb']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
-            <label style="font-size:0.7rem; color:#1877F2;">Facebook URL (Diary Albums)</label><input type="text" id="cfg_diary_fb" value="${c['cfg_diary_fb']||''}" placeholder="每个相册默认跳转的 FB 链接..." style="width:100%; margin-bottom:10px; background:#111; border:1px solid #1877F2; color:#fff;">
             <label style="font-size:0.7rem; color:#666;">Instagram URL</label><input type="text" id="cfg_social_ig" value="${c['cfg_social_ig']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
             <label style="font-size:0.7rem; color:#666;">YouTube URL</label><input type="text" id="cfg_social_yt" value="${c['cfg_social_yt']||''}" style="width:100%; background:#222; border:1px solid #444; color:#fff;">
           </div>
@@ -1068,7 +1067,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.saveAllConfigs = async() => {
-    const keys = ['cfg_about_text', 'cfg_contact_email', 'cfg_social_fb', 'cfg_diary_fb', 'cfg_social_ig', 'cfg_social_yt'];
+    const keys = ['cfg_about_text', 'cfg_contact_email', 'cfg_social_fb', 'cfg_social_ig', 'cfg_social_yt'];
     for(let k of keys) {
       const el = document.getElementById(k);
       if(el) {
