@@ -205,14 +205,18 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const { data: album } = await db.from('diary_albums').select('*, diary_media(*)').eq('id', id).single();
       document.getElementById('eventTitle').innerText = album.title;
-      document.getElementById('eventDate').innerText = album.date + " | FB Link Sync: Active";
+      document.getElementById('eventDate').innerText = album.date;
 
       const fbLink = album.fb_url || siteConfigs['cfg_diary_fb'];
       if (fbLink && !document.getElementById('fb_link_exists')) {
         const link = document.createElement('span');
         link.id = 'fb_link_exists';
         link.style.marginLeft = "15px";
-        link.innerHTML = `<a href="${fbLink}" target="_blank" class="btn-social-fb" style="width:auto; padding:5px 15px; font-size:0.8rem; vertical-align:middle;"><i class="fab fa-facebook"></i> 跳轉到 FB 帖子</a>`;
+        link.innerHTML = `
+          <a href="${fbLink}" target="_blank" class="btn-social-fb" style="width:auto; padding:6px 16px; font-size:0.75rem; vertical-align:middle; background:#1877F2; border-radius:100px;">
+            <i class="fab fa-facebook"></i> 去 FB 看看
+          </a>
+        `;
         document.getElementById('eventDate')?.appendChild(link);
       }
 
