@@ -1038,6 +1038,18 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="hidden" id="url_submit" value="${c['cfg_submit_poster']||''}">
           </div>
 
+          <div class="banner-edit-item" style="grid-column: 1 / -1; border-top: 1px solid #222; padding-top: 15px; margin-top:20px;">
+            <label style="color:var(--gold);"><i class="fas fa-search"></i> Google 搜索关键词 (SEO Keywords)</label>
+            <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">用逗号隔开。例如: <code>收割机音乐, CCM, 基督教, 赞美诗</code></p>
+            <input type="text" id="cfg_site_keywords" value="${c['cfg_site_keywords']||''}" style="width:100%; background:#0a0a0a; border:1px solid #333; color:var(--gold); padding:10px; border-radius:4px;">
+          </div>
+
+          <div class="banner-edit-item" style="grid-column: 1 / -1; border-top: 1px solid #222; padding-top: 15px;">
+            <label style="color:var(--gold);"><i class="fas fa-id-card"></i> 搜索结果显示的网站简介 (Meta Description)</label>
+            <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">这段话将出现在 Google 搜索结果的标题下方。</p>
+            <textarea id="cfg_site_description" style="width:100%; height:60px; background:#0a0a0a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px; font-size:0.85rem;">${c['cfg_site_description']||''}</textarea>
+          </div>
+
           <div class="banner-edit-item" style="margin-top:20px; border-top:1px solid #222; padding-top:15px; grid-column: 1 / -1;">
              <label style="color:var(--gold);"><i class="fas fa-edit"></i> 投稿页面说明文字 (Submit Terms Text)</label>
              <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">支持多行输入。换行将自动转换为 HTML &lt;br&gt;</p>
@@ -1088,7 +1100,9 @@ document.addEventListener('DOMContentLoaded', () => {
       {k: 'cfg_contact_banner', v: document.getElementById('url_contact').value},
       {k: 'cfg_submit_poster', v: document.getElementById('url_submit').value},
       {k: 'cfg_submit_btn_link', v: document.getElementById('cfg_submit_btn_link').value},
-      {k: 'cfg_submit_text', v: document.getElementById('cfg_submit_text').value}
+      {k: 'cfg_submit_text', v: document.getElementById('cfg_submit_text').value},
+      {k: 'cfg_site_keywords', v: document.getElementById('cfg_site_keywords').value},
+      {k: 'cfg_site_description', v: document.getElementById('cfg_site_description').value}
     ];
     for(let b of banners) {
       await db.from('site_config').upsert({key: b.k, value: b.v}, {onConflict: 'key'});

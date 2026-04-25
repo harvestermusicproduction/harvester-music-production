@@ -74,6 +74,18 @@ document.addEventListener('DOMContentLoaded', () => {
       else if (el.tagName === 'A') el.href = val;
       else el.innerHTML = val.replace(/\n/g, '<br>');
     });
+
+    // 🔍 Dynamic SEO Sync: Connect DB keywords/desc to actual HTML meta tags
+    if (siteConfigs['cfg_site_keywords']) {
+      let kTag = document.querySelector('meta[name="keywords"]');
+      if (!kTag) { kTag = document.createElement('meta'); kTag.name = "keywords"; document.head.appendChild(kTag); }
+      kTag.content = siteConfigs['cfg_site_keywords'];
+    }
+    if (siteConfigs['cfg_site_description']) {
+      let dTag = document.querySelector('meta[name="description"]');
+      if (!dTag) { dTag = document.createElement('meta'); dTag.name = "description"; document.head.appendChild(dTag); }
+      dTag.content = siteConfigs['cfg_site_description'];
+    }
   }
 
   async function fetchLatestMusicForHome() {
