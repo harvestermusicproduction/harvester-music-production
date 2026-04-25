@@ -118,11 +118,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!container) return;
     try {
       const { data: events } = await db.from('events').select('*').order('date', { ascending: true });
-      container.innerHTML = events.map(e => `
-        <div class="event-card fade-in gold-theme">
-          <h3>${e.title}</h3>
-          <p>${e.description || ''}</p>
-        </div>`).join('');
+      container.innerHTML = events.map(e => {
+        let desc = e.description || "";
+        const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
+        if (metaMatch) desc = desc.replace(metaMatch[0], '').trim();
+        
+        const date = e.date ? new Date(e.date).toLocaleDateString('zh-CN') : 'TBA';
+        return `
+          <div class="event-card fade-in gold-theme" style="text-align:center;">
+            <div style="font-size:0.9rem; opacity:0.8; margin-bottom:1rem;">
+              <span><i class="fas fa-calendar-alt"></i> ${date}</span>
+              ${e.location ? `<span style="margin-left:15px;"><i class="fas fa-map-marker-alt"></i> ${e.location}</span>` : ''}
+            </div>
+            <h3 style="color:var(--gold); font-size:1.6rem; margin-bottom:0.8rem;">${e.title}</h3>
+            <p style="line-height:1.6; font-size:0.95rem;">${desc}</p>
+            <div style="margin-top:20px;">
+              <button class="btn-frosted-gold" style="width:100%; max-width:200px;" onclick="alert('即将上线: 活动提醒功能')">我要参与 / 提醒我</button>
+            </div>
+          </div>`;
+      }).join('');
       refreshObserver();
     } catch(e) {}
   }
