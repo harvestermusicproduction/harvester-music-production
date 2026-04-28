@@ -5,10 +5,10 @@
   --gray: #888888;
   --panel: #141414;
   
-  /* Brand Typography System - Enhanced for Luxury Feel */
-  --font-eng-title: 'Outfit', sans-serif;
-  --font-eng-body:  'Outfit', sans-serif;
-  --font-chn-title: 'Noto Serif SC', serif;
+  /* Brand Typography System V2 - Inter + Noto Sans SC */
+  --font-eng-title: 'Inter', sans-serif;
+  --font-eng-body:  'Inter', sans-serif;
+  --font-chn-title: 'Noto Sans SC', sans-serif;
   --font-chn-body:  'Noto Sans SC', sans-serif;
   
   /* Helper Assignments */
@@ -37,16 +37,17 @@ body {
 
 h1, h2, h3, h4, h5, h6 { 
   font-family: var(--font-eng-title); 
-  font-weight: 400; 
+  font-weight: 600; 
   line-height: 1.4; 
   letter-spacing: 2px;
 }
 p { 
   font-family: var(--font-chn-body); 
   color: rgba(255,255,255,0.85); 
-  font-weight: 300; 
+  font-weight: 400; 
   margin-bottom: 1.5rem; 
   letter-spacing: 0.5px;
+  line-height: 1.9;
 }
 a { color: var(--text); text-decoration: none; transition: var(--transition); font-family: var(--font-eng-body); }
 a:hover { color: var(--gold); }
@@ -55,14 +56,14 @@ section { padding: 8rem 2rem; max-width: 1000px; margin: 0 auto; }
 
 /* 🖋️ Typography Helper Classes */
 .font-title-en { font-family: var(--font-eng-title); }
-.font-title-cn { font-family: var(--font-chn-title); font-weight: 300; }
+.font-title-cn { font-family: var(--font-chn-title); font-weight: 500; }
 .font-body-en  { font-family: var(--font-eng-body); }
 .font-body-cn  { font-family: var(--font-chn-body); }
 
 /* 🖋️ Poetry & Artistic Blocks */
 .poetry-block {
   font-family: var(--font-chn-title);
-  font-weight: 200; /* Extra light for spiritual feel */
+  font-weight: 400; /* Clean regular weight */
   font-size: 1.25rem;
   line-height: 2.2;
   letter-spacing: 0.15em;
@@ -101,8 +102,17 @@ section { padding: 8rem 2rem; max-width: 1000px; margin: 0 auto; }
   transform: translateY(40px); 
   transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
               transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+  /* CSS Safety Net: force content visible after 3s even if JS observer fails */
+  animation: fadeInSafetyNet 1s ease 3s forwards;
 }
-.fade-in.visible { opacity: 1; transform: translateY(0); }
+.fade-in.visible { 
+  opacity: 1; 
+  transform: translateY(0); 
+  animation: none; /* JS observer succeeded, cancel CSS fallback */
+}
+@keyframes fadeInSafetyNet {
+  to { opacity: 1; transform: translateY(0); }
+}
 
 /* Header & Nav */
 header {
@@ -131,7 +141,7 @@ header.scrolled {
   display: block; 
   transition: 0.3s;
 }
-.nav-links { display: flex; gap: 0.5rem; font-size: 0.75rem; letter-spacing: 1px; flex-wrap: nowrap; align-items: center; }
+.nav-links { display: flex; gap: 0.5rem; font-size: 0.75rem; font-weight: 500; letter-spacing: 1px; flex-wrap: nowrap; align-items: center; }
 .nav-links a {
   text-decoration: none;
   color: #888;
@@ -629,7 +639,7 @@ footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid rgba(255,
   transition: transform 0.3s ease;
 }
 .stat-card:hover { transform: translateY(-5px); border-color: var(--gold); }
-.stat-card h3 { font-size: 2.2rem; color: #fff; margin: 0 0 0.5rem 0; font-family: 'Outfit', sans-serif; }
+.stat-card h3 { font-size: 2.2rem; color: #fff; margin: 0 0 0.5rem 0; font-family: 'Inter', sans-serif; }
 .stat-card p { font-size: 0.85rem; color: var(--gold); margin: 0; opacity: 0.8; }
 .stat-card.gold { background: rgba(246, 210, 138, 0.05); border-color: rgba(246, 210, 138, 0.3); }
 
@@ -699,7 +709,7 @@ footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid rgba(255,
   color: #fff;
   border-radius: 15px;
   overflow: hidden;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 .cms-sidebar {
   width: 260px;

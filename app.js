@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("💎 Harvester Diamond V1.9: Multi-Layer Logic Active");
+  console.log("💎 Harvester Diamond V2.0: Multi-Layer Logic Active");
 
-  // --- 📱 Global UX UI Controllers ---
+  // --- 📱 Global UX UI Controllers (DB-independent) ---
   window.toggleMobileMenu = () => {
     const overlay = document.getElementById('mobileNavOverlay');
     if (!overlay) return;
@@ -13,22 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.tagName === 'A') window.toggleMobileMenu();
   });
 
-  // --- 0. Supabase Initialization ---
-  const db = window.supabase;
-  if(!db) { console.error("❌ Harvester Engine: Supabase Client NOT found!"); return; }
-
-  // --- 📈 Real-time Analytics ---
-  async function recordVisit() {
-    try {
-      if (!sessionStorage.getItem('h_v')) {
-        await db.from('visits').insert([{}]);
-        sessionStorage.setItem('h_v', '1');
-      }
-    } catch(e) { console.warn("Analytics idle."); }
-  }
-  recordVisit();
-
-  // --- 1. General UX (Particles & Scroll) ---
+  // --- 1. General UX: Scroll & Fade-in (DB-independent) ---
   const header = document.querySelector('header');
   if(header) {
     window.addEventListener('scroll', () => {
@@ -50,6 +35,24 @@ document.addEventListener('DOMContentLoaded', () => {
   window.refreshObserver = () => {
     document.querySelectorAll('.fade-in, .reveal, .event-card, .folder-card').forEach(el => observer.observe(el));
   };
+
+  // 🔥 Immediately observe ALL static fade-in elements (no DB needed)
+  refreshObserver();
+
+  // --- 0. Supabase Initialization ---
+  const db = window.supabase;
+  if(!db) { console.error("❌ Harvester Engine: Supabase Client NOT found. Static UI still works."); return; }
+
+  // --- 📈 Real-time Analytics ---
+  async function recordVisit() {
+    try {
+      if (!sessionStorage.getItem('h_v')) {
+        await db.from('visits').insert([{}]);
+        sessionStorage.setItem('h_v', '1');
+      }
+    } catch(e) { console.warn("Analytics idle."); }
+  }
+  recordVisit();
 
   // --- 2. Site Content Synchronization ---
   let siteConfigs = {};
@@ -260,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // --- Runtime ---
+  refreshObserver(); // Observe ALL static fade-in elements on every page immediately
   syncSiteContent();
   fetchMusic();
   fetchEvents();
