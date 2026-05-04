@@ -1,4 +1,4 @@
-// Harvester Music - Supabase Configuration
+// Harvester Music - Supabase Configuration (Heartbeat Check)
 // Successfully connected to your project: ollfdarbmiahgjaqivpg
 
 const SUPABASE_CONFIG = {
