@@ -680,6 +680,69 @@
     </div>
   </div>
 
+  <!-- ============================================================
+       NATIVE CHECKOUT MODAL
+  ============================================================ -->
+  <div id="checkoutModalOverlay" onclick="if(event.target===this) closeCheckout()">
+    <div id="checkoutModalBox" style="background:#0d0d0d; border:1px solid rgba(246,210,138,0.15); border-radius:28px; max-width:600px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 40px 80px rgba(0,0,0,0.8); position:relative; animation:modalSlideUp 0.5s forwards; padding:2rem;">
+      <button class="modal-close-btn" onclick="closeCheckout()">
+        <i class="fas fa-times"></i>
+      </button>
+      <h2 style="color:var(--gold); margin-top:0; font-size:1.8rem;">Checkout 购票结账</h2>
+      <p id="chkEventTitle" style="color:#fff; font-size:1.1rem; margin-bottom:0.5rem;"></p>
+      <p id="chkTicketInfo" style="color:#888; font-size:0.85rem; margin-bottom:1.5rem; border-bottom:1px solid #222; padding-bottom:1rem;"></p>
+
+      <form id="checkoutForm" onsubmit="submitCheckout(event)">
+        <input type="hidden" id="chkEventId">
+        
+        <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Full Name 姓名 *</label>
+        <input type="text" id="chkName" required placeholder="Enter your full name" style="width:100%; padding:12px; margin-bottom:15px; background:#111; border:1px solid #333; color:#fff; border-radius:8px;">
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Email 邮箱 *</label>
+            <input type="email" id="chkEmail" required placeholder="example@gmail.com" style="width:100%; padding:12px; margin-bottom:15px; background:#111; border:1px solid #333; color:#fff; border-radius:8px;">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Phone 手机号 *</label>
+            <input type="tel" id="chkPhone" required placeholder="012-3456789" style="width:100%; padding:12px; margin-bottom:15px; background:#111; border:1px solid #333; color:#fff; border-radius:8px;">
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(246,210,138,0.05); padding:15px; border-radius:12px; border:1px solid rgba(246,210,138,0.2); margin-bottom:20px;">
+          <label style="color:#fff; font-size:0.9rem;">Ticket Quantity 购票数量</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <button type="button" onclick="updateQty(-1)" style="width:30px; height:30px; border-radius:50%; background:#222; border:none; color:#fff; cursor:pointer;">-</button>
+            <input type="number" id="chkQty" value="1" min="1" max="10" readonly style="width:40px; text-align:center; background:transparent; border:none; color:var(--gold); font-weight:bold; font-size:1.1rem;">
+            <button type="button" onclick="updateQty(1)" style="width:30px; height:30px; border-radius:50%; background:#222; border:none; color:#fff; cursor:pointer;">+</button>
+          </div>
+        </div>
+
+        <div id="paymentSection" style="display:none; margin-bottom:20px;">
+          <h4 style="color:var(--gold); border-top:1px dashed #333; padding-top:15px;">Payment Details 付款详情</h4>
+          <p style="font-size:0.8rem; color:#888;">Total Amount 总额: <strong id="chkTotalAmt" style="color:var(--gold); font-size:1.2rem;">RM 0.00</strong></p>
+          
+          <div style="background:#111; border:1px solid #333; border-radius:12px; padding:15px; margin-top:15px; display:flex; gap:15px; align-items:center;">
+            <img id="chkQrImg" src="" style="width:100px; height:100px; object-fit:contain; border-radius:8px; background:#fff; display:none;">
+            <div style="font-size:0.8rem; color:#ccc; line-height:1.6;">
+              <span id="chkBankInfo">Loading bank info...</span><br>
+              <span id="chkDuitNowInfo"></span>
+            </div>
+          </div>
+          
+          <div style="margin-top:15px;">
+            <label style="display:block; margin-bottom:5px; color:var(--gold); font-size:0.8rem;">Upload Payment Receipt 上传付款截图 *</label>
+            <input type="file" id="chkReceipt" accept="image/*" style="width:100%; padding:10px; background:#111; border:1px solid #333; border-radius:8px; color:#fff;">
+          </div>
+        </div>
+
+        <button type="submit" id="btnSubmitOrder" class="ticket-cta-btn primary" style="width:100%; margin-top:10px; font-size:0.9rem;">
+          <i class="fas fa-check-circle"></i> Confirm Order 确认下单
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
@@ -705,8 +768,7 @@
       const hasSoldOut = ev.max_seats && ev.seats_sold >= ev.max_seats;
       if (hasSoldOut) return 'sold-out';
       if (isFree) return 'free';
-      if (ev.ticket_url) return 'on-sale';
-      return 'coming-soon';
+      return 'on-sale'; // Native checkout is always available if not sold out
     }
 
     function formatPrice(price) {
@@ -878,11 +940,11 @@
             ` : ''}
           </div>
           <div class="modal-btn-row">
-            ${canBuy && hasLink
-              ? `<a class="modal-cta-main" href="${ev.ticket_url}" target="_blank" rel="noopener">
+            ${canBuy
+              ? `<button class="modal-cta-main" onclick="openCheckout('${ev.id}')">
                   <i class="fas fa-ticket-alt"></i>
                   ${isFree ? '立即报名 / REGISTER' : '立即购票 / BUY TICKETS'}
-                </a>`
+                </button>`
               : status === 'sold-out'
                 ? `<button class="modal-cta-main" style="background:#333; color:#666; cursor:not-allowed;" disabled><i class="fas fa-ban"></i> 已售罄 / SOLD OUT</button>`
                 : `<button class="modal-cta-main" style="background:#222; color:#555; cursor:not-allowed;" disabled><i class="fas fa-clock"></i> 即将开放 / COMING SOON</button>`
@@ -905,13 +967,147 @@
       document.body.style.overflow = 'hidden';
     }
 
-    function closeTicketDetail() {
-      document.getElementById('ticketDetailOverlay').classList.remove('open');
+    // ============================================================
+    //  NATIVE CHECKOUT LOGIC
+    // ============================================================
+    let currentCheckoutEvent = null;
+
+    function updateQty(diff) {
+      const input = document.getElementById('chkQty');
+      let val = parseInt(input.value) + diff;
+      if (val < 1) val = 1;
+      if (val > 10) val = 10;
+      input.value = val;
+      
+      if (currentCheckoutEvent) {
+        const price = parseFloat(currentCheckoutEvent.ticket_price) || 0;
+        document.getElementById('chkTotalAmt').innerText = price === 0 ? 'FREE' : 'RM ' + (price * val).toFixed(2);
+      }
+    }
+
+    async function openCheckout(id) {
+      const allTicketEvents = window.allTicketEvents || [];
+      const ev = allTicketEvents.find(e => e.id == id);
+      if (!ev) return;
+      currentCheckoutEvent = ev;
+
+      // Close details modal
+      closeTicketDetail();
+
+      document.getElementById('chkEventId').value = ev.id;
+      document.getElementById('chkEventTitle').innerText = ev.title;
+      const isFree = !ev.ticket_price || parseFloat(ev.ticket_price) === 0;
+      const priceStr = isFree ? 'FREE' : 'RM ' + parseFloat(ev.ticket_price).toFixed(2);
+      document.getElementById('chkTicketInfo').innerText = `${formatDate(ev.event_date || ev.date)} | ${priceStr} per ticket`;
+      
+      document.getElementById('chkQty').value = 1;
+      document.getElementById('chkTotalAmt').innerText = priceStr;
+      
+      const paymentSection = document.getElementById('paymentSection');
+      if (isFree) {
+        paymentSection.style.display = 'none';
+        document.getElementById('chkReceipt').removeAttribute('required');
+      } else {
+        paymentSection.style.display = 'block';
+        document.getElementById('chkReceipt').setAttribute('required', 'true');
+        
+        // Fetch Bank Info from site_config
+        try {
+          const { data: cfg } = await db.from('site_config').select('*').in('key', ['cfg_support_bank', 'cfg_support_acc_no', 'cfg_support_acc_name', 'cfg_support_tng', 'cfg_support_qr']);
+          const conf = {};
+          if(cfg) cfg.forEach(c => conf[c.key] = c.value);
+          
+          document.getElementById('chkBankInfo').innerHTML = `
+            <strong>Bank Transfer:</strong><br>
+            Bank: <span style="color:#fff;">${conf.cfg_support_bank || '-'}</span><br>
+            Acc No: <span style="color:var(--gold);">${conf.cfg_support_acc_no || '-'}</span><br>
+            Name: <span style="color:#fff;">${conf.cfg_support_acc_name || '-'}</span>
+          `;
+          document.getElementById('chkDuitNowInfo').innerHTML = `
+            <strong>TNG / DuitNow:</strong> <span style="color:var(--gold);">${conf.cfg_support_tng || '-'}</span>
+          `;
+          if (conf.cfg_support_qr) {
+            document.getElementById('chkQrImg').src = conf.cfg_support_qr;
+            document.getElementById('chkQrImg').style.display = 'block';
+          }
+        } catch (e) {
+          console.error("Failed to load payment config", e);
+        }
+      }
+
+      document.getElementById('checkoutModalOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkoutModalOverlay').classList.remove('open');
       document.body.style.overflow = '';
+      currentCheckoutEvent = null;
+      document.getElementById('checkoutForm').reset();
+    }
+
+    async function submitCheckout(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitOrder');
+      btn.innerText = "⏳ Processing 正在处理...";
+      btn.disabled = true;
+
+      const isFree = !currentCheckoutEvent.ticket_price || parseFloat(currentCheckoutEvent.ticket_price) === 0;
+      const qty = parseInt(document.getElementById('chkQty').value);
+      const totalAmount = isFree ? 0 : parseFloat(currentCheckoutEvent.ticket_price) * qty;
+      
+      let receiptUrl = null;
+      
+      try {
+        if (!isFree) {
+          const receiptFile = document.getElementById('chkReceipt').files[0];
+          if (!receiptFile) throw new Error("Please upload a payment receipt / 请上传付款截图");
+          
+          btn.innerText = "📤 Uploading Receipt 上传截图中...";
+          const safeName = receiptFile.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+          const path = `receipts/${Date.now()}-${safeName}`;
+          
+          const { data: uploadData, error: uploadError } = await db.storage.from('harvester-media').upload(path, receiptFile);
+          if (uploadError) throw uploadError;
+          
+          const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
+          receiptUrl = publicUrl;
+        }
+
+        btn.innerText = "💾 Saving Order 保存订单中...";
+        
+        const payload = {
+          event_id: currentCheckoutEvent.id,
+          customer_name: document.getElementById('chkName').value,
+          email: document.getElementById('chkEmail').value,
+          phone: document.getElementById('chkPhone').value,
+          qty: qty,
+          total_amount: totalAmount,
+          payment_proof_url: receiptUrl,
+          status: 'pending'
+        };
+
+        const { error: dbError } = await db.from('ticket_orders').insert([payload]);
+        if (dbError) throw dbError;
+
+        alert("✅ Order Submitted Successfully!\nYour ticket order is pending admin verification.\n\n订单已提交！等待管理员审核后生效。");
+        closeCheckout();
+
+      } catch (err) {
+        alert("❌ Error: " + err.message);
+      } finally {
+        btn.innerHTML = `<i class="fas fa-check-circle"></i> Confirm Order 确认下单`;
+        btn.disabled = false;
+      }
     }
 
     // ESC to close
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTicketDetail(); });
+    document.addEventListener('keydown', e => { 
+      if (e.key === 'Escape') {
+        closeTicketDetail();
+        closeCheckout();
+      }
+    });
   </script>
 </body>
 </html>

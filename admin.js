@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="javascript:void(0)" onclick="switchModule('submissions')" class="nav-item ${currentModule==='submissions'?'active':''}">📮 Inbox</a>
             <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ Subscriptions</a>
             <a href="javascript:void(0)" onclick="switchModule('tickets')" class="nav-item ${currentModule==='tickets'?'active':''}">🎟️ Ticket Links</a>
+            <a href="javascript:void(0)" onclick="switchModule('orders')" class="nav-item ${currentModule==='orders'?'active':''}">📦 Ticket Orders</a>
             
             <p class="nav-section-title" style="margin-top:25px;">Engine</p>
             <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ Global Settings</a>
@@ -118,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (currentModule === 'submissions') renderSubmissions(body);
     else if (currentModule === 'config') renderConfig(body);
     else if (currentModule === 'tickets') renderTickets(body);
+    else if (currentModule === 'orders') renderOrders(body);
     else body.innerHTML = `<h2 style="color:#333;">${currentModule.toUpperCase()}</h2><p style="color:#222;">Migration in progress.</p>`;
   }
 
@@ -1418,6 +1420,96 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
+
+  // --- 📦 TICKET ORDERS MODULE (原生订单管理) ---
+  async function renderOrders(container) {
+    const { data: orders } = await db.from('ticket_orders').select('*').order('created_at', { ascending: false });
+    const { data: events } = await db.from('events').select('id, title, max_seats, seats_sold');
+
+    const eventMap = {};
+    if (events) events.forEach(e => eventMap[e.id] = e);
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+        <h1 style="color:var(--gold);">📦 票务订单管理 (Ticket Orders)</h1>
+      </div>
+      <p style="color:#555; font-size:0.85rem; margin-bottom:2rem;">在此审核用户在 tickets.html 提交的购票订单与转账截图。</p>
+
+      <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px; overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; color:#eee; min-width:800px;">
+          <thead>
+            <tr style="border-bottom:1px solid #333; text-align:left; background:#111;">
+              <th style="padding:15px; font-size:0.8rem; color:#666;">下单时间</th>
+              <th style="padding:15px; font-size:0.8rem; color:#666;">活动名称</th>
+              <th style="padding:15px; font-size:0.8rem; color:#666;">客户信息</th>
+              <th style="padding:15px; font-size:0.8rem; color:#666;">数量/金额</th>
+              <th style="padding:15px; font-size:0.8rem; color:#666;">付款截图</th>
+              <th style="padding:15px; font-size:0.8rem; color:#666;">状态</th>
+              <th style="padding:15px; font-size:0.8rem; color:#666; text-align:right;">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${orders?.map(o => {
+              const ev = eventMap[o.event_id];
+              const evTitle = ev ? ev.title : '<span style="color:red">Unknown Event</span>';
+              const isApproved = o.status === 'approved';
+              return `
+                <tr style="border-bottom:1px solid #1a1a1a; transition:0.3s;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
+                  <td style="padding:15px; font-size:0.75rem; color:#555;">${new Date(o.created_at).toLocaleString()}</td>
+                  <td style="padding:15px; color:var(--gold); font-size:0.85rem; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${evTitle}</td>
+                  <td style="padding:15px; font-size:0.8rem;">
+                    <strong>${o.customer_name}</strong><br>
+                    <span style="color:#888;">${o.email}</span><br>
+                    <span style="color:#888;">${o.phone}</span>
+                  </td>
+                  <td style="padding:15px; font-size:0.85rem;">
+                    <span style="color:var(--gold); font-weight:bold;">${o.qty}</span> 张<br>
+                    <span style="color:#aaa;">RM ${parseFloat(o.total_amount).toFixed(2)}</span>
+                  </td>
+                  <td style="padding:15px;">
+                    ${o.payment_proof_url ? `<a href="${o.payment_proof_url}" target="_blank" style="color:#64D28A; font-size:0.75rem; border:1px solid #64D28A; padding:4px 8px; border-radius:4px; text-decoration:none;"><i class="fas fa-file-image"></i> 查看截图</a>` : '<span style="color:#555; font-size:0.75rem;">免费活动 无需付款</span>'}
+                  </td>
+                  <td style="padding:15px;">
+                    <span style="padding:4px 10px; border-radius:50px; font-size:0.7rem; background:${isApproved ? 'rgba(100,210,138,0.1)' : 'rgba(255,200,0,0.1)'}; color:${isApproved ? '#64D28A' : '#FFC800'}; border:1px solid ${isApproved ? 'rgba(100,210,138,0.2)' : 'rgba(255,200,0,0.2)'};">
+                      ${isApproved ? '✅ 已通过' : '⏳ 待审核'}
+                    </span>
+                  </td>
+                  <td style="padding:15px; text-align:right; white-space:nowrap;">
+                    ${!isApproved ? `<button class="btn-tiny" style="margin-right:5px; border-color:#64D28A; color:#64D28A;" onclick="approveOrder('${o.id}', '${o.event_id}', ${o.qty})">✔️ 批准</button>` : ''}
+                    <button class="btn-tiny danger" onclick="deleteItem('ticket_orders', '${o.id}')">🗑️</button>
+                  </td>
+                </tr>
+              `;
+            }).join('') || '<tr><td colspan="7" style="padding:50px; text-align:center; color:#444;">暂无订单记录</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  window.approveOrder = async (orderId, eventId, qty) => {
+    if(!confirm("确定审核通过该订单？通过后将自动增加活动售出人数。")) return;
+    
+    try {
+      // 1. Update order status
+      const { error: err1 } = await db.from('ticket_orders').update({ status: 'approved' }).eq('id', orderId);
+      if (err1) throw err1;
+
+      // 2. Fetch current seats_sold for the event
+      const { data: evData, error: err2 } = await db.from('events').select('seats_sold').eq('id', eventId).single();
+      if (err2) throw err2;
+
+      // 3. Increment seats_sold
+      const currentSold = evData.seats_sold || 0;
+      const { error: err3 } = await db.from('events').update({ seats_sold: currentSold + qty }).eq('id', eventId);
+      if (err3) throw err3;
+
+      alert("✅ 订单已批准！名额已自动更新。");
+      renderCMS();
+    } catch (e) {
+      alert("处理失败：" + e.message);
+    }
+  };
 
   async function renderEchoes(container) {
     const { data: echoes } = await db.from('contact_messages').select('*').ilike('message', '[ECHO]%').order('created_at', {ascending: false});
