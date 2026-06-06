@@ -262,11 +262,64 @@ document.addEventListener('DOMContentLoaded', () => {
     if(lb && img) { img.src = url; lb.style.display = 'flex'; }
   };
 
+  // --- 🎟️ Ticket Events (tickets.html) ---
+  async function fetchTicketEvents() {
+    const grid = document.getElementById('ticketsGrid');
+    if (!grid) return;
+    try {
+      const { data: events } = await db
+        .from('events')
+        .select('*')
+        .order('event_date', { ascending: true });
+
+      if (!events || events.length === 0) {
+        grid.innerHTML = '';
+        const empty = document.getElementById('ticketsEmpty');
+        if (empty) empty.style.display = 'block';
+        return;
+      }
+
+      // Parse EXT_META if present
+      window.allTicketEvents = events.map(e => {
+        let desc = e.description || '';
+        const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
+        if (metaMatch) {
+          try {
+            const meta = JSON.parse(metaMatch[1]);
+            return {
+              ...e,
+              event_date: meta.d || e.event_date || e.date,
+              event_time: meta.tm || e.event_time,
+              image_url: meta.img || e.image_url,
+              ticket_url: meta.turl || e.ticket_url,
+              ticket_price: meta.tprice !== undefined ? meta.tprice : e.ticket_price,
+              max_seats: meta.mseat || e.max_seats,
+              description: desc.replace(metaMatch[0], '').trim()
+            };
+          } catch { return { ...e, description: desc.replace(metaMatch[0], '').trim() }; }
+        }
+        return { ...e, event_date: e.event_date || e.date };
+      });
+
+      // Sync data to global scope so tickets.html inline script can access it
+      window.allTicketEvents = window.allTicketEvents; // already set above
+      // Trigger the page render function (defined in tickets.html)
+      if (typeof renderFilteredTickets === 'function') {
+        renderFilteredTickets();
+      }
+    } catch (err) {
+      console.warn('fetchTicketEvents error:', err);
+      const grid = document.getElementById('ticketsGrid');
+      if (grid) grid.innerHTML = '<p style="text-align:center; color:#333; padding:4rem;">加载失败，请刷新页面</p>';
+    }
+  }
+
   // --- Runtime ---
   refreshObserver(); // Observe ALL static fade-in elements on every page immediately
   syncSiteContent();
   fetchMusic();
   fetchEvents();
+  fetchTicketEvents();
 });
 
 // Note Particles logic restated

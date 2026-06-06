@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta name="keywords" content="Harvester Music, 收割机音乐, 活动购票, Ticket2U, CCM演唱会, 基督教音乐, 福音活动">
+  <meta name="description" content="Harvester Music Production 活动购票中心 — 查看最新活动详情及购票链接。">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>活动购票 Tickets | Harvester Music Production 收割机创作工作坊</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="活动购票 Tickets | Harvester Music Production">
+  <meta property="og:description" content="Harvester Music Production 活动购票中心 — 查看最新活动详情及购票链接。">
+  <meta property="og:image" content="https://www.harvestermusic.my/assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=4.7.8">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ============================================================
+       TICKETS PAGE — Premium Design System
+    ============================================================ */
+
+    /* Page Layout */
+    #ticketsHero {
+      text-align: center;
+      padding: 10rem 2rem 4rem;
+      position: relative;
+    }
+    .tickets-hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(246, 210, 138, 0.25);
+      border-radius: 50px;
+      padding: 6px 18px;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(10px);
+    }
+    .tickets-hero-title {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #fff;
+      margin: 0 0 1rem;
+      line-height: 1.05;
+    }
+    .tickets-hero-title span {
+      background: linear-gradient(135deg, var(--gold) 0%, #e8b84b 50%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .tickets-hero-sub {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 2px;
+      font-family: 'Noto Sans SC', sans-serif;
+      margin: 0;
+    }
+
+    /* Filter Bar */
+    #ticketsFilterBar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 2rem 3rem;
+      flex-wrap: wrap;
+    }
+    .filter-pill {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      color: #666;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .filter-pill:hover, .filter-pill.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(246, 210, 138, 0.05);
+    }
+
+    /* Event Grid */
+    #ticketsGrid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 2rem;
+    }
+
+    /* Single Ticket Card */
+    .ticket-card {
+      background: #0d0d0d;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+      cursor: pointer;
+      position: relative;
+    }
+    .ticket-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, rgba(246,210,138,0) 0%, rgba(246,210,138,0.15) 100%) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .ticket-card:hover::before { opacity: 1; }
+    .ticket-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(246, 210, 138, 0.05);
+      border-color: rgba(246, 210, 138, 0.15);
+    }
+
+    /* Poster */
+    .ticket-card-poster {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      display: block;
+      position: relative;
+    }
+    .ticket-poster-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+    .ticket-poster-wrap img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+    .ticket-card:hover .ticket-poster-wrap img { transform: scale(1.05); }
+
+    /* Status Badge */
+    .ticket-status-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+    }
+    .badge-on-sale {
+      background: rgba(100, 210, 138, 0.2);
+      color: #64D28A;
+      border: 1px solid rgba(100, 210, 138, 0.3);
+    }
+    .badge-sold-out {
+      background: rgba(255, 60, 60, 0.2);
+      color: #ff6060;
+      border: 1px solid rgba(255, 60, 60, 0.3);
+    }
+    .badge-free {
+      background: rgba(246, 210, 138, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(246, 210, 138, 0.3);
+    }
+    .badge-coming-soon {
+      background: rgba(120, 120, 255, 0.15);
+      color: #a0a0ff;
+      border: 1px solid rgba(120, 120, 255, 0.3);
+    }
+
+    /* Ticket Price Tag */
+    .ticket-price-tag {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      backdrop-filter: blur(15px);
+      background: rgba(0,0,0,0.75);
+      border: 1px solid rgba(246,210,138,0.2);
+      border-radius: 10px;
+      padding: 6px 14px;
+      text-align: right;
+    }
+    .ticket-price-tag .price-label {
+      font-size: 0.55rem;
+      letter-spacing: 2px;
+      color: #666;
+      text-transform: uppercase;
+      display: block;
+    }
+    .ticket-price-tag .price-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold);
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0;
+    }
+
+    /* Card Body */
+    .ticket-card-body {
+      padding: 1.5rem;
+    }
+    .ticket-date-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      color: #555;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      font-family: 'Inter', sans-serif;
+    }
+    .ticket-date-row i { color: var(--gold); opacity: 0.7; font-size: 0.65rem; }
+    .ticket-date-sep { color: #333; margin: 0 4px; }
+
+    .ticket-card-title {
+      font-size: 1.3rem;
+      color: #fff;
+      font-weight: 700;
+      margin: 0 0 0.6rem;
+      letter-spacing: 0.5px;
+      line-height: 1.3;
+    }
+    .ticket-card-location {
+      font-size: 0.8rem;
+      color: #555;
+      font-family: 'Noto Sans SC', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1.2rem;
+    }
+    .ticket-card-location i { color: var(--gold); opacity: 0.6; }
+
+    /* Divider */
+    .ticket-divider {
+      border: none;
+      border-top: 1px dashed rgba(255,255,255,0.07);
+      margin: 1rem 0;
+      position: relative;
+    }
+    .ticket-divider::before {
+      content: '';
+      position: absolute;
+      left: -1.5rem;
+      top: -8px;
+      width: 16px;
+      height: 16px;
+      background: #050505;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-left: none;
+    }
+    .ticket-divider::after {
+      content: '';
+      position: absolute;
+      right: -1.5rem;
+      top: -8px;
+      width: 16px;
+      height: 16px;
+      background: #050505;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-right: none;
+    }
+
+    /* Seat Info */
+    .ticket-seat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .ticket-seat-bar-wrap {
+      flex: 1;
+      margin: 0 12px;
+    }
+    .ticket-seat-bar-bg {
+      height: 4px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 50px;
+      overflow: hidden;
+    }
+    .ticket-seat-bar-fill {
+      height: 100%;
+      border-radius: 50px;
+      background: linear-gradient(90deg, #64D28A, var(--gold));
+      transition: width 1s ease;
+    }
+    .ticket-seat-label {
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      color: #444;
+      text-transform: uppercase;
+    }
+    .ticket-seat-count {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gold);
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* CTA Button */
+    .ticket-cta-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      text-decoration: none;
+    }
+    .ticket-cta-btn.primary {
+      background: var(--gold);
+      color: #000;
+    }
+    .ticket-cta-btn.primary:hover {
+      background: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(246, 210, 138, 0.3);
+    }
+    .ticket-cta-btn.secondary {
+      background: rgba(255,255,255,0.04);
+      color: #555;
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: not-allowed;
+    }
+
+    /* Empty State */
+    #ticketsEmpty {
+      display: none;
+      text-align: center;
+      padding: 6rem 2rem;
+    }
+    #ticketsEmpty .empty-icon {
+      font-size: 4rem;
+      color: rgba(246,210,138,0.15);
+      display: block;
+      margin-bottom: 2rem;
+    }
+    #ticketsEmpty h3 { color: #333; font-size: 1.5rem; margin-bottom: 1rem; }
+    #ticketsEmpty p { color: #444; font-size: 0.9rem; }
+
+    /* ============================================================
+       DETAIL MODAL
+    ============================================================ */
+    #ticketDetailOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1.5rem;
+      backdrop-filter: blur(20px);
+    }
+    #ticketDetailOverlay.open { display: flex; }
+
+    #ticketDetailBox {
+      background: #0d0d0d;
+      border: 1px solid rgba(246,210,138,0.15);
+      border-radius: 28px;
+      max-width: 760px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(246,210,138,0.2) transparent;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.8), 0 0 80px rgba(246,210,138,0.04);
+      position: relative;
+      animation: modalSlideUp 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    }
+    @keyframes modalSlideUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #666;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      z-index: 10;
+    }
+    .modal-close-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    .modal-poster {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      border-radius: 28px 28px 0 0;
+      display: block;
+    }
+    .modal-body {
+      padding: 2rem;
+    }
+    .modal-event-name {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 1rem;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+    }
+    .modal-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .modal-meta-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 0.9rem 1.1rem;
+    }
+    .modal-meta-item .meta-label {
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      color: #444;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 4px;
+      font-family: 'Inter', sans-serif;
+    }
+    .modal-meta-item .meta-value {
+      font-size: 0.9rem;
+      color: #ddd;
+      font-weight: 500;
+      font-family: 'Noto Sans SC', sans-serif;
+    }
+    .modal-meta-item .meta-value.gold { color: var(--gold); }
+
+    .modal-desc {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.95rem;
+      line-height: 1.9;
+      margin: 1rem 0 1.5rem;
+      font-family: 'Noto Sans SC', sans-serif;
+    }
+
+    .modal-ticket-section {
+      background: rgba(246, 210, 138, 0.04);
+      border: 1px solid rgba(246, 210, 138, 0.12);
+      border-radius: 18px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .modal-ticket-section h4 {
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin: 0 0 1.2rem;
+      font-weight: 600;
+    }
+    .ticket-type-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .ticket-type-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .ticket-type-name { font-size: 0.9rem; color: #ccc; }
+    .ticket-type-price { font-size: 1.1rem; font-weight: 700; color: var(--gold); font-family: 'Inter', sans-serif; }
+    .ticket-type-price.free { color: #64D28A; }
+
+    .modal-btn-row {
+      display: flex;
+      gap: 12px;
+    }
+    .modal-cta-main {
+      flex: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px;
+      border-radius: 14px;
+      background: var(--gold);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      cursor: pointer;
+      border: none;
+    }
+    .modal-cta-main:hover {
+      background: #fff;
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(246, 210, 138, 0.3);
+    }
+    .modal-cta-remind {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px;
+      border-radius: 14px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #555;
+      font-size: 0.75rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Inter', sans-serif;
+    }
+    .modal-cta-remind:hover { border-color: var(--gold); color: var(--gold); background: rgba(246,210,138,0.05); }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      #ticketsGrid { grid-template-columns: 1fr; }
+      .modal-meta-grid { grid-template-columns: 1fr 1fr; }
+      .modal-btn-row { flex-direction: column; }
+    }
+    @media (max-width: 480px) {
+      .modal-meta-grid { grid-template-columns: 1fr; }
+      .ticket-card-title { font-size: 1.1rem; }
+    }
+
+    /* Loading shimmer */
+    .ticket-skeleton {
+      background: linear-gradient(90deg, #111 25%, #181818 50%, #111 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.5s infinite;
+      border-radius: 20px;
+      height: 380px;
+    }
+    @keyframes skeleton-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body style="position: relative;">
+  <canvas id="bgParticles"></canvas>
+  <header style="z-index:100;">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none;">
+        <img src="assets/logo.png" alt="Harvester" class="nav-logo">
+      </a>
+      <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 1.2rem;">
+        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="menu-toggle" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="feedback.html">回声空间</a>
+      <a href="events.html">活动</a>
+      <a href="tickets.html" class="active">🎟️ 票务</a>
+      <a href="diary.html">田野日志</a>
+      <div class="nav-dropdown">
+        <a href="javascript:void(0)">歌手 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
+        <div class="dropdown-content">
+          <a href="singers.html?tab=gospel">福音歌手</a>
+          <a href="singers.html?tab=worship">敬拜歌手</a>
+        </div>
+      </div>
+      <a href="submit.html">我要投稿</a>
+      <a href="about.html">关于我们</a>
+      <a href="support.html">支持我们</a>
+      <a href="contact.html">联系我们</a>
+    </nav>
+  </header>
+
+  <div id="mobileNavOverlay">
+    <a href="index.html">主页</a>
+    <a href="music.html">音乐与歌谱集</a>
+    <a href="feedback.html">回声空间</a>
+    <a href="events.html">活动</a>
+    <a href="tickets.html" class="active">🎟️ 票务</a>
+    <a href="diary.html">田野日志</a>
+    <div class="mobile-dropdown">
+      <a href="#" onclick="event.preventDefault(); this.nextElementSibling.classList.toggle('show');">歌手 <i class="fas fa-caret-down"></i></a>
+      <div class="mobile-dropdown-content">
+        <a href="singers.html?tab=gospel">福音歌手</a>
+        <a href="singers.html?tab=worship">敬拜歌手</a>
+      </div>
+    </div>
+    <a href="submit.html">我要投稿</a>
+    <a href="about.html">关于我们</a>
+    <a href="support.html">支持我们</a>
+    <a href="contact.html">联系我们</a>
+  </div>
+
+  <!-- Hero -->
+  <div id="ticketsHero" class="fade-in">
+    <div class="tickets-hero-tag">
+      <i class="fas fa-ticket-alt"></i>
+      HARVESTER MUSIC · EVENT TICKETS
+    </div>
+    <h1 class="tickets-hero-title">
+      精彩活动<br><span>购票中心</span>
+    </h1>
+    <p class="tickets-hero-sub">收割感动的每一个时刻 — 与我们相遇在祂的恩典里</p>
+  </div>
+
+  <!-- Filter Bar -->
+  <div id="ticketsFilterBar">
+    <button class="filter-pill active" onclick="filterTickets('all', this)">全部活动</button>
+    <button class="filter-pill" onclick="filterTickets('upcoming', this)">即将举行</button>
+    <button class="filter-pill" onclick="filterTickets('free', this)">免费入场</button>
+    <button class="filter-pill" onclick="filterTickets('paid', this)">付费购票</button>
+  </div>
+
+  <!-- Tickets Grid -->
+  <div id="ticketsGrid">
+    <!-- Skeleton Loading -->
+    <div class="ticket-skeleton fade-in"></div>
+    <div class="ticket-skeleton fade-in" style="animation-delay:0.1s"></div>
+    <div class="ticket-skeleton fade-in" style="animation-delay:0.2s"></div>
+  </div>
+
+  <!-- Empty State -->
+  <div id="ticketsEmpty">
+    <i class="fas fa-ticket-alt empty-icon"></i>
+    <h3>暂无活动票务</h3>
+    <p>请关注我们的社交媒体，精彩活动即将公布</p>
+  </div>
+
+  <!-- ============================================================
+       DETAIL MODAL
+  ============================================================ -->
+  <div id="ticketDetailOverlay" onclick="if(event.target===this) closeTicketDetail()">
+    <div id="ticketDetailBox">
+      <button class="modal-close-btn" onclick="closeTicketDetail()">
+        <i class="fas fa-times"></i>
+      </button>
+      <!-- Content injected by JS -->
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+    <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
+      <img src="assets/logo.png" alt="Harvester" style="height: 20px; display: block; margin: 0 auto 1.2rem;">
+    </a>
+    <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js"></script>
+  <script src="app.js?v=4.8.4"></script>
+
+  <script>
+    // ============================================================
+    //  TICKETS PAGE ENGINE
+    // ============================================================
+    // allTicketEvents is populated by app.js → fetchTicketEvents() → window.allTicketEvents
+    let currentFilter = 'all';
+
+    // Ticket status logic
+    function getTicketStatus(ev) {
+      const isFree = !ev.ticket_price || parseFloat(ev.ticket_price) === 0;
+      const hasSoldOut = ev.max_seats && ev.seats_sold >= ev.max_seats;
+      if (hasSoldOut) return 'sold-out';
+      if (isFree) return 'free';
+      if (ev.ticket_url) return 'on-sale';
+      return 'coming-soon';
+    }
+
+    function formatPrice(price) {
+      if (!price || parseFloat(price) === 0) return 'FREE';
+      return 'RM ' + parseFloat(price).toFixed(2);
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return 'TBA';
+      try {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+      } catch { return dateStr; }
+    }
+
+    function formatDateShort(dateStr) {
+      if (!dateStr) return 'TBA';
+      try {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+      } catch { return dateStr; }
+    }
+
+    function seatsPercent(ev) {
+      if (!ev.max_seats || ev.max_seats <= 0) return 100;
+      const filled = ev.seats_sold || 0;
+      return Math.min(100, Math.round((filled / ev.max_seats) * 100));
+    }
+
+    function renderTicketCard(ev) {
+      const status = getTicketStatus(ev);
+      const isFree = !ev.ticket_price || parseFloat(ev.ticket_price) === 0;
+      const pct = seatsPercent(ev);
+      const remaining = ev.max_seats ? ev.max_seats - (ev.seats_sold || 0) : null;
+
+      const statusBadge = {
+        'on-sale':     `<span class="ticket-status-badge badge-on-sale"><i class="fas fa-circle" style="font-size:0.5rem; margin-right:4px;"></i>ON SALE</span>`,
+        'free':        `<span class="ticket-status-badge badge-free"><i class="fas fa-gift" style="margin-right:4px;"></i>FREE</span>`,
+        'sold-out':    `<span class="ticket-status-badge badge-sold-out"><i class="fas fa-ban" style="margin-right:4px;"></i>SOLD OUT</span>`,
+        'coming-soon': `<span class="ticket-status-badge badge-coming-soon"><i class="fas fa-clock" style="margin-right:4px;"></i>COMING SOON</span>`,
+      }[status];
+
+      const ctaDisabled = status === 'sold-out' || status === 'coming-soon';
+      const ctaLabel = { 'on-sale': '立即购票 / BUY TICKETS', 'free': '免费报名 / REGISTER', 'sold-out': '已售罄 / SOLD OUT', 'coming-soon': '即将开放 / COMING SOON' }[status];
+
+      const poster = ev.image_url || 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=800&q=80';
+      const desc = (ev.description || '').replace(/EXT_META:.*?\|\|/s, '').trim();
+
+      return `
+        <div class="ticket-card fade-in" data-id="${ev.id}" data-status="${status}" data-price="${isFree ? 'free' : 'paid'}" onclick="openTicketDetail('${ev.id}')">
+          <div class="ticket-poster-wrap">
+            <img src="${poster}" alt="${ev.title}" onerror="this.src='assets/logo.png'">
+            ${statusBadge}
+            <div class="ticket-price-tag">
+              <span class="price-label">Tickets from</span>
+              <span class="price-value">${isFree ? '<span style="color:#64D28A;">FREE</span>' : formatPrice(ev.ticket_price)}</span>
+            </div>
+          </div>
+          <div class="ticket-card-body">
+            <div class="ticket-date-row">
+              <i class="fas fa-calendar-alt"></i>
+              <span>${formatDateShort(ev.event_date || ev.date)}</span>
+              ${ev.event_time ? `<span class="ticket-date-sep">·</span><i class="fas fa-clock"></i><span>${ev.event_time}</span>` : ''}
+            </div>
+            <h3 class="ticket-card-title">${ev.title}</h3>
+            ${ev.location ? `<div class="ticket-card-location"><i class="fas fa-map-marker-alt"></i>${ev.location}</div>` : ''}
+            <hr class="ticket-divider">
+            ${ev.max_seats ? `
+              <div class="ticket-seat-row">
+                <span class="ticket-seat-label">Availability</span>
+                <div class="ticket-seat-bar-wrap">
+                  <div class="ticket-seat-bar-bg">
+                    <div class="ticket-seat-bar-fill" style="width:${pct}%"></div>
+                  </div>
+                </div>
+                <span class="ticket-seat-count">${remaining} left</span>
+              </div>
+            ` : ''}
+            ${ctaDisabled
+              ? `<button class="ticket-cta-btn secondary" disabled>${ctaLabel}</button>`
+              : `<div class="ticket-cta-btn primary" style="pointer-events:none;"><i class="fas fa-ticket-alt"></i> ${ctaLabel}</div>`
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function filterTickets(type, btn) {
+      currentFilter = type;
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      renderFilteredTickets();
+    }
+
+    function renderFilteredTickets() {
+      const grid = document.getElementById('ticketsGrid');
+      const empty = document.getElementById('ticketsEmpty');
+      const allTicketEvents = window.allTicketEvents || [];
+      let filtered = allTicketEvents;
+
+      if (currentFilter === 'upcoming') {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        filtered = allTicketEvents.filter(ev => {
+          const d = new Date(ev.event_date || ev.date);
+          return d >= today;
+        });
+      } else if (currentFilter === 'free') {
+        filtered = allTicketEvents.filter(ev => !ev.ticket_price || parseFloat(ev.ticket_price) === 0);
+      } else if (currentFilter === 'paid') {
+        filtered = allTicketEvents.filter(ev => ev.ticket_price && parseFloat(ev.ticket_price) > 0);
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        empty.style.display = 'block';
+      } else {
+        empty.style.display = 'none';
+        grid.innerHTML = filtered.map(renderTicketCard).join('');
+        if (typeof refreshObserver === 'function') refreshObserver();
+      }
+    }
+
+    // Open detail modal
+    function openTicketDetail(id) {
+      const allTicketEvents = window.allTicketEvents || [];
+      const ev = allTicketEvents.find(e => e.id == id);
+      if (!ev) return;
+
+      const overlay = document.getElementById('ticketDetailOverlay');
+      const box = document.getElementById('ticketDetailBox');
+      const status = getTicketStatus(ev);
+      const isFree = !ev.ticket_price || parseFloat(ev.ticket_price) === 0;
+      const desc = (ev.description || '').replace(/EXT_META:.*?\|\|/s, '').trim();
+      const poster = ev.image_url || 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=1200&q=80';
+
+      const canBuy = status !== 'sold-out' && status !== 'coming-soon';
+      const hasLink = !!ev.ticket_url;
+
+      box.innerHTML = `
+        <button class="modal-close-btn" onclick="closeTicketDetail()"><i class="fas fa-times"></i></button>
+        <img class="modal-poster" src="${poster}" alt="${ev.title}" onerror="this.src='assets/logo.png'">
+        <div class="modal-body">
+          <h2 class="modal-event-name">${ev.title}</h2>
+          <div class="modal-meta-grid">
+            <div class="modal-meta-item">
+              <span class="meta-label"><i class="fas fa-calendar-alt" style="margin-right:5px;"></i>日期</span>
+              <span class="meta-value">${formatDate(ev.event_date || ev.date)}</span>
+            </div>
+            ${ev.event_time ? `<div class="modal-meta-item"><span class="meta-label"><i class="fas fa-clock" style="margin-right:5px;"></i>时间</span><span class="meta-value">${ev.event_time}</span></div>` : ''}
+            ${ev.location ? `<div class="modal-meta-item"><span class="meta-label"><i class="fas fa-map-marker-alt" style="margin-right:5px;"></i>地点</span><span class="meta-value">${ev.location}</span></div>` : ''}
+            <div class="modal-meta-item">
+              <span class="meta-label"><i class="fas fa-tag" style="margin-right:5px;"></i>票价</span>
+              <span class="meta-value gold">${isFree ? '免费入场 FREE' : 'From ' + formatPrice(ev.ticket_price)}</span>
+            </div>
+          </div>
+          ${desc ? `<p class="modal-desc">${desc}</p>` : ''}
+          <div class="modal-ticket-section">
+            <h4><i class="fas fa-ticket-alt"></i> &nbsp;票务详情</h4>
+            <div class="ticket-type-row">
+              <span class="ticket-type-name">${isFree ? 'Free Admission' : 'General Admission'}</span>
+              <span class="ticket-type-price ${isFree ? 'free' : ''}">${isFree ? 'FREE' : formatPrice(ev.ticket_price)}</span>
+            </div>
+            ${ev.max_seats ? `
+              <div class="ticket-type-row" style="font-size:0.75rem; color:#555;">
+                <span><i class="fas fa-users" style="margin-right:5px;"></i>总名额</span>
+                <span style="color:#555;">${ev.max_seats} seats (${ev.max_seats - (ev.seats_sold||0)} remaining)</span>
+              </div>
+            ` : ''}
+          </div>
+          <div class="modal-btn-row">
+            ${canBuy && hasLink
+              ? `<a class="modal-cta-main" href="${ev.ticket_url}" target="_blank" rel="noopener">
+                  <i class="fas fa-ticket-alt"></i>
+                  ${isFree ? '立即报名 / REGISTER' : '立即购票 / BUY TICKETS'}
+                </a>`
+              : status === 'sold-out'
+                ? `<button class="modal-cta-main" style="background:#333; color:#666; cursor:not-allowed;" disabled><i class="fas fa-ban"></i> 已售罄 / SOLD OUT</button>`
+                : `<button class="modal-cta-main" style="background:#222; color:#555; cursor:not-allowed;" disabled><i class="fas fa-clock"></i> 即将开放 / COMING SOON</button>`
+            }
+            <button class="modal-cta-remind" onclick="closeTicketDetail(); openReminderModal('${ev.id}', '${ev.title.replace(/'/g,"\\'")}', '${ev.event_date || ev.date || ''}')">
+              <i class="fas fa-bell"></i> 提醒我
+            </button>
+          </div>
+          ${ev.map_url ? `
+            <div style="margin-top:1.2rem; text-align:center;">
+              <a href="${ev.map_url}" target="_blank" rel="noopener" style="font-size:0.75rem; color:#444; letter-spacing:1px; text-transform:uppercase; text-decoration:none; transition:color 0.3s;">
+                <i class="fas fa-map-marked-alt" style="margin-right:6px;"></i>查看地图 / View Map
+              </a>
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeTicketDetail() {
+      document.getElementById('ticketDetailOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // ESC to close
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTicketDetail(); });
+  </script>
+</body>
+</html>

@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="javascript:void(0)" onclick="switchModule('echo')" class="nav-item ${currentModule==='echo'?'active':''}">🌌 Echo Space</a>
             <a href="javascript:void(0)" onclick="switchModule('submissions')" class="nav-item ${currentModule==='submissions'?'active':''}">📮 Inbox</a>
             <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ Subscriptions</a>
+            <a href="javascript:void(0)" onclick="switchModule('tickets')" class="nav-item ${currentModule==='tickets'?'active':''}">🎟️ Ticket Links</a>
             
             <p class="nav-section-title" style="margin-top:25px;">Engine</p>
             <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ Global Settings</a>
@@ -116,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (currentModule === 'reminders') renderReminders(body);
     else if (currentModule === 'submissions') renderSubmissions(body);
     else if (currentModule === 'config') renderConfig(body);
+    else if (currentModule === 'tickets') renderTickets(body);
     else body.innerHTML = `<h2 style="color:#333;">${currentModule.toUpperCase()}</h2><p style="color:#222;">Migration in progress.</p>`;
   }
 
@@ -526,6 +528,23 @@ document.addEventListener('DOMContentLoaded', () => {
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动详情描述</label>
           <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:100px; margin-bottom:15px; padding:10px;">${e?.description || ''}</textarea>
 
+          <div style="background:rgba(246,210,138,0.05); border:1px solid rgba(246,210,138,0.15); border-radius:12px; padding:15px; margin-bottom:15px;">
+            <p style="font-size:0.7rem; color:var(--gold); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; font-weight:bold;">🎟️ 票务配置 (Ticket2U / External Ticketing)</p>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">购票链接 (Ticket2U / Google Form URL)</label>
+            <input type="text" id="ev_ticket_url" value="${e?.ticket_url || ''}" placeholder="https://ticket2u.com.my/... 或 Google Form 链接" style="width:100%; padding:10px; margin-bottom:12px;">
+            
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">最低票价 RM (0 = 免费)</label>
+                <input type="number" id="ev_ticket_price" value="${e?.ticket_price ?? ''}" placeholder="0.00" min="0" step="0.01" style="width:100%; padding:10px;">
+              </div>
+              <div>
+                <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">总名额 (留空 = 不限)</label>
+                <input type="number" id="ev_max_seats" value="${e?.max_seats ?? ''}" placeholder="例如：200" min="0" style="width:100%; padding:10px;">
+              </div>
+            </div>
+          </div>
+
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">提醒邮件定制内容 (如果不填则使用系统默认)</label>
           <textarea id="ev_email" placeholder="支持自动换行。例：请记得明天穿白色上衣出席哦！" style="width:100%; height:80px; margin-bottom:20px; padding:10px;">${e?.email_template || ''}</textarea>
 
@@ -558,7 +577,10 @@ document.addEventListener('DOMContentLoaded', () => {
       map_url: document.getElementById('ev_ml').value,
       image_url: document.getElementById('ev_url').value,
       email_template: document.getElementById('ev_email').value,
-      description: document.getElementById('ev_desc').value
+      description: document.getElementById('ev_desc').value,
+      ticket_url: document.getElementById('ev_ticket_url').value,
+      ticket_price: document.getElementById('ev_ticket_price').value || null,
+      max_seats: document.getElementById('ev_max_seats').value ? parseInt(document.getElementById('ev_max_seats').value) : null
     };
 
     try {
@@ -641,8 +663,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <label>姓名 Name</label>
         <input type="text" id="s_n_new" placeholder="请输入姓名..." style="width:100%; margin-bottom:15px;">
-        <label>简介 Bio</label>
-        <input type="text" id="s_role_new" placeholder="请输入简介..." style="width:100%; margin-bottom:15px;" value="">
+
+        <label>短简介 Bio (显示在卡片上)</label>
+        <input type="text" id="s_role_new" placeholder="例如：CCM 创作人 / 敬拜主领" style="width:100%; margin-bottom:15px;" value="">
+        
+        <label>详细介绍 Description (显示在弹窗里)</label>
+        <textarea id="s_bio_new" placeholder="请输入详细的歌手介绍..." style="width:100%; height:100px; margin-bottom:15px; background:#222; color:#fff; border:1px solid #444; padding:10px;"></textarea>
         <label>展示分类 Category</label>
         <select id="s_cat_new" style="width:100%; margin-bottom:15px; background: #222; color: #fff; padding: 10px; border: 1px solid #444;">
           <option value="gospel">福音歌手 Gospel</option>
@@ -660,13 +686,14 @@ document.addEventListener('DOMContentLoaded', () => {
   window.submitNewSinger = async(btn) => {
     const name = document.getElementById('s_n_new').value.trim();
     const role = document.getElementById('s_role_new').value.trim();
+    const bio = document.getElementById('s_bio_new').value.trim();
     const category = document.getElementById('s_cat_new').value;
     const image_url = document.getElementById('surl_new').value;
     if(!name) return alert("请输入姓名");
     
     try {
       if(btn) btn.innerText = "处理中...";
-      const { error } = await db.from('singers').insert([{ name, role, category, image_url }]);
+      const { error } = await db.from('singers').insert([{ name, role, bio, category, image_url }]);
       if (error) throw error;
       if(btn) btn.closest('div').parentElement.parentElement.remove();
       renderCMS();
@@ -694,8 +721,11 @@ document.addEventListener('DOMContentLoaded', () => {
         <label>姓名 Name</label>
         <input type="text" id="sn" value="${s.name}" style="width:100%; margin-bottom:15px;">
         
-        <label>简介 Bio</label>
+        <label>短简介 Bio (显示在卡片上)</label>
         <input type="text" id="sr" value="${s.role || ''}" style="width:100%; margin-bottom:15px;">
+
+        <label>详细介绍 Description (显示在弹窗里)</label>
+        <textarea id="sb" style="width:100%; height:120px; margin-bottom:15px; background:#222; color:#fff; border:1px solid #444; padding:10px;">${s.bio || ''}</textarea>
         
         <label>展示分类 Category</label>
         <select id="scat" style="width:100%; margin-bottom:15px; background: #222; color: #fff; padding: 10px; border: 1px solid #444;">
@@ -720,7 +750,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.saveSinger = async(id, btn) => {
     const p = {
       name: document.getElementById('sn').value,
-      // bio field removed as per request
+      bio: document.getElementById('sb').value,
       role: document.getElementById('sr').value,
       category: document.getElementById('scat').value,
       image_url: document.getElementById('surl').value,
@@ -1325,6 +1355,69 @@ document.addEventListener('DOMContentLoaded', () => {
   window.deleteItem = async(t, id) => {
     if(confirm("确定永久删除？")) { await db.from(t).delete().eq('id', id); renderCMS(); }
   };
+
+  // --- 🎟️ TICKETS MODULE (票务链接管理) ---
+  async function renderTickets(container) {
+    const { data: events } = await db.from('events').select('*').order('event_date', { ascending: true });
+
+    // Parse EXT_META from description if needed
+    const parsed = events?.map(e => {
+      let desc = e.description || '';
+      const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
+      if (metaMatch) {
+        try {
+          const meta = JSON.parse(metaMatch[1]);
+          return { ...e, event_date: meta.d || e.event_date || e.date, ticket_url: meta.turl || e.ticket_url, ticket_price: meta.tprice ?? e.ticket_price, max_seats: meta.mseat || e.max_seats, description: desc.replace(metaMatch[0], '').trim() };
+        } catch { return e; }
+      }
+      return { ...e, event_date: e.event_date || e.date };
+    });
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+        <h1 style="color:var(--gold);">🎟️ 票务链接管理 (Ticket Links)</h1>
+        <a href="tickets.html" target="_blank" class="btn-tiny" style="padding:8px 18px;">👁️ 查看票务页</a>
+      </div>
+      <p style="color:#555; font-size:0.85rem; margin-bottom:2rem;">在此为每个活动配置 Ticket2U 外链和票价，将实时反映在 <strong style="color:#888;">tickets.html</strong> 购票页面上。</p>
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        ${parsed?.map(e => {
+          const isFree = !e.ticket_price || parseFloat(e.ticket_price) === 0;
+          const hasLink = !!e.ticket_url;
+          return `
+            <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:14px; padding:20px; display:flex; gap:20px; align-items:center; transition:0.3s;" onmouseover="this.style.borderColor='rgba(246,210,138,0.15)'" onmouseout="this.style.borderColor='#1a1a1a'">
+              <img src="${e.image_url || 'https://via.placeholder.com/120x68?text=No+Poster'}" style="width:120px; height:68px; object-fit:cover; border-radius:8px; flex-shrink:0; border:1px solid #222;" onerror="this.src='assets/logo.png'">
+              <div style="flex:1; min-width:0;">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
+                  <h3 style="margin:0; color:#fff; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:250px;">${e.title}</h3>
+                  <span style="font-size:0.65rem; padding:3px 10px; border-radius:50px; background:${hasLink ? 'rgba(100,210,138,0.1)' : 'rgba(255,255,255,0.05)'}; color:${hasLink ? '#64D28A' : '#333'}; border:1px solid ${hasLink ? 'rgba(100,210,138,0.2)' : '#222'}; white-space:nowrap;">${hasLink ? '✅ 已配置链接' : '⚠️ 暂无链接'}</span>
+                </div>
+                <div style="display:flex; gap:20px; font-size:0.75rem; color:#555; flex-wrap:wrap;">
+                  <span><i class="fas fa-calendar-alt" style="margin-right:4px; color:var(--gold); opacity:0.5;"></i>${e.event_date || e.date || 'TBA'}</span>
+                  <span><i class="fas fa-tag" style="margin-right:4px; color:var(--gold); opacity:0.5;"></i>${isFree ? '免费 FREE' : 'RM ' + parseFloat(e.ticket_price).toFixed(2)}</span>
+                  ${e.max_seats ? `<span><i class="fas fa-users" style="margin-right:4px; color:var(--gold); opacity:0.5;"></i>${e.max_seats} seats</span>` : ''}
+                </div>
+                ${hasLink ? `<div style="font-size:0.7rem; color:#333; margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${e.ticket_url}</div>` : ''}
+              </div>
+              <button class="btn-tiny" style="padding:8px 20px; white-space:nowrap;" onclick="openEventModal('${e.id}')">✏️ 编辑票务</button>
+            </div>
+          `;
+        }).join('') || '<p style="text-align:center; color:#444; padding:50px;">暂无活动，请先在 Events 模块中新建活动</p>'}
+      </div>
+
+      <div style="margin-top:40px; background:rgba(246,210,138,0.04); border:1px solid rgba(246,210,138,0.1); border-radius:14px; padding:20px;">
+        <h4 style="color:var(--gold); margin-top:0; font-size:0.85rem; letter-spacing:2px;">💡 如何配置 Ticket2U 购票链接</h4>
+        <ol style="color:#555; font-size:0.85rem; padding-left:1.5rem; line-height:2;">
+          <li>到 <a href="https://www.ticket2u.com.my" target="_blank" style="color:var(--gold);">Ticket2U</a> 创建你的活动并发布</li>
+          <li>复制 Ticket2U 活动页面链接</li>
+          <li>点击上方对应活动的 <strong style="color:#888;">✏️ 编辑票务</strong> 按钮</li>
+          <li>将链接粘贴到"购票链接"一栏，设置票价和名额</li>
+          <li>保存后，<strong style="color:#888;">tickets.html</strong> 将自动显示"立即购票"按钮</li>
+        </ol>
+      </div>
+    `;
+  }
+
 
   async function renderEchoes(container) {
     const { data: echoes } = await db.from('contact_messages').select('*').ilike('message', '[ECHO]%').order('created_at', {ascending: false});
