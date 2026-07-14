@@ -167,13 +167,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const isFree = !ticketPrice || parseFloat(ticketPrice) === 0;
         const priceStr = isFree ? '免费 FREE' : 'RM ' + parseFloat(ticketPrice).toFixed(2);
-        const displayTicketInfo = ticketUrl ? `
-          <div style="margin-top:1.5rem; padding:1.5rem; background:rgba(246,210,138,0.05); border:1px solid rgba(246,210,138,0.15); border-radius:12px;">
-            <p style="color:var(--gold); font-size:0.9rem; margin-bottom:10px; font-weight:bold;">🎟️ 报名与付款 (票价: ${priceStr})</p>
-            <p style="font-size:0.8rem; color:#888; margin-bottom:15px;">请扫描下方二维码进行付款或报名，如有备注请填写您的名字。</p>
-            <img src="${ticketUrl}" style="width:180px; height:180px; object-fit:contain; border-radius:8px; border:2px solid #333; background:#fff; margin:0 auto;" onerror="this.style.display='none'">
-          </div>
-        ` : '';
+        
+        const displayButtons = `
+            <div style="margin-top:20px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+              <button class="btn-frosted-gold" style="flex:1; min-width:140px; max-width:240px; padding:12px 10px;" onclick="openTicketInfoModal('${ticketUrl}', '${priceStr}', '${e.title}')">我要参与</button>
+              <button class="btn-frosted-gold" style="flex:1; min-width:140px; max-width:240px; padding:12px 10px; background:rgba(255,255,255,0.05); color:#ddd; border-color:rgba(255,255,255,0.2);" onclick="openReminderModal('${e.id}', '${e.title}', '${eventDate}')">提醒我</button>
+            </div>
+        `;
 
         return `
           <div class="event-card fade-in gold-theme" style="text-align:center; height:auto; aspect-ratio:auto; padding:2rem;">
@@ -185,15 +185,38 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <h3 style="color:var(--gold); font-size:1.6rem; margin-bottom:0.8rem;">${e.title}</h3>
             <p style="line-height:1.6; font-size:0.95rem;">${desc}</p>
-            ${displayTicketInfo}
-            <div style="margin-top:20px;">
-              <button class="btn-frosted-gold" style="width:100%; max-width:240px;" onclick="openReminderModal('${e.id}', '${e.title}', '${eventDate}')">我要参与 / 提醒我</button>
-            </div>
+            ${displayButtons}
           </div>`;
       }).join('');
       refreshObserver();
     } catch(e) {}
   }
+
+  window.openTicketInfoModal = (url, price, title) => {
+    if (!url) return alert("尚未开放报名，敬请期待！");
+    // If it's a URL and doesn't look like a supabase image upload, open the link
+    if (url.startsWith('http') && !url.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) && !url.includes('storage.supabase.co')) {
+      window.open(url, '_blank');
+      return;
+    }
+    
+    // Otherwise show QR modal
+    let m = document.getElementById('ticketQrModal');
+    if(!m){
+      m = document.createElement('div'); m.id='ticketQrModal';
+      m.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(15px); padding:20px;";
+      document.body.appendChild(m);
+    }
+    m.innerHTML = `<div style="background:#fff; border-radius:30px; padding:2rem; text-align:center; max-width:400px; width:100%; color:#222; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+         <h2 style="margin-bottom:0.5rem; font-family:var(--font-display);">报名与付款</h2>
+         <h4 style="margin-bottom:1rem; color:var(--gold);">《${title}》</h4>
+         <p style="font-size:0.9rem; margin-bottom:15px; color:#666;">票价：<strong>${price}</strong></p>
+         <p style="font-size:0.8rem; color:#888; margin-bottom:15px;">请扫描下方二维码进行付款或报名。如有备注请填写您的名字。</p>
+         <img src="${url}" style="width:100%; max-width:250px; aspect-ratio:1; object-fit:contain; border-radius:12px; border:2px solid #eee; margin:0 auto 1.5rem; display:block;" onerror="this.src='assets/logo.png'">
+         <button class="btn-frosted-gold" style="width:100%; background:#eee; color:#333; border:none; border-radius:10px; padding:12px; font-weight:bold; cursor:pointer;" onclick="document.getElementById('ticketQrModal').style.display='none'">关闭 (Close)</button>
+      </div>`;
+    m.style.display = 'flex';
+  };
 
   window.openReminderModal = (id, title, date) => {
     let m = document.getElementById('reminderModal');
