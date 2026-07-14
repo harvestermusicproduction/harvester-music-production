@@ -136,20 +136,58 @@ document.addEventListener('DOMContentLoaded', () => {
       const { data: events } = await db.from('events').select('*').order('date', { ascending: true });
       container.innerHTML = events.map(e => {
         let desc = e.description || "";
-        const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
-        if (metaMatch) desc = desc.replace(metaMatch[0], '').trim();
+        let eventDate = e.date;
+        let eventTime = "";
+        let eventLocation = e.location || "";
+        let eventImage = e.image_url || "";
         
-        const date = e.date ? new Date(e.date).toLocaleDateString('zh-CN') : 'TBA';
+        const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
+        let ticketUrl = e.ticket_url || "";
+        let ticketPrice = e.ticket_price || "";
+        
+        if (metaMatch) {
+          try {
+            const meta = JSON.parse(metaMatch[1]);
+            if (meta.d) eventDate = meta.d;
+            if (meta.tm) eventTime = meta.tm;
+            if (meta.loc) eventLocation = meta.loc;
+            if (meta.img) eventImage = meta.img;
+            if (meta.turl) ticketUrl = meta.turl;
+            if (meta.tprice !== undefined) ticketPrice = meta.tprice;
+          } catch (err) {
+            console.warn("Meta parse fail:", err);
+          }
+          desc = desc.replace(metaMatch[0], '').trim();
+        }
+        
+        const dateStr = eventDate ? new Date(eventDate).toLocaleDateString('zh-CN') : 'TBA';
+        const displayTime = eventTime ? `<span style="margin-left:15px;"><i class="fas fa-clock"></i> ${eventTime}</span>` : '';
+        const displayLocation = eventLocation ? `<span style="margin-left:15px;"><i class="fas fa-map-marker-alt"></i> ${eventLocation}</span>` : '';
+        const displayImage = eventImage ? `<img src="${eventImage}" style="width:100%; max-height:220px; object-fit:cover; border-radius:12px; border:1px solid #333; margin-bottom:1.5rem;" onerror="this.style.display='none'">` : '';
+        
+        const isFree = !ticketPrice || parseFloat(ticketPrice) === 0;
+        const priceStr = isFree ? '免费 FREE' : 'RM ' + parseFloat(ticketPrice).toFixed(2);
+        const displayTicketInfo = ticketUrl ? `
+          <div style="margin-top:1.5rem; padding:1.5rem; background:rgba(246,210,138,0.05); border:1px solid rgba(246,210,138,0.15); border-radius:12px;">
+            <p style="color:var(--gold); font-size:0.9rem; margin-bottom:10px; font-weight:bold;">🎟️ 报名与付款 (票价: ${priceStr})</p>
+            <p style="font-size:0.8rem; color:#888; margin-bottom:15px;">请扫描下方二维码进行付款或报名，如有备注请填写您的名字。</p>
+            <img src="${ticketUrl}" style="width:180px; height:180px; object-fit:contain; border-radius:8px; border:2px solid #333; background:#fff; margin:0 auto;" onerror="this.style.display='none'">
+          </div>
+        ` : '';
+
         return `
-          <div class="event-card fade-in gold-theme" style="text-align:center;">
+          <div class="event-card fade-in gold-theme" style="text-align:center; height:auto; aspect-ratio:auto; padding:2rem;">
+            ${displayImage}
             <div style="font-size:0.9rem; opacity:0.8; margin-bottom:1rem;">
-              <span><i class="fas fa-calendar-alt"></i> ${date}</span>
-              ${e.location ? `<span style="margin-left:15px;"><i class="fas fa-map-marker-alt"></i> ${e.location}</span>` : ''}
+              <span><i class="fas fa-calendar-alt"></i> ${dateStr}</span>
+              ${displayTime}
+              ${displayLocation}
             </div>
             <h3 style="color:var(--gold); font-size:1.6rem; margin-bottom:0.8rem;">${e.title}</h3>
             <p style="line-height:1.6; font-size:0.95rem;">${desc}</p>
+            ${displayTicketInfo}
             <div style="margin-top:20px;">
-              <button class="btn-frosted-gold" style="width:100%; max-width:240px;" onclick="openReminderModal('${e.id}', '${e.title}', '${e.date}')">我要参与 / 提醒我</button>
+              <button class="btn-frosted-gold" style="width:100%; max-width:240px;" onclick="openReminderModal('${e.id}', '${e.title}', '${eventDate}')">我要参与 / 提醒我</button>
             </div>
           </div>`;
       }).join('');
@@ -262,64 +300,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if(lb && img) { img.src = url; lb.style.display = 'flex'; }
   };
 
-  // --- 🎟️ Ticket Events (tickets.html) ---
-  async function fetchTicketEvents() {
-    const grid = document.getElementById('ticketsGrid');
-    if (!grid) return;
-    try {
-      const { data: events } = await db
-        .from('events')
-        .select('*')
-        .order('event_date', { ascending: true });
-
-      if (!events || events.length === 0) {
-        grid.innerHTML = '';
-        const empty = document.getElementById('ticketsEmpty');
-        if (empty) empty.style.display = 'block';
-        return;
-      }
-
-      // Parse EXT_META if present
-      window.allTicketEvents = events.map(e => {
-        let desc = e.description || '';
-        const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
-        if (metaMatch) {
-          try {
-            const meta = JSON.parse(metaMatch[1]);
-            return {
-              ...e,
-              event_date: meta.d || e.event_date || e.date,
-              event_time: meta.tm || e.event_time,
-              image_url: meta.img || e.image_url,
-              ticket_url: meta.turl || e.ticket_url,
-              ticket_price: meta.tprice !== undefined ? meta.tprice : e.ticket_price,
-              max_seats: meta.mseat || e.max_seats,
-              description: desc.replace(metaMatch[0], '').trim()
-            };
-          } catch { return { ...e, description: desc.replace(metaMatch[0], '').trim() }; }
-        }
-        return { ...e, event_date: e.event_date || e.date };
-      });
-
-      // Sync data to global scope so tickets.html inline script can access it
-      window.allTicketEvents = window.allTicketEvents; // already set above
-      // Trigger the page render function (defined in tickets.html)
-      if (typeof renderFilteredTickets === 'function') {
-        renderFilteredTickets();
-      }
-    } catch (err) {
-      console.warn('fetchTicketEvents error:', err);
-      const grid = document.getElementById('ticketsGrid');
-      if (grid) grid.innerHTML = '<p style="text-align:center; color:#333; padding:4rem;">加载失败，请刷新页面</p>';
-    }
-  }
-
   // --- Runtime ---
   refreshObserver(); // Observe ALL static fade-in elements on every page immediately
   syncSiteContent();
   fetchMusic();
   fetchEvents();
-  fetchTicketEvents();
 });
 
 // Note Particles logic restated

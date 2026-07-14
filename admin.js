@@ -70,9 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="javascript:void(0)" onclick="switchModule('echo')" class="nav-item ${currentModule==='echo'?'active':''}">🌌 Echo Space</a>
             <a href="javascript:void(0)" onclick="switchModule('submissions')" class="nav-item ${currentModule==='submissions'?'active':''}">📮 Inbox</a>
             <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ Subscriptions</a>
-            <a href="javascript:void(0)" onclick="switchModule('tickets')" class="nav-item ${currentModule==='tickets'?'active':''}">🎟️ Ticket Links</a>
-            <a href="javascript:void(0)" onclick="switchModule('orders')" class="nav-item ${currentModule==='orders'?'active':''}">📦 Ticket Orders</a>
-            
+            <p class="nav-section-title" style="margin-top:25px;">Ticketing</p>
+            <a href="javascript:void(0)" onclick="switchModule('tickets')" class="nav-item ${currentModule==='tickets'?'active':''}">🎟️ Tickets</a>
+            <a href="javascript:void(0)" onclick="switchModule('orders')" class="nav-item ${currentModule==='orders'?'active':''}">📦 Orders</a>
             <p class="nav-section-title" style="margin-top:25px;">Engine</p>
             <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ Global Settings</a>
           </nav>
@@ -531,9 +531,13 @@ document.addEventListener('DOMContentLoaded', () => {
           <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:100px; margin-bottom:15px; padding:10px;">${e?.description || ''}</textarea>
 
           <div style="background:rgba(246,210,138,0.05); border:1px solid rgba(246,210,138,0.15); border-radius:12px; padding:15px; margin-bottom:15px;">
-            <p style="font-size:0.7rem; color:var(--gold); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; font-weight:bold;">🎟️ 票务配置 (Ticket2U / External Ticketing)</p>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">购票链接 (Ticket2U / Google Form URL)</label>
-            <input type="text" id="ev_ticket_url" value="${e?.ticket_url || ''}" placeholder="https://ticket2u.com.my/... 或 Google Form 链接" style="width:100%; padding:10px; margin-bottom:12px;">
+            <p style="font-size:0.7rem; color:var(--gold); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; font-weight:bold;">🎟️ 票务/付款二维码配置 (QR Code)</p>
+            
+            <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem;">上传付款或报名二维码 (QR Code)</label>
+            <img id="ev_qr_prev" src="${e?.ticket_url || 'https://via.placeholder.com/300x300?text=Upload+QR'}" style="width:150px; height:150px; object-fit:contain; border-radius:8px; margin-bottom:10px; border:1px solid #333; background:#222;">
+            <input type="file" id="f_qr" style="font-size:0.8rem; color:#888;">
+            <button class="btn-tiny" style="margin-top:10px; width:100%; padding:8px;" onclick="uploadFile('f_qr', 'ev_ticket_url', 'ev_qr_prev')">📤 上传 QR 照片</button>
+            <input type="hidden" id="ev_ticket_url" value="${e?.ticket_url || ''}">
             
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
               <div>
@@ -1377,29 +1381,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-        <h1 style="color:var(--gold);">🎟️ 票务链接管理 (Ticket Links)</h1>
-        <a href="tickets.html" target="_blank" class="btn-tiny" style="padding:8px 18px;">👁️ 查看票务页</a>
+        <h1 style="color:var(--gold);">🎟️ 票务/报名管理 (Ticketing & Registration)</h1>
       </div>
-      <p style="color:#555; font-size:0.85rem; margin-bottom:2rem;">在此为每个活动配置 Ticket2U 外链和票价，将实时反映在 <strong style="color:#888;">tickets.html</strong> 购票页面上。</p>
+      <p style="color:#555; font-size:0.85rem; margin-bottom:2rem;">在此为每个活动上传付款或报名的二维码，以及票价信息，用户扫描即可完成付款。</p>
 
       <div style="display:flex; flex-direction:column; gap:16px;">
         ${parsed?.map(e => {
           const isFree = !e.ticket_price || parseFloat(e.ticket_price) === 0;
-          const hasLink = !!e.ticket_url;
+          const hasLink = !!e.ticket_url && e.ticket_url.startsWith('http');
           return `
             <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:14px; padding:20px; display:flex; gap:20px; align-items:center; transition:0.3s;" onmouseover="this.style.borderColor='rgba(246,210,138,0.15)'" onmouseout="this.style.borderColor='#1a1a1a'">
               <img src="${e.image_url || 'https://via.placeholder.com/120x68?text=No+Poster'}" style="width:120px; height:68px; object-fit:cover; border-radius:8px; flex-shrink:0; border:1px solid #222;" onerror="this.src='assets/logo.png'">
               <div style="flex:1; min-width:0;">
                 <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
                   <h3 style="margin:0; color:#fff; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:250px;">${e.title}</h3>
-                  <span style="font-size:0.65rem; padding:3px 10px; border-radius:50px; background:${hasLink ? 'rgba(100,210,138,0.1)' : 'rgba(255,255,255,0.05)'}; color:${hasLink ? '#64D28A' : '#333'}; border:1px solid ${hasLink ? 'rgba(100,210,138,0.2)' : '#222'}; white-space:nowrap;">${hasLink ? '✅ 已配置链接' : '⚠️ 暂无链接'}</span>
+                  <span style="font-size:0.65rem; padding:3px 10px; border-radius:50px; background:${hasLink ? 'rgba(100,210,138,0.1)' : 'rgba(255,255,255,0.05)'}; color:${hasLink ? '#64D28A' : '#333'}; border:1px solid ${hasLink ? 'rgba(100,210,138,0.2)' : '#222'}; white-space:nowrap;">${hasLink ? '✅ 已上传二维码' : '⚠️ 未上传二维码'}</span>
                 </div>
                 <div style="display:flex; gap:20px; font-size:0.75rem; color:#555; flex-wrap:wrap;">
                   <span><i class="fas fa-calendar-alt" style="margin-right:4px; color:var(--gold); opacity:0.5;"></i>${e.event_date || e.date || 'TBA'}</span>
                   <span><i class="fas fa-tag" style="margin-right:4px; color:var(--gold); opacity:0.5;"></i>${isFree ? '免费 FREE' : 'RM ' + parseFloat(e.ticket_price).toFixed(2)}</span>
                   ${e.max_seats ? `<span><i class="fas fa-users" style="margin-right:4px; color:var(--gold); opacity:0.5;"></i>${e.max_seats} seats</span>` : ''}
                 </div>
-                ${hasLink ? `<div style="font-size:0.7rem; color:#333; margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${e.ticket_url}</div>` : ''}
               </div>
               <button class="btn-tiny" style="padding:8px 20px; white-space:nowrap;" onclick="openEventModal('${e.id}')">✏️ 编辑票务</button>
             </div>
@@ -1408,13 +1410,12 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       <div style="margin-top:40px; background:rgba(246,210,138,0.04); border:1px solid rgba(246,210,138,0.1); border-radius:14px; padding:20px;">
-        <h4 style="color:var(--gold); margin-top:0; font-size:0.85rem; letter-spacing:2px;">💡 如何配置 Ticket2U 购票链接</h4>
+        <h4 style="color:var(--gold); margin-top:0; font-size:0.85rem; letter-spacing:2px;">💡 如何配置付款/报名二维码</h4>
         <ol style="color:#555; font-size:0.85rem; padding-left:1.5rem; line-height:2;">
-          <li>到 <a href="https://www.ticket2u.com.my" target="_blank" style="color:var(--gold);">Ticket2U</a> 创建你的活动并发布</li>
-          <li>复制 Ticket2U 活动页面链接</li>
           <li>点击上方对应活动的 <strong style="color:#888;">✏️ 编辑票务</strong> 按钮</li>
-          <li>将链接粘贴到"购票链接"一栏，设置票价和名额</li>
-          <li>保存后，<strong style="color:#888;">tickets.html</strong> 将自动显示"立即购票"按钮</li>
+          <li>在“票务/付款二维码配置”区域，上传包含二维码的照片（如 DuitNow 或报名群二维码）。</li>
+          <li>设置活动价格与人数限制。</li>
+          <li>保存后，前端页面就会展示该照片供用户扫描。</li>
         </ol>
       </div>
     `;
