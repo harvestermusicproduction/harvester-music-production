@@ -129,114 +129,175 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {}
   }
 
+  // --- Event & Album Metadata Parser ---
+  function parseEventData(item) {
+    if (!item) return { title: '', dateStr: '', timeStr: '', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '', fullDateTime: '' };
+    
+    let desc = (item.description || "").trim();
+    let rawDate = item.event_date || item.date || item.start_date || item.eventDate || "";
+    let rawTime = item.event_time || item.time || item.start_time || item.eventTime || "";
+    let rawLoc = item.location || item.loc || "";
+    let rawMapUrl = item.map_url || item.mapUrl || item.murl || "";
+    let rawImg = item.image_url || item.cover_url || item.imageUrl || item.poster_url || "";
+    let emailTemplate = item.email_template || item.emailTemplate || "";
+
+    // Parse EXT_META JSON block if embedded in description
+    if (desc && typeof desc === 'string' && desc.includes('EXT_META:')) {
+      const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
+      if (metaMatch) {
+        try {
+          const meta = JSON.parse(metaMatch[1]);
+          if (meta.d || meta.date || meta.event_date) rawDate = meta.d || meta.date || meta.event_date;
+          if (meta.tm || meta.time || meta.event_time || meta.start_time) rawTime = meta.tm || meta.time || meta.event_time || meta.start_time;
+          if (meta.loc || meta.location) rawLoc = meta.loc || meta.location;
+          if (meta.murl || meta.map_url) rawMapUrl = meta.murl || meta.map_url;
+          if (meta.img || meta.image_url) rawImg = meta.img || meta.image_url;
+          if (meta.et || meta.email_template) emailTemplate = meta.et || meta.email_template;
+        } catch (err) {
+          console.warn("Meta parse fail:", err);
+        }
+        desc = desc.replace(metaMatch[0], '').trim();
+      }
+    }
+
+    // Extract time from date string if combined (e.g. 2026-08-25T19:30:00 or 2026-08-25 19:30)
+    let datePart = rawDate ? String(rawDate).trim() : "";
+    if (datePart.includes('T')) {
+      const parts = datePart.split('T');
+      datePart = parts[0];
+      if (!rawTime && parts[1]) rawTime = parts[1].replace('Z', '').substring(0, 5);
+    } else if (datePart.includes(' ') && !datePart.includes('年')) {
+      const parts = datePart.split(' ');
+      datePart = parts[0];
+      if (!rawTime && parts[1]) rawTime = parts[1].substring(0, 5);
+    }
+
+    // If time is still empty, check description or title for time clues (e.g. 时间：19:30, ⏰ 19:30, 7:30 PM, etc.)
+    if (!rawTime && desc) {
+      const descTimeMatch = desc.match(/(?:时间|time|⏰|：|\s|^)(\d{1,2}[:：.]\d{2}(?:\s*(?:am|pm|AM|PM))?)/i);
+      if (descTimeMatch) rawTime = descTimeMatch[1];
+    }
+
+    // Format Date (e.g. 2026-08-25 -> 2026年8月25日)
+    let dateStr = datePart;
+    const dateMatch = datePart.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);
+    if (dateMatch) {
+      dateStr = `${dateMatch[1]}年${parseInt(dateMatch[2], 10)}月${parseInt(dateMatch[3], 10)}日`;
+    }
+
+    // Format Time (e.g. 19:30 or 19:30 - 21:30 or 7:30 PM)
+    let timeStr = "";
+    if (rawTime) {
+      const cleanTime = String(rawTime).trim();
+      if (cleanTime.includes('-') || cleanTime.includes('~') || cleanTime.includes('至')) {
+        timeStr = cleanTime;
+      } else {
+        const isPM = /pm|下午|晚上|夜间|傍晚/i.test(cleanTime);
+        const isAM = /am|上午|早上|清晨/i.test(cleanTime);
+        const timeMatch = cleanTime.match(/(\d{1,2})[:：.](\d{2})/);
+        if (timeMatch) {
+          let h = parseInt(timeMatch[1], 10);
+          const m = timeMatch[2];
+          if (isPM && h < 12) h += 12;
+          if (isAM && h === 12) h = 0;
+          timeStr = `${String(h).padStart(2, '0')}:${m}`;
+        } else {
+          timeStr = cleanTime;
+        }
+      }
+    }
+
+    const fullDateTime = `${dateStr}${timeStr ? ' ' + timeStr : ''}`.trim();
+
+    return {
+      id: item.id,
+      title: item.title || '',
+      dateStr,
+      timeStr,
+      location: rawLoc,
+      mapUrl: rawMapUrl,
+      image_url: rawImg,
+      description: desc,
+      rawDate,
+      rawTime,
+      emailTemplate,
+      fullDateTime
+    };
+  }
+
   async function fetchEvents() {
     const container = document.getElementById('eventsContainer');
     if (!container) return;
     try {
-      const { data: events } = await db.from('events').select('*').order('date', { ascending: true });
+      let res = await db.from('events').select('*').order('created_at', { ascending: false });
+      if (res.error || !res.data) {
+        res = await db.from('events').select('*');
+      }
+      const rawEvents = res.data || [];
+
+      if (rawEvents.length === 0) {
+        container.innerHTML = `<p style="text-align:center; opacity:0.5; font-size:0.95rem; margin-top:2rem;">暂无活动预告 敬请期待</p>`;
+        return;
+      }
+
+      const events = rawEvents.map(e => parseEventData(e));
+      // Sort by date if available
+      events.sort((a, b) => (b.rawDate || '').localeCompare(a.rawDate || ''));
+
       container.innerHTML = events.map(e => {
-        let desc = e.description || "";
-        let eventDate = e.date;
-        let eventTime = "";
-        let eventLocation = e.location || "";
-        let eventImage = e.image_url || "";
+        const displayDate = e.dateStr ? `<span><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>${e.dateStr}</span>` : '';
+        const displayTime = e.timeStr ? `<span><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${e.timeStr}</span>` : '';
+        const displayLocation = e.location ? `<span><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${e.location}</span>` : '';
+        const displayImage = e.image_url ? `<a href="event.html?id=${e.id}"><img src="${e.image_url}" style="width:100%; max-height:280px; object-fit:cover; border-radius:12px; border:1px solid #333; margin-bottom:1.5rem;" onerror="this.style.display='none'"></a>` : '';
         
-        const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
-        let ticketUrl = e.ticket_url || "";
-        let ticketPrice = e.ticket_price || "";
-        
-        if (metaMatch) {
-          try {
-            const meta = JSON.parse(metaMatch[1]);
-            if (meta.d) eventDate = meta.d;
-            if (meta.tm) eventTime = meta.tm;
-            if (meta.loc) eventLocation = meta.loc;
-            if (meta.img) eventImage = meta.img;
-            if (meta.turl) ticketUrl = meta.turl;
-            if (meta.tprice !== undefined) ticketPrice = meta.tprice;
-          } catch (err) {
-            console.warn("Meta parse fail:", err);
-          }
-          desc = desc.replace(metaMatch[0], '').trim();
-        }
-        
-        const dateStr = eventDate ? new Date(eventDate).toLocaleDateString('zh-CN') : 'TBA';
-        const displayTime = eventTime ? `<span style="margin-left:15px;"><i class="fas fa-clock"></i> ${eventTime}</span>` : '';
-        const displayLocation = eventLocation ? `<span style="margin-left:15px;"><i class="fas fa-map-marker-alt"></i> ${eventLocation}</span>` : '';
-        const displayImage = eventImage ? `<img src="${eventImage}" style="width:100%; max-height:220px; object-fit:cover; border-radius:12px; border:1px solid #333; margin-bottom:1.5rem;" onerror="this.style.display='none'">` : '';
-        
-        const isFree = !ticketPrice || parseFloat(ticketPrice) === 0;
-        const priceStr = isFree ? '免费 FREE' : 'RM ' + parseFloat(ticketPrice).toFixed(2);
-        
+        const cleanTitle = (e.title || "").replace(/'/g, "\\'");
         const displayButtons = `
-            <div style="margin-top:20px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-              <button class="btn-frosted-gold" style="flex:1; min-width:140px; max-width:240px; padding:12px 10px;" onclick="openTicketInfoModal('${ticketUrl}', '${priceStr}', '${e.title}')">我要参与</button>
-              <button class="btn-frosted-gold" style="flex:1; min-width:140px; max-width:240px; padding:12px 10px; background:rgba(255,255,255,0.05); color:#ddd; border-color:rgba(255,255,255,0.2);" onclick="openReminderModal('${e.id}', '${e.title}', '${eventDate}')">提醒我</button>
+            <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+              <button class="btn-frosted-gold" style="min-width:180px; max-width:260px; padding:12px 20px; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:50px; cursor:pointer; font-weight:600;" onclick="openReminderModal('${e.id}', '${cleanTitle}', '${e.fullDateTime}')"><i class="fas fa-bell"></i> 提醒我</button>
             </div>
         `;
 
         return `
-          <div class="event-card fade-in gold-theme" style="text-align:center; height:auto; aspect-ratio:auto; padding:2rem;">
+          <div class="event-card fade-in gold-theme" style="text-align:center; height:auto; aspect-ratio:auto; padding:2.5rem; background:#111; border:1px solid rgba(246,210,138,0.25); border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
             ${displayImage}
-            <div style="font-size:0.9rem; opacity:0.8; margin-bottom:1rem;">
-              <span><i class="fas fa-calendar-alt"></i> ${dateStr}</span>
+            <div style="font-size:0.95rem; color:#ccc; margin-bottom:1.2rem; display:flex; gap:15px; justify-content:center; flex-wrap:wrap; align-items:center;">
+              ${displayDate}
               ${displayTime}
               ${displayLocation}
             </div>
-            <h3 style="color:var(--gold); font-size:1.6rem; margin-bottom:0.8rem;">${e.title}</h3>
-            <p style="line-height:1.6; font-size:0.95rem;">${desc}</p>
+            <h3 style="color:var(--gold); font-size:1.7rem; margin-bottom:0.8rem;"><a href="event.html?id=${e.id}" style="color:inherit; text-decoration:none;">${e.title}</a></h3>
+            ${e.description ? `<p style="line-height:1.7; font-size:0.95rem; color:#ddd; margin-bottom:1rem;">${e.description}</p>` : ''}
             ${displayButtons}
           </div>`;
       }).join('');
       refreshObserver();
-    } catch(e) {}
+    } catch(e) {
+      console.error("fetchEvents fail:", e);
+    }
   }
-
-  window.openTicketInfoModal = (url, price, title) => {
-    if (!url) return alert("尚未开放报名，敬请期待！");
-    // If it's a URL and doesn't look like a supabase image upload, open the link
-    if (url.startsWith('http') && !url.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) && !url.includes('storage.supabase.co')) {
-      window.open(url, '_blank');
-      return;
-    }
-    
-    // Otherwise show QR modal
-    let m = document.getElementById('ticketQrModal');
-    if(!m){
-      m = document.createElement('div'); m.id='ticketQrModal';
-      m.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(15px); padding:20px;";
-      document.body.appendChild(m);
-    }
-    m.innerHTML = `<div style="background:#fff; border-radius:30px; padding:2rem; text-align:center; max-width:400px; width:100%; color:#222; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
-         <h2 style="margin-bottom:0.5rem; font-family:var(--font-display);">报名与付款</h2>
-         <h4 style="margin-bottom:1rem; color:var(--gold);">《${title}》</h4>
-         <p style="font-size:0.9rem; margin-bottom:15px; color:#666;">票价：<strong>${price}</strong></p>
-         <p style="font-size:0.8rem; color:#888; margin-bottom:15px;">请扫描下方二维码进行付款或报名。如有备注请填写您的名字。</p>
-         <img src="${url}" style="width:100%; max-width:250px; aspect-ratio:1; object-fit:contain; border-radius:12px; border:2px solid #eee; margin:0 auto 1.5rem; display:block;" onerror="this.src='assets/logo.png'">
-         <button class="btn-frosted-gold" style="width:100%; background:#eee; color:#333; border:none; border-radius:10px; padding:12px; font-weight:bold; cursor:pointer;" onclick="document.getElementById('ticketQrModal').style.display='none'">关闭 (Close)</button>
-      </div>`;
-    m.style.display = 'flex';
-  };
 
   window.openReminderModal = (id, title, date) => {
     let m = document.getElementById('reminderModal');
     if(!m){
       m=document.createElement('div'); m.id='reminderModal';
       m.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(15px); padding:20px;";
-      m.innerHTML=`<div style="background:#fff; border-radius:30px; padding:2rem; text-align:center; max-width:400px; width:100%; color:#222;">
-         <h2 style="margin-bottom:0.5rem; font-family:var(--font-display);">活动参与</h2>
-         <p style="font-size:0.9rem; margin-bottom:1.5rem; color:#666;">请输入邮箱，我们会在活动前提醒你。</p>
-         <h4 id="rem_t" style="margin-bottom:1.5rem; color:var(--gold);"></h4>
-         <input type="email" id="rem_email" placeholder="your@email.com" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ccc; margin-bottom:1.5rem; text-align:center;">
+      m.innerHTML=`<div style="background:#111; border:1px solid var(--gold); border-radius:24px; padding:2.5rem; text-align:center; max-width:420px; width:100%; color:#fff; box-shadow:0 20px 50px rgba(0,0,0,0.8);">
+         <h2 style="margin-bottom:0.5rem; font-family:var(--font-display); color:var(--gold);">活动提醒</h2>
+         <p style="font-size:0.9rem; margin-bottom:1.2rem; color:#aaa;">输入邮箱，我们会在活动前给您发送提醒。</p>
+         <h4 id="rem_t" style="margin-bottom:0.4rem; color:#fff; font-size:1.1rem;"></h4>
+         <p id="rem_d" style="font-size:0.85rem; color:var(--gold); margin-bottom:1.5rem;"></p>
+         <input type="email" id="rem_email" placeholder="your@email.com" style="width:100%; padding:12px; border-radius:10px; border:1px solid #333; background:#222; color:#fff; margin-bottom:1.5rem; text-align:center; font-size:1rem; box-sizing:border-box;">
          <div style="display:flex; gap:10px;">
-           <button id="rem_submit" class="btn-frosted-gold" style="flex:2; background:#000; color:var(--gold); border:none; border-radius:10px; padding:12px; font-weight:bold;">🔔 提交</button>
-           <button style="flex:1; border-radius:10px; padding:12px; background:#eee; border:none; color:#666; cursor:pointer;" onclick="document.getElementById('reminderModal').style.display='none'">取消</button>
+           <button id="rem_submit" class="btn-frosted-gold" style="flex:2; background:var(--gold); color:#000; border:none; border-radius:50px; padding:12px; font-weight:bold; cursor:pointer;">🔔 提交提醒</button>
+           <button style="flex:1; border-radius:50px; padding:12px; background:#222; border:1px solid #444; color:#ccc; cursor:pointer;" onclick="document.getElementById('reminderModal').style.display='none'">取消</button>
          </div>
       </div>`;
       document.body.appendChild(m);
     }
     m.style.display = 'flex';
     document.getElementById('rem_t').innerText = `《${title}》`;
+    const remDEl = document.getElementById('rem_d');
+    if (remDEl) remDEl.innerText = date ? `📅 ${date}` : '';
     document.getElementById('rem_submit').onclick = async () => {
       const email = document.getElementById('rem_email').value;
       if(!email || !email.includes('@')) return alert("请输入有效邮箱");
@@ -276,45 +337,126 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('galleryContainer');
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
-    if (!container || !id) return;
+    if (!container) return;
+
+    if (!id) {
+      container.innerHTML = "<p style='text-align:center; opacity:0.5; padding:3rem;'>未指定活动或相册</p>";
+      return;
+    }
 
     try {
-      const { data: album } = await db.from('diary_albums').select('*, diary_media(*)').eq('id', id).single();
+      let album = null;
+      let isEvent = false;
+
+      // 1. Try diary_albums first
+      const { data: diaryData } = await db.from('diary_albums').select('*, diary_media(*)').eq('id', id).maybeSingle();
+      if (diaryData) {
+        album = diaryData;
+      } else {
+        // 2. Fallback to events table
+        const { data: eventData } = await db.from('events').select('*').eq('id', id).maybeSingle();
+        if (eventData) {
+          album = eventData;
+          isEvent = true;
+        }
+      }
+
+      if (!album) {
+        container.innerHTML = "<p style='text-align:center; opacity:0.5; padding:3rem;'>暂无相关数据</p>";
+        return;
+      }
+
+      const parsed = parseEventData(album);
+
+      if (parsed.title) {
+        document.title = `${parsed.title} | Harvester Music`;
+      }
+
       const titleEl = document.getElementById('eventTitle');
-      if (titleEl) titleEl.innerText = album.title;
-      
+      if (titleEl) titleEl.innerText = parsed.title || '';
+
       const dateEl = document.getElementById('eventDate');
       if (dateEl) {
         dateEl.style.display = 'flex';
         dateEl.style.alignItems = 'center';
-        dateEl.innerHTML = `<span>${album.date}</span>`;
+        dateEl.style.justifyContent = 'center';
+        dateEl.style.gap = '15px';
+        dateEl.style.flexWrap = 'wrap';
+
+        let html = '';
+        if (parsed.dateStr) html += `<span><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.dateStr}</span>`;
+        if (parsed.timeStr) html += `<span><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${parsed.timeStr}</span>`;
+        if (parsed.location) html += `<span><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.location}</span>`;
+        
+        dateEl.innerHTML = html;
+      }
+
+      const descEl = document.getElementById('eventDesc');
+      if (descEl) {
+        if (parsed.description) {
+          descEl.innerText = parsed.description;
+          descEl.style.display = 'block';
+        } else {
+          descEl.style.display = 'none';
+        }
       }
 
       const fbLink = album.fb_url;
-      
-      if (fbLink && !document.getElementById('fb_link_exists')) {
+      if (fbLink && dateEl && !document.getElementById('fb_link_exists')) {
         const link = document.createElement('span');
         link.id = 'fb_link_exists';
         link.style.display = 'inline-block';
-        link.style.lineHeight = '0';
-        link.style.marginLeft = "15px";
+        link.style.lineHeight = '1';
         link.innerHTML = `
-          <a href="${fbLink}" target="_blank" class="btn-social-fb" style="display:inline-flex; width:auto; padding:4px 14px; font-size:0.7rem; vertical-align:middle; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:100px; text-decoration:none; backdrop-filter:blur(5px); letter-spacing:1px; transition:0.3s; margin:0; line-height:1;">
+          <a href="${fbLink}" target="_blank" class="btn-social-fb" style="display:inline-flex; width:auto; padding:4px 14px; font-size:0.75rem; vertical-align:middle; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:100px; text-decoration:none; backdrop-filter:blur(5px); letter-spacing:1px; transition:0.3s; margin:0; align-items:center;">
             <i class="fab fa-facebook-f" style="font-size:0.8rem; margin-right:5px;"></i> Facebook
           </a>
         `;
-        dateEl?.appendChild(link);
+        dateEl.appendChild(link);
+      }
+
+      // If it's an event (from events table), add reminder button
+      const oldBtn = document.getElementById('event_remind_btn_wrap');
+      if (oldBtn) oldBtn.remove();
+      if (isEvent) {
+        const cleanTitle = (parsed.title || "").replace(/'/g, "\\'");
+        const btnWrap = document.createElement('div');
+        btnWrap.id = 'event_remind_btn_wrap';
+        btnWrap.style = "width:100%; display:flex; justify-content:center; margin-top:20px;";
+        btnWrap.innerHTML = `
+          <button class="btn-frosted-gold" style="min-width:180px; max-width:260px; padding:12px 24px; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:50px; cursor:pointer; font-weight:600; font-size:0.95rem;" onclick="openReminderModal('${album.id}', '${cleanTitle}', '${parsed.fullDateTime}')"><i class="fas fa-bell"></i> 提醒我</button>
+        `;
+        const eventHeader = document.getElementById('eventHeader');
+        if (eventHeader) eventHeader.appendChild(btnWrap);
       }
 
       let list = [];
       if (album.cover_url) list.push({ media_url: album.cover_url, is_cover: true });
-      if (album.diary_media) list = [...list, ...album.diary_media];
+      if (parsed.image_url && parsed.image_url !== album.cover_url) list.push({ media_url: parsed.image_url, is_cover: true });
+      if (album.diary_media && album.diary_media.length > 0) list = [...list, ...album.diary_media];
 
-      container.innerHTML = list.map(p => `
-        <div class="photo-item" onclick="openLightbox('${p.media_url}')">
-          <img src="${p.media_url}">
-        </div>`).join('');
-    } catch (e) { container.innerHTML = "加载失败。"; }
+      if (list.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:3rem; color:#aaa; max-width:600px; margin:0 auto;"><p style="line-height:1.8;">${parsed.description ? '' : '精彩照片整理中...'}</p></div>`;
+      } else if (list.length === 1) {
+        // Single featured poster presentation
+        container.innerHTML = `
+          <div style="max-width:680px; margin:2rem auto; text-align:center; padding:0 1rem;">
+            <div class="gallery-item" onclick="openLightbox('${list[0].media_url}')" style="cursor:pointer; display:inline-block; max-width:100%; border-radius:16px; overflow:hidden; border:1px solid rgba(246,210,138,0.25); box-shadow:0 15px 40px rgba(0,0,0,0.6); aspect-ratio:auto;">
+              <img src="${list[0].media_url}" class="gallery-img" style="max-height:550px; width:100%; object-fit:contain; display:block;" onerror="this.parentElement.style.display='none'">
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = list.map(p => `
+          <div class="gallery-item" onclick="openLightbox('${p.media_url}')">
+            <img src="${p.media_url}" class="gallery-img" onerror="this.parentElement.style.display='none'">
+          </div>`).join('');
+      }
+
+    } catch (e) {
+      console.error("initEventGallery Error:", e);
+      container.innerHTML = "<p style='text-align:center; opacity:0.5;'>加载失败。</p>";
+    }
   }
 
   window.openLightbox = (url) => {
@@ -328,6 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
   syncSiteContent();
   fetchMusic();
   fetchEvents();
+  if (document.getElementById('galleryContainer')) initEventGallery();
 });
 
 // Note Particles logic restated

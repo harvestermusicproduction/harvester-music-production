@@ -70,9 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="javascript:void(0)" onclick="switchModule('echo')" class="nav-item ${currentModule==='echo'?'active':''}">🌌 Echo Space</a>
             <a href="javascript:void(0)" onclick="switchModule('submissions')" class="nav-item ${currentModule==='submissions'?'active':''}">📮 Inbox</a>
             <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ Subscriptions</a>
-            <p class="nav-section-title" style="margin-top:25px;">Ticketing</p>
-            <a href="javascript:void(0)" onclick="switchModule('tickets')" class="nav-item ${currentModule==='tickets'?'active':''}">🎟️ Tickets</a>
-            <a href="javascript:void(0)" onclick="switchModule('orders')" class="nav-item ${currentModule==='orders'?'active':''}">📦 Orders</a>
             <p class="nav-section-title" style="margin-top:25px;">Engine</p>
             <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ Global Settings</a>
           </nav>
@@ -118,8 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (currentModule === 'reminders') renderReminders(body);
     else if (currentModule === 'submissions') renderSubmissions(body);
     else if (currentModule === 'config') renderConfig(body);
-    else if (currentModule === 'tickets') renderTickets(body);
-    else if (currentModule === 'orders') renderOrders(body);
     else body.innerHTML = `<h2 style="color:#333;">${currentModule.toUpperCase()}</h2><p style="color:#222;">Migration in progress.</p>`;
   }
 
@@ -402,18 +397,24 @@ document.addEventListener('DOMContentLoaded', () => {
           const meta = JSON.parse(metaMatch[1]);
           return {
             ...e,
-            event_date: meta.d || e.event_date,
-            event_time: meta.tm || e.event_time,
+            event_date: meta.d || e.event_date || e.date,
+            event_time: meta.tm || e.event_time || e.time,
+            location: meta.loc || e.location,
+            map_url: meta.murl || e.map_url,
             image_url: meta.img || e.image_url,
             email_template: meta.et || e.email_template,
             description: desc.replace(metaMatch[0], '').trim()
           };
         } catch (err) {
           console.warn("Meta parse fail:", err);
-          return { ...e, description: desc.replace(metaMatch[0], '').trim() };
+          return { ...e, event_date: e.event_date || e.date, event_time: e.event_time || e.time, location: e.location, map_url: e.map_url, description: desc.replace(metaMatch[0], '').trim() };
         }
       }
-      return e;
+      return {
+        ...e,
+        event_date: e.event_date || e.date,
+        event_time: e.event_time || e.time
+      };
     });
 
     container.innerHTML = `
@@ -474,14 +475,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const meta = JSON.parse(metaMatch[1]);
                 e = {
                   ...e,
-                  event_date: meta.d || e.event_date,
-                  event_time: meta.tm || e.event_time,
+                  event_date: meta.d || e.event_date || e.date,
+                  event_time: meta.tm || e.event_time || e.time,
+                  location: meta.loc || e.location,
+                  map_url: meta.murl || e.map_url,
                   image_url: meta.img || e.image_url,
                   email_template: meta.et || e.email_template,
                   description: e.description.replace(metaMatch[0], '').trim()
                 };
               } catch(err) {}
            }
+        } else {
+           e = {
+             ...e,
+             event_date: e.event_date || e.date,
+             event_time: e.event_time || e.time
+           };
         }
       }
       const isEdit = !!e;
@@ -530,27 +539,6 @@ document.addEventListener('DOMContentLoaded', () => {
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动详情描述</label>
           <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:100px; margin-bottom:15px; padding:10px;">${e?.description || ''}</textarea>
 
-          <div style="background:rgba(246,210,138,0.05); border:1px solid rgba(246,210,138,0.15); border-radius:12px; padding:15px; margin-bottom:15px;">
-            <p style="font-size:0.7rem; color:var(--gold); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; font-weight:bold;">🎟️ 票务/付款二维码配置 (QR Code)</p>
-            
-            <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem;">上传付款或报名二维码 (QR Code)</label>
-            <img id="ev_qr_prev" src="${e?.ticket_url || 'https://via.placeholder.com/300x300?text=Upload+QR'}" style="width:150px; height:150px; object-fit:contain; border-radius:8px; margin-bottom:10px; border:1px solid #333; background:#222;">
-            <input type="file" id="f_qr" style="font-size:0.8rem; color:#888;">
-            <button class="btn-tiny" style="margin-top:10px; width:100%; padding:8px;" onclick="uploadFile('f_qr', 'ev_ticket_url', 'ev_qr_prev')">📤 上传 QR 照片</button>
-            <input type="hidden" id="ev_ticket_url" value="${e?.ticket_url || ''}">
-            
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-              <div>
-                <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">最低票价 RM (0 = 免费)</label>
-                <input type="number" id="ev_ticket_price" value="${e?.ticket_price ?? ''}" placeholder="0.00" min="0" step="0.01" style="width:100%; padding:10px;">
-              </div>
-              <div>
-                <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">总名额 (留空 = 不限)</label>
-                <input type="number" id="ev_max_seats" value="${e?.max_seats ?? ''}" placeholder="例如：200" min="0" style="width:100%; padding:10px;">
-              </div>
-            </div>
-          </div>
-
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">提醒邮件定制内容 (如果不填则使用系统默认)</label>
           <textarea id="ev_email" placeholder="支持自动换行。例：请记得明天穿白色上衣出席哦！" style="width:100%; height:80px; margin-bottom:20px; padding:10px;">${e?.email_template || ''}</textarea>
 
@@ -583,10 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
       map_url: document.getElementById('ev_ml').value,
       image_url: document.getElementById('ev_url').value,
       email_template: document.getElementById('ev_email').value,
-      description: document.getElementById('ev_desc').value,
-      ticket_url: document.getElementById('ev_ticket_url').value,
-      ticket_price: document.getElementById('ev_ticket_price').value || null,
-      max_seats: document.getElementById('ev_max_seats').value ? parseInt(document.getElementById('ev_max_seats').value) : null
+      description: document.getElementById('ev_desc').value
     };
 
     try {
@@ -1360,156 +1345,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.deleteItem = async(t, id) => {
     if(confirm("确定永久删除？")) { await db.from(t).delete().eq('id', id); renderCMS(); }
-  };
-
-  // --- 🎟️ TICKETS MODULE (票务链接管理) ---
-  async function renderTickets(container) {
-    const { data: events } = await db.from('events').select('*').order('event_date', { ascending: true });
-
-    // Parse EXT_META from description if needed
-    const parsed = events?.map(e => {
-      let desc = e.description || '';
-      const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
-      if (metaMatch) {
-        try {
-          const meta = JSON.parse(metaMatch[1]);
-          return { ...e, event_date: meta.d || e.event_date || e.date, ticket_url: meta.turl || e.ticket_url, ticket_price: meta.tprice ?? e.ticket_price, max_seats: meta.mseat || e.max_seats, description: desc.replace(metaMatch[0], '').trim() };
-        } catch { return e; }
-      }
-      return { ...e, event_date: e.event_date || e.date };
-    });
-
-    container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-        <h1 style="color:var(--gold);">🎟️ 票务/报名管理 (Ticketing & Registration)</h1>
-      </div>
-      <p style="color:#555; font-size:0.85rem; margin-bottom:2rem;">在此为每个活动上传付款或报名的二维码，以及票价信息，用户扫描即可完成付款。</p>
-
-      <div style="display:flex; flex-direction:column; gap:16px;">
-        ${parsed?.map(e => {
-          const isFree = !e.ticket_price || parseFloat(e.ticket_price) === 0;
-          const hasLink = !!e.ticket_url && e.ticket_url.startsWith('http');
-          return `
-            <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:14px; padding:20px; display:flex; gap:20px; align-items:center; transition:0.3s;" onmouseover="this.style.borderColor='rgba(246,210,138,0.15)'" onmouseout="this.style.borderColor='#1a1a1a'">
-              <img src="${e.image_url || 'https://via.placeholder.com/120x68?text=No+Poster'}" style="width:120px; height:68px; object-fit:cover; border-radius:8px; flex-shrink:0; border:1px solid #222;" onerror="this.src='assets/logo.png'">
-              <div style="flex:1; min-width:0;">
-                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
-                  <h3 style="margin:0; color:#fff; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:250px;">${e.title}</h3>
-                  <span style="font-size:0.65rem; padding:3px 10px; border-radius:50px; background:${hasLink ? 'rgba(100,210,138,0.1)' : 'rgba(255,255,255,0.05)'}; color:${hasLink ? '#64D28A' : '#333'}; border:1px solid ${hasLink ? 'rgba(100,210,138,0.2)' : '#222'}; white-space:nowrap;">${hasLink ? '✅ 已上传二维码' : '⚠️ 未上传二维码'}</span>
-                </div>
-                <div style="display:flex; gap:20px; font-size:0.75rem; color:#555; flex-wrap:wrap;">
-                  <span><i class="fas fa-calendar-alt" style="margin-right:4px; color:var(--gold); opacity:0.5;"></i>${e.event_date || e.date || 'TBA'}</span>
-                  <span><i class="fas fa-tag" style="margin-right:4px; color:var(--gold); opacity:0.5;"></i>${isFree ? '免费 FREE' : 'RM ' + parseFloat(e.ticket_price).toFixed(2)}</span>
-                  ${e.max_seats ? `<span><i class="fas fa-users" style="margin-right:4px; color:var(--gold); opacity:0.5;"></i>${e.max_seats} seats</span>` : ''}
-                </div>
-              </div>
-              <button class="btn-tiny" style="padding:8px 20px; white-space:nowrap;" onclick="openEventModal('${e.id}')">✏️ 编辑票务</button>
-            </div>
-          `;
-        }).join('') || '<p style="text-align:center; color:#444; padding:50px;">暂无活动，请先在 Events 模块中新建活动</p>'}
-      </div>
-
-      <div style="margin-top:40px; background:rgba(246,210,138,0.04); border:1px solid rgba(246,210,138,0.1); border-radius:14px; padding:20px;">
-        <h4 style="color:var(--gold); margin-top:0; font-size:0.85rem; letter-spacing:2px;">💡 如何配置付款/报名二维码</h4>
-        <ol style="color:#555; font-size:0.85rem; padding-left:1.5rem; line-height:2;">
-          <li>点击上方对应活动的 <strong style="color:#888;">✏️ 编辑票务</strong> 按钮</li>
-          <li>在“票务/付款二维码配置”区域，上传包含二维码的照片（如 DuitNow 或报名群二维码）。</li>
-          <li>设置活动价格与人数限制。</li>
-          <li>保存后，前端页面就会展示该照片供用户扫描。</li>
-        </ol>
-      </div>
-    `;
-  }
-
-
-  // --- 📦 TICKET ORDERS MODULE (原生订单管理) ---
-  async function renderOrders(container) {
-    const { data: orders } = await db.from('ticket_orders').select('*').order('created_at', { ascending: false });
-    const { data: events } = await db.from('events').select('id, title, max_seats, seats_sold');
-
-    const eventMap = {};
-    if (events) events.forEach(e => eventMap[e.id] = e);
-
-    container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-        <h1 style="color:var(--gold);">📦 票务订单管理 (Ticket Orders)</h1>
-      </div>
-      <p style="color:#555; font-size:0.85rem; margin-bottom:2rem;">在此审核用户在 tickets.html 提交的购票订单与转账截图。</p>
-
-      <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px; overflow-x:auto;">
-        <table style="width:100%; border-collapse:collapse; color:#eee; min-width:800px;">
-          <thead>
-            <tr style="border-bottom:1px solid #333; text-align:left; background:#111;">
-              <th style="padding:15px; font-size:0.8rem; color:#666;">下单时间</th>
-              <th style="padding:15px; font-size:0.8rem; color:#666;">活动名称</th>
-              <th style="padding:15px; font-size:0.8rem; color:#666;">客户信息</th>
-              <th style="padding:15px; font-size:0.8rem; color:#666;">数量/金额</th>
-              <th style="padding:15px; font-size:0.8rem; color:#666;">付款截图</th>
-              <th style="padding:15px; font-size:0.8rem; color:#666;">状态</th>
-              <th style="padding:15px; font-size:0.8rem; color:#666; text-align:right;">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${orders?.map(o => {
-              const ev = eventMap[o.event_id];
-              const evTitle = ev ? ev.title : '<span style="color:red">Unknown Event</span>';
-              const isApproved = o.status === 'approved';
-              return `
-                <tr style="border-bottom:1px solid #1a1a1a; transition:0.3s;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
-                  <td style="padding:15px; font-size:0.75rem; color:#555;">${new Date(o.created_at).toLocaleString()}</td>
-                  <td style="padding:15px; color:var(--gold); font-size:0.85rem; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${evTitle}</td>
-                  <td style="padding:15px; font-size:0.8rem;">
-                    <strong>${o.customer_name}</strong><br>
-                    <span style="color:#888;">${o.email}</span><br>
-                    <span style="color:#888;">${o.phone}</span>
-                  </td>
-                  <td style="padding:15px; font-size:0.85rem;">
-                    <span style="color:var(--gold); font-weight:bold;">${o.qty}</span> 张<br>
-                    <span style="color:#aaa;">RM ${parseFloat(o.total_amount).toFixed(2)}</span>
-                  </td>
-                  <td style="padding:15px;">
-                    ${o.payment_proof_url ? `<a href="${o.payment_proof_url}" target="_blank" style="color:#64D28A; font-size:0.75rem; border:1px solid #64D28A; padding:4px 8px; border-radius:4px; text-decoration:none;"><i class="fas fa-file-image"></i> 查看截图</a>` : '<span style="color:#555; font-size:0.75rem;">免费活动 无需付款</span>'}
-                  </td>
-                  <td style="padding:15px;">
-                    <span style="padding:4px 10px; border-radius:50px; font-size:0.7rem; background:${isApproved ? 'rgba(100,210,138,0.1)' : 'rgba(255,200,0,0.1)'}; color:${isApproved ? '#64D28A' : '#FFC800'}; border:1px solid ${isApproved ? 'rgba(100,210,138,0.2)' : 'rgba(255,200,0,0.2)'};">
-                      ${isApproved ? '✅ 已通过' : '⏳ 待审核'}
-                    </span>
-                  </td>
-                  <td style="padding:15px; text-align:right; white-space:nowrap;">
-                    ${!isApproved ? `<button class="btn-tiny" style="margin-right:5px; border-color:#64D28A; color:#64D28A;" onclick="approveOrder('${o.id}', '${o.event_id}', ${o.qty})">✔️ 批准</button>` : ''}
-                    <button class="btn-tiny danger" onclick="deleteItem('ticket_orders', '${o.id}')">🗑️</button>
-                  </td>
-                </tr>
-              `;
-            }).join('') || '<tr><td colspan="7" style="padding:50px; text-align:center; color:#444;">暂无订单记录</td></tr>'}
-          </tbody>
-        </table>
-      </div>
-    `;
-  }
-
-  window.approveOrder = async (orderId, eventId, qty) => {
-    if(!confirm("确定审核通过该订单？通过后将自动增加活动售出人数。")) return;
-    
-    try {
-      // 1. Update order status
-      const { error: err1 } = await db.from('ticket_orders').update({ status: 'approved' }).eq('id', orderId);
-      if (err1) throw err1;
-
-      // 2. Fetch current seats_sold for the event
-      const { data: evData, error: err2 } = await db.from('events').select('seats_sold').eq('id', eventId).single();
-      if (err2) throw err2;
-
-      // 3. Increment seats_sold
-      const currentSold = evData.seats_sold || 0;
-      const { error: err3 } = await db.from('events').update({ seats_sold: currentSold + qty }).eq('id', eventId);
-      if (err3) throw err3;
-
-      alert("✅ 订单已批准！名额已自动更新。");
-      renderCMS();
-    } catch (e) {
-      alert("处理失败：" + e.message);
-    }
   };
 
   async function renderEchoes(container) {

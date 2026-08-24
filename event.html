@@ -7,22 +7,32 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=4.6.3">
+  <link rel="stylesheet" href="styles.css?v=5.1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js"></script>
+  <script src="config.js?v=2.6.0"></script>
 </head>
 <body class="event-body">
   <canvas id="bgParticles"></canvas>
 
-  <header id="mainHeader">
-    <div class="logo">
-      <img src="assets/logo.png" alt="Harvester" class="nav-logo" id="cfg_nav_logo" onerror="this.src='assets/logo.png'">
+  <header id="mainHeader" style="z-index:100;">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+      <a href="index.html" class="logo" style="text-decoration:none;">
+        <img src="assets/logo.png" alt="Harvester" class="nav-logo" id="cfg_nav_logo" onerror="this.src='assets/logo.png'">
+      </a>
+      <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 1.2rem;">
+        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+      </div>
     </div>
-        <nav class="nav-links">
+    <div class="menu-toggle" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </div>
+    <nav class="nav-links">
       <a href="index.html">主页</a>
       <a href="music.html">音乐与歌谱集</a>
-      <a href="feedback.html" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);">回声空间</a>
+      <a href="feedback.html">回声空间</a>
       <a href="events.html">活动</a>
       <a href="diary.html">田野日志</a>
       <div class="nav-dropdown">
@@ -36,20 +46,35 @@
       <a href="about.html">关于我们</a>
       <a href="support.html">支持我们</a>
       <a href="contact.html">联系我们</a>
-      <div style="display:inline-flex; gap:12px; margin-left:15px; border-left:1px solid rgba(255,255,255,0.1); padding-left:15px;">
-        <a href="#" id="cfg_social_fb" target="_blank"><i class="fab fa-facebook"></i></a>
-        <a href="#" id="cfg_social_ig" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="#" id="cfg_social_yt" target="_blank"><i class="fab fa-youtube"></i></a>
-      </div>
     </nav>
   </header>
 
+  <div id="mobileNavOverlay">
+    <a href="index.html">主页</a>
+    <a href="music.html">音乐与歌谱集</a>
+    <a href="feedback.html">回声空间</a>
+    <a href="events.html">活动</a>
+    <a href="diary.html">田野日志</a>
+    <div class="mobile-dropdown">
+      <a href="#" onclick="event.preventDefault(); this.nextElementSibling.classList.toggle('show');">歌手 <i class="fas fa-caret-down"></i></a>
+      <div class="mobile-dropdown-content">
+        <a href="singers.html?tab=gospel">福音歌手</a>
+        <a href="singers.html?tab=worship">敬拜歌手</a>
+      </div>
+    </div>
+    <a href="submit.html">我要投稿</a>
+    <a href="about.html">关于我们</a>
+    <a href="support.html">支持我们</a>
+    <a href="contact.html">联系我们</a>
+  </div>
+
   <main style="padding-top: 100px;">
     <section>
-      <div id="eventHeader" class="text-center mb-4">
-        <!-- Title and Date injected by JS -->
+      <div id="eventHeader" class="text-center mb-4" style="padding: 0 1rem;">
+        <!-- Title, Date/Time, and Description injected by JS -->
         <h1 class="text-gold" id="eventTitle">...</h1>
-        <p id="eventDate" style="letter-spacing: 2px; font-size: 0.9rem; opacity: 0.6;"></p>
+        <div id="eventDate" style="letter-spacing: 1px; font-size: 1rem; opacity: 0.9; display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; margin-top: 10px;"></div>
+        <div id="eventDesc" style="max-width: 650px; margin: 1.5rem auto 0; color: #ddd; font-size: 0.95rem; line-height: 1.8; text-align: center; display: none;"></div>
       </div>
 
       <div id="galleryContainer" class="photo-gallery">
@@ -71,7 +96,7 @@
     <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
   </footer>
 
-  <script src="app.js?v=9.2"></script>
+  <script src="app.js?v=10.0.0"></script>
   <script>
     // Specific initialization for this page
     document.addEventListener('DOMContentLoaded', () => {
