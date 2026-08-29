@@ -65,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
       fetchLatestMusicForHome();
       // Re-run diary to apply global FB link from config if needed
       fetchDiary(); 
-      if (document.getElementById('galleryContainer')) initEventGallery();
     } catch (err) { console.warn("Supabase Config Error:", err.message); }
   }
 
@@ -131,14 +130,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Event & Album Metadata Parser ---
   function parseEventData(item) {
-    if (!item) return { title: '', dateStr: '', timeStr: '', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '', fullDateTime: '' };
+    if (!item) return { id: '', title: '', dateStr: '', timeStr: '', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '', fullDateTime: '' };
     
     let desc = (item.description || "").trim();
-    let rawDate = item.event_date || item.date || item.start_date || item.eventDate || "";
-    let rawTime = item.event_time || item.time || item.start_time || item.eventTime || "";
-    let rawLoc = item.location || item.loc || "";
-    let rawMapUrl = item.map_url || item.mapUrl || item.murl || "";
-    let rawImg = item.image_url || item.cover_url || item.imageUrl || item.poster_url || "";
+    let rawDate = item.event_date || item.date || item.start_date || item.eventDate || item.event_day || item.datetime || item.event_datetime || item.start_at || "";
+    let rawTime = item.event_time || item.time || item.start_time || item.eventTime || item.event_hour || item.time_str || item.event_time_str || "";
+    let rawLoc = item.location || item.loc || item.place || item.venue || item.address || "";
+    let rawMapUrl = item.map_url || item.mapUrl || item.murl || item.google_map || "";
+    let rawImg = item.image_url || item.cover_url || item.imageUrl || item.poster_url || item.poster || item.photo_url || "";
     let emailTemplate = item.email_template || item.emailTemplate || "";
 
     // Parse EXT_META JSON block if embedded in description
@@ -148,10 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           const meta = JSON.parse(metaMatch[1]);
           if (meta.d || meta.date || meta.event_date) rawDate = meta.d || meta.date || meta.event_date;
-          if (meta.tm || meta.time || meta.event_time || meta.start_time) rawTime = meta.tm || meta.time || meta.event_time || meta.start_time;
-          if (meta.loc || meta.location) rawLoc = meta.loc || meta.location;
-          if (meta.murl || meta.map_url) rawMapUrl = meta.murl || meta.map_url;
-          if (meta.img || meta.image_url) rawImg = meta.img || meta.image_url;
+          if (meta.tm || meta.time || meta.event_time || meta.start_time || meta.t) rawTime = meta.tm || meta.time || meta.event_time || meta.start_time || meta.t;
+          if (meta.loc || meta.location || meta.place || meta.venue || meta.address) rawLoc = meta.loc || meta.location || meta.place || meta.venue || meta.address;
+          if (meta.murl || meta.map_url || meta.mapUrl) rawMapUrl = meta.murl || meta.map_url || meta.mapUrl;
+          if (meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url) rawImg = meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url;
           if (meta.et || meta.email_template) emailTemplate = meta.et || meta.email_template;
         } catch (err) {
           console.warn("Meta parse fail:", err);
@@ -160,22 +159,34 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Extract time from date string if combined (e.g. 2026-08-25T19:30:00 or 2026-08-25 19:30)
+    // Extract time from date string if combined (e.g. 2026-08-25T19:30:00, 2026-08-25 19:30, 2026年8月25日 19:30)
     let datePart = rawDate ? String(rawDate).trim() : "";
     if (datePart.includes('T')) {
       const parts = datePart.split('T');
       datePart = parts[0];
       if (!rawTime && parts[1]) rawTime = parts[1].replace('Z', '').substring(0, 5);
-    } else if (datePart.includes(' ') && !datePart.includes('年')) {
-      const parts = datePart.split(' ');
-      datePart = parts[0];
-      if (!rawTime && parts[1]) rawTime = parts[1].substring(0, 5);
+    } else if (datePart.includes(' ')) {
+      const m = datePart.match(/^(.*?)[ ]+([0-9]{1,2}[:：.][0-9]{2}(?::[0-9]{2})?(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
+      if (m) {
+        datePart = m[1].trim();
+        if (!rawTime) rawTime = m[2].trim();
+      }
     }
 
-    // If time is still empty, check description or title for time clues (e.g. 时间：19:30, ⏰ 19:30, 7:30 PM, etc.)
+    // If time is still empty, check description for time clues (e.g. 时间：19:30, ⏰ 19:30, 7:30 PM, etc.)
     if (!rawTime && desc) {
-      const descTimeMatch = desc.match(/(?:时间|time|⏰|：|\s|^)(\d{1,2}[:：.]\d{2}(?:\s*(?:am|pm|AM|PM))?)/i);
-      if (descTimeMatch) rawTime = descTimeMatch[1];
+      const m1 = desc.match(/(?:时间|time|⏰|时段|开场|开始)[：:\s]*([0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
+      if (m1) {
+        rawTime = m1[1].trim();
+      } else {
+        const m2 = desc.match(/(?:时间|time|⏰)[：:\s]*([^\r\n,，。|]+)/i);
+        if (m2) {
+          rawTime = m2[1].trim();
+        } else {
+          const m3 = desc.match(/\b([0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
+          if (m3) rawTime = m3[1].trim();
+        }
+      }
     }
 
     // Format Date (e.g. 2026-08-25 -> 2026年8月25日)
@@ -183,13 +194,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const dateMatch = datePart.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);
     if (dateMatch) {
       dateStr = `${dateMatch[1]}年${parseInt(dateMatch[2], 10)}月${parseInt(dateMatch[3], 10)}日`;
+    } else {
+      const yearMonthMatch = datePart.match(/^(\d{4})[-/.](\d{1,2})$/);
+      if (yearMonthMatch) {
+        dateStr = `${yearMonthMatch[1]}年${parseInt(yearMonthMatch[2], 10)}月`;
+      }
     }
 
     // Format Time (e.g. 19:30 or 19:30 - 21:30 or 7:30 PM)
     let timeStr = "";
     if (rawTime) {
       const cleanTime = String(rawTime).trim();
-      if (cleanTime.includes('-') || cleanTime.includes('~') || cleanTime.includes('至')) {
+      if (cleanTime.includes('-') || cleanTime.includes('~') || cleanTime.includes('至') || cleanTime.includes('to')) {
         timeStr = cleanTime;
       } else {
         const isPM = /pm|下午|晚上|夜间|傍晚/i.test(cleanTime);
@@ -202,7 +218,19 @@ document.addEventListener('DOMContentLoaded', () => {
           if (isAM && h === 12) h = 0;
           timeStr = `${String(h).padStart(2, '0')}:${m}`;
         } else {
-          timeStr = cleanTime;
+          const hourOnlyMatch = cleanTime.match(/(\d{1,2})(?:\s*(?:pm|am|点|时|:00))?/i);
+          if (hourOnlyMatch && !isNaN(parseInt(hourOnlyMatch[1], 10))) {
+            let h = parseInt(hourOnlyMatch[1], 10);
+            if (isPM && h < 12) h += 12;
+            if (isAM && h === 12) h = 0;
+            if (h >= 0 && h <= 24) {
+              timeStr = `${String(h).padStart(2, '0')}:00`;
+            } else {
+              timeStr = cleanTime;
+            }
+          } else {
+            timeStr = cleanTime;
+          }
         }
       }
     }
@@ -301,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('rem_submit').onclick = async () => {
       const email = document.getElementById('rem_email').value;
       if(!email || !email.includes('@')) return alert("请输入有效邮箱");
-      const { error } = await db.from('event_reminders').insert([{ eventId: id, eventTitle: title, userEmail: email }]);
+      const { error } = await db.from('event_reminders').insert([{ eventId: id, eventTitle: title, userEmail: email, eventDate: date }]);
       if(!error) { alert("✅ 设置成功！届时系统将通知您。"); m.style.display = 'none'; }
       else { alert("提交失败，请稍后重试。"); }
     };

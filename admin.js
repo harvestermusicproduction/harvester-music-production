@@ -391,29 +391,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // Parse metadata if present (Regex for maximum robustness)
     const events = rawEvents?.map(e => {
       let desc = e.description || "";
+      let evDate = e.event_date || e.date || "";
+      let evTime = e.event_time || e.time || "";
+      let loc = e.location || e.loc || "";
+      let murl = e.map_url || e.mapUrl || "";
+      let img = e.image_url || e.cover_url || "";
+      let et = e.email_template || "";
+
       const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
       if (metaMatch) {
         try {
           const meta = JSON.parse(metaMatch[1]);
-          return {
-            ...e,
-            event_date: meta.d || e.event_date || e.date,
-            event_time: meta.tm || e.event_time || e.time,
-            location: meta.loc || e.location,
-            map_url: meta.murl || e.map_url,
-            image_url: meta.img || e.image_url,
-            email_template: meta.et || e.email_template,
-            description: desc.replace(metaMatch[0], '').trim()
-          };
+          evDate = meta.d || meta.date || meta.event_date || evDate;
+          evTime = meta.tm || meta.time || meta.event_time || meta.start_time || meta.t || evTime;
+          loc = meta.loc || meta.location || meta.place || meta.venue || loc;
+          murl = meta.murl || meta.map_url || meta.mapUrl || murl;
+          img = meta.img || meta.image_url || meta.cover_url || img;
+          et = meta.et || meta.email_template || et;
+          desc = desc.replace(metaMatch[0], '').trim();
         } catch (err) {
           console.warn("Meta parse fail:", err);
-          return { ...e, event_date: e.event_date || e.date, event_time: e.event_time || e.time, location: e.location, map_url: e.map_url, description: desc.replace(metaMatch[0], '').trim() };
+          desc = desc.replace(metaMatch[0], '').trim();
         }
       }
       return {
         ...e,
-        event_date: e.event_date || e.date,
-        event_time: e.event_time || e.time
+        event_date: evDate,
+        event_time: evTime,
+        location: loc,
+        map_url: murl,
+        image_url: img,
+        email_template: et,
+        description: desc
       };
     });
 
@@ -468,30 +477,41 @@ document.addEventListener('DOMContentLoaded', () => {
         if (error) throw error;
         e = data;
         // Handle meta parsing if description has it
-        if (e.description?.includes('EXT_META:')) {
-           const metaMatch = e.description.match(/EXT_META:(.*?)\|\|/);
+        let evDate = e.event_date || e.date || "";
+        let evTime = e.event_time || e.time || "";
+        let loc = e.location || e.loc || "";
+        let murl = e.map_url || e.mapUrl || "";
+        let img = e.image_url || e.cover_url || "";
+        let et = e.email_template || "";
+        let desc = e.description || "";
+
+        if (desc.includes('EXT_META:')) {
+           const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
            if (metaMatch) {
               try {
                 const meta = JSON.parse(metaMatch[1]);
-                e = {
-                  ...e,
-                  event_date: meta.d || e.event_date || e.date,
-                  event_time: meta.tm || e.event_time || e.time,
-                  location: meta.loc || e.location,
-                  map_url: meta.murl || e.map_url,
-                  image_url: meta.img || e.image_url,
-                  email_template: meta.et || e.email_template,
-                  description: e.description.replace(metaMatch[0], '').trim()
-                };
-              } catch(err) {}
+                evDate = meta.d || meta.date || meta.event_date || evDate;
+                evTime = meta.tm || meta.time || meta.event_time || meta.start_time || meta.t || evTime;
+                loc = meta.loc || meta.location || meta.place || meta.venue || loc;
+                murl = meta.murl || meta.map_url || meta.mapUrl || murl;
+                img = meta.img || meta.image_url || meta.cover_url || img;
+                et = meta.et || meta.email_template || et;
+                desc = desc.replace(metaMatch[0], '').trim();
+              } catch(err) {
+                desc = desc.replace(metaMatch[0], '').trim();
+              }
            }
-        } else {
-           e = {
-             ...e,
-             event_date: e.event_date || e.date,
-             event_time: e.event_time || e.time
-           };
         }
+        e = {
+          ...e,
+          event_date: evDate,
+          event_time: evTime,
+          location: loc,
+          map_url: murl,
+          image_url: img,
+          email_template: et,
+          description: desc
+        };
       }
       const isEdit = !!e;
       const modal = document.createElement('div');
