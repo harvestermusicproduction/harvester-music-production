@@ -1,6 +1,4 @@
 {
-  "version": 2,
-  "public": false,
   "crons": [
     {
       "path": "/api/cron",
@@ -8,3 +6,4 @@
     }
   ]
 }
+
