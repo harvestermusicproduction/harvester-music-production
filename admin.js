@@ -414,6 +414,24 @@ document.addEventListener('DOMContentLoaded', () => {
           desc = desc.replace(metaMatch[0], '').trim();
         }
       }
+      if (!evTime && evDate) {
+        if (evDate.includes('T')) {
+          const parts = evDate.split('T');
+          evDate = parts[0];
+          if (parts[1]) evTime = parts[1].replace('Z', '').substring(0, 5);
+        } else if (evDate.includes(' ')) {
+          const m = evDate.match(/^(.*?)[ ]+([0-9]{1,2}[:：.][0-9]{2}(?::[0-9]{2})?(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
+          if (m) {
+            evDate = m[1].trim();
+            evTime = m[2].trim();
+          }
+        }
+      }
+      if (!evTime && desc) {
+        const m1 = desc.match(/(?:时间|time|⏰|时段|开场|开始)[：:\s]*([0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
+        if (m1) evTime = m1[1].trim();
+      }
+
       return {
         ...e,
         event_date: evDate,
@@ -495,12 +513,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 loc = meta.loc || meta.location || meta.place || meta.venue || loc;
                 murl = meta.murl || meta.map_url || meta.mapUrl || murl;
                 img = meta.img || meta.image_url || meta.cover_url || img;
-                et = meta.et || meta.email_template || et;
+              et = meta.et || meta.email_template || et;
                 desc = desc.replace(metaMatch[0], '').trim();
               } catch(err) {
                 desc = desc.replace(metaMatch[0], '').trim();
               }
            }
+        }
+        if (!evTime && evDate) {
+          if (evDate.includes('T')) {
+            const parts = evDate.split('T');
+            evDate = parts[0];
+            if (parts[1]) evTime = parts[1].replace('Z', '').substring(0, 5);
+          } else if (evDate.includes(' ')) {
+            const m = evDate.match(/^(.*?)[ ]+([0-9]{1,2}[:：.][0-9]{2}(?::[0-9]{2})?(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
+            if (m) {
+              evDate = m[1].trim();
+              evTime = m[2].trim();
+            }
+          }
+        }
+        if (!evTime && desc) {
+          const m1 = desc.match(/(?:时间|time|⏰|时段|开场|开始)[：:\s]*([0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
+          if (m1) evTime = m1[1].trim();
         }
         e = {
           ...e,
