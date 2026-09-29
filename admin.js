@@ -387,6 +387,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- 📅 EVENTS MODULE (Upgraded) ---
   async function renderEvents(container) {
     const { data: rawEvents } = await db.from('events').select('*').order('display_order', {ascending: true, nullsFirst: false}).order('created_at', {ascending: false});
+    const { data: bannerCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_banner').maybeSingle();
+    const currentBanner = bannerCfg?.value || '';
     
     // Parse metadata if present (Regex for maximum robustness)
     const events = rawEvents?.map(e => {
@@ -445,13 +447,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-        <h1 style="color:var(--gold);">活动预告管理</h1>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h1 style="color:var(--gold); margin:0;">活动预告管理</h1>
         <div style="display:flex; gap:10px;">
           <button class="btn btn-submit" style="width:auto; padding:10px 25px; background:#444;" onclick="triggerBlast()">🚀 一键发送提醒</button>
           <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openEventModal()">+ 新建活动</button>
         </div>
       </div>
+
+      <!-- 🌟 精彩活动页面顶部主海报管理卡片 -->
+      <div style="background:#0e0e0e; border:1px solid rgba(246,210,138,0.25); border-radius:14px; padding:20px; margin-bottom:35px; box-shadow:0 8px 30px rgba(0,0,0,0.6);">
+        <div style="margin-bottom:15px;">
+          <h3 style="margin:0; color:var(--gold); font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-image"></i> 精彩活动 顶部主海报 (Events Top Banner)
+          </h3>
+          <p style="margin:6px 0 0 0; color:#888; font-size:0.8rem; line-height:1.5;">
+            在此上传的海报将直接展示在官网活动页面的「精彩活动」标题正下方。如果此处留空，系统将自动显示排在第 1 位的活动海报。
+          </p>
+        </div>
+        <div style="display:grid; grid-template-columns: minmax(260px, 360px) 1fr; gap:20px; align-items:center; background:#050505; padding:15px; border-radius:10px; border:1px solid #1c1c1c;">
+          <div>
+            <img id="ev_hero_prev" src="${currentBanner || 'https://via.placeholder.com/1200x500?text=Events+Hero+Banner'}" style="width:100%; aspect-ratio:21/9; max-height:140px; object-fit:cover; border-radius:8px; border:1px solid #333; background:#111;">
+          </div>
+          <div>
+            <label style="display:block; font-size:0.75rem; color:#aaa; margin-bottom:6px;">选择新海报图片 (推荐比例 21:9 或 16:9)</label>
+            <input type="file" id="f_ev_hero" style="font-size:0.8rem; color:#aaa; margin-bottom:12px; width:100%;">
+            <input type="hidden" id="url_ev_hero" value="${currentBanner}">
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn-tiny" style="padding:8px 18px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); font-weight:600;" onclick="uploadAndSaveEventsBanner('f_ev_hero', 'url_ev_hero', 'ev_hero_prev')">📤 上传并设为主海报</button>
+              ${currentBanner ? `<button class="btn-tiny danger" style="padding:8px 15px;" onclick="clearEventsBanner()">✖ 移除独立主海报 (改用自动展示首位)</button>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0; color:#ccc; font-size:1.05rem;"><i class="fas fa-list"></i> 各活动列表 (${events?.length || 0} 个)</h3>
+        <span style="font-size:0.75rem; color:#666;">越小排位越靠前</span>
+      </div>
+
       <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
         ${events?.map(e => `
           <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:10px;">
@@ -467,6 +501,51 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
   }
+  
+  window.uploadAndSaveEventsBanner = async (fileInputId, targetId, previewId) => {
+    const fileInput = document.getElementById(fileInputId);
+    const file = fileInput?.files?.[0];
+    if(!file) return alert("请先选择要上传的海报图片文件");
+    const btn = event.currentTarget;
+    const origText = btn.innerText;
+    btn.innerText = "⏳ 正在上传并同步...";
+    btn.disabled = true;
+    try {
+      let uploadFileObj = file;
+      if (file.type.startsWith('image/')) {
+        uploadFileObj = await compressImage(file);
+      }
+      const safeName = uploadFileObj.name.replace(/[^\w.-]/g, "_");
+      const path = `banners/${Date.now()}-${safeName}`;
+      const { data, error } = await db.storage.from('harvester-media').upload(path, uploadFileObj);
+      if(error) throw error;
+      const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
+      
+      document.getElementById(targetId).value = publicUrl;
+      const prevEl = document.getElementById(previewId);
+      if(prevEl) prevEl.src = publicUrl;
+
+      await db.from('site_config').upsert({ key: 'cfg_events_banner', value: publicUrl }, { onConflict: 'key' });
+      alert("✅ 精彩活动主海报已成功上传并生效！");
+      renderCMS();
+    } catch(err) {
+      alert("上传失败: " + err.message);
+    } finally {
+      btn.innerText = origText;
+      btn.disabled = false;
+    }
+  };
+
+  window.clearEventsBanner = async () => {
+    if(!confirm("确定要移除独立主海报吗？移除后活动页面将自动展示排在第 1 位的活动海报。")) return;
+    try {
+      await db.from('site_config').upsert({ key: 'cfg_events_banner', value: '' }, { onConflict: 'key' });
+      alert("✅ 已移除独立主海报，现已恢复为自动展示首位活动海报。");
+      renderCMS();
+    } catch(err) {
+      alert("操作失败: " + err.message);
+    }
+  };
   
   window.triggerBlast = async () => {
     if(!confirm("确定要立即发送所有处于‘未发送’状态的活动提醒邮件吗？")) return;
