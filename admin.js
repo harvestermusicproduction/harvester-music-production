@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 📅 EVENTS MODULE (Upgraded) ---
   async function renderEvents(container) {
-    const { data: rawEvents } = await db.from('events').select('*').order('created_at', {ascending: false});
+    const { data: rawEvents } = await db.from('events').select('*').order('display_order', {ascending: true, nullsFirst: false}).order('created_at', {ascending: false});
     
     // Parse metadata if present (Regex for maximum robustness)
     const events = rawEvents?.map(e => {
@@ -501,6 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let murl = e.map_url || e.mapUrl || "";
         let img = e.image_url || e.cover_url || "";
         let et = e.email_template || "";
+        let ord = e.display_order || 0;
         let desc = e.description || "";
 
         if (desc.includes('EXT_META:')) {
@@ -513,7 +514,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 loc = meta.loc || meta.location || meta.place || meta.venue || loc;
                 murl = meta.murl || meta.map_url || meta.mapUrl || murl;
                 img = meta.img || meta.image_url || meta.cover_url || img;
-              et = meta.et || meta.email_template || et;
+                et = meta.et || meta.email_template || et;
+                ord = meta.ord || meta.display_order || ord;
                 desc = desc.replace(metaMatch[0], '').trim();
               } catch(err) {
                 desc = desc.replace(metaMatch[0], '').trim();
@@ -545,6 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
           map_url: murl,
           image_url: img,
           email_template: et,
+          display_order: ord,
           description: desc
         };
       }
@@ -591,6 +594,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
 
+          <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">排位顺序 Order (越小越靠前)</label>
+            <input type="number" id="ev_order" value="${e?.display_order || 0}" style="width:100%; padding:10px;">
+          </div>
+
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动详情描述</label>
           <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:100px; margin-bottom:15px; padding:10px;">${e?.description || ''}</textarea>
 
@@ -626,7 +634,8 @@ document.addEventListener('DOMContentLoaded', () => {
       map_url: document.getElementById('ev_ml').value,
       image_url: document.getElementById('ev_url').value,
       email_template: document.getElementById('ev_email').value,
-      description: document.getElementById('ev_desc').value
+      description: document.getElementById('ev_desc').value,
+      display_order: parseInt(document.getElementById('ev_order').value) || 0
     };
 
     try {
@@ -644,7 +653,8 @@ document.addEventListener('DOMContentLoaded', () => {
           loc: payload.location,
           murl: payload.map_url,
           img: payload.image_url,
-          et: payload.email_template
+          et: payload.email_template,
+          ord: payload.display_order
         };
         const fallbackPayload = {
           title: payload.title,
@@ -1106,6 +1116,14 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div class="banner-edit-item">
+            <label>活动页面 精彩活动主海报 (Events Top Banner)</label>
+            <img id="prev_events_banner" src="${c['cfg_events_banner']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0; background:#000;">
+            <input type="file" id="f_events_banner">
+            <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_events_banner', 'url_events_banner', 'prev_events_banner')">上传活动海报</button>
+            <input type="hidden" id="url_events_banner" value="${c['cfg_events_banner']||''}">
+          </div>
+
+          <div class="banner-edit-item">
             <label>我要投稿 海报</label>
             <img id="prev_submit" src="${c['cfg_submit_poster']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0;">
             <input type="file" id="f_submit">
@@ -1173,6 +1191,7 @@ document.addEventListener('DOMContentLoaded', () => {
       {k: 'cfg_about_video', v: document.getElementById('url_about_v').value},
       {k: 'cfg_about_video_chapters', v: document.getElementById('cfg_about_video_chapters').value},
       {k: 'cfg_contact_banner', v: document.getElementById('url_contact').value},
+      {k: 'cfg_events_banner', v: document.getElementById('url_events_banner').value},
       {k: 'cfg_submit_poster', v: document.getElementById('url_submit').value},
       {k: 'cfg_submit_btn_link', v: document.getElementById('cfg_submit_btn_link').value},
       {k: 'cfg_submit_text', v: document.getElementById('cfg_submit_text').value},

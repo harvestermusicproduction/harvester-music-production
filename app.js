@@ -88,6 +88,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!dTag) { dTag = document.createElement('meta'); dTag.name = "description"; document.head.appendChild(dTag); }
       dTag.content = siteConfigs['cfg_site_description'];
     }
+
+    // --- 🎬 Video Replacement Logic (About Page) ---
+    const vUrl = siteConfigs['cfg_about_video'];
+    const mediaContainer = document.getElementById('cfg_about_media_container');
+    if (vUrl && mediaContainer) {
+      mediaContainer.innerHTML = `
+        <video src="${vUrl}" 
+               style="width: 100%; height: 100%; object-fit: cover;" 
+               autoplay loop muted playsinline>
+        </video>
+      `;
+    }
   }
 
   async function fetchLatestMusicForHome() {
@@ -139,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let rawMapUrl = item.map_url || item.mapUrl || item.murl || item.google_map || "";
     let rawImg = item.image_url || item.cover_url || item.imageUrl || item.poster_url || item.poster || item.photo_url || "";
     let emailTemplate = item.email_template || item.emailTemplate || "";
+    let order = (item.display_order !== undefined && item.display_order !== null && !isNaN(parseInt(item.display_order, 10))) ? parseInt(item.display_order, 10) : null;
 
     // Parse EXT_META JSON block if embedded in description
     if (desc && typeof desc === 'string' && desc.includes('EXT_META:')) {
@@ -152,6 +165,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if (meta.murl || meta.map_url || meta.mapUrl) rawMapUrl = meta.murl || meta.map_url || meta.mapUrl;
           if (meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url) rawImg = meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url;
           if (meta.et || meta.email_template) emailTemplate = meta.et || meta.email_template;
+          if (meta.ord !== undefined || meta.display_order !== undefined) {
+            const parsedOrd = parseInt(meta.ord ?? meta.display_order, 10);
+            if (!isNaN(parsedOrd)) order = parsedOrd;
+          }
         } catch (err) {
           console.warn("Meta parse fail:", err);
         }
@@ -249,53 +266,84 @@ document.addEventListener('DOMContentLoaded', () => {
       rawDate,
       rawTime,
       emailTemplate,
+      order,
+      created_at: item.created_at || '',
       fullDateTime
     };
   }
 
   async function fetchEvents() {
     const container = document.getElementById('eventsContainer');
+    const posterImg = document.getElementById('cfg_events_banner');
+    const posterWrapper = document.getElementById('eventsPosterWrapper');
     if (!container) return;
     try {
-      let res = await db.from('events').select('*').order('created_at', { ascending: false });
-      if (res.error || !res.data) {
-        res = await db.from('events').select('*');
-      }
+      let res = await db.from('events').select('*');
       const rawEvents = res.data || [];
 
       if (rawEvents.length === 0) {
-        container.innerHTML = `<p style="text-align:center; opacity:0.5; font-size:0.95rem; margin-top:2rem;">暂无活动预告 敬请期待</p>`;
+        container.innerHTML = `<p style="text-align:center; opacity:0.5; font-size:0.95rem; margin-top:2rem; grid-column:1/-1;">暂无活动预告 敬请期待</p>`;
+        if (posterWrapper) posterWrapper.style.display = 'none';
         return;
       }
 
       const events = rawEvents.map(e => parseEventData(e));
-      // Sort by date if available
-      events.sort((a, b) => (b.rawDate || '').localeCompare(a.rawDate || ''));
 
+      // 排序逻辑：
+      // 1. 如果设置了 display_order，按照数值由小到大排序 (0, 1, 2...)
+      // 2. 未设置则按日期或创建时间倒序排
+      events.sort((a, b) => {
+        const orderA = (a.order !== null && a.order !== undefined && !isNaN(a.order)) ? a.order : 999999;
+        const orderB = (b.order !== null && b.order !== undefined && !isNaN(b.order)) ? b.order : 999999;
+        if (orderA !== orderB) return orderA - orderB;
+        if (b.rawDate && a.rawDate) {
+          const comp = b.rawDate.localeCompare(a.rawDate);
+          if (comp !== 0) return comp;
+        }
+        return (b.created_at || '').localeCompare(a.created_at || '');
+      });
+
+      // 🌟 顶部主海报加载逻辑：优先读取后台配置的海报，其次读取排第一位的活动海报
+      if (posterImg && posterWrapper) {
+        const customBanner = siteConfigs['cfg_events_banner'];
+        const topEventImg = events.find(e => e.image_url)?.image_url;
+        const bannerSrc = customBanner || topEventImg;
+        if (bannerSrc) {
+          posterImg.src = bannerSrc;
+          posterImg.style.display = 'block';
+          posterWrapper.style.display = 'block';
+        } else {
+          posterWrapper.style.display = 'none';
+        }
+      }
+
+      // 🌟 各活动详情卡片（横向网格排列）
       container.innerHTML = events.map(e => {
-        const displayDate = e.dateStr ? `<span><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>${e.dateStr}</span>` : '';
-        const displayTime = e.timeStr ? `<span><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${e.timeStr}</span>` : '';
-        const displayLocation = e.location ? `<span><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${e.location}</span>` : '';
-        const displayImage = e.image_url ? `<a href="event.html?id=${e.id}"><img src="${e.image_url}" style="width:100%; max-height:280px; object-fit:cover; border-radius:12px; border:1px solid #333; margin-bottom:1.5rem;" onerror="this.style.display='none'"></a>` : '';
+        const displayDate = e.dateStr ? `<span class="event-meta-pill"><i class="fas fa-calendar-alt"></i> ${e.dateStr}</span>` : '';
+        const displayTime = e.timeStr ? `<span class="event-meta-pill"><i class="fas fa-clock"></i> ${e.timeStr}</span>` : '';
+        const displayLocation = e.location ? `<span class="event-meta-pill"><i class="fas fa-map-marker-alt"></i> ${e.location}</span>` : '';
+        const displayImage = e.image_url 
+          ? `<a href="event.html?id=${e.id}" class="event-card-img-wrap"><img src="${e.image_url}" alt="${e.title}" class="event-card-img" onerror="this.src='https://via.placeholder.com/600x338?text=Harvester+Event'"></a>` 
+          : `<a href="event.html?id=${e.id}" class="event-card-img-wrap"><img src="https://via.placeholder.com/600x338?text=Harvester+Event" alt="${e.title}" class="event-card-img"></a>`;
         
         const cleanTitle = (e.title || "").replace(/'/g, "\\'");
-        const displayButtons = `
-            <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
-              <button class="btn-frosted-gold" style="min-width:180px; max-width:260px; padding:12px 20px; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:50px; cursor:pointer; font-weight:600;" onclick="openReminderModal('${e.id}', '${cleanTitle}', '${e.fullDateTime}')"><i class="fas fa-bell"></i> 提醒我</button>
-            </div>
-        `;
 
         return `
-          <div class="event-card fade-in gold-theme" style="text-align:center; height:auto; aspect-ratio:auto; padding:2.5rem; background:#111; border:1px solid rgba(246,210,138,0.25); border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+          <div class="event-card-item fade-in">
             ${displayImage}
-            <div style="font-size:0.95rem; color:#ccc; margin-bottom:1.2rem; display:flex; gap:15px; justify-content:center; flex-wrap:wrap; align-items:center;">
-              ${displayDate}
-              ${displayTime}
-              ${displayLocation}
+            <div class="event-card-body">
+              <div class="event-meta-list">
+                ${displayDate}
+                ${displayTime}
+                ${displayLocation}
+              </div>
+              <h3 class="event-card-title"><a href="event.html?id=${e.id}">${e.title}</a></h3>
+              ${e.description ? `<p class="event-card-desc">${e.description}</p>` : ''}
+              <div class="event-card-actions">
+                <a href="event.html?id=${e.id}" class="btn-event-detail">查看详情 <i class="fas fa-arrow-right"></i></a>
+                <button class="btn-event-remind" onclick="openReminderModal('${e.id}', '${cleanTitle}', '${e.fullDateTime}')"><i class="fas fa-bell"></i> 提醒我</button>
+              </div>
             </div>
-            <h3 style="color:var(--gold); font-size:1.7rem; margin-bottom:0.8rem;"><a href="event.html?id=${e.id}" style="color:inherit; text-decoration:none;">${e.title}</a></h3>
-            ${e.description ? `<p style="line-height:1.7; font-size:0.95rem; color:#ddd; margin-bottom:1rem;">${e.description}</p>` : ''}
-            ${displayButtons}
           </div>`;
       }).join('');
       refreshObserver();
