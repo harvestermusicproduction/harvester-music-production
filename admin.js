@@ -467,7 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div style="display:grid; grid-template-columns: minmax(260px, 360px) 1fr; gap:20px; align-items:center; background:#050505; padding:15px; border-radius:10px; border:1px solid #1c1c1c;">
           <div>
-            <img id="ev_hero_prev" src="${currentBanner || 'https://via.placeholder.com/1200x500?text=Events+Hero+Banner'}" style="width:100%; aspect-ratio:21/9; max-height:140px; object-fit:cover; border-radius:8px; border:1px solid #333; background:#111;">
+            <img id="ev_hero_prev" src="${currentBanner || 'https://via.placeholder.com/1200x500?text=Events+Hero+Banner'}" style="width:100%; max-height:160px; object-fit:contain; border-radius:8px; border:1px solid #333; background:#111;">
           </div>
           <div>
             <label style="display:block; font-size:0.75rem; color:#aaa; margin-bottom:6px;">选择新海报图片 (推荐比例 21:9 或 16:9)</label>
