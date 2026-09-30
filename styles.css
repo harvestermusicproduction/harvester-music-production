@@ -1,3 +1,28 @@
+/* 🖋️ 乐米秋叙手书体 (LemiQiuXuShouShuTi) & 全局字体声明 */
+@font-face {
+  font-family: '乐米秋叙手书体';
+  src: local('乐米秋叙手书体'),
+       local('LemiQiuXuShouShuTi'),
+       local('Lemi-QiuXu-ShouShuTi'),
+       local('Lemi QiuXu ShouShu Ti'),
+       local('LemiQiuXuShoushuTi');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LemiQiuXuShouShuTi';
+  src: local('乐米秋叙手书体'),
+       local('LemiQiuXuShouShuTi'),
+       local('Lemi-QiuXu-ShouShuTi'),
+       local('Lemi QiuXu ShouShu Ti'),
+       local('LemiQiuXuShoushuTi');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: 'LemiSongKe';
   src: local('乐米宋刻'), local('LemiSongKe'), local('Lemi-Songke'), local('Lemi Songke');
@@ -46,24 +71,25 @@
   --panel: #1a1512;
   --panel-warm: rgba(28, 23, 19, 0.75);
   
-  /* 📖 乐米宋刻 & 高清晰度简体中文排版系统 (Lemi Songke & High-Clarity Typography) */
-  --font-songke: '乐米宋刻', 'LemiSongKe', 'Lemi Songke', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', STSong, serif;
+  /* 🖋️ 乐米秋叙手书体 (自带温柔叙事感的硬笔手写体) & 中文字体系统 */
+  --font-qiuxu: '乐米秋叙手书体', 'LemiQiuXuShouShuTi', 'Lemi-QiuXu-ShouShuTi', 'Lemi QiuXu ShouShu Ti', 'ChenYuluoyan', 'Yozai', '乐米宋刻', 'Noto Serif SC', 'Noto Sans SC', sans-serif;
+  --font-songke: '乐米秋叙手书体', 'LemiQiuXuShouShuTi', '乐米宋刻', 'Noto Serif SC', 'Noto Sans SC', serif;
   --font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   
-  --font-eng-title: 'Gaegu', 'Patrick Hand', var(--font-songke), cursive, sans-serif;
+  --font-eng-title: 'Gaegu', 'Patrick Hand', var(--font-qiuxu), cursive, sans-serif;
   --font-eng-body:  'Patrick Hand', 'Gaegu', var(--font-sans), cursive, sans-serif;
-  --font-chn-title: var(--font-songke);
-  --font-chn-body:  var(--font-sans);
-  --font-hand-title: var(--font-songke);
-  --font-hand-en:    'Gaegu', 'Patrick Hand', var(--font-songke), cursive;
-  --font-hand-cn:    var(--font-songke);
-  --font-serif-cn:   var(--font-songke);
-  --font-kaiti:      var(--font-songke);
-  --font-kai:        var(--font-songke);
+  --font-chn-title: var(--font-qiuxu);
+  --font-chn-body:  var(--font-qiuxu);
+  --font-hand-title: var(--font-qiuxu);
+  --font-hand-en:    'Gaegu', 'Patrick Hand', var(--font-qiuxu), cursive;
+  --font-hand-cn:    var(--font-qiuxu);
+  --font-serif-cn:   var(--font-qiuxu);
+  --font-kaiti:      var(--font-qiuxu);
+  --font-kai:        var(--font-qiuxu);
   
   /* Helper Assignments */
-  --font-display: var(--font-songke);
-  --font-body:    var(--font-sans);
+  --font-display: var(--font-qiuxu);
+  --font-body:    var(--font-qiuxu);
   
   --transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
   --hand-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
