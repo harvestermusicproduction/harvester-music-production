@@ -34,29 +34,32 @@ const WATER_SHADERS = {
 
       // Strength of the "bumpiness"
       float bump = 5.0;
-      vec3 normal = normalize(vec3((hL - hR) * bump, (hB - hT) * bump, 1.0));
+      float dX = (hL - hR) * bump;
+      float dY = (hB - hT) * bump;
+      vec3 normal = normalize(vec3(dX, dY, 1.0));
+      float waveDisturbance = clamp(length(vec2(dX, dY)) * 2.0, 0.0, 1.0);
 
       // 2. Refraction (Distort UVs based on normal)
       float refractionStrength = 0.05;
       vec2 refractedUv = vUv + normal.xy * refractionStrength;
       vec3 bg = texture2D(tBackground, refractedUv).rgb;
 
-      // 3. Specular Highlights
+      // 3. Specular Highlights (Shine dynamically along active ripple wave crests)
       vec3 viewDir = normalize(vViewPosition);
       vec3 lightDir = normalize(lightPosition);
       vec3 halfwayDir = normalize(lightDir + viewDir);
       float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
-      vec3 specular = vec3(0.96, 0.82, 0.54) * spec * 0.8; // Gold highlights
+      vec3 specular = vec3(0.96, 0.82, 0.54) * spec * waveDisturbance * 0.8; // Gold highlights on active waves only
 
-      // 4. Reflection (Simple color tint + Fresnel-like)
-      float fresnel = 1.0 - max(dot(normal, vec3(0.0, 0.0, 1.0)), 0.0);
-      fresnel = pow(fresnel, 5.0); // Focus reflection on edges
+      // 4. Reflection (Focus reflection on wave edges)
+      float fresnel = (1.0 - max(dot(normal, vec3(0.0, 0.0, 1.0)), 0.0)) * waveDisturbance;
+      fresnel = pow(fresnel, 4.0);
       vec3 reflectionColor = vec3(0.1, 0.1, 0.1) * fresnel;
 
       // Final Color Composition
       vec3 finalColor = bg + reflectionColor + specular;
       
-      // Depth Tint (Slight blue/black)
+      // Depth Tint
       finalColor = mix(finalColor, edgeColor, clamp(fresnel * 0.5, 0.0, 1.0));
 
       gl_FragColor = vec4(finalColor, 1.0);
