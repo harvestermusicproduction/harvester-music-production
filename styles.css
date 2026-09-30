@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Gaegu:wght@400;700&family=Homemade+Apple&family=Kaushan+Script&family=Long+Cang&family=Ma+Shan+Zheng&family=Marck+Script&family=Noto+Serif+SC:wght@300;400;600&family=Patrick+Hand&family=Reenie+Beanie&family=Satisfy&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Handlee&family=Indie+Flower&family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Patrick+Hand&family=Shantell+Sans:wght@400;600;700&family=ZCOOL+KuaiLe&display=swap');
 
 :root {
   --gold: #f6d28a;
@@ -12,15 +12,15 @@
   --panel: #1a1512;
   --panel-warm: rgba(28, 23, 19, 0.75);
   
-  /* Brand Typography System V2 + Hand-drawn Warm Accents */
+  /* Brand Typography System V3: Unified Authentic Hand-drawn Fonts */
   --font-eng-title: 'Inter', sans-serif;
   --font-eng-body:  'Inter', sans-serif;
   --font-chn-title: 'Noto Sans SC', sans-serif;
   --font-chn-body:  'Noto Sans SC', sans-serif;
-  --font-hand-title: 'Kaushan Script', 'Marck Script', 'Alex Brush', 'Caveat', cursive;
-  --font-hand-en:   'Caveat', 'Patrick Hand', cursive;
-  --font-hand-cn:   'Ma Shan Zheng', 'Long Cang', cursive;
-  --font-serif-cn:  'Noto Serif SC', serif;
+  --font-hand-title: 'Gaegu', 'Patrick Hand', 'Handlee', 'ZCOOL KuaiLe', cursive;
+  --font-hand-en:    'Gaegu', 'Patrick Hand', 'Handlee', 'Shantell Sans', cursive;
+  --font-hand-cn:    'ZCOOL KuaiLe', 'Long Cang', 'Ma Shan Zheng', 'Noto Sans SC', cursive;
+  --font-serif-cn:   'Noto Sans SC', serif;
   
   /* Helper Assignments */
   --font-display: var(--font-eng-title);
@@ -62,7 +62,7 @@ body {
   color: var(--gold);
   opacity: 0;
   pointer-events: none;
-  font-family: 'Caveat', 'Noto Sans SC', sans-serif;
+  font-family: 'Gaegu', 'Noto Sans SC', sans-serif;
   filter: drop-shadow(0 0 12px rgba(246, 210, 138, 0.55));
   animation: ambientNoteRise linear infinite;
 }
@@ -85,12 +85,12 @@ body {
 
 .hero-hand-title {
   font-family: var(--font-hand-title) !important;
-  font-size: 5rem !important;
-  font-weight: 400 !important;
+  font-size: 5.5rem !important;
+  font-weight: 700 !important;
   color: #fffaf0 !important;
-  letter-spacing: 7px !important;
+  letter-spacing: 5px !important;
   text-shadow: 0 8px 30px rgba(0,0,0,0.85), 0 0 40px rgba(246, 210, 138, 0.35) !important;
-  line-height: 1.2 !important;
+  line-height: 1.15 !important;
 }
 
 /* Background Particles Canvas */
