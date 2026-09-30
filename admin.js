@@ -1915,10 +1915,175 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- 🎯 板块 7: 平台定位 (POSITIONING) -->
+        <!-- 🤝 板块 7: 合作方案与参与要求 (COLLABORATION & REQUIREMENTS) -->
+        <div class="cms-card" style="border-left: 4px solid #ff9f43;">
+          <h3 style="color:#ff9f43; margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>🤝</span> 板块七：合作方案与参与要求 (Collaboration & Requirements)
+          </h3>
+          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑共分共享共赢理念、出品合作模式与参与准则。</p>
+
+          <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-bottom:20px;">
+            <!-- Left Info -->
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222;">
+              <div style="margin-bottom:12px;">
+                <label style="font-size:0.75rem; color:#aaa;">主标题 (Main Title)</label>
+                <input type="text" id="in_about_coop_main_title" value="${d('about_coop_main_title', '收 割 机 和 独 立 创 作 人 的 合 作 方 案')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:12px;">
+                <label style="font-size:0.75rem; color:#aaa;">副标题 (Subtitle EN)</label>
+                <input type="text" id="in_about_coop_subtitle" value="${d('about_coop_subtitle', 'HARVESTER MUSIC & INDEPENDENT SONGWRITERS PROPOSAL')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:12px;">
+                <label style="font-size:0.75rem; color:#aaa;">标语宣告 (Tagline)</label>
+                <input type="text" id="in_about_coop_tagline" value="${d('about_coop_tagline', 'support a fair and transparent model of shared rights and shared profits')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:#aaa;">核心共赢理念阐述 (Core Concept)</label>
+                <textarea id="in_about_coop_core_concept" style="width:100%; height:90px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_coop_core_concept', '共分共享，意指共同『为作品贡献个人的恩赐』，后续共同『分享』所得的工价。\n共赢，意指在这个过程里，一同『赢得』未信之人、未得之民的灵魂，为复兴神的国度效力！')}</textarea>
+              </div>
+            </div>
+
+            <!-- Right Photo -->
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
+              <label style="font-size:0.8rem; color:var(--gold); font-weight:bold; display:block; margin-bottom:8px;">合作方案展示图 (Studio Mic Photo)</label>
+              <img id="prev_about_coop_img_mic" src="${d('about_coop_img_mic', 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80')}" style="width:100%; height:160px; object-fit:cover; border-radius:6px; margin-bottom:8px; border:1px solid #333;">
+              <input type="file" id="f_about_coop_img_mic" style="font-size:0.75rem; width:100%; margin-bottom:5px;">
+              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_coop_img_mic', 'in_about_coop_img_mic', 'prev_about_coop_img_mic')">📤 上传展示图</button>
+              <input type="hidden" id="in_about_coop_img_mic" value="${d('about_coop_img_mic', 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80')}">
+            </div>
+          </div>
+
+          <!-- Dual Cards Configuration -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <!-- Model -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <h4 style="color:var(--gold); margin-top:0; margin-bottom:12px;">🏢 合作模式 (Model)</h4>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">出品公司条款</label>
+                <input type="text" id="in_about_coop_model_p1" value="${d('about_coop_model_p1', 'Harvester Music Production')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">包含项目条款</label>
+                <input type="text" id="in_about_coop_model_p2" value="${d('about_coop_model_p2', '词曲、制作、拍摄、宣发、演唱')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:#aaa;">版权说明条款 (100%永久持有)</label>
+                <textarea id="in_about_coop_model_p3" style="width:100%; height:55px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_coop_model_p3', '所有版权（词曲OP 与 母带）100% 由 Harvester 永久持有')}</textarea>
+              </div>
+            </div>
+
+            <!-- Requirements -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <h4 style="color:#ff9f43; margin-top:0; margin-bottom:12px;">⚖️ 参与要求 (Requirements)</h4>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">版权分成机制</label>
+                <input type="text" id="in_about_coop_req_p1" value="${d('about_coop_req_p1', '按既定比例分配，确保公平透明')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">加入平台要求</label>
+                <input type="text" id="in_about_coop_req_p2" value="${d('about_coop_req_p2', '加入者须同意版权分成方案')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:#aaa;">自由选择声明</label>
+                <textarea id="in_about_coop_req_p3" style="width:100%; height:55px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_coop_req_p3', '不同意者可选择不参与')}</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 👥 板块 8: 核心团队 (CORE TEAM POLAROIDS) -->
+        <div class="cms-card" style="border-left: 4px solid #1dd1a1;">
+          <h3 style="color:#1dd1a1; margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>👥</span> 板块八：核心团队拍立得画廊 (Core Team Polaroids)
+          </h3>
+          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑 7 大职务成员名单、中英文职称以及拍立得照片。</p>
+
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; margin-bottom:20px;">
+            <!-- 1. 创办启发人 -->
+            <div style="background:#111; padding:15px; border-radius:8px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">01 创办启发人</span>
+              <input type="text" id="in_about_team_r1_t" value="${d('about_team_r1_t', '创作平台创办启发人')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; margin:6px 0 4px; border-radius:4px; font-size:0.8rem;">
+              <textarea id="in_about_team_r1_names" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.85rem; margin-bottom:8px;">${d('about_team_r1_names', '汤小康\nWarren 沈自强')}</textarea>
+              <img id="prev_about_team_r1_img" src="${d('about_team_r1_img', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:80px; object-fit:cover; border-radius:4px; margin-bottom:6px;">
+              <input type="file" id="f_about_team_r1_img" style="font-size:0.7rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r1_img', 'in_about_team_r1_img', 'prev_about_team_r1_img')">更换相片</button>
+              <input type="hidden" id="in_about_team_r1_img" value="${d('about_team_r1_img', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80')}">
+            </div>
+
+            <!-- 2. 创作 -->
+            <div style="background:#111; padding:15px; border-radius:8px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">02 创作</span>
+              <input type="text" id="in_about_team_r2_t" value="${d('about_team_r2_t', '创作')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; margin:6px 0 4px; border-radius:4px; font-size:0.8rem;">
+              <textarea id="in_about_team_r2_names" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.85rem; margin-bottom:8px;">${d('about_team_r2_names', 'Warren 沈自强\n汤小康\nNatasha')}</textarea>
+              <img id="prev_about_team_r2_img" src="${d('about_team_r2_img', 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:80px; object-fit:cover; border-radius:4px; margin-bottom:6px;">
+              <input type="file" id="f_about_team_r2_img" style="font-size:0.7rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r2_img', 'in_about_team_r2_img', 'prev_about_team_r2_img')">更换相片</button>
+              <input type="hidden" id="in_about_team_r2_img" value="${d('about_team_r2_img', 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80')}">
+            </div>
+
+            <!-- 3. 制作 -->
+            <div style="background:#111; padding:15px; border-radius:8px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">03 制作</span>
+              <input type="text" id="in_about_team_r3_t" value="${d('about_team_r3_t', '制作')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; margin:6px 0 4px; border-radius:4px; font-size:0.8rem;">
+              <textarea id="in_about_team_r3_names" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.85rem; margin-bottom:8px;">${d('about_team_r3_names', '汤小康\nWarren 沈自强\nEdward')}</textarea>
+              <img id="prev_about_team_r3_img" src="${d('about_team_r3_img', 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:80px; object-fit:cover; border-radius:4px; margin-bottom:6px;">
+              <input type="file" id="f_about_team_r3_img" style="font-size:0.7rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r3_img', 'in_about_team_r3_img', 'prev_about_team_r3_img')">更换相片</button>
+              <input type="hidden" id="in_about_team_r3_img" value="${d('about_team_r3_img', 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80')}">
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px;">
+            <!-- 4. 拍摄 -->
+            <div style="background:#111; padding:12px; border-radius:8px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">04 拍摄</span>
+              <input type="text" id="in_about_team_r4_t" value="${d('about_team_r4_t', '拍摄')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; margin:4px 0; border-radius:4px; font-size:0.75rem;">
+              <input type="text" id="in_about_team_r4_names" value="${d('about_team_r4_names', '陈宏亮')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
+              <img id="prev_about_team_r4_img" src="${d('about_team_r4_img', 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:70px; object-fit:cover; border-radius:4px; margin-bottom:5px;">
+              <input type="file" id="f_about_team_r4_img" style="font-size:0.7rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:3px;" onclick="uploadFile('f_about_team_r4_img', 'in_about_team_r4_img', 'prev_about_team_r4_img')">更换相片</button>
+              <input type="hidden" id="in_about_team_r4_img" value="${d('about_team_r4_img', 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80')}">
+            </div>
+
+            <!-- 5. 宣传 -->
+            <div style="background:#111; padding:12px; border-radius:8px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">05 宣传</span>
+              <input type="text" id="in_about_team_r5_t" value="${d('about_team_r5_t', '宣传')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; margin:4px 0; border-radius:4px; font-size:0.75rem;">
+              <input type="text" id="in_about_team_r5_names" value="${d('about_team_r5_names', 'Sherlyn')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
+              <img id="prev_about_team_r5_img" src="${d('about_team_r5_img', 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:70px; object-fit:cover; border-radius:4px; margin-bottom:5px;">
+              <input type="file" id="f_about_team_r5_img" style="font-size:0.7rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:3px;" onclick="uploadFile('f_about_team_r5_img', 'in_about_team_r5_img', 'prev_about_team_r5_img')">更换相片</button>
+              <input type="hidden" id="in_about_team_r5_img" value="${d('about_team_r5_img', 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80')}">
+            </div>
+
+            <!-- 6. 行政 -->
+            <div style="background:#111; padding:12px; border-radius:8px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">06 行政</span>
+              <input type="text" id="in_about_team_r6_t" value="${d('about_team_r6_t', '行政')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; margin:4px 0; border-radius:4px; font-size:0.75rem;">
+              <input type="text" id="in_about_team_r6_names" value="${d('about_team_r6_names', '梁苡乐')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
+              <img id="prev_about_team_r6_img" src="${d('about_team_r6_img', 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:70px; object-fit:cover; border-radius:4px; margin-bottom:5px;">
+              <input type="file" id="f_about_team_r6_img" style="font-size:0.7rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:3px;" onclick="uploadFile('f_about_team_r6_img', 'in_about_team_r6_img', 'prev_about_team_r6_img')">更换相片</button>
+              <input type="hidden" id="in_about_team_r6_img" value="${d('about_team_r6_img', 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80')}">
+            </div>
+
+            <!-- 7. 歌手 -->
+            <div style="background:#111; padding:12px; border-radius:8px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">07 歌手</span>
+              <input type="text" id="in_about_team_r7_t" value="${d('about_team_r7_t', '歌手')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; margin:4px 0; border-radius:4px; font-size:0.75rem;">
+              <input type="text" id="in_about_team_r7_names" value="${d('about_team_r7_names', '依歌曲需求而定')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
+              <img id="prev_about_team_r7_img" src="${d('about_team_r7_img', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:70px; object-fit:cover; border-radius:4px; margin-bottom:5px;">
+              <input type="file" id="f_about_team_r7_img" style="font-size:0.7rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:3px;" onclick="uploadFile('f_about_team_r7_img', 'in_about_team_r7_img', 'prev_about_team_r7_img')">更换相片</button>
+              <input type="hidden" id="in_about_team_r7_img" value="${d('about_team_r7_img', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80')}">
+            </div>
+          </div>
+        </div>
+
+        <!-- 🎯 板块 9: 平台定位 (POSITIONING) -->
         <div class="cms-card" style="border-left: 4px solid #2ed573;">
           <h3 style="color:#2ed573; margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>🎯</span> 板块七：平台定位 (Brand Positioning)
+            <span>🎯</span> 板块九：平台定位 (Brand Positioning)
           </h3>
           <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑定位口号、大标题及两大核心支柱。</p>
 
@@ -1954,10 +2119,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- 🎬 板块 8: 视听故事与品牌媒体 (MEDIA & FOOTER TEXT) -->
+        <!-- 🎬 板块 10: 视听故事与品牌媒体 (MEDIA & FOOTER TEXT) -->
         <div class="cms-card" style="border-left: 4px solid var(--gold);">
           <h3 style="color:var(--gold); margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>🎬</span> 板块八：品牌视听与结语 (Media Showcase & Closing Words)
+            <span>🎬</span> 板块十：品牌视听与结语 (Media Showcase & Closing Words)
           </h3>
 
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:25px; margin-bottom:20px;">
@@ -2042,6 +2207,19 @@ document.addEventListener('DOMContentLoaded', () => {
       'about_cps_r4_t', 'about_cps_r4_d',
       'about_cps_r5_t', 'about_cps_r5_d',
       'about_cps_r6_t', 'about_cps_r6_d',
+
+      'about_coop_main_title', 'about_coop_subtitle', 'about_coop_tagline', 'about_coop_core_concept', 'about_coop_img_mic',
+      'about_coop_model_title', 'about_coop_model_p1', 'about_coop_model_p2', 'about_coop_model_p3',
+      'about_coop_req_title', 'about_coop_req_p1', 'about_coop_req_p2', 'about_coop_req_p3',
+
+      'about_team_main_title', 'about_team_subtitle',
+      'about_team_r1_t', 'about_team_r1_te', 'about_team_r1_names', 'about_team_r1_img',
+      'about_team_r2_t', 'about_team_r2_te', 'about_team_r2_names', 'about_team_r2_img',
+      'about_team_r3_t', 'about_team_r3_te', 'about_team_r3_names', 'about_team_r3_img',
+      'about_team_r4_t', 'about_team_r4_te', 'about_team_r4_names', 'about_team_r4_img',
+      'about_team_r5_t', 'about_team_r5_te', 'about_team_r5_names', 'about_team_r5_img',
+      'about_team_r6_t', 'about_team_r6_te', 'about_team_r6_names', 'about_team_r6_img',
+      'about_team_r7_t', 'about_team_r7_te', 'about_team_r7_names', 'about_team_r7_names_en', 'about_team_r7_img',
 
       'about_pos_tagline',
       'about_pos_title',
