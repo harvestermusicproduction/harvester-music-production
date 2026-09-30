@@ -1,4 +1,13 @@
 @font-face {
+  font-family: 'Yozai';
+  src: url('assets/fonts/Yozai.woff2') format('woff2'),
+       url('assets/fonts/Yozai-Medium.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'ChenYuluoyan';
   src: url('assets/fonts/ChenYuluoyan-SC.woff2') format('woff2'),
        url('assets/fonts/ChenYuluoyan-SC.ttf') format('truetype');
@@ -21,17 +30,17 @@
   --panel: #1a1512;
   --panel-warm: rgba(28, 23, 19, 0.75);
   
-  /* Brand Typography System: 100% Authentic ChenYuluoyan Hand-drawn Fonts */
-  --font-eng-title: 'ChenYuluoyan', 'Gaegu', 'Patrick Hand', sans-serif;
-  --font-eng-body:  'ChenYuluoyan', 'Patrick Hand', 'Gaegu', sans-serif;
-  --font-chn-title: 'ChenYuluoyan', cursive, sans-serif;
-  --font-chn-body:  'ChenYuluoyan', cursive, sans-serif;
-  --font-hand-title: 'ChenYuluoyan', 'Gaegu', 'Patrick Hand', cursive;
-  --font-hand-en:    'ChenYuluoyan', 'Gaegu', 'Patrick Hand', cursive;
-  --font-hand-cn:    'ChenYuluoyan', cursive;
-  --font-serif-cn:   'ChenYuluoyan', serif;
-  --font-kaiti:      'ChenYuluoyan', cursive;
-  --font-kai:        'ChenYuluoyan', cursive;
+  /* Brand Typography System: 100% Authentic Yozai & Hand-drawn Fonts */
+  --font-eng-title: 'Yozai', 'Gaegu', 'Patrick Hand', sans-serif;
+  --font-eng-body:  'Yozai', 'Patrick Hand', 'Gaegu', sans-serif;
+  --font-chn-title: 'Yozai', 'ChenYuluoyan', cursive, sans-serif;
+  --font-chn-body:  'Yozai', 'ChenYuluoyan', cursive, sans-serif;
+  --font-hand-title: 'Yozai', 'Gaegu', 'Patrick Hand', cursive;
+  --font-hand-en:    'Yozai', 'Gaegu', 'Patrick Hand', cursive;
+  --font-hand-cn:    'Yozai', 'ChenYuluoyan', cursive;
+  --font-serif-cn:   'Yozai', 'ChenYuluoyan', serif;
+  --font-kaiti:      'Yozai', 'ChenYuluoyan', cursive;
+  --font-kai:        'Yozai', 'ChenYuluoyan', cursive;
   
   /* Helper Assignments */
   --font-display: var(--font-hand-title);
