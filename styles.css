@@ -337,12 +337,14 @@ header.scrolled {
 /* Hero Interactive Visualizer & Overlays */
 .hero { 
   position: relative; 
-  height: 100vh; 
+  min-height: 100vh; 
+  height: auto;
   display: flex; 
   align-items: center; 
   justify-content: center; 
   overflow: hidden;
   background: transparent;
+  padding: 7.5rem 2rem 4.5rem;
 }
 #vizCanvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
 .hero-video-bg {
