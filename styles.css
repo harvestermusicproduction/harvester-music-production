@@ -1,21 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Gaegu:wght@400;700&family=Long+Cang&family=Ma+Shan+Zheng&family=Patrick+Hand&family=Noto+Serif+SC:wght@300;400;600&display=swap');
+
 :root {
   --gold: #f6d28a;
-  --bg: #0a0a0a;
-  --text: #ffffff;
-  --gray: #888888;
-  --panel: #141414;
+  --gold-warm: #f4be6a;
+  --gold-amber: #e8a848;
+  --bg: #12100e; 
+  --bg-warm-dark: #181411;
+  --text: #faf6f0; 
+  --text-muted: #b8ac9f;
+  --gray: #9c9083;
+  --panel: #1a1512;
+  --panel-warm: rgba(28, 23, 19, 0.75);
   
-  /* Brand Typography System V2 - Inter + Noto Sans SC */
+  /* Brand Typography System V2 + Hand-drawn Warm Accents */
   --font-eng-title: 'Inter', sans-serif;
   --font-eng-body:  'Inter', sans-serif;
   --font-chn-title: 'Noto Sans SC', sans-serif;
   --font-chn-body:  'Noto Sans SC', sans-serif;
+  --font-hand-en:   'Caveat', 'Patrick Hand', cursive;
+  --font-hand-cn:   'Ma Shan Zheng', 'Long Cang', cursive;
+  --font-serif-cn:  'Noto Serif SC', serif;
   
   /* Helper Assignments */
   --font-display: var(--font-eng-title);
   --font-body:    var(--font-eng-body);
   
-  --transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+  --transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  --hand-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  --hand-radius-soft: 22px 26px 20px 24px / 24px 20px 26px 22px;
 }
 
 /* Base resets */
@@ -23,7 +35,11 @@
 html { scroll-behavior: smooth; font-size: 16px; }
 body {
   font-family: var(--font-body);
-  background: #0a0a0a; 
+  background-color: var(--bg);
+  background-image: 
+    radial-gradient(ellipse 90% 50% at 50% 0%, rgba(246, 210, 138, 0.1) 0%, rgba(210, 140, 65, 0.04) 40%, transparent 80%),
+    radial-gradient(ellipse 60% 40% at 50% 65%, rgba(246, 210, 138, 0.04) 0%, transparent 70%);
+  background-attachment: fixed;
   color: var(--text);
   line-height: 1.8;
   overflow-x: hidden;
@@ -43,7 +59,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 p { 
   font-family: var(--font-chn-body); 
-  color: rgba(255,255,255,0.85); 
+  color: rgba(250, 246, 240, 0.88); 
   font-weight: 400; 
   margin-bottom: 1.5rem; 
   letter-spacing: 0.5px;
@@ -51,7 +67,7 @@ p {
 }
 a { color: var(--text); text-decoration: none; transition: var(--transition); font-family: var(--font-eng-body); }
 a:hover { color: var(--gold); }
-img, video { max-width: 100%; display: block; border-radius: 4px; }
+img, video { max-width: 100%; display: block; border-radius: 6px; }
 section { padding: 8rem 2rem; max-width: 1000px; margin: 0 auto; }
 
 /* 🖋️ Typography Helper Classes */
@@ -59,32 +75,109 @@ section { padding: 8rem 2rem; max-width: 1000px; margin: 0 auto; }
 .font-title-cn { font-family: var(--font-chn-title); font-weight: 500; }
 .font-body-en  { font-family: var(--font-eng-body); }
 .font-body-cn  { font-family: var(--font-chn-body); }
+.font-hand-en  { font-family: var(--font-hand-en); }
+.font-hand-cn  { font-family: var(--font-hand-cn); }
+.font-serif-cn { font-family: var(--font-serif-cn); }
 
-/* 🖋️ Poetry & Artistic Blocks */
+/* 🌾 Hand-drawn Badges / Tags */
+.hand-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-hand-en);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--gold);
+  background: rgba(246, 210, 138, 0.08);
+  border: 1.5px dashed rgba(246, 210, 138, 0.4);
+  border-radius: var(--hand-radius);
+  padding: 4px 18px;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+  transform: rotate(-1.5deg);
+  transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+.hand-tag:hover {
+  transform: rotate(0deg) scale(1.04);
+  border-color: var(--gold);
+  background: rgba(246, 210, 138, 0.15);
+}
+
+/* 🌾 Hand-drawn Underlines */
+.hand-underline {
+  position: relative;
+  display: inline-block;
+}
+.hand-underline::after {
+  content: '';
+  position: absolute;
+  left: -4%;
+  bottom: -6px;
+  width: 108%;
+  height: 8px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'%3E%3Cpath d='M0,7 Q25,2 50,7 T100,7' fill='none' stroke='%23f6d28a' stroke-width='2.5' stroke-linecap='round' opacity='0.75'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  pointer-events: none;
+}
+
+/* 🌾 Hand-drawn Border Cards */
+.hand-card {
+  background: rgba(24, 20, 16, 0.75) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(246, 210, 138, 0.28) !important;
+  border-radius: var(--hand-radius-soft) !important;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), inset 0 0 25px rgba(246, 210, 138, 0.04);
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.hand-card:hover {
+  border-color: rgba(246, 210, 138, 0.55) !important;
+  transform: translateY(-4px) rotate(0.4deg);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(246, 210, 138, 0.12);
+}
+
+/* 🖋️ Poetry & Artistic Blocks (Warm Artisanal Manuscript) */
 .poetry-block {
-  font-family: var(--font-chn-title);
-  font-weight: 400; /* Clean regular weight */
-  font-size: 1.25rem;
-  line-height: 2.2;
-  letter-spacing: 0.15em;
+  font-family: var(--font-hand-cn), var(--font-serif-cn), serif;
+  font-weight: 400;
+  font-size: 1.35rem;
+  line-height: 2.3;
+  letter-spacing: 0.16em;
   text-align: center;
-  color: rgba(255,255,255,0.9);
-  margin: 4rem 0;
+  color: #faf4e8;
+  background: rgba(28, 23, 19, 0.65);
+  border: 1.5px dashed rgba(246, 210, 138, 0.35);
+  border-radius: var(--hand-radius);
+  padding: 3.5rem 2.5rem;
+  max-width: 720px;
+  margin: 3.5rem auto;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 0 30px rgba(246, 210, 138, 0.05);
+  position: relative;
   white-space: pre-line;
+}
+.poetry-block::before {
+  content: '🌾';
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.3rem;
+  background: var(--bg);
+  padding: 0 14px;
 }
 .poetry-block span {
   display: block;
   margin-bottom: 0.5rem;
 }
 .section-subtitle {
-  font-family: var(--font-eng-title);
-  font-style: italic;
-  font-size: 0.9rem;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--gold);
-  opacity: 0.8;
-  margin-bottom: 1rem;
+  font-family: var(--font-hand-en);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--gold-warm);
+  opacity: 0.95;
+  margin-bottom: 0.8rem;
   text-align: center;
 }
 
@@ -524,32 +617,33 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); }
 .btn-submit { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 1rem 3rem; text-transform: uppercase; cursor: pointer; transition: var(--transition); align-self: flex-start; }
 .btn-submit:hover { background: var(--gold); color: var(--bg); border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 5px 20px rgba(246, 210, 138, 0.2); }
 
-/* Premium & Social Buttons Redesign */
+/* Premium & Social Buttons Redesign (Warm & Handcrafted) */
 .btn-premium {
   display: flex !important;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 12px 28px;
-  border-radius: 50px;
+  padding: 12px 30px;
+  border-radius: var(--hand-radius);
   font-size: 0.85rem;
   letter-spacing: 2px;
   text-transform: uppercase;
-  font-weight: 500;
-  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  font-weight: 600;
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   cursor: pointer;
-  background: var(--gold) !important;
-  color: #000 !important;
-  border: 1px solid var(--gold) !important;
+  background: rgba(246, 210, 138, 0.15) !important;
+  color: var(--gold) !important;
+  border: 1.5px solid var(--gold) !important;
   text-decoration: none !important;
-  box-shadow: 0 4px 15px rgba(246, 210, 138, 0.3);
+  box-shadow: 0 6px 20px rgba(246, 210, 138, 0.18);
+  position: relative;
 }
 
 .btn-premium:hover {
-  background: #fff !important;
-  color: #000 !important;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+  background: var(--gold) !important;
+  color: #1a1512 !important;
+  transform: translateY(-3px) rotate(-0.5deg);
+  box-shadow: 0 10px 30px rgba(246, 210, 138, 0.4);
 }
 
 
@@ -1762,6 +1856,8 @@ body.harvest-active {
   .about-social-row { flex-wrap: nowrap !important; overflow-x: auto !important; }
   .home-hero-logo { height: 200px !important; }
   .header-socials { display: none !important; }
+  .hero-slogan { font-size: 1.1rem !important; letter-spacing: 2px !important; padding: 0 1rem; }
+  .hero-desc { font-size: 0.82rem !important; letter-spacing: 1px !important; padding: 0 1rem; line-height: 1.6 !important; }
 }
 
 /* 🎥 Video Control Killing */
