@@ -12,14 +12,417 @@
   <meta property="og:title" content="关于我们 About Us | Harvester Music Production 收割机创作工作坊">
   <meta property="og:description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
   <meta property="og:image" content="https://www.harvestermusic.my/assets/logo.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=15.0.0">
+  <link rel="stylesheet" href="styles.css?v=16.2.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ========================================================
+       🎨 Hand-drawn Artistic "About Us" Creative Canvas Styles
+       ======================================================== */
+    .about-page-wrapper {
+      max-width: 1140px;
+      margin: 0 auto 6rem;
+      padding: 0 1.5rem;
+      position: relative;
+    }
+
+    /* 🏷️ Hand-drawn Tape / Badges */
+    .sketch-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 20px;
+      border-radius: var(--hand-radius);
+      border: 1.5px dashed rgba(246, 210, 138, 0.45);
+      background: rgba(246, 210, 138, 0.08);
+      color: var(--gold);
+      font-family: var(--font-hand-en);
+      font-size: 1.15rem;
+      letter-spacing: 2px;
+      margin-bottom: 1.2rem;
+      transition: all 0.3s ease;
+    }
+    .sketch-pill:hover {
+      transform: scale(1.05) rotate(-1deg);
+      border-color: var(--gold);
+      background: rgba(246, 210, 138, 0.16);
+    }
+
+    /* 📜 Section 1: Name Origin Showcase */
+    .origin-hero-card {
+      background: linear-gradient(135deg, rgba(28, 23, 19, 0.85) 0%, rgba(18, 15, 12, 0.95) 100%);
+      border: 1.5px solid rgba(246, 210, 138, 0.3);
+      border-radius: var(--hand-radius-soft);
+      padding: 3.5rem 3rem;
+      margin-bottom: 4.5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 0 35px rgba(246, 210, 138, 0.04);
+      position: relative;
+      overflow: hidden;
+    }
+    .origin-hero-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(246, 210, 138, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .origin-quote-box {
+      border-left: 3px solid var(--gold);
+      padding-left: 1.8rem;
+      margin: 1.8rem 0 2.2rem;
+    }
+    .origin-scripture {
+      font-family: var(--font-hand-cn);
+      font-size: 1.85rem;
+      color: #fffaf0;
+      line-height: 1.7;
+      margin-bottom: 0.5rem;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .origin-scripture-ref {
+      font-family: var(--font-hand-en);
+      font-size: 1.3rem;
+      color: var(--gold);
+      letter-spacing: 3px;
+      margin: 0;
+    }
+
+    .origin-meaning {
+      font-family: var(--font-hand-cn);
+      font-size: 1.45rem;
+      color: #ede4d5;
+      line-height: 2.0;
+      letter-spacing: 1.5px;
+      margin: 0;
+    }
+    .origin-meaning-en {
+      font-family: var(--font-hand-en);
+      font-size: 1.05rem;
+      color: #9c9083;
+      line-height: 1.6;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 0.8rem;
+    }
+
+    /* 🌟 Section 2: Vision & Mission Dual Wing Cards */
+    .dual-wing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      margin-bottom: 5rem;
+    }
+    .wing-card {
+      background: rgba(22, 18, 15, 0.85);
+      border: 1.5px solid rgba(246, 210, 138, 0.28);
+      border-radius: var(--hand-radius-soft);
+      padding: 3rem 2.4rem;
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      box-shadow: 0 15px 45px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .wing-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(246, 210, 138, 0.6);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(246, 210, 138, 0.1);
+    }
+    .wing-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px dashed rgba(246, 210, 138, 0.25);
+      padding-bottom: 1.2rem;
+      margin-bottom: 1.8rem;
+    }
+    .wing-badge h2 {
+      margin: 0;
+      font-size: 2.2rem;
+      color: #fffaf0;
+      font-family: var(--font-hand-cn);
+      letter-spacing: 3px;
+    }
+    .wing-badge span {
+      font-family: var(--font-hand-en);
+      font-size: 1.5rem;
+      color: var(--gold);
+      letter-spacing: 3px;
+    }
+
+    .wing-item {
+      margin-bottom: 1.6rem;
+      position: relative;
+    }
+    .wing-item:last-child {
+      margin-bottom: 0;
+    }
+    .wing-item-title {
+      font-family: var(--font-hand-cn);
+      font-size: 1.35rem;
+      color: #fffaf0;
+      line-height: 1.6;
+      margin-bottom: 0.35rem;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .wing-item-title i {
+      color: var(--gold);
+      margin-top: 5px;
+      font-size: 0.9em;
+    }
+    .wing-item-desc {
+      font-family: var(--font-hand-en);
+      font-size: 0.95rem;
+      color: #9c9083;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      line-height: 1.4;
+      margin-left: 24px;
+      margin-bottom: 0;
+    }
+
+    /* 🏛️ Section 3: 4 Pillars of Mission (使命四维支柱) */
+    .pillars-section {
+      margin-bottom: 5.5rem;
+    }
+    .section-sketch-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .section-sketch-header h2 {
+      font-size: 2.5rem;
+      color: #fffaf0;
+      font-family: var(--font-hand-cn);
+      letter-spacing: 4px;
+      margin: 0 0 0.4rem 0;
+    }
+    .section-sketch-header p {
+      font-family: var(--font-hand-en);
+      font-size: 1.25rem;
+      color: var(--gold);
+      letter-spacing: 4px;
+      margin: 0;
+    }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+    .pillar-card {
+      background: rgba(20, 16, 13, 0.8);
+      border: 1.5px solid rgba(246, 210, 138, 0.22);
+      border-radius: var(--hand-radius-soft);
+      padding: 2.2rem 2rem;
+      position: relative;
+      transition: all 0.35s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .pillar-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+      background: rgba(28, 22, 18, 0.9);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.7), 0 0 25px rgba(246, 210, 138, 0.08);
+    }
+    .pillar-num {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.6rem;
+      font-family: var(--font-hand-en);
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: rgba(246, 210, 138, 0.18);
+      letter-spacing: 1px;
+      transition: color 0.3s ease;
+    }
+    .pillar-card:hover .pillar-num {
+      color: rgba(246, 210, 138, 0.45);
+    }
+    .pillar-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(246, 210, 138, 0.1);
+      border: 1px solid rgba(246, 210, 138, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .pillar-title {
+      font-family: var(--font-hand-cn);
+      font-size: 1.55rem;
+      color: #fffaf0;
+      margin-bottom: 0.3rem;
+      letter-spacing: 2px;
+    }
+    .pillar-title-en {
+      font-family: var(--font-hand-en);
+      font-size: 1.05rem;
+      color: var(--gold);
+      letter-spacing: 1.5px;
+      margin-bottom: 0.9rem;
+    }
+    .pillar-desc {
+      font-family: var(--font-hand-cn);
+      font-size: 1.22rem;
+      color: #ded6c8;
+      line-height: 1.8;
+      letter-spacing: 1.2px;
+      margin-bottom: 0.4rem;
+    }
+    .pillar-desc-en {
+      font-family: var(--font-hand-en);
+      font-size: 0.92rem;
+      color: #8c8276;
+      line-height: 1.5;
+      letter-spacing: 0.8px;
+      margin: 0;
+    }
+
+    /* 🎯 Section 4: Brand Positioning (平台定位) */
+    .position-card {
+      background: radial-gradient(ellipse at center, rgba(32, 26, 21, 0.9) 0%, rgba(16, 13, 11, 0.95) 100%);
+      border: 1.5px dashed rgba(246, 210, 138, 0.35);
+      border-radius: var(--hand-radius-soft);
+      padding: 3.5rem 3rem;
+      margin-bottom: 5rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      text-align: center;
+      position: relative;
+    }
+    .position-tagline {
+      font-family: var(--font-hand-en);
+      font-size: 1.55rem;
+      color: var(--gold);
+      letter-spacing: 4px;
+      margin-bottom: 0.3rem;
+    }
+    .position-main-title {
+      font-family: var(--font-hand-cn);
+      font-size: 2.6rem;
+      color: #fffaf0;
+      letter-spacing: 4px;
+      margin-bottom: 2.2rem;
+    }
+    .position-points-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      text-align: left;
+      margin-top: 1.5rem;
+    }
+    .position-point-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(246, 210, 138, 0.18);
+      border-radius: 16px;
+      padding: 1.8rem 1.6rem;
+    }
+    .position-point-box h4 {
+      font-family: var(--font-hand-cn);
+      font-size: 1.35rem;
+      color: #fffaf0;
+      letter-spacing: 1.5px;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .position-point-box h4 i {
+      color: var(--gold);
+    }
+    .position-point-box p {
+      font-family: var(--font-hand-en);
+      font-size: 0.95rem;
+      color: #9c9083;
+      line-height: 1.5;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+
+    /* 🎬 Section 5: Brand Media Showcase */
+    .media-card-wrapper {
+      margin-bottom: 5rem;
+    }
+
+    /* 🤝 Section 6: Action & Connect */
+    .about-cta-card {
+      background: linear-gradient(135deg, rgba(28, 23, 19, 0.9) 0%, rgba(16, 13, 10, 0.95) 100%);
+      border: 1.5px solid rgba(246, 210, 138, 0.35);
+      border-radius: var(--hand-radius);
+      padding: 3.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    }
+    .about-cta-title {
+      font-family: var(--font-hand-cn);
+      font-size: 2.3rem;
+      color: #fffaf0;
+      letter-spacing: 3px;
+      margin-bottom: 0.8rem;
+    }
+    .about-cta-desc {
+      font-family: var(--font-hand-cn);
+      font-size: 1.35rem;
+      color: #ded6c8;
+      max-width: 650px;
+      margin: 0 auto 2rem;
+      line-height: 1.8;
+      letter-spacing: 1.5px;
+    }
+    .about-cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    /* 📱 Mobile Responsive Adjustments */
+    @media (max-width: 860px) {
+      .dual-wing-grid,
+      .pillars-grid,
+      .position-points-grid {
+        grid-template-columns: 1fr;
+        gap: 1.8rem;
+      }
+      .origin-hero-card {
+        padding: 2.2rem 1.6rem;
+      }
+      .origin-scripture {
+        font-size: 1.5rem;
+      }
+      .origin-meaning {
+        font-size: 1.25rem;
+      }
+      .position-card {
+        padding: 2.2rem 1.4rem;
+      }
+      .position-main-title {
+        font-size: 2rem;
+      }
+      .wing-card {
+        padding: 2.2rem 1.6rem;
+      }
+    }
+  </style>
 </head>
 <body style="position: relative;">
   <canvas id="bgParticles"></canvas>
+
   <header style="z-index:100;">
     <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
       <a href="index.html" class="logo" style="text-decoration:none;">
@@ -75,66 +478,264 @@
     <a href="contact.html">联系我们</a>
   </div>
 
+  <!-- 🌟 Page Header -->
   <div class="ppt-header fade-in">
     <div class="ppt-line"></div>
     <h1 class="ppt-title">关于我们</h1>
-    <p class="ppt-subtitle">ABOUT US</p>
+    <p class="ppt-subtitle">ABOUT HARVESTER MUSIC</p>
   </div>
 
-  <section class="about fade-in" style="min-height: 60vh; text-align:center; padding: 0 2rem; padding-top: 0;">
-    
-    <!-- Cinematic Video Container (16:9) -->
-    <div id="cfg_about_media_container" style="width: 100%; max-width: 1100px; aspect-ratio: 16 / 9; margin: 0 auto 3rem; overflow: hidden; border-radius: 12px; border: 1px solid rgba(246,210,138,0.15); background: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
-      <img id="cfg_about_banner" src="https://images.unsplash.com/photo-1514525253361-9ee1a07b7ec2?auto=format&fit=crop&w=1200&q=80" alt="正在加载媒体..." style="width: 100%; height: 100%; object-fit: cover;">
-    </div>
-    
-    <div style="max-width: 900px; margin: 0 auto 4rem; padding: 0 1rem;">
-      <p id="cfg_about_text" class="kaiti-quote" style="font-size: 1.2rem; line-height: 1.8; color: #eee; text-align: center;">
-        正在加载品牌故事...
-      </p>
-    </div>
+  <main class="about-page-wrapper">
 
-    <!-- Social Connect Section -->
-    <div style="margin-top: 4rem; padding: 3rem; border-top: 1px solid rgba(255,255,255,0.05);">
-        <h3 class="text-gold mb-4" style="font-weight: 300; letter-spacing: 4px;">CONNECT WITH US</h3>
-        <div class="about-social-row" style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: nowrap; overflow-x: auto; padding: 10px 0;">
-            <a id="cfg_social_wa" href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry." target="_blank" class="btn-premium btn-social-pill" style="min-width: 65px; width: 65px; height: 65px; padding: 0;" title="WhatsApp">
-                <i class="fab fa-whatsapp" style="font-size: 1.4rem;"></i>
-            </a>
-            <a id="cfg_social_sp" href="https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ" target="_blank" class="btn-premium btn-social-pill" style="min-width: 65px; width: 65px; height: 65px; padding: 0;" title="Spotify">
-                <i class="fab fa-spotify" style="font-size: 1.4rem;"></i>
-            </a>
-            <a id="cfg_social_fb" href="#" target="_blank" class="btn-premium btn-social-pill" style="min-width: 65px; width: 65px; height: 65px; padding: 0;" title="Facebook">
-                <i class="fab fa-facebook-f" style="font-size: 1.3rem;"></i>
-            </a>
-            <a id="cfg_social_ig" href="#" target="_blank" class="btn-premium btn-social-pill" style="min-width: 65px; width: 65px; height: 65px; padding: 0;" title="Instagram">
-                <i class="fab fa-instagram" style="font-size: 1.3rem;"></i>
-            </a>
-            <a id="cfg_social_yt" href="#" target="_blank" class="btn-premium btn-youtube-premium" style="min-width: 65px; width: 65px; height: 65px; padding: 0;" title="YouTube">
-                <i class="fab fa-youtube" style="font-size: 1.3rem;"></i>
-            </a>
+    <!-- ===================================================
+         🌾 1. 名字的由来 (NAME ORIGIN)
+         =================================================== -->
+    <section class="origin-hero-card fade-in">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <span class="sketch-pill">🌾 NAME ORIGIN · 名字由来</span>
+        <h2 style="font-size: 2.8rem; color: #fffaf0; font-family: var(--font-hand-cn); letter-spacing: 4px; margin: 0;">
+          收 割 机 的 故 事
+        </h2>
+      </div>
+
+      <!-- 经文启发 -->
+      <div style="margin-bottom: 2.2rem;">
+        <span style="font-family: var(--font-hand-en); color: var(--gold); font-size: 1.15rem; letter-spacing: 2px;">
+          ✦ 经文启发 / BIBLICAL INSPIRATION
+        </span>
+        <div class="origin-quote-box">
+          <p class="origin-scripture">「那人撒种，这人收割，这话可见是真的。」</p>
+          <p class="origin-scripture-ref">—— 约翰福音 4:37 · JOHN 4:37</p>
+          <p style="font-family: var(--font-hand-en); font-size: 0.95rem; color: #9c9083; letter-spacing: 1px; text-transform: uppercase; margin: 4px 0 0 0;">
+            ONE SOWS AND ANOTHER REAPS. THIS SAYING IS TRUE.
+          </p>
         </div>
-    </div>
-  </section>
+      </div>
 
-  <script>
-    // Fail-safe for About Video Autoplay
-    window.addEventListener('DOMContentLoaded', () => {
-      const container = document.getElementById('cfg_about_media_container');
-      const checkVideo = setInterval(() => {
-        const video = container.querySelector('video');
-        if (video) {
-          video.play().catch(() => {
-            // If blocked, try again on first user interaction
-            document.addEventListener('touchstart', () => video.play(), { once: true });
-          });
-          clearInterval(checkVideo);
-        }
-      }, 500);
-    });
-  </script>
+      <!-- 名字意义 -->
+      <div>
+        <span style="font-family: var(--font-hand-en); color: var(--gold); font-size: 1.15rem; letter-spacing: 2px;">
+          ✦ 名字意义 / MEANING OF THE NAME
+        </span>
+        <div style="background: rgba(0,0,0,0.3); border: 1px dashed rgba(246,210,138,0.25); border-radius: 14px; padding: 1.8rem; margin-top: 10px;">
+          <p class="origin-meaning">
+            以“收割机”命名，象征着<b>神国的丰收</b>。<br>
+            音乐作品如同撒下的种子，触动人心，在神的时间里结出果实。
+          </p>
+          <p class="origin-meaning-en">
+            The name 'Harvester' symbolizes the abundant harvest in God's kingdom. Music is like a seed that touches hearts and bears fruit in God's timing.
+          </p>
+        </div>
+      </div>
+    </section>
 
-    <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+    <!-- ===================================================
+         🕊️ 2. 愿景与使命 (VISION & MISSION)
+         =================================================== -->
+    <section class="dual-wing-grid fade-in">
+      <!-- 愿景 (Vision) -->
+      <div class="wing-card">
+        <div>
+          <div class="wing-badge">
+            <h2>愿 景</h2>
+            <span>VISION</span>
+          </div>
+
+          <div class="wing-item">
+            <div class="wing-item-title">
+              <i class="fas fa-globe-asia"></i>
+              <span>推动现代流行基督教音乐的推广与发展</span>
+            </div>
+            <p class="wing-item-desc">To promote and develop modern contemporary Christian music</p>
+          </div>
+
+          <div class="wing-item">
+            <div class="wing-item-title">
+              <i class="fas fa-heart"></i>
+              <span>同心合一，为神国度收割灵魂，透过音乐传扬福音</span>
+            </div>
+            <p class="wing-item-desc">United as one, harvesting souls for God's kingdom through the power of music</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 使命 (Mission) -->
+      <div class="wing-card">
+        <div>
+          <div class="wing-badge">
+            <h2>使 命</h2>
+            <span>MISSION</span>
+          </div>
+
+          <div class="wing-item">
+            <div class="wing-item-title">
+              <i class="fas fa-microphone-alt"></i>
+              <span>为主兴起这世代的中文诗歌词曲创作人和音乐人</span>
+            </div>
+            <p class="wing-item-desc">To raise up the songwriters and musicians of this generation for the Lord through Chinese poetry and song creation</p>
+          </div>
+
+          <div class="wing-item">
+            <div class="wing-item-title">
+              <i class="fas fa-cross"></i>
+              <span>通过创作歌曲引导人认识神，并传播真理、信望与爱</span>
+            </div>
+            <p class="wing-item-desc">To guide people to know God through song creation and spread truth, faith, hope, and love</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         🏛️ 3. 使命详细内容 · 四大支柱 (MISSION DETAILS)
+         =================================================== -->
+    <section class="pillars-section fade-in">
+      <div class="section-sketch-header">
+        <span class="sketch-pill">🏛️ FOUR PILLARS · 四大支柱</span>
+        <h2>使 命 详 细 内 容</h2>
+        <p>OUR CORE MISSION PILLARS</p>
+      </div>
+
+      <div class="pillars-grid">
+        <!-- 支柱 01 -->
+        <div class="pillar-card">
+          <span class="pillar-num">01</span>
+          <div class="pillar-icon"><i class="fas fa-pen-nib"></i></div>
+          <h3 class="pillar-title">推动诗歌创作</h3>
+          <p class="pillar-title-en">Promoting Songwriting</p>
+          <p class="pillar-desc">鼓励并支持创作能够传递信仰的诗歌与歌曲。</p>
+          <p class="pillar-desc-en">Encourage and support the creation of songs and hymns that communicate faith.</p>
+        </div>
+
+        <!-- 支柱 02 -->
+        <div class="pillar-card">
+          <span class="pillar-num">02</span>
+          <div class="pillar-icon"><i class="fas fa-users"></i></div>
+          <h3 class="pillar-title">提供服事平台</h3>
+          <p class="pillar-title-en">Providing a Service Platform</p>
+          <p class="pillar-desc">创建一个平台，让音乐人能够分享、服事，达到共赢。</p>
+          <p class="pillar-desc-en">Create a platform where musicians can share and serve, achieving a win-win situation.</p>
+        </div>
+
+        <!-- 支柱 03 -->
+        <div class="pillar-card">
+          <span class="pillar-num">03</span>
+          <div class="pillar-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3 class="pillar-title">建立版权制度</h3>
+          <p class="pillar-title-en">Establishing a Copyright System</p>
+          <p class="pillar-desc">保护创作人的版权，确保每首歌曲在法律框架下得到保障。</p>
+          <p class="pillar-desc-en">Protect creators' copyrights and ensure that each song is legally protected.</p>
+        </div>
+
+        <!-- 支柱 04 -->
+        <div class="pillar-card">
+          <span class="pillar-num">04</span>
+          <div class="pillar-icon"><i class="fas fa-seedling"></i></div>
+          <h3 class="pillar-title">传承培育下一代</h3>
+          <p class="pillar-title-en">Passing on and Cultivating the Next Generation</p>
+          <p class="pillar-desc">培养下一代音乐人才，为神的事业贡献创意与才华。</p>
+          <p class="pillar-desc-en">Cultivate the next generation of music talent, contributing creativity and skills to God's work.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         🎯 4. 平台定位 (POSITIONING)
+         =================================================== -->
+    <section class="position-card fade-in">
+      <span class="sketch-pill">🎯 POSITIONING · 平台定位</span>
+      <p class="position-tagline">PROMOTING CONTEMPORARY CHRISTIAN MUSIC</p>
+      <h2 class="position-main-title">推 广 现 代 流 行 基 督 教 音 乐</h2>
+
+      <div class="position-points-grid">
+        <div class="position-point-box">
+          <h4><i class="fas fa-compact-disc"></i> 为神创作的门徒培养平台</h4>
+          <p style="font-family: var(--font-hand-cn); font-size: 1.18rem; color: #ded6c8; margin-bottom: 0.4rem; letter-spacing: 1px;">
+            专注于培养具备创作才能的门徒，让原创音符成为敬拜与传道的器皿。
+          </p>
+          <p>Positioned as a platform for music created for God, focusing on cultivating disciples with creative talents.</p>
+        </div>
+
+        <div class="position-point-box">
+          <h4><i class="fas fa-hands-helping"></i> 触及年轻一代与福音禾场</h4>
+          <p style="font-family: var(--font-hand-cn); font-size: 1.18rem; color: #ded6c8; margin-bottom: 0.4rem; letter-spacing: 1px;">
+            通过现代音乐语言向世人传递信仰、希望与爱，尤其是年轻群体和未认识神的群体。
+          </p>
+          <p>Use music to convey faith, hope, and love, especially to young people and those who have not yet known God.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         🎬 5. 品牌视听与图文展区 (MEDIA SHOWCASE)
+         =================================================== -->
+    <section class="media-card-wrapper fade-in">
+      <div class="section-sketch-header">
+        <span class="sketch-pill">🎬 MEDIA & STORY · 视听故事</span>
+        <h2>光 影 与 旋 律 的 见 证</h2>
+        <p>WITNESS OF LIGHT AND MELODY</p>
+      </div>
+
+      <div id="cfg_about_media_container" style="width: 100%; max-width: 1000px; aspect-ratio: 16 / 9; margin: 0 auto; overflow: hidden; border-radius: var(--hand-radius-soft); border: 1.5px solid rgba(246,210,138,0.25); background: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
+        <img id="cfg_about_banner" src="https://images.unsplash.com/photo-1514525253361-9ee1a07b7ec2?auto=format&fit=crop&w=1200&q=80" alt="关于我们主视觉" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+
+      <div style="max-width: 850px; margin: 2rem auto 0; text-align: center;">
+        <p id="cfg_about_text" class="kaiti-quote" style="font-size: 1.25rem; line-height: 1.9; color: #eee; text-align: center; font-family: var(--font-hand-cn);">
+          让每一首写给神的歌都被听见，让每一颗跳动的心灵被主爱收割。
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         🤝 6. 呼召同行与社交连接 (CALL TO ACTION & CONNECT)
+         =================================================== -->
+    <section class="about-cta-card fade-in">
+      <h3 class="about-cta-title">与 我 们 一 起 同 行 撒 种</h3>
+      <p class="about-cta-desc">
+        无论你是词曲作者、编曲人、歌手，或愿意在祈祷与奉献中支持我们的同行者，收割机的禾场始终向你敞开。
+      </p>
+
+      <div class="about-cta-buttons">
+        <a href="submit.html" class="btn-frosted-gold" style="padding: 12px 28px; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 8px;">
+          <i class="fas fa-paper-plane"></i> 投递原创歌曲 / SUBMIT
+        </a>
+        <a href="support.html" class="btn-frosted" style="padding: 12px 28px; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 8px;">
+          <i class="fas fa-hand-holding-heart"></i> 支持我们同行 / SUPPORT
+        </a>
+        <a href="contact.html" class="btn-frosted" style="padding: 12px 28px; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 8px;">
+          <i class="fas fa-comment-dots"></i> 联系与合作 / CONTACT
+        </a>
+      </div>
+
+      <!-- Social Media Buttons -->
+      <div style="border-top: 1px dashed rgba(246, 210, 138, 0.2); padding-top: 2rem; margin-top: 1rem;">
+        <p style="font-family: var(--font-hand-en); color: var(--gold); letter-spacing: 3px; font-size: 1rem; margin-bottom: 1.2rem;">
+          CONNECT WITH US · 关注我们的最新动态
+        </p>
+        <div class="about-social-row" style="display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap;">
+          <a id="cfg_social_wa" href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry." target="_blank" class="btn-premium btn-social-pill" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="WhatsApp">
+            <i class="fab fa-whatsapp" style="font-size: 1.3rem;"></i>
+          </a>
+          <a id="cfg_social_sp" href="https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ" target="_blank" class="btn-premium btn-social-pill" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="Spotify">
+            <i class="fab fa-spotify" style="font-size: 1.3rem;"></i>
+          </a>
+          <a id="cfg_social_fb" href="#" target="_blank" class="btn-premium btn-social-pill" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="Facebook">
+            <i class="fab fa-facebook-f" style="font-size: 1.2rem;"></i>
+          </a>
+          <a id="cfg_social_ig" href="#" target="_blank" class="btn-premium btn-social-pill" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="Instagram">
+            <i class="fab fa-instagram" style="font-size: 1.2rem;"></i>
+          </a>
+          <a id="cfg_social_yt" href="#" target="_blank" class="btn-premium btn-youtube-premium" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="YouTube">
+            <i class="fab fa-youtube" style="font-size: 1.2rem;"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
       <img src="assets/logo.png" alt="Harvester" style="height: 20px; display: block; margin: 0 auto 1.2rem;">
     </a>
@@ -143,7 +744,24 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js?v=2.6.0"></script>
-  <script src="app.js?v=15.0.0"></script>
+  <script src="config.js?v=16.2.0"></script>
+  <script src="app.js?v=16.2.0"></script>
+  <script>
+    // Fail-safe for About Video Autoplay
+    window.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('cfg_about_media_container');
+      if (container) {
+        const checkVideo = setInterval(() => {
+          const video = container.querySelector('video');
+          if (video) {
+            video.play().catch(() => {
+              document.addEventListener('touchstart', () => video.play(), { once: true });
+            });
+            clearInterval(checkVideo);
+          }
+        }, 500);
+      }
+    });
+  </script>
 </body>
 </html>
