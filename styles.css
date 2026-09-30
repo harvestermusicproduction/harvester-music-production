@@ -519,7 +519,7 @@ header.scrolled {
   align-items: center;
   gap: 15px;
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.95rem;
   letter-spacing: 3px;
   color: var(--gray);
   margin-bottom: 1rem;
@@ -530,15 +530,15 @@ header.scrolled {
   font-weight: 600;
 }
 .ppt-title {
-  font-size: 3rem !important;
+  font-size: clamp(2.4rem, 5vw, 3.4rem) !important;
   color: #fff;
   margin: 0 0 0.5rem 0 !important;
   letter-spacing: 1px;
 }
 .ppt-subtitle {
-  font-size: 0.9rem !important;
+  font-size: 1.05rem !important;
   color: var(--gray) !important;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   text-transform: uppercase;
   margin: 0 !important;
 }
@@ -554,11 +554,11 @@ header.scrolled {
   -webkit-backdrop-filter: blur(10px) !important;
   border: 1.5px solid rgba(246, 210, 138, 0.28) !important; 
   border-radius: 50px !important;
-  padding: 8px 22px !important;
+  padding: 10px 24px !important;
   color: var(--gold) !important; 
   text-decoration: none !important;
   font-family: var(--font-hand-cn), var(--font-hand-en) !important;
-  font-size: 0.95rem !important;
+  font-size: 1.05rem !important;
   letter-spacing: 1.5px !important;
   transition: all 0.35s cubic-bezier(0.19, 1, 0.22, 1) !important;
   cursor: pointer !important;
@@ -585,9 +585,9 @@ header.scrolled {
   color: #111 !important;
   border: 1px solid var(--gold) !important;
   border-radius: 50px !important;
-  padding: 10px 20px !important;
+  padding: 10px 22px !important;
   font-family: var(--font-body) !important;
-  font-size: 0.75rem !important;
+  font-size: 0.95rem !important;
   font-weight: 600 !important;
   letter-spacing: 1px;
   text-decoration: none !important;
@@ -1963,8 +1963,8 @@ body.harvest-active {
     letter-spacing: 1.5px !important; 
     white-space: nowrap !important;
   }
-  .hero-slogan { font-size: 1.1rem !important; letter-spacing: 2px !important; padding: 0 1rem; }
-  .hero-desc { font-size: 0.82rem !important; letter-spacing: 1px !important; padding: 0 1rem; line-height: 1.6 !important; }
+  .hero-slogan { font-size: 1.35rem !important; letter-spacing: 2px !important; padding: 0 1rem; }
+  .hero-desc { font-size: 1.05rem !important; letter-spacing: 1px !important; padding: 0 1rem; line-height: 1.8 !important; }
 }
 
 /* 🎥 Video Control Killing */
