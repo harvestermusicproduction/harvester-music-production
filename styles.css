@@ -102,12 +102,16 @@ body {
 
 .hero-hand-title {
   font-family: var(--font-hand-title) !important;
-  font-size: 6.2rem !important;
+  font-size: clamp(2.6rem, 6.5vw, 5.5rem) !important;
   font-weight: normal !important;
   color: #fffaf0 !important;
-  letter-spacing: 6px !important;
+  letter-spacing: 4px !important;
   text-shadow: 0 8px 30px rgba(0,0,0,0.85), 0 0 40px rgba(246, 210, 138, 0.35) !important;
   line-height: 1.2 !important;
+  white-space: nowrap !important;
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
 }
 
 /* Background Particles Canvas */
@@ -1962,7 +1966,11 @@ body.harvest-active {
   .about-social-row { flex-wrap: nowrap !important; overflow-x: auto !important; }
   .home-hero-logo { height: 200px !important; }
   .header-socials { display: none !important; }
-  .hero-hand-title { font-size: 3.3rem !important; letter-spacing: 1px !important; }
+  .hero-hand-title { 
+    font-size: clamp(2.1rem, 9.2vw, 3.2rem) !important; 
+    letter-spacing: 1.5px !important; 
+    white-space: nowrap !important;
+  }
   .hero-slogan { font-size: 1.1rem !important; letter-spacing: 2px !important; padding: 0 1rem; }
   .hero-desc { font-size: 0.82rem !important; letter-spacing: 1px !important; padding: 0 1rem; line-height: 1.6 !important; }
 }
