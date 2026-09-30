@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Gaegu:wght@400;700&family=Kaushan+Script&family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&family=Patrick+Hand&family=Satisfy&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Gaegu:wght@400;700&family=Homemade+Apple&family=Kaushan+Script&family=Long+Cang&family=Ma+Shan+Zheng&family=Marck+Script&family=Noto+Serif+SC:wght@300;400;600&family=Patrick+Hand&family=Reenie+Beanie&family=Satisfy&display=swap');
 
 :root {
   --gold: #f6d28a;
@@ -17,7 +17,7 @@
   --font-eng-body:  'Inter', sans-serif;
   --font-chn-title: 'Noto Sans SC', sans-serif;
   --font-chn-body:  'Noto Sans SC', sans-serif;
-  --font-hand-title: 'Caveat', 'Dancing Script', 'Satisfy', cursive;
+  --font-hand-title: 'Kaushan Script', 'Marck Script', 'Alex Brush', 'Caveat', cursive;
   --font-hand-en:   'Caveat', 'Patrick Hand', cursive;
   --font-hand-cn:   'Ma Shan Zheng', 'Long Cang', cursive;
   --font-serif-cn:  'Noto Serif SC', serif;
@@ -83,16 +83,14 @@ body {
   }
 }
 
-
-
 .hero-hand-title {
   font-family: var(--font-hand-title) !important;
-  font-size: 5.2rem !important;
-  font-weight: 700 !important;
+  font-size: 5rem !important;
+  font-weight: 400 !important;
   color: #fffaf0 !important;
-  letter-spacing: 2px !important;
-  text-shadow: 0 10px 30px rgba(0,0,0,0.85), 0 0 35px rgba(246, 210, 138, 0.3) !important;
-  line-height: 1.1 !important;
+  letter-spacing: 7px !important;
+  text-shadow: 0 8px 30px rgba(0,0,0,0.85), 0 0 40px rgba(246, 210, 138, 0.35) !important;
+  line-height: 1.2 !important;
 }
 
 /* Background Particles Canvas */
