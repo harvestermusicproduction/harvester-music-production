@@ -114,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!val && val !== '') return;
             if (el.tagName === 'IMG') el.src = val;
             else if (el.tagName === 'A') el.href = val;
+            else if (typeof val === 'string' && (val.includes('<br') || val.includes('<b') || val.includes('<span'))) el.innerHTML = val;
             else el.innerText = val;
           });
         }

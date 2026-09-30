@@ -1703,43 +1703,130 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="text" id="in_about_cat3_t" value="${d('about_cat3_t', '商业型')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
                 <input type="text" id="in_about_cat3_te" value="${d('about_cat3_te', 'Commercial / Contemporary')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
               </div>
-              <textarea id="in_about_cat3_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat3_d1', '结合当代专业流行编曲与叙事结构，在主流流媒体与大众文化中播种真理。')}</textarea>
-              <textarea id="in_about_cat3_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat3_d2', '让信仰通过高质量的流行艺术触及更广泛的大众听众。')}</textarea>
+              <textarea id="in_about_cat3_d1" style="width:100%; height:40px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat3_d1', '适用于日常生活，可在社交媒体、流行音乐平台上播放。')}</textarea>
+              <textarea id="in_about_cat3_d2" style="width:100%; height:40px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat3_d2', '歌词生活化、口语化，使非信徒也能接受和感动。')}</textarea>
+              <textarea id="in_about_cat3_d3" style="width:100%; height:40px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat3_d3', '通过触动人心的旋律和歌词，引导听众认识上帝的爱。')}</textarea>
               <div style="display:flex; align-items:center; gap:12px;">
-                <img id="prev_about_cat3_img" src="${d('about_cat3_img', 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
+                <img id="prev_about_cat3_img" src="${d('about_cat3_img', 'https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
                 <div style="flex:1;">
                   <input type="file" id="f_about_cat3_img" style="font-size:0.75rem; width:100%;">
                   <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_cat3_img', 'in_about_cat3_img', 'prev_about_cat3_img')">上传缩略图</button>
-                  <input type="hidden" id="in_about_cat3_img" value="${d('about_cat3_img', 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=600&q=80')}">
+                  <input type="hidden" id="in_about_cat3_img" value="${d('about_cat3_img', 'https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=600&q=80')}">
                 </div>
               </div>
             </div>
 
             <!-- Cat 4 -->
             <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
-              <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">类别 04 · 机构主题曲</span>
+              <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">类别 04 · 主题曲</span>
               <div style="display:flex; gap:10px; margin:10px 0 8px;">
-                <input type="text" id="in_about_cat4_t" value="${d('about_cat4_t', '机构主题曲')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
-                <input type="text" id="in_about_cat4_te" value="${d('about_cat4_te', 'Organization Theme Songs')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat4_t" value="${d('about_cat4_t', '主题曲')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat4_te" value="${d('about_cat4_te', 'Theme Songs')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
               </div>
-              <textarea id="in_about_cat4_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat4_d1', '为教会、特会、营会、事工及机构量身定制专属主题旋律与纪念赞美诗。')}</textarea>
-              <textarea id="in_about_cat4_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat4_d2', '凝聚异象与使命，成为群体长久传唱的属灵见证。')}</textarea>
+              <textarea id="in_about_cat4_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat4_d1', '为特殊的基督教机构创作主题曲：')}</textarea>
+              <textarea id="in_about_cat4_d2" style="width:100%; height:60px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat4_d2', '• 孤儿院 (Orphanage)\n• 老人院 (Nursing Home)\n• 特殊儿童教育机构 (Special Needs Children)')}</textarea>
               <div style="display:flex; align-items:center; gap:12px;">
-                <img id="prev_about_cat4_img" src="${d('about_cat4_img', 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
+                <img id="prev_about_cat4_img" src="${d('about_cat4_img', 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
                 <div style="flex:1;">
                   <input type="file" id="f_about_cat4_img" style="font-size:0.75rem; width:100%;">
                   <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_cat4_img', 'in_about_cat4_img', 'prev_about_cat4_img')">上传缩略图</button>
-                  <input type="hidden" id="in_about_cat4_img" value="${d('about_cat4_img', 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=600&q=80')}">
+                  <input type="hidden" id="in_about_cat4_img" value="${d('about_cat4_img', 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=600&q=80')}">
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 🎯 板块 6: 平台定位 (POSITIONING) -->
+        <!-- 💽 板块 6: 版权分成结构与收入来源 (PROFIT SHARING & REVENUE) -->
+        <div class="cms-card" style="border-left: 4px solid #a55eea;">
+          <h3 style="color:#a55eea; margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>💽</span> 板块六：版权分成结构与收入来源 (Profit Sharing & Revenue)
+          </h3>
+          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑数字流媒体收入说明、配图及六大部门分成机制比例。</p>
+
+          <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap:25px; margin-bottom:20px;">
+            <!-- Revenue Source Info -->
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222;">
+              <h4 style="color:var(--gold); margin-top:0; margin-bottom:12px;">🎹 收入来源 (Revenue Sources)</h4>
+              <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:#aaa;">来源标题</label>
+                <input type="text" id="in_about_rev_title" value="${d('about_rev_title', 'REVENUE 收入来源')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:#aaa;">中文说明</label>
+                <textarea id="in_about_rev_desc" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_rev_desc', '主要来自 YouTube 或其他数字音乐平台的收益。')}</textarea>
+              </div>
+              <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:#aaa;">英文说明</label>
+                <input type="text" id="in_about_rev_desc_en" value="${d('about_rev_desc_en', 'Mainly from YouTube or other digital streaming platforms.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+            </div>
+
+            <!-- Revenue Source Image -->
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
+              <label style="font-size:0.8rem; color:var(--gold); font-weight:bold; display:block; margin-bottom:8px;">收入来源配图 (Piano / Audio)</label>
+              <img id="prev_about_rev_img" src="${d('about_rev_img', 'https://images.unsplash.com/photo-1520523839898-50712509e37b?auto=format&fit=crop&w=800&q=80')}" style="width:100%; height:120px; object-fit:cover; border-radius:6px; margin-bottom:8px; border:1px solid #333;">
+              <input type="file" id="f_about_rev_img" style="font-size:0.75rem; width:100%; margin-bottom:5px;">
+              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_rev_img', 'in_about_rev_img', 'prev_about_rev_img')">📤 上传配图</button>
+              <input type="hidden" id="in_about_rev_img" value="${d('about_rev_img', 'https://images.unsplash.com/photo-1520523839898-50712509e37b?auto=format&fit=crop&w=800&q=80')}">
+            </div>
+          </div>
+
+          <!-- Profit Percentages -->
+          <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px dashed #333; padding-bottom:10px;">
+              <h4 style="color:#a55eea; margin:0;">📊 盈利按比例分配设置 (Profit Sharing Breakdown)</h4>
+              <div style="display:flex; gap:10px;">
+                <input type="text" id="in_about_cps_title" value="${d('about_cps_title', '盈利按比例分配')}" style="background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px 10px; border-radius:4px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_subtitle" value="${d('about_cps_subtitle', 'PROFITS WILL BE DISTRIBUTED AS FOLLOWS')}" style="background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:6px 10px; border-radius:4px; font-size:0.8rem;">
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+              <!-- 1 -->
+              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
+                <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">01 词曲 (20%)</label>
+                <input type="text" id="in_about_cps_r1_t" value="${d('about_cps_r1_t', '词曲')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r1_d" value="${d('about_cps_r1_d', '创作部门 · Creation')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
+              </div>
+              <!-- 2 -->
+              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
+                <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">02 制作 (20%)</label>
+                <input type="text" id="in_about_cps_r2_t" value="${d('about_cps_r2_t', '制作')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r2_d" value="${d('about_cps_r2_d', '制作部门 · Production')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
+              </div>
+              <!-- 3 -->
+              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
+                <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">03 影片 (20%)</label>
+                <input type="text" id="in_about_cps_r3_t" value="${d('about_cps_r3_t', '影片')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r3_d" value="${d('about_cps_r3_d', '影片部门 · Film')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
+              </div>
+              <!-- 4 -->
+              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
+                <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">04 推广 (20%)</label>
+                <input type="text" id="in_about_cps_r4_t" value="${d('about_cps_r4_t', '推广')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r4_d" value="${d('about_cps_r4_d', '宣传部门 · Promotion')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
+              </div>
+              <!-- 5 -->
+              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
+                <label style="font-size:0.7rem; color:#2ed573; font-weight:bold;">05 歌手 (10%)</label>
+                <input type="text" id="in_about_cps_r5_t" value="${d('about_cps_r5_t', '歌手')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r5_d" value="${d('about_cps_r5_d', '歌唱部门 · Singing')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
+              </div>
+              <!-- 6 -->
+              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
+                <label style="font-size:0.7rem; color:#2ed573; font-weight:bold;">06 行政 (10%)</label>
+                <input type="text" id="in_about_cps_r6_t" value="${d('about_cps_r6_t', '行政')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r6_d" value="${d('about_cps_r6_d', '行政部门 · Admin')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🎯 板块 7: 平台定位 (POSITIONING) -->
         <div class="cms-card" style="border-left: 4px solid #2ed573;">
           <h3 style="color:#2ed573; margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>🎯</span> 板块六：平台定位 (Brand Positioning)
+            <span>🎯</span> 板块七：平台定位 (Brand Positioning)
           </h3>
           <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑定位口号、大标题及两大核心支柱。</p>
 
@@ -1775,10 +1862,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- 🎬 板块 7: 视听故事与品牌媒体 (MEDIA & FOOTER TEXT) -->
+        <!-- 🎬 板块 8: 视听故事与品牌媒体 (MEDIA & FOOTER TEXT) -->
         <div class="cms-card" style="border-left: 4px solid var(--gold);">
           <h3 style="color:var(--gold); margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>🎬</span> 板块七：品牌视听与结语 (Media Showcase & Closing Words)
+            <span>🎬</span> 板块八：品牌视听与结语 (Media Showcase & Closing Words)
           </h3>
 
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:25px; margin-bottom:20px;">
@@ -1852,8 +1939,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       'about_cat1_t', 'about_cat1_te', 'about_cat1_d1', 'about_cat1_d2', 'about_cat1_img',
       'about_cat2_t', 'about_cat2_te', 'about_cat2_d1', 'about_cat2_d2', 'about_cat2_img',
-      'about_cat3_t', 'about_cat3_te', 'about_cat3_d1', 'about_cat3_d2', 'about_cat3_img',
+      'about_cat3_t', 'about_cat3_te', 'about_cat3_d1', 'about_cat3_d2', 'about_cat3_d3', 'about_cat3_img',
       'about_cat4_t', 'about_cat4_te', 'about_cat4_d1', 'about_cat4_d2', 'about_cat4_img',
+
+      'about_rev_title', 'about_rev_desc', 'about_rev_desc_en', 'about_rev_img',
+      'about_cps_title', 'about_cps_subtitle',
+      'about_cps_r1_t', 'about_cps_r1_d',
+      'about_cps_r2_t', 'about_cps_r2_d',
+      'about_cps_r3_t', 'about_cps_r3_d',
+      'about_cps_r4_t', 'about_cps_r4_d',
+      'about_cps_r5_t', 'about_cps_r5_d',
+      'about_cps_r6_t', 'about_cps_r6_d',
 
       'about_pos_tagline',
       'about_pos_title',
