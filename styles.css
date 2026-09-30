@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'ChenYuluoyan';
+  src: url('assets/fonts/ChenYuluoyan-2.0-Thin.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Handlee&family=Indie+Flower&family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Patrick+Hand&family=Shantell+Sans:wght@400;600;700&family=ZCOOL+KuaiLe&display=swap');
 
 :root {
@@ -12,19 +20,19 @@
   --panel: #1a1512;
   --panel-warm: rgba(28, 23, 19, 0.75);
   
-  /* Brand Typography System V3: Unified Authentic Hand-drawn Fonts */
-  --font-eng-title: 'Inter', sans-serif;
-  --font-eng-body:  'Inter', sans-serif;
-  --font-chn-title: 'Noto Sans SC', sans-serif;
-  --font-chn-body:  'Noto Sans SC', sans-serif;
-  --font-hand-title: 'Gaegu', 'Patrick Hand', 'Handlee', 'ZCOOL KuaiLe', cursive;
-  --font-hand-en:    'Gaegu', 'Patrick Hand', 'Handlee', 'Shantell Sans', cursive;
-  --font-hand-cn:    'ZCOOL KuaiLe', 'Long Cang', 'Ma Shan Zheng', 'Noto Sans SC', cursive;
-  --font-serif-cn:   'Noto Sans SC', serif;
+  /* Brand Typography System: Unified Authentic ChenYuluoyan Hand-drawn Fonts */
+  --font-eng-title: 'ChenYuluoyan', 'Gaegu', 'Patrick Hand', 'Inter', sans-serif;
+  --font-eng-body:  'ChenYuluoyan', 'Patrick Hand', 'Inter', sans-serif;
+  --font-chn-title: 'ChenYuluoyan', 'Noto Sans SC', sans-serif;
+  --font-chn-body:  'ChenYuluoyan', 'Noto Sans SC', sans-serif;
+  --font-hand-title: 'ChenYuluoyan', 'Gaegu', 'Patrick Hand', cursive;
+  --font-hand-en:    'ChenYuluoyan', 'Gaegu', 'Patrick Hand', cursive;
+  --font-hand-cn:    'ChenYuluoyan', 'Noto Sans SC', cursive;
+  --font-serif-cn:   'ChenYuluoyan', 'Noto Sans SC', serif;
   
   /* Helper Assignments */
-  --font-display: var(--font-eng-title);
-  --font-body:    var(--font-eng-body);
+  --font-display: var(--font-hand-title);
+  --font-body:    var(--font-chn-body);
   
   --transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
   --hand-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
@@ -62,7 +70,7 @@ body {
   color: var(--gold);
   opacity: 0;
   pointer-events: none;
-  font-family: 'Gaegu', 'Noto Sans SC', sans-serif;
+  font-family: 'ChenYuluoyan', 'Gaegu', 'Noto Sans SC', sans-serif;
   filter: drop-shadow(0 0 12px rgba(246, 210, 138, 0.55));
   animation: ambientNoteRise linear infinite;
 }
@@ -86,11 +94,11 @@ body {
 .hero-hand-title {
   font-family: var(--font-hand-title) !important;
   font-size: 5.5rem !important;
-  font-weight: 700 !important;
+  font-weight: normal !important;
   color: #fffaf0 !important;
-  letter-spacing: 5px !important;
+  letter-spacing: 6px !important;
   text-shadow: 0 8px 30px rgba(0,0,0,0.85), 0 0 40px rgba(246, 210, 138, 0.35) !important;
-  line-height: 1.15 !important;
+  line-height: 1.2 !important;
 }
 
 /* Background Particles Canvas */
@@ -100,27 +108,27 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 { 
-  font-family: var(--font-eng-title); 
-  font-weight: 600; 
+  font-family: var(--font-hand-cn), var(--font-eng-title); 
+  font-weight: normal; 
   line-height: 1.4; 
   letter-spacing: 2px;
 }
 p { 
   font-family: var(--font-chn-body); 
-  color: rgba(250, 246, 240, 0.88); 
-  font-weight: 400; 
+  color: rgba(250, 246, 240, 0.9); 
+  font-weight: normal; 
   margin-bottom: 1.5rem; 
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   line-height: 1.9;
 }
-a { color: var(--text); text-decoration: none; transition: var(--transition); font-family: var(--font-eng-body); }
+a { color: var(--text); text-decoration: none; transition: var(--transition); font-family: var(--font-hand-cn), var(--font-eng-body); }
 a:hover { color: var(--gold); }
 img, video { max-width: 100%; display: block; border-radius: 6px; }
 section { padding: 8rem 2rem; max-width: 1000px; margin: 0 auto; }
 
 /* 🖋️ Typography Helper Classes */
 .font-title-en { font-family: var(--font-eng-title); }
-.font-title-cn { font-family: var(--font-chn-title); font-weight: 500; }
+.font-title-cn { font-family: var(--font-chn-title); font-weight: normal; }
 .font-body-en  { font-family: var(--font-eng-body); }
 .font-body-cn  { font-family: var(--font-chn-body); }
 .font-hand-en  { font-family: var(--font-hand-en); }
@@ -134,7 +142,7 @@ section { padding: 8rem 2rem; max-width: 1000px; margin: 0 auto; }
   gap: 8px;
   font-family: var(--font-hand-en);
   font-size: 1.15rem;
-  font-weight: 600;
+  font-weight: normal;
   color: var(--gold);
   background: rgba(246, 210, 138, 0.08);
   border: 1.5px dashed rgba(246, 210, 138, 0.4);
