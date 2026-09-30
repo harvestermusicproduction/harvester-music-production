@@ -201,12 +201,24 @@
       <div class="nav-dropdown">
         <a href="javascript:void(0)">歌手 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
         <div class="dropdown-content">
-          <a href="singers.html?tab=gospel">福音歌手</a>
-          <a href="singers.html?tab=worship">敬拜歌手</a>
+          <a href="singers.html?tab=gospel"><i class="fas fa-microphone-alt"></i> 福音歌手</a>
+          <a href="singers.html?tab=worship"><i class="fas fa-church"></i> 敬拜歌手</a>
         </div>
       </div>
       <a href="submit.html">我要投稿</a>
-      <a href="about.html">关于我们</a>
+      <div class="nav-dropdown">
+        <a href="about.html">关于我们 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
+        <div class="dropdown-content">
+          <a href="about.html#section-origin"><i class="fas fa-seedling"></i> 名字由来</a>
+          <a href="about.html#section-vision"><i class="fas fa-compass"></i> 愿景使命</a>
+          <a href="about.html#section-pillars"><i class="fas fa-monument"></i> 四大支柱</a>
+          <a href="about.html#section-audience"><i class="fas fa-users"></i> 群体受众</a>
+          <a href="about.html#section-categories"><i class="fas fa-music"></i> 创作方向</a>
+          <a href="about.html#section-profit"><i class="fas fa-hand-holding-usd"></i> 版权分成</a>
+          <a href="about.html#section-positioning"><i class="fas fa-bullseye"></i> 平台定位</a>
+          <a href="about.html#section-media"><i class="fas fa-film"></i> 视听故事</a>
+        </div>
+      </div>
       <a href="support.html">支持我们</a>
       <a href="contact.html">联系我们</a>
     </nav>
@@ -218,14 +230,27 @@
     <a href="events.html">活动</a>
     <a href="diary.html">田野日志</a>
     <div class="mobile-dropdown">
-      <a href="#" onclick="event.preventDefault(); this.nextElementSibling.classList.toggle('show');">歌手 <i class="fas fa-caret-down"></i></a>
+      <a href="javascript:void(0)" class="mobile-dropdown-toggle" onclick="event.preventDefault(); event.stopPropagation(); this.nextElementSibling.classList.toggle('show');">歌手 <i class="fas fa-caret-down"></i></a>
       <div class="mobile-dropdown-content">
-        <a href="singers.html?tab=gospel">福音歌手</a>
-        <a href="singers.html?tab=worship">敬拜歌手</a>
+        <a href="singers.html?tab=gospel"><i class="fas fa-microphone-alt"></i> 福音歌手</a>
+        <a href="singers.html?tab=worship"><i class="fas fa-church"></i> 敬拜歌手</a>
       </div>
     </div>
     <a href="submit.html">我要投稿</a>
-    <a href="about.html">关于我们</a>
+    <div class="mobile-dropdown">
+      <a href="javascript:void(0)" class="mobile-dropdown-toggle" onclick="event.preventDefault(); event.stopPropagation(); this.nextElementSibling.classList.toggle('show');">关于我们 <i class="fas fa-caret-down"></i></a>
+      <div class="mobile-dropdown-content">
+        <a href="about.html"><i class="fas fa-book-open"></i> 全部概览</a>
+        <a href="about.html#section-origin"><i class="fas fa-seedling"></i> 名字由来</a>
+        <a href="about.html#section-vision"><i class="fas fa-compass"></i> 愿景使命</a>
+        <a href="about.html#section-pillars"><i class="fas fa-monument"></i> 四大支柱</a>
+        <a href="about.html#section-audience"><i class="fas fa-users"></i> 群体受众</a>
+        <a href="about.html#section-categories"><i class="fas fa-music"></i> 创作方向</a>
+        <a href="about.html#section-profit"><i class="fas fa-hand-holding-usd"></i> 版权分成</a>
+        <a href="about.html#section-positioning"><i class="fas fa-bullseye"></i> 平台定位</a>
+        <a href="about.html#section-media"><i class="fas fa-film"></i> 视听故事</a>
+      </div>
+    </div>
     <a href="support.html">支持我们</a>
     <a href="contact.html">联系我们</a>
   </div>

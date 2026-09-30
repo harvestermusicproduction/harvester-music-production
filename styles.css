@@ -1993,13 +1993,14 @@ body.harvest-active {
 video::-webkit-media-controls { display:none !important; }
 video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
 
-/* --- Singer Dropdown Navigation --- */
+/* --- Navigation Dropdown System (Singers & About Us) --- */
 .nav-dropdown {
   position: relative;
   display: inline-block;
 }
 
-.nav-dropdown .dropbtn {
+.nav-dropdown .dropbtn,
+.nav-dropdown > a {
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
@@ -2008,6 +2009,9 @@ video::-webkit-media-controls-start-playback-button { display: none !important; 
   border: none;
   font-size: 1rem;
   font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .dropdown-content {
@@ -2015,15 +2019,16 @@ video::-webkit-media-controls-start-playback-button { display: none !important; 
   opacity: 0;
   visibility: hidden;
   position: absolute;
-  top: 150%;
+  top: 140%;
   left: 50%;
-  transform: translateX(-50%) translateY(10px);
-  background: rgba(24, 20, 16, 0.95);
-  backdrop-filter: blur(15px);
-  min-width: 140px;
-  border-radius: 18px 220px 16px 225px / 225px 16px 230px 18px;
-  border: 1.5px solid rgba(246, 210, 138, 0.4);
-  box-shadow: 0 12px 35px rgba(0,0,0,0.7), 0 0 15px rgba(246, 210, 138, 0.15);
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(24, 20, 16, 0.96);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  min-width: 155px;
+  border-radius: 16px;
+  border: 1.5px solid rgba(246, 210, 138, 0.38);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.75), 0 0 20px rgba(246, 210, 138, 0.12);
   z-index: 1001;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   overflow: hidden;
@@ -2034,29 +2039,62 @@ video::-webkit-media-controls-start-playback-button { display: none !important; 
   opacity: 1;
   visibility: visible;
   top: 100%;
-  transform: translateX(-50%) translateY(10px);
+  transform: translateX(-50%) translateY(8px);
 }
 
 .dropdown-content a {
   color: #f5eee6 !important;
-  padding: 10px 18px;
+  padding: 9px 18px;
   text-decoration: none;
-  display: block;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
   font-family: var(--font-hand-cn), var(--font-hand-en), sans-serif !important;
-  font-size: 1.15rem !important;
+  font-size: 1.05rem !important;
   border-radius: 0 !important;
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
-  transition: 0.25s ease;
+  transition: 0.22s ease;
   letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.dropdown-content a i {
+  font-size: 0.85em;
+  color: var(--gold);
+  width: 14px;
+  text-align: center;
+  opacity: 0.85;
+  transition: transform 0.2s ease;
 }
 
 .dropdown-content a:hover {
   color: var(--gold) !important;
-  background: rgba(246, 210, 138, 0.15) !important;
+  background: rgba(246, 210, 138, 0.14) !important;
   transform: none !important;
+}
+
+.dropdown-content a:hover i {
+  transform: scale(1.2);
+}
+
+/* Light Gallery Mode Navigation Dropdown Override */
+body.gallery-mode .dropdown-content {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
+}
+body.gallery-mode .dropdown-content a {
+  color: #2b2b2b !important;
+}
+body.gallery-mode .dropdown-content a i {
+  color: var(--accent) !important;
+}
+body.gallery-mode .dropdown-content a:hover {
+  color: var(--accent) !important;
+  background: rgba(201, 147, 59, 0.08) !important;
 }
 
 /* Mobile Dropdown styles */
@@ -2066,10 +2104,10 @@ video::-webkit-media-controls-start-playback-button { display: none !important; 
 }
 .mobile-dropdown-content {
   display: none;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.45);
   margin-top: 10px;
   border-radius: 12px;
-  padding: 10px 0;
+  padding: 8px 0;
   border: 1px dashed rgba(246, 210, 138, 0.3);
 }
 .mobile-dropdown-content.show {
@@ -2078,12 +2116,24 @@ video::-webkit-media-controls-start-playback-button { display: none !important; 
 .mobile-dropdown-content a {
   border: none !important;
   background: transparent !important;
-  font-size: 1.3rem !important;
+  font-size: 1.15rem !important;
   color: #f5eee6 !important;
-  padding: 8px !important;
+  padding: 8px 12px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 .mobile-dropdown-content a:hover {
   color: var(--gold) !important;
+}
+
+/* Section Anchor Smooth Scrolling Offset */
+html {
+  scroll-behavior: smooth;
+}
+section[id], div[id^="section-"] {
+  scroll-margin-top: 105px;
 }
 
 /* --- Z-Axis Space Gallery specific UI --- */

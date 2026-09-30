@@ -734,12 +734,24 @@
       <div class="nav-dropdown">
         <a href="javascript:void(0)">歌手 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
         <div class="dropdown-content">
-          <a href="singers.html?tab=gospel">福音歌手</a>
-          <a href="singers.html?tab=worship">敬拜歌手</a>
+          <a href="singers.html?tab=gospel"><i class="fas fa-microphone-alt"></i> 福音歌手</a>
+          <a href="singers.html?tab=worship"><i class="fas fa-church"></i> 敬拜歌手</a>
         </div>
       </div>
       <a href="submit.html">我要投稿</a>
-      <a href="about.html" class="active">关于我们</a>
+      <div class="nav-dropdown">
+        <a href="about.html" class="active">关于我们 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
+        <div class="dropdown-content">
+          <a href="about.html#section-origin"><i class="fas fa-seedling"></i> 名字由来</a>
+          <a href="about.html#section-vision"><i class="fas fa-compass"></i> 愿景使命</a>
+          <a href="about.html#section-pillars"><i class="fas fa-monument"></i> 四大支柱</a>
+          <a href="about.html#section-audience"><i class="fas fa-users"></i> 群体受众</a>
+          <a href="about.html#section-categories"><i class="fas fa-music"></i> 创作方向</a>
+          <a href="about.html#section-profit"><i class="fas fa-hand-holding-usd"></i> 版权分成</a>
+          <a href="about.html#section-positioning"><i class="fas fa-bullseye"></i> 平台定位</a>
+          <a href="about.html#section-media"><i class="fas fa-film"></i> 视听故事</a>
+        </div>
+      </div>
       <a href="support.html">支持我们</a>
       <a href="contact.html">联系我们</a>
     </nav>
@@ -751,14 +763,27 @@
     <a href="events.html">活动</a>
     <a href="diary.html">田野日志</a>
     <div class="mobile-dropdown">
-      <a href="#" onclick="event.preventDefault(); this.nextElementSibling.classList.toggle('show');">歌手 <i class="fas fa-caret-down"></i></a>
+      <a href="javascript:void(0)" class="mobile-dropdown-toggle" onclick="event.preventDefault(); event.stopPropagation(); this.nextElementSibling.classList.toggle('show');">歌手 <i class="fas fa-caret-down"></i></a>
       <div class="mobile-dropdown-content">
-        <a href="singers.html?tab=gospel">福音歌手</a>
-        <a href="singers.html?tab=worship">敬拜歌手</a>
+        <a href="singers.html?tab=gospel"><i class="fas fa-microphone-alt"></i> 福音歌手</a>
+        <a href="singers.html?tab=worship"><i class="fas fa-church"></i> 敬拜歌手</a>
       </div>
     </div>
     <a href="submit.html">我要投稿</a>
-    <a href="about.html" class="active">关于我们</a>
+    <div class="mobile-dropdown">
+      <a href="javascript:void(0)" class="mobile-dropdown-toggle active" onclick="event.preventDefault(); event.stopPropagation(); this.nextElementSibling.classList.toggle('show');">关于我们 <i class="fas fa-caret-down"></i></a>
+      <div class="mobile-dropdown-content">
+        <a href="about.html"><i class="fas fa-book-open"></i> 全部概览</a>
+        <a href="about.html#section-origin"><i class="fas fa-seedling"></i> 名字由来</a>
+        <a href="about.html#section-vision"><i class="fas fa-compass"></i> 愿景使命</a>
+        <a href="about.html#section-pillars"><i class="fas fa-monument"></i> 四大支柱</a>
+        <a href="about.html#section-audience"><i class="fas fa-users"></i> 群体受众</a>
+        <a href="about.html#section-categories"><i class="fas fa-music"></i> 创作方向</a>
+        <a href="about.html#section-profit"><i class="fas fa-hand-holding-usd"></i> 版权分成</a>
+        <a href="about.html#section-positioning"><i class="fas fa-bullseye"></i> 平台定位</a>
+        <a href="about.html#section-media"><i class="fas fa-film"></i> 视听故事</a>
+      </div>
+    </div>
     <a href="support.html">支持我们</a>
     <a href="contact.html">联系我们</a>
   </div>
@@ -775,7 +800,7 @@
     <!-- ===================================================
          🌾 1. 名字的由来 (NAME ORIGIN)
          =================================================== -->
-    <section class="origin-hero-card fade-in">
+    <section id="section-origin" class="origin-hero-card fade-in">
       <div style="text-align: center; margin-bottom: 2rem;">
         <span class="sketch-pill">🌾 NAME ORIGIN · 名字由来</span>
         <h2 id="about_origin_main_title" style="font-size: 2.8rem; color: #fffaf0; font-family: var(--font-hand-cn); letter-spacing: 4px; margin: 0;">
@@ -826,7 +851,7 @@
     <!-- ===================================================
          🕊️ 2. 愿景与使命 (VISION & MISSION)
          =================================================== -->
-    <section class="dual-wing-grid fade-in">
+    <section id="section-vision" class="dual-wing-grid fade-in">
       <!-- 愿景 (Vision) -->
       <div class="wing-card">
         <div>
@@ -883,7 +908,7 @@
     <!-- ===================================================
          🏛️ 3. 使命详细内容 · 四大支柱 (MISSION DETAILS)
          =================================================== -->
-    <section class="pillars-section fade-in">
+    <section id="section-pillars" class="pillars-section fade-in">
       <div class="section-sketch-header">
         <span class="sketch-pill">🏛️ FOUR PILLARS · 四大支柱</span>
         <h2>使 命 详 细 内 容</h2>
@@ -936,7 +961,7 @@
     <!-- ===================================================
          👥 4. 创作群体与目标受众 (CREATIVE GROUP & TARGET AUDIENCE)
          =================================================== -->
-    <section class="audience-section fade-in">
+    <section id="section-audience" class="audience-section fade-in">
       <div class="section-sketch-header">
         <span class="sketch-pill">👥 CALLING & AUDIENCE · 群体与受众</span>
         <h2>创 作 群 体 与 目 标 受 众</h2>
@@ -999,7 +1024,7 @@
     <!-- ===================================================
          🎼 5. 主要的诗歌创作方向 (MAIN SONGWRITING CATEGORIES)
          =================================================== -->
-    <section class="categories-section fade-in">
+    <section id="section-categories" class="categories-section fade-in">
       <div class="section-sketch-header">
         <span class="sketch-pill">🎼 SONGWRITING DIRECTIONS · 创作方向</span>
         <h2>主 要 的 诗 歌 创 作 方 向</h2>
@@ -1069,7 +1094,7 @@
     <!-- ===================================================
          💽 6. 版权分成结构与收入来源 (COPYRIGHT PROFIT SHARING & REVENUE)
          =================================================== -->
-    <section class="profit-section fade-in">
+    <section id="section-profit" class="profit-section fade-in">
       <div class="section-sketch-header">
         <span class="sketch-pill">💽 PROFIT SHARING · 版权分成</span>
         <h2>版 权 分 成 结 构 与 收 益</h2>
@@ -1160,7 +1185,7 @@
     <!-- ===================================================
          🎯 7. 平台定位 (POSITIONING)
          =================================================== -->
-    <section class="position-card fade-in">
+    <section id="section-positioning" class="position-card fade-in">
       <span class="sketch-pill">🎯 POSITIONING · 平台定位</span>
       <p id="about_pos_tagline" class="position-tagline">PROMOTING CONTEMPORARY CHRISTIAN MUSIC</p>
       <h2 id="about_pos_title" class="position-main-title">推 广 现 代 流 行 基 督 教 音 乐</h2>
@@ -1187,7 +1212,7 @@
     <!-- ===================================================
          🎬 8. 品牌视听与图文展区 (MEDIA SHOWCASE)
          =================================================== -->
-    <section class="media-card-wrapper fade-in">
+    <section id="section-media" class="media-card-wrapper fade-in">
       <div class="section-sketch-header">
         <span class="sketch-pill">🎬 MEDIA & STORY · 视听故事</span>
         <h2>光 影 与 旋 律 的 见 证</h2>

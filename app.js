@@ -10,7 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   
   document.getElementById('mobileNavOverlay')?.addEventListener('click', (e) => {
-    if (e.target.tagName === 'A') window.toggleMobileMenu();
+    const a = e.target.closest('a');
+    if (!a) return;
+    if (a.classList.contains('mobile-dropdown-toggle') || a.getAttribute('href') === 'javascript:void(0)' || a.getAttribute('href') === '#') {
+      return;
+    }
+    window.toggleMobileMenu();
   });
 
   // --- 1. General UX: Scroll & Fade-in (DB-independent) ---
