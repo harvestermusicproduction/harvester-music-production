@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=15.0.0">
+  <link rel="stylesheet" href="styles.css?v=16.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* --- 💎 Contact Form Light White Frosted Standard --- */
@@ -305,8 +305,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js?v=2.6.0"></script>
-  <script src="app.js?v=15.0.0"></script>
+  <script src="config.js?v=16.0.0"></script>
+  <script src="app.js?v=16.0.0"></script>
   <script>
     // --- 📨 Contact Form Handler ---
     document.getElementById('contactForm')?.addEventListener('submit', async (e) => {
@@ -341,7 +341,7 @@
     // --- 🔮 3D Echo Universe Engine ---
     let echoScene, echoCamera, echoRenderer, echoStarField;
     let echoMouseX = 0, echoMouseY = 0;
-    const MAX_ECHOES = 60;
+    const MAX_ECHOES = 25;
     window.currentEchoes = [];
 
     function init3DEchoUniverse() {
@@ -353,8 +353,8 @@
       const isMobile = window.innerWidth <= 768;
 
       echoScene = new THREE.Scene();
-      echoCamera = new THREE.PerspectiveCamera(isMobile ? 85 : 70, width / height, 1, 4000);
-      echoCamera.position.z = isMobile ? 800 : 500;
+      echoCamera = new THREE.PerspectiveCamera(isMobile ? 80 : 65, width / height, 1, 4000);
+      echoCamera.position.z = isMobile ? 750 : 500;
 
       echoRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       echoRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -368,21 +368,21 @@
       const starGeo = new THREE.BufferGeometry();
       const starCoords = [];
       for (let i = 0; i < 4000; i++) {
-        starCoords.push((Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2500);
+        starCoords.push((Math.random() - 0.5) * 2200, (Math.random() - 0.5) * 2200, (Math.random() - 0.5) * 2500);
       }
       starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
       const starMat = new THREE.PointsMaterial({
         color: 0xffffff,
-        size: isMobile ? 1.4 : 0.9,
+        size: isMobile ? 1.5 : 1.0,
         transparent: true,
-        opacity: 0.75,
+        opacity: 0.8,
         blending: THREE.AdditiveBlending
       });
       echoStarField = new THREE.Points(starGeo, starMat);
       echoScene.add(echoStarField);
 
       // Warm Point Light
-      const light = new THREE.PointLight(0xf6d28a, 0.6, 2000);
+      const light = new THREE.PointLight(0xf6d28a, 0.8, 2200);
       light.position.set(0, 0, 500);
       echoScene.add(light);
 
@@ -400,19 +400,27 @@
       const isMobile = window.innerWidth <= 768;
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      canvas.width = 1600;
-      canvas.height = 300;
+      canvas.width = 2400;
+      canvas.height = 450;
       
-      const fontSize = isPrimary ? 150 : 110;
-      ctx.font = `normal ${fontSize}px 'ChenYuluoyan', 'Gaegu', sans-serif`;
-      
-      ctx.shadowBlur = 40;
-      ctx.shadowColor = isPrimary ? 'rgba(246, 210, 138, 1.0)' : 'rgba(255,255,255,0.6)';
-      ctx.fillStyle = isPrimary ? '#f6d28a' : 'rgba(255,255,255,0.92)';
+      // 超大字体与手绘感描边
+      const fontSize = isPrimary ? 240 : 170;
+      ctx.font = `bold ${fontSize}px 'ChenYuluoyan', 'Gaegu', sans-serif`;
       
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(message, 800, 150);
+
+      if (isPrimary) {
+        ctx.shadowBlur = 45;
+        ctx.shadowColor = 'rgba(246, 210, 138, 1.0)';
+        ctx.fillStyle = '#f6d28a';
+      } else {
+        ctx.shadowBlur = 35;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.75)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+      }
+      
+      ctx.fillText(message, 1200, 225);
 
       const texture = new THREE.CanvasTexture(canvas);
       const material = new THREE.SpriteMaterial({ 
@@ -423,24 +431,31 @@
       });
       
       const sprite = new THREE.Sprite(material);
-      const scaleBase = isMobile ? 1.4 : 3.0;
-      sprite.scale.set(isPrimary ? (16 * scaleBase) : (8 * scaleBase), isPrimary ? (3.0 * scaleBase) : (1.6 * scaleBase), 1);
+      const scaleBase = isMobile ? 1.8 : 3.6;
       
-      const boundX = isMobile ? 500 : 1200;
-      const boundY = isMobile ? 600 : 800;
+      // 飘出来的字体大幅放大
+      sprite.scale.set(
+        isPrimary ? (28 * scaleBase) : (18 * scaleBase), 
+        isPrimary ? (5.5 * scaleBase) : (3.4 * scaleBase), 
+        1
+      );
+      
+      const boundX = isMobile ? 600 : 1300;
+      const boundY = isMobile ? 700 : 850;
 
-      if(isPrimary) {
-        sprite.position.set(0, 0, 320);
-        sprite.userData = { speed: 0.15, drift: (Math.random()-0.5)*0.2 };
+      if (isPrimary) {
+        sprite.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 100, 330);
+        sprite.userData = { speed: 0.18, drift: (Math.random() - 0.5) * 0.15 };
       } else {
-        sprite.position.set((Math.random()-0.5)*boundX, (Math.random()-0.5)*boundY, (Math.random()-0.5)*800);
-        sprite.userData = { speed: Math.random()*0.05 + 0.03, drift: (Math.random()-0.5)*0.04 };
+        sprite.position.set((Math.random() - 0.5) * boundX, (Math.random() - 0.5) * boundY, (Math.random() - 0.5) * 800);
+        sprite.userData = { speed: Math.random() * 0.05 + 0.03, drift: (Math.random() - 0.5) * 0.04 };
       }
 
       echoScene.add(sprite);
       window.currentEchoes.push(sprite);
       
-      if(window.currentEchoes.length > MAX_ECHOES) {
+      // 保证背景最多活跃回声
+      if (window.currentEchoes.length > MAX_ECHOES) {
         const old = window.currentEchoes.shift();
         echoScene.remove(old);
       }
@@ -460,9 +475,9 @@
         window.currentEchoes.forEach(e => {
           e.position.x += e.userData.speed || 0.04;
           e.position.y += e.userData.drift || 0;
-          if(e.material.opacity < 1) e.material.opacity += 0.02;
+          if(e.material.opacity < 1) e.material.opacity += 0.03;
 
-          const resetBound = isMobile ? 450 : 1000;
+          const resetBound = isMobile ? 550 : 1100;
           if(e.position.x > resetBound) {
             e.position.x = -resetBound;
             e.position.y = (Math.random()-0.5) * (isMobile ? 800 : 700);
@@ -482,7 +497,7 @@
     function handleCustomSubmit() {
       const emoji = document.getElementById('customEmoji').value.trim() || '✨';
       const text = document.getElementById('customText').value.trim();
-      if(!text) return alert("请写一点感悟文字吧");
+      if(!text) return alert("请写一点感悟短语吧");
       
       postReaction(emoji, text);
       toggleCustomUI(); 
@@ -490,11 +505,34 @@
       document.getElementById('customText').value = '';
     }
 
-    function postReaction(emoji, text = "") {
+    // --- 📊 记录按钮点击数并在前端立即发射大字 ---
+    async function postReaction(emoji, text = "") {
       const fullText = text ? (emoji + " " + text) : emoji;
       createEchoSprite(fullText, true);
+
+      // 后台异步记录点击数据
+      const db = window.supabase;
+      if (!db) return;
+      try {
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_echo_reactions_stats').maybeSingle();
+        let stats = { total: 0, reactions: {} };
+        if (cfg?.value) {
+          try { stats = JSON.parse(cfg.value); } catch(err){}
+        }
+        if (!stats.reactions) stats.reactions = {};
+        stats.total = (stats.total || 0) + 1;
+        stats.reactions[fullText] = (stats.reactions[fullText] || 0) + 1;
+
+        await db.from('site_config').upsert({
+          key: 'cfg_echo_reactions_stats',
+          value: JSON.stringify(stats)
+        }, { onConflict: 'key' });
+      } catch(e) {
+        console.warn("Reaction stat update failed", e);
+      }
     }
 
+    // --- 📝 用户提交长留言（需后台审核才永久悬浮） ---
     async function postEcho() {
       const input = document.getElementById("echoInput");
       const text = input.value.trim();
@@ -502,34 +540,60 @@
       if(!text) return;
 
       const db = window.supabase;
-      const data = { name: isAnon ? "Anonymous" : "", message: "[ECHO] " + text };
+      const data = { 
+        name: isAnon ? "匿名听众" : "音乐挚友", 
+        message: "[ECHO] " + text,
+        status: "pending"
+      };
+
       try {
         await db.from('contact_messages').insert([data]);
+        // 本地立即飘出一次作为即时反馈
         createEchoSprite(text, true);
         input.value = "";
-        alert("✨ 回声已发布，正在宇宙星空中回荡！");
-      } catch(e) { console.error("Echo failed", e); }
+        alert("✨ 留言已提交！经管理员审核通过后，将永久悬浮于星空中。");
+      } catch(e) { 
+        console.error("Echo failed", e);
+        alert("提交失败，请稍后重试");
+      }
     }
 
+    // --- 🌌 获取最多20个最新审核通过的留言永久悬浮于背景 ---
     async function fetchEchoes() {
       const db = window.supabase;
       if (!db) return;
       try {
+        // 1. 获取已批准的 IDs
         const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
-        const approvedIds = cfg?.value ? cfg.value.split(',') : [];
+        const approvedIds = cfg?.value ? cfg.value.split(',').filter(Boolean) : [];
         
-        if (approvedIds.length === 0) return;
+        let approvedEchoes = [];
 
-        const { data, error } = await db.from('contact_messages')
-          .select('*')
-          .in('id', approvedIds)
-          .order('created_at', {ascending:false});
-          
-        if(error) throw error;
-        if(data) {
-          data.forEach(e => {
-            const cleanMessage = e.message.replace("[ECHO] ", "");
-            createEchoSprite(cleanMessage);
+        // 优先从 contact_messages 查 status = 'approved' 或 ID 在 approvedIds 里的最新 20 条
+        if (approvedIds.length > 0) {
+          const { data, error } = await db.from('contact_messages')
+            .select('*')
+            .in('id', approvedIds)
+            .order('created_at', { ascending: false })
+            .limit(20);
+          if (!error && data) approvedEchoes = data;
+        }
+
+        if (approvedEchoes.length === 0) {
+          const { data, error } = await db.from('contact_messages')
+            .select('*')
+            .eq('status', 'approved')
+            .ilike('message', '[ECHO]%')
+            .order('created_at', { ascending: false })
+            .limit(20);
+          if (!error && data) approvedEchoes = data;
+        }
+
+        if (approvedEchoes.length > 0) {
+          // 最多 20 条，最新取代最旧
+          approvedEchoes.slice(0, 20).forEach(e => {
+            const cleanMessage = e.message.replace("[ECHO]", "").trim();
+            if (cleanMessage) createEchoSprite(cleanMessage, false);
           });
         }
       } catch(e) { 
