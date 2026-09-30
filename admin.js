@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <p class="nav-section-title" style="margin-top:25px;">Interact</p>
             <a href="javascript:void(0)" onclick="switchModule('echo')" class="nav-item ${currentModule==='echo'?'active':''}">🌌 Echo Space</a>
-            <a href="javascript:void(0)" onclick="switchModule('submissions')" class="nav-item ${currentModule==='submissions'?'active':''}">📮 Inbox</a>
+            <a href="javascript:void(0)" onclick="switchModule('submissions')" class="nav-item ${currentModule==='submissions'?'active':''}">📮 Inbox / 留言收件</a>
             <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ Subscriptions</a>
             <p class="nav-section-title" style="margin-top:25px;">Engine</p>
             <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ Global Settings</a>
@@ -1254,31 +1254,89 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </section>
 
-      <!-- Part 2: Contact Messages (联系我们) -->
+      <!-- Part 2: Contact Messages (联系我们 / 合作咨询) -->
       <section>
-        <h3 style="color:var(--gold); border-bottom:1px solid #222; padding-bottom:10px;">📬 联系与合作 (Contact Inquiries)</h3>
-        <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222; margin-top:15px;">
-          <table style="width:100%; text-align:left; border-collapse:collapse;">
-            <tr style="background:#151515; color:#666; font-size:0.8rem;">
-              <th style="padding:15px;">日期</th><th>姓名</th><th>Email</th><th>预览</th><th>操作</th>
-            </tr>
-            ${contacts?.filter(c => !c.message?.includes('[ECHO]')).map(c => `
-              <tr style="border-bottom:1px solid #222;">
-                <td style="padding:15px; font-size:0.8rem; color:#666;">${new Date(c.created_at).toLocaleDateString()}</td>
-                <td style="color:var(--gold);">${c.name}</td>
-                <td><small>${c.email}</small></td>
-                <td style="color:#888;">${c.message?.substring(0, 30)}...</td>
-                <td>
-                  <button class="btn-tiny" onclick="viewContact('${c.id}')">查看</button>
-                  <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${c.id}')">删除</button>
-                </td>
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #222; padding-bottom:12px; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+          <div>
+            <h3 style="color:var(--gold); margin:0; font-size:1.2rem; display:flex; align-items:center; gap:8px;">
+              <span>📬</span> 联系我们与合作咨询留言 (Contact Inquiries)
+            </h3>
+            <p style="color:#888; font-size:0.8rem; margin:4px 0 0 0;">
+              用户在“联系我们”页面提交的合作意向与咨询。可直接勾选是否已回复/已处理。
+            </p>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <span style="background:rgba(255,165,2,0.1); border:1px solid rgba(255,165,2,0.3); color:#ffa502; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:bold;">
+              ⏳ 待处理: ${contacts?.filter(c => !c.message?.includes('[ECHO]') && c.status !== 'replied' && c.status !== 'processed' && c.status !== 'reviewed' && c.status !== 'done').length || 0}
+            </span>
+            <span style="background:rgba(100,210,138,0.1); border:1px solid rgba(100,210,138,0.3); color:#64D28A; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:bold;">
+              ✅ 已回复: ${contacts?.filter(c => !c.message?.includes('[ECHO]') && (c.status === 'replied' || c.status === 'processed' || c.status === 'reviewed' || c.status === 'done')).length || 0}
+            </span>
+          </div>
+        </div>
+
+        <div style="background:#0a0a0a; border-radius:12px; overflow-x:auto; border:1px solid #222;">
+          <table style="width:100%; text-align:left; border-collapse:collapse; min-width:700px;">
+            <thead>
+              <tr style="background:#151515; color:#777; font-size:0.8rem; border-bottom:1px solid #282828;">
+                <th style="padding:15px; width:110px;">日期时间</th>
+                <th style="padding:15px; width:130px;">咨询人</th>
+                <th style="padding:15px; width:180px;">联络邮箱</th>
+                <th style="padding:15px;">留言意向预览</th>
+                <th style="padding:15px; width:150px;">回复/处理状态</th>
+                <th style="padding:15px; width:120px; text-align:right;">管理操作</th>
               </tr>
-            `).join('') || '<tr><td colspan="5" style="padding:30px; text-align:center;">暂无合作留言</td></tr>'}
+            </thead>
+            <tbody>
+              ${contacts?.filter(c => !c.message?.includes('[ECHO]')).map(c => {
+                const isProcessed = c.status === 'replied' || c.status === 'processed' || c.status === 'reviewed' || c.status === 'done';
+                return `
+                <tr style="border-bottom:1px solid #1a1a1a; transition:0.25s;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
+                  <td style="padding:15px; font-size:0.8rem; color:#666;">
+                    ${new Date(c.created_at).toLocaleDateString()}
+                    <div style="font-size:0.7rem; color:#444;">${new Date(c.created_at).toLocaleTimeString().substring(0,5)}</div>
+                  </td>
+                  <td style="padding:15px; color:var(--gold); font-weight:500;">
+                    ${c.name || '未填写'}
+                  </td>
+                  <td style="padding:15px;">
+                    ${c.email ? `<a href="mailto:${c.email}?subject=【Harvester 收割机音乐】关于合作咨询回复" target="_blank" style="color:#70a1ff; text-decoration:none; font-size:0.85rem;" title="点击直接发送邮件"><i class="fas fa-envelope"></i> ${c.email}</a>` : '<span style="color:#555;">无邮箱</span>'}
+                  </td>
+                  <td style="padding:15px; color:#ccc; font-size:0.88rem; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${(c.message || '').replace(/"/g, '&quot;')}">
+                    ${c.message || ''}
+                  </td>
+                  <td style="padding:15px;">
+                    <label style="display:inline-flex; align-items:center; gap:8px; cursor:pointer; background:${isProcessed ? 'rgba(100,210,138,0.08)' : 'rgba(255,165,2,0.08)'}; padding:6px 12px; border-radius:20px; border:1px solid ${isProcessed ? 'rgba(100,210,138,0.25)' : 'rgba(255,165,2,0.25)'};">
+                      <input type="checkbox" ${isProcessed ? 'checked' : ''} onchange="toggleContactStatus('${c.id}', this.checked)" style="width:16px; height:16px; cursor:pointer; accent-color:#64D28A;">
+                      <span style="font-size:0.78rem; font-weight:bold; color:${isProcessed ? '#64D28A' : '#ffa502'};">
+                        ${isProcessed ? '✅ 已回复' : '⏳ 待处理'}
+                      </span>
+                    </label>
+                  </td>
+                  <td style="padding:15px; text-align:right; white-space:nowrap;">
+                    <button class="btn-tiny" onclick="viewContact('${c.id}')" style="margin-right:5px; color:var(--gold); border-color:var(--gold);">查看</button>
+                    <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${c.id}')" title="删除">🗑️</button>
+                  </td>
+                </tr>
+                `;
+              }).join('') || '<tr><td colspan="6" style="padding:40px; text-align:center; color:#555;">暂无联系留言记录</td></tr>'}
+            </tbody>
           </table>
         </div>
       </section>
     `;
   }
+
+  window.toggleContactStatus = async (id, isReplied) => {
+    try {
+      const newStatus = isReplied ? 'replied' : 'pending';
+      const { error } = await db.from('contact_messages').update({ status: newStatus }).eq('id', id);
+      if (error) throw error;
+      renderCMS();
+    } catch(err) {
+      alert("更新状态失败: " + err.message);
+    }
+  };
 
   window.toggleEchoApproval = async(id, currentlyApproved) => {
     try {
@@ -1303,22 +1361,56 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Modal Helpers ---
   window.viewContact = async(id) => {
     const { data: c } = await db.from('contact_messages').select('*').eq('id', id).single();
+    const isProcessed = c.status === 'replied' || c.status === 'processed' || c.status === 'reviewed' || c.status === 'done';
     const modal = document.createElement('div');
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center;";
+    modal.id = 'contactDetailModal';
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
     modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:12px; padding:2rem; width:100%; max-width:600px;">
-        <h3 style="color:var(--gold);">合作咨询详情</h3>
-        <p><strong>姓名:</strong> ${c.name}</p>
-        <p><strong>Email:</strong> ${c.email}</p>
-        <hr style="border:0; border-top:1px solid #222; margin:15px 0;">
-        <p style="white-space:pre-wrap; line-height:1.6;">${c.message}</p>
-        <div style="margin-top:20px;">
-          <button class="btn btn-submit" onclick="this.closest('div').parentElement.parentElement.remove()">关闭详情</button>
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2.2rem; width:100%; max-width:620px; box-shadow:0 20px 60px rgba(0,0,0,0.9);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid #222; padding-bottom:1rem;">
+          <h3 style="color:var(--gold); margin:0; font-size:1.3rem; display:flex; align-items:center; gap:8px;">
+            <span>📬</span> 合作咨询与联系留言详情
+          </h3>
+          <span style="font-size:0.75rem; color:#888;">${new Date(c.created_at).toLocaleString()}</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:1.2rem; background:#161616; padding:15px; border-radius:10px; border:1px solid #282828;">
+          <div>
+            <label style="font-size:0.75rem; color:#888; display:block;">咨询人称呼</label>
+            <div style="color:var(--gold); font-weight:bold; font-size:1.1rem; margin-top:2px;">${c.name || '未填写'}</div>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:#888; display:block;">联络邮箱</label>
+            <div style="color:#fff; margin-top:2px; font-size:0.95rem;">
+              ${c.email ? `<a href="mailto:${c.email}?subject=【Harvester 收割机音乐】关于合作咨询回复" target="_blank" style="color:#70a1ff; text-decoration:none;"><i class="fas fa-paper-plane"></i> ${c.email}</a>` : '未填写'}
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+          <label style="font-size:0.75rem; color:#888; display:block; margin-bottom:6px;">留言内容 / 合作意向</label>
+          <div style="background:#0a0a0a; border:1px solid #222; border-radius:10px; padding:15px; max-height:220px; overflow-y:auto; color:#eee; font-size:0.95rem; line-height:1.7; white-space:pre-wrap;">${c.message || ''}</div>
+        </div>
+
+        <!-- Processed / Replied Checkbox Control -->
+        <div style="background:rgba(246,210,138,0.06); border:1px solid rgba(246,210,138,0.25); border-radius:10px; padding:14px 18px; margin-bottom:1.5rem; display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div style="color:var(--gold); font-weight:bold; font-size:0.9rem;">回复/处理状态标记</div>
+            <div style="color:#888; font-size:0.75rem;">勾选以标记此条信息是否已与对方回复/跟进处理</div>
+          </div>
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.95rem; color:${isProcessed ? '#64D28A' : '#ffa502'}; font-weight:bold;">
+            <input type="checkbox" id="modalContactCheck" ${isProcessed ? 'checked' : ''} style="width:18px; height:18px; cursor:pointer; accent-color:#64D28A;" onchange="toggleContactStatus('${c.id}', this.checked)">
+            <span>${isProcessed ? '✅ 已回复/已处理' : '⏳ 待回复/待处理'}</span>
+          </label>
+        </div>
+
+        <div style="display:flex; gap:12px; justify-content:flex-end;">
+          ${c.email ? `<a href="mailto:${c.email}?subject=【Harvester 收割机音乐】关于合作咨询回复" target="_blank" class="btn-tiny" style="padding:10px 18px; background:rgba(112,161,255,0.15); color:#70a1ff; border-color:#70a1ff; text-decoration:none; display:inline-flex; align-items:center; gap:6px;"><i class="fas fa-reply"></i> 发送邮件回复</a>` : ''}
+          <button class="btn btn-submit" style="width:auto; padding:10px 24px;" onclick="this.closest('#contactDetailModal').remove()">完成并关闭</button>
         </div>
       </div>
     `;
     document.body.appendChild(modal);
-    await db.from('contact_messages').update({status:'reviewed'}).eq('id', id);
   };
 
   window.viewSub = async(id) => {
