@@ -244,6 +244,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let ticketUrl = "";
     let ticketText = "前往购票/索票/报名";
+    let requiresTicket = true;
+    if (item.requires_ticket !== undefined && item.requires_ticket !== null) {
+      requiresTicket = item.requires_ticket === true || item.requires_ticket === 'true' || item.requires_ticket === 1 || item.requires_ticket === '1';
+    }
+
     if (desc.includes('EXT_META:')) {
       // already parsed above
     }
@@ -255,6 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (metaObj.ticket_url || metaObj.ticketUrl || metaObj.turl) ticketUrl = metaObj.ticket_url || metaObj.ticketUrl || metaObj.turl;
         if (metaObj.ticket_text || metaObj.ticketText || metaObj.ttext) ticketText = metaObj.ticket_text || metaObj.ticketText || metaObj.ttext;
         if (metaObj.status_tag || metaObj.statusTag || metaObj.stag) statusTag = metaObj.status_tag || metaObj.statusTag || metaObj.stag;
+        if (metaObj.rt !== undefined) requiresTicket = metaObj.rt === true || metaObj.rt === 'true' || metaObj.rt === 1 || metaObj.rt === '1';
+        if (metaObj.requires_ticket !== undefined) requiresTicket = metaObj.requires_ticket === true || metaObj.requires_ticket === 'true' || metaObj.requires_ticket === 1 || metaObj.requires_ticket === '1';
+        if (metaObj.req_ticket !== undefined) requiresTicket = metaObj.req_ticket === true || metaObj.req_ticket === 'true' || metaObj.req_ticket === 1 || metaObj.req_ticket === '1';
       } catch(e){}
     }
     if (item.ticket_url) ticketUrl = item.ticket_url;
@@ -306,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
       image_url: rawImg,
       ticketUrl,
       ticketText,
+      requiresTicket,
       description: desc,
       rawDate,
       rawTime,
@@ -388,12 +397,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const tagHtml = e.statusTag ? `<span class="${tagClass}">${e.statusTag}</span> ` : '';
 
-        // Action Link logic
+        // Action Link logic: 若活动不需要报名/购票，只展示铃铛
         let actionHtml = '';
         const isCancelled = tagText.includes("取消") || tagText.includes("CANCEL");
         const isSoldOut = tagText.includes("SOLD") || tagText.includes("售罄");
 
-        if (isCancelled) {
+        if (e.requiresTicket === false) {
+          actionHtml = '';
+        } else if (isCancelled) {
           actionHtml = `<span class="event-strip-disabled">已取消</span>`;
         } else if (isSoldOut) {
           actionHtml = `<span class="event-strip-disabled" style="color:#ff6b81;">已售罄 / 满额</span>`;

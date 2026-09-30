@@ -250,14 +250,15 @@
       border: 1px solid rgba(255,255,255,0.15);
       color: #888;
       border-radius: 50%;
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       transition: all 0.25s ease;
+      flex-shrink: 0;
     }
 
     .btn-strip-remind:hover {
@@ -283,9 +284,14 @@
       }
       .event-action-block {
         width: 100%;
-        justify-content: space-between;
+        justify-content: flex-end;
+        gap: 16px;
         padding-top: 6px;
         min-width: auto;
+      }
+      .event-action-block .event-strip-link,
+      .event-action-block .event-strip-disabled {
+        margin-right: auto;
       }
     }
   </style>
@@ -379,8 +385,8 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js?v=16.0.0"></script>
-  <script src="app.js?v=16.0.0"></script>
+  <script src="config.js?v=16.1.0"></script>
+  <script src="app.js?v=16.1.0"></script>
 
 
 </body>

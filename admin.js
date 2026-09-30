@@ -416,6 +416,10 @@ document.addEventListener('DOMContentLoaded', () => {
       let stag = e.status_tag || "";
       let turl = e.ticket_url || "";
       let ttext = e.ticket_text || "前往购票/索票/报名";
+      let reqTicket = true;
+      if (e.requires_ticket !== undefined && e.requires_ticket !== null) {
+        reqTicket = e.requires_ticket === true || e.requires_ticket === 'true' || e.requires_ticket === 1 || e.requires_ticket === '1';
+      }
 
       const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
       if (metaMatch) {
@@ -431,6 +435,9 @@ document.addEventListener('DOMContentLoaded', () => {
           stag = meta.status_tag || meta.stag || stag;
           turl = meta.ticket_url || meta.turl || turl;
           ttext = meta.ticket_text || meta.ttext || ttext;
+          if (meta.rt !== undefined) reqTicket = meta.rt === true || meta.rt === 'true' || meta.rt === 1 || meta.rt === '1';
+          if (meta.requires_ticket !== undefined) reqTicket = meta.requires_ticket === true || meta.requires_ticket === 'true' || meta.requires_ticket === 1 || meta.requires_ticket === '1';
+          if (meta.req_ticket !== undefined) reqTicket = meta.req_ticket === true || meta.req_ticket === 'true' || meta.req_ticket === 1 || meta.req_ticket === '1';
           desc = desc.replace(metaMatch[0], '').trim();
         } catch (err) {
           desc = desc.replace(metaMatch[0], '').trim();
@@ -467,6 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         image_url: img,
         ticket_url: turl,
         ticket_text: ttext,
+        requires_ticket: reqTicket,
         email_template: et,
         display_order: parseInt(ord, 10) || 0,
         description: desc
@@ -591,7 +599,9 @@ document.addEventListener('DOMContentLoaded', () => {
                       ${e.location || '待定'}
                     </td>
                     <td style="padding:14px; font-size:0.8rem;">
-                      ${e.ticket_url ? `<a href="${e.ticket_url}" target="_blank" style="color:var(--gold); text-decoration:underline;">${e.ticket_text || '外部链接'} ↗</a>` : `<span style="color:#666;">站内详情</span>`}
+                      ${!e.requires_ticket 
+                        ? `<span style="display:inline-flex; align-items:center; gap:5px; color:#aaa; background:rgba(255,255,255,0.06); padding:3px 8px; border-radius:50px; font-size:0.75rem; border:1px solid rgba(255,255,255,0.1);"><i class="fas fa-bell" style="color:var(--gold);"></i> 仅铃铛提醒 (免购票)</span>` 
+                        : (e.ticket_url ? `<a href="${e.ticket_url}" target="_blank" style="color:var(--gold); text-decoration:underline;">${e.ticket_text || '外部链接'} ↗</a>` : `<span style="color:#666;">站内详情</span>`)}
                     </td>
                     <td style="padding:14px; text-align:right; white-space:nowrap;">
                       <button class="btn-tiny" style="margin-right:6px; border-color:var(--gold); color:var(--gold);" onclick="openEventModal('${e.id}')">✏️ 编辑</button>
@@ -725,6 +735,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let stag = e.status_tag || "";
         let turl = e.ticket_url || "";
         let ttext = e.ticket_text || "前往购票/索票/报名";
+        let reqTicket = true;
+        if (e.requires_ticket !== undefined && e.requires_ticket !== null) {
+          reqTicket = e.requires_ticket === true || e.requires_ticket === 'true' || e.requires_ticket === 1 || e.requires_ticket === '1';
+        }
 
         if (desc.includes('EXT_META:')) {
            const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
@@ -741,6 +755,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 stag = meta.status_tag || meta.stag || stag;
                 turl = meta.ticket_url || meta.turl || turl;
                 ttext = meta.ticket_text || meta.ttext || ttext;
+                if (meta.rt !== undefined) reqTicket = meta.rt === true || meta.rt === 'true' || meta.rt === 1 || meta.rt === '1';
+                if (meta.requires_ticket !== undefined) reqTicket = meta.requires_ticket === true || meta.requires_ticket === 'true' || meta.requires_ticket === 1 || meta.requires_ticket === '1';
+                if (meta.req_ticket !== undefined) reqTicket = meta.req_ticket === true || meta.req_ticket === 'true' || meta.req_ticket === 1 || meta.req_ticket === '1';
                 desc = desc.replace(metaMatch[0], '').trim();
               } catch(err) {
                 desc = desc.replace(metaMatch[0], '').trim();
@@ -777,6 +794,7 @@ document.addEventListener('DOMContentLoaded', () => {
           image_url: img,
           ticket_url: turl,
           ticket_text: ttext,
+          requires_ticket: reqTicket,
           email_template: et,
           display_order: ord,
           description: desc
@@ -836,8 +854,20 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
 
-          <!-- 购票/报名链接与按钮文字 -->
-          <div style="display:grid; grid-template-columns: 2fr 1.2fr; gap:15px; margin-bottom:15px;">
+          <!-- 是否需要购票/报名 (勾选切换) -->
+          <div style="background:#0e0e0e; border:1px solid #222; border-radius:12px; padding:15px; margin-bottom:15px;">
+            <label style="display:flex; align-items:center; gap:12px; cursor:pointer; font-size:0.9rem; color:#fff; font-weight:600; user-select:none;">
+              <input type="checkbox" id="ev_req_ticket" ${e && e.requires_ticket === false ? '' : 'checked'} onchange="document.getElementById('ev_ticket_fields').style.display = this.checked ? 'grid' : 'none';" style="width:20px; height:20px; accent-color:var(--gold); cursor:pointer;">
+              <span>需要购票 / 报名 / 索票 (Require Ticket or Registration)</span>
+            </label>
+            <p style="margin:6px 0 0 32px; font-size:0.75rem; color:#888; line-height:1.5;">
+              💡 <b>勾选时</b>：活动列表中会显示【前往购票/索票/报名】按钮与铃铛。<br>
+              💡 <b>取消勾选时</b>：活动为免购票/免报名开放活动，<b>前台仅显示铃铛提醒图标</b>。
+            </p>
+          </div>
+
+          <!-- 购票/报名链接与按钮文字 (根据勾选状态展示/折叠) -->
+          <div id="ev_ticket_fields" style="display:${e && e.requires_ticket === false ? 'none' : 'grid'}; grid-template-columns: 2fr 1.2fr; gap:15px; margin-bottom:15px;">
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">购票/索票/报名链接 (Ticket URL)</label>
               <input type="text" id="ev_turl" value="${e?.ticket_url || ''}" placeholder="https://... 留空则链接到站内详情" style="width:100%; padding:10px;">
@@ -880,6 +910,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const originalText = btn ? btn.innerText : '保存';
     if (btn) { btn.innerText = "⏳ 正在同步到云端..."; btn.disabled = true; }
 
+    const reqTicket = document.getElementById('ev_req_ticket').checked;
     const rawTitle = document.getElementById('ev_t').value.trim();
     const stag = document.getElementById('ev_stag').value.trim();
     const finalTitle = stag ? `${stag} ${rawTitle}` : rawTitle;
@@ -891,8 +922,9 @@ document.addEventListener('DOMContentLoaded', () => {
       location: document.getElementById('ev_l').value,
       map_url: document.getElementById('ev_ml').value,
       image_url: document.getElementById('ev_url').value,
-      ticket_url: document.getElementById('ev_turl').value,
-      ticket_text: document.getElementById('ev_ttext').value || '前往购票/索票/报名',
+      ticket_url: reqTicket ? document.getElementById('ev_turl').value.trim() : '',
+      ticket_text: reqTicket ? (document.getElementById('ev_ttext').value.trim() || '前往购票/索票/报名') : '',
+      requires_ticket: reqTicket,
       status_tag: stag,
       email_template: document.getElementById('ev_email').value,
       description: document.getElementById('ev_desc').value,
@@ -921,6 +953,9 @@ document.addEventListener('DOMContentLoaded', () => {
           img: payload.image_url,
           turl: payload.ticket_url,
           ttext: payload.ticket_text,
+          rt: payload.requires_ticket,
+          requires_ticket: payload.requires_ticket,
+          req_ticket: payload.requires_ticket,
           stag: payload.status_tag,
           et: payload.email_template,
           ord: payload.display_order
