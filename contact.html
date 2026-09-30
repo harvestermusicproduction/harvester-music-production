@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=13.0.0">
+  <link rel="stylesheet" href="styles.css?v=14.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* --- 💎 Contact Form Light White Frosted Standard --- */
@@ -54,6 +54,98 @@
       margin-left: 10px; 
       font-family: var(--font-hand-cn), var(--font-hand-en) !important;
     }
+    /* --- 🌌 3D Echo Universe & Interactive Styles --- */
+    .echo-universe-section {
+      position: relative;
+      min-height: 85vh;
+      margin: 4rem auto 2rem;
+      max-width: 1200px;
+      padding: 0 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #echo-canvas-wrap {
+      position: relative;
+      width: 100%;
+      min-height: 650px;
+      border-radius: 36px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, rgba(26, 21, 18, 0.95) 0%, rgba(10, 8, 7, 0.98) 100%);
+      border: 1.5px solid rgba(246, 210, 138, 0.25);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #echo3DCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: auto;
+      z-index: 1;
+    }
+    .interactive-card {
+      position: relative;
+      z-index: 10;
+      background: rgba(25, 20, 16, 0.82) !important;
+      backdrop-filter: blur(25px) !important;
+      -webkit-backdrop-filter: blur(25px) !important;
+      border: 1.5px solid rgba(246, 210, 138, 0.35) !important;
+      border-radius: 36px;
+      padding: 2.8rem 2.5rem;
+      width: 90%;
+      max-width: 540px;
+      text-align: center;
+      pointer-events: auto;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 25px rgba(246, 210, 138, 0.1);
+      transition: 0.4s ease;
+    }
+    .interactive-card:hover { 
+      border-color: var(--gold) !important;
+      box-shadow: 0 35px 90px rgba(0,0,0,0.8), 0 0 35px rgba(246, 210, 138, 0.2);
+    }
+    .btn-echo {
+      background: rgba(35, 29, 23, 0.8) !important;
+      border: 1.5px solid rgba(246, 210, 138, 0.3) !important;
+      color: #faf6f0 !important;
+      padding: 10px 18px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      font-size: 1.05rem;
+      font-family: var(--font-hand-cn), var(--font-hand-en) !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-echo:hover {
+      background: rgba(246, 210, 138, 0.2) !important;
+      transform: translateY(-3px);
+      border-color: var(--gold) !important;
+      color: var(--gold) !important;
+      box-shadow: 0 0 15px rgba(246, 210, 138, 0.3);
+    }
+    .input-box {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(246, 210, 138, 0.25);
+      border-radius: 20px;
+      padding: 16px 20px;
+      color: #fff;
+      margin-top: 1.2rem;
+      font-size: 1.1rem;
+      outline: none;
+      box-sizing: border-box;
+      font-family: var(--font-hand-cn), var(--font-hand-en) !important;
+    }
+    .input-box:focus {
+      border-color: var(--gold);
+      background: rgba(255,255,255,0.09);
+    }
   </style>
 </head>
 <body style="position: relative;">
@@ -79,7 +171,7 @@
     <nav class="nav-links">
       <a href="index.html">主页</a>
       <a href="music.html">音乐与歌谱集</a>
-      <a href="feedback.html">回声空间</a>
+      <a href="#echo">回声空间</a>
       <a href="events.html">活动</a>
       <a href="diary.html">田野日志</a>
       <div class="nav-dropdown">
@@ -99,7 +191,7 @@
   <div id="mobileNavOverlay">
     <a href="index.html">主页</a>
     <a href="music.html">音乐与歌谱集</a>
-    <a href="feedback.html">回声空间</a>
+    <a href="#echo">回声空间</a>
     <a href="events.html">活动</a>
     <a href="diary.html">田野日志</a>
     <div class="mobile-dropdown">
@@ -115,19 +207,18 @@
     <a href="contact.html" class="active">联系我们</a>
   </div>
 
+  <!-- 1. 联系我们板块 (原有内容完整保留) -->
   <div class="ppt-header fade-in">
     <div class="ppt-line"></div>
-    
-    <h1 class="ppt-title">与我们同工共建</h1>
-    <p class="ppt-subtitle">TELL US YOUR STORY OR PARTNER WITH US</p>
+    <h1 class="ppt-title font-hand-cn" style="font-size: 3.2rem;">与我们同工共建</h1>
+    <p class="ppt-subtitle font-hand-en">TELL US YOUR STORY OR PARTNER WITH US</p>
   </div>
 
-  <section class="fade-in" style="min-height: 80vh; padding: 0 2rem; max-width: 1200px; margin: 0 auto;">
+  <section class="fade-in" style="min-height: 70vh; padding: 0 2rem; max-width: 1200px; margin: 0 auto 4rem;">
     <div class="res-grid">
       <!-- 联络方式与图片 -->
       <div style="text-align: center;">
-        
-        <div style="margin-top: 2rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+        <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
           <a id="cfg_contact_wa" href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry." target="_blank" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
           <a id="cfg_contact_fb" href="#" target="_blank" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="Facebook"><i class="fab fa-facebook-f"></i></a>
           <a id="cfg_contact_email" href="mailto:harvestermusicproduction@gmail.com" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="Email"><i class="fas fa-envelope"></i></a>
@@ -136,7 +227,7 @@
         <img id="cfg_contact_banner" 
              src="https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=800&q=80" 
              onerror="this.src='https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&w=800&q=80'"
-             style="width: 100%; max-height: 400px; object-fit: cover; margin-top: 3rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.5);">
+             style="width: 100%; max-height: 400px; object-fit: cover; margin-top: 2.5rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.5);">
       </div>
 
       <!-- 站内表单 -->
@@ -157,17 +248,66 @@
     </div>
   </section>
 
-    <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+  <!-- 2. 回声空间板块 (合并于联系我们下方) -->
+  <div class="ppt-header fade-in" id="echo" style="margin-top: 6rem;">
+    <div class="ppt-line"></div>
+    <h2 class="ppt-title font-hand-cn" style="font-size: 3.2rem;">回 声 空 间</h2>
+    <p class="ppt-subtitle font-hand-en">~ ECHO SPACE · 写下你的感悟，留下属于你的回声 ~</p>
+  </div>
+
+  <section class="fade-in echo-universe-section">
+    <div id="echo-canvas-wrap">
+      <div id="echo3DCanvas"></div>
+
+      <div class="interactive-card">
+        <div class="ppt-header" style="margin:0 0 1.2rem 0; padding:0; max-width:none; border:none; text-align: center;">
+          <div class="ppt-meta" style="margin-bottom:0; justify-content:center; border:none;">
+            <span class="font-hand-cn" style="font-size: 1.8rem; letter-spacing: 4px; color: var(--gold); font-weight: normal;">共 鸣 留 言</span>
+          </div>
+        </div>
+        
+        <div id="reaction-group" style="display: flex; justify-content: center; gap: 10px; margin-top: 1rem; flex-wrap: wrap;">
+          <button class="btn-echo" onclick="postReaction('❤️', '被触动')">❤️ 被触动</button>
+          <button class="btn-echo" onclick="postReaction('🙏', '被安慰')">🙏 被安慰</button>
+          <button class="btn-echo" onclick="postReaction('🔥', '很真实')">🔥 很真实</button>
+          <button class="btn-echo" onclick="postReaction('🎧', '单曲循环')">🎧 单曲循环</button>
+          <button class="btn-echo" id="btnCustomTrigger" onclick="toggleCustomUI()">➕ 自定义</button>
+        </div>
+
+        <!-- Custom Reaction UI -->
+        <div id="customReactionUI" style="display: none; margin-top: 1.2rem;">
+          <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+            <input id="customEmoji" placeholder="😊" style="width: 60px; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(246,210,138,0.3); border-radius: 15px; padding: 10px; color: #fff; text-align: center; outline: none; font-size: 1.2rem;">
+            <input id="customText" placeholder="写个短语..." style="flex:1; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(246,210,138,0.3); border-radius: 15px; padding: 10px; color: #fff; outline: none; font-family: var(--font-hand-cn);">
+            <button class="btn-echo" style="padding: 10px 18px; border-color: var(--gold);" onclick="handleCustomSubmit()">🔥 触发</button>
+          </div>
+        </div>
+
+        <div class="input-area">
+          <input id="echoInput" class="input-box" maxlength="20" placeholder="写下你的感悟，融入这片回声..." />
+          <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 1.2rem 0;">
+            <input type="checkbox" id="echoAnon" checked style="width:auto; transform: scale(1.2);">
+            <label for="echoAnon" class="font-hand-cn" style="color:#b8ac9f; font-size: 1.1rem; cursor: pointer;">匿名共吟</label>
+          </div>
+          <button class="btn-frosted-gold" style="width: 100%; border-radius: 50px; padding: 14px; font-size: 1.15rem; color: #f6d28a !important; text-align: center; border: 1.5px solid rgba(246, 210, 138, 0.4); background: rgba(35, 29, 23, 0.9);" onclick="postEcho()">发 布 回 声</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
-      <img src="assets/logo.png" alt="Harvester" style="height: 50px; display: block; margin: 0 auto 1.2rem;">
+      <img src="assets/logo.png" alt="Harvester" style="height: 25px; display: block; margin: 0 auto 1.2rem;">
     </a>
     <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=2.6.0"></script>
-  <script src="app.js?v=13.0.0"></script>
+  <script src="app.js?v=14.0.0"></script>
   <script>
+    // --- 📨 Contact Form Handler ---
     document.getElementById('contactForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('btnContactSubmit');
@@ -195,6 +335,221 @@
         btn.innerText = "发 送 请 求 (Send Message)";
         btn.disabled = false;
       }
+    });
+
+    // --- 🔮 3D Echo Universe Engine ---
+    let echoScene, echoCamera, echoRenderer, echoStarField;
+    let echoMouseX = 0, echoMouseY = 0;
+    const MAX_ECHOES = 60;
+    window.currentEchoes = [];
+
+    function init3DEchoUniverse() {
+      const container = document.getElementById('echo-canvas-wrap');
+      if (!container) return;
+
+      const width = container.clientWidth || 1000;
+      const height = container.clientHeight || 650;
+      const isMobile = window.innerWidth <= 768;
+
+      echoScene = new THREE.Scene();
+      echoCamera = new THREE.PerspectiveCamera(isMobile ? 85 : 70, width / height, 1, 4000);
+      echoCamera.position.z = isMobile ? 800 : 500;
+
+      echoRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      echoRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      echoRenderer.setSize(width, height);
+      
+      const targetDiv = document.getElementById('echo3DCanvas');
+      targetDiv.innerHTML = '';
+      targetDiv.appendChild(echoRenderer.domElement);
+
+      // Starfield
+      const starGeo = new THREE.BufferGeometry();
+      const starCoords = [];
+      for (let i = 0; i < 4000; i++) {
+        starCoords.push((Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2500);
+      }
+      starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
+      const starMat = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: isMobile ? 1.4 : 0.9,
+        transparent: true,
+        opacity: 0.75,
+        blending: THREE.AdditiveBlending
+      });
+      echoStarField = new THREE.Points(starGeo, starMat);
+      echoScene.add(echoStarField);
+
+      // Warm Point Light
+      const light = new THREE.PointLight(0xf6d28a, 0.6, 2000);
+      light.position.set(0, 0, 500);
+      echoScene.add(light);
+
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        echoMouseX = (e.clientX - rect.left - width / 2) * 0.05;
+        echoMouseY = (e.clientY - rect.top - height / 2) * 0.05;
+      });
+
+      animateEchoUniverse();
+    }
+
+    function createEchoSprite(message, isPrimary = false) {
+      if (!echoScene) return;
+      const isMobile = window.innerWidth <= 768;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 1600;
+      canvas.height = 300;
+      
+      const fontSize = isPrimary ? 150 : 110;
+      ctx.font = `normal ${fontSize}px 'ChenYuluoyan', 'Gaegu', sans-serif`;
+      
+      ctx.shadowBlur = 40;
+      ctx.shadowColor = isPrimary ? 'rgba(246, 210, 138, 1.0)' : 'rgba(255,255,255,0.6)';
+      ctx.fillStyle = isPrimary ? '#f6d28a' : 'rgba(255,255,255,0.92)';
+      
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(message, 800, 150);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const material = new THREE.SpriteMaterial({ 
+        map: texture, 
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending
+      });
+      
+      const sprite = new THREE.Sprite(material);
+      const scaleBase = isMobile ? 1.4 : 3.0;
+      sprite.scale.set(isPrimary ? (16 * scaleBase) : (8 * scaleBase), isPrimary ? (3.0 * scaleBase) : (1.6 * scaleBase), 1);
+      
+      const boundX = isMobile ? 500 : 1200;
+      const boundY = isMobile ? 600 : 800;
+
+      if(isPrimary) {
+        sprite.position.set(0, 0, 320);
+        sprite.userData = { speed: 0.15, drift: (Math.random()-0.5)*0.2 };
+      } else {
+        sprite.position.set((Math.random()-0.5)*boundX, (Math.random()-0.5)*boundY, (Math.random()-0.5)*800);
+        sprite.userData = { speed: Math.random()*0.05 + 0.03, drift: (Math.random()-0.5)*0.04 };
+      }
+
+      echoScene.add(sprite);
+      window.currentEchoes.push(sprite);
+      
+      if(window.currentEchoes.length > MAX_ECHOES) {
+        const old = window.currentEchoes.shift();
+        echoScene.remove(old);
+      }
+    }
+
+    function animateEchoUniverse() {
+      requestAnimationFrame(animateEchoUniverse);
+      if (!echoScene || !echoRenderer || !echoCamera) return;
+
+      const isMobile = window.innerWidth <= 768;
+      echoScene.rotation.y += (echoMouseX * 0.0001) + 0.0002;
+      echoScene.rotation.x += (echoMouseY * 0.0001) + 0.0001;
+
+      if(echoStarField) echoStarField.rotation.z += 0.0001;
+
+      if(window.currentEchoes) {
+        window.currentEchoes.forEach(e => {
+          e.position.x += e.userData.speed || 0.04;
+          e.position.y += e.userData.drift || 0;
+          if(e.material.opacity < 1) e.material.opacity += 0.02;
+
+          const resetBound = isMobile ? 450 : 1000;
+          if(e.position.x > resetBound) {
+            e.position.x = -resetBound;
+            e.position.y = (Math.random()-0.5) * (isMobile ? 800 : 700);
+          }
+        });
+      }
+
+      echoRenderer.render(echoScene, echoCamera);
+    }
+
+    function toggleCustomUI() {
+      const ui = document.getElementById('customReactionUI');
+      ui.style.display = ui.style.display === 'none' ? 'block' : 'none';
+      if(ui.style.display === 'block') document.getElementById('customEmoji').focus();
+    }
+
+    function handleCustomSubmit() {
+      const emoji = document.getElementById('customEmoji').value.trim() || '✨';
+      const text = document.getElementById('customText').value.trim();
+      if(!text) return alert("请写一点感悟文字吧");
+      
+      postReaction(emoji, text);
+      toggleCustomUI(); 
+      document.getElementById('customEmoji').value = '';
+      document.getElementById('customText').value = '';
+    }
+
+    function postReaction(emoji, text = "") {
+      const fullText = text ? (emoji + " " + text) : emoji;
+      createEchoSprite(fullText, true);
+    }
+
+    async function postEcho() {
+      const input = document.getElementById("echoInput");
+      const text = input.value.trim();
+      const isAnon = document.getElementById("echoAnon").checked;
+      if(!text) return;
+
+      const db = window.supabase;
+      const data = { name: isAnon ? "Anonymous" : "", message: "[ECHO] " + text };
+      try {
+        await db.from('contact_messages').insert([data]);
+        createEchoSprite(text, true);
+        input.value = "";
+        alert("✨ 回声已发布，正在宇宙星空中回荡！");
+      } catch(e) { console.error("Echo failed", e); }
+    }
+
+    async function fetchEchoes() {
+      const db = window.supabase;
+      if (!db) return;
+      try {
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
+        const approvedIds = cfg?.value ? cfg.value.split(',') : [];
+        
+        if (approvedIds.length === 0) return;
+
+        const { data, error } = await db.from('contact_messages')
+          .select('*')
+          .in('id', approvedIds)
+          .order('created_at', {ascending:false});
+          
+        if(error) throw error;
+        if(data) {
+          data.forEach(e => {
+            const cleanMessage = e.message.replace("[ECHO] ", "");
+            createEchoSprite(cleanMessage);
+          });
+        }
+      } catch(e) { 
+        console.error("Echo fetch error:", e);
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      const container = document.getElementById('echo-canvas-wrap');
+      if (container && echoCamera && echoRenderer) {
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        echoCamera.aspect = width / height;
+        echoCamera.updateProjectionMatrix();
+        echoRenderer.setSize(width, height);
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      init3DEchoUniverse();
+      fetchEchoes();
     });
   </script>
 </body>

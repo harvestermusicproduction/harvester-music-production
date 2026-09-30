@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="song-card-actions" style="display:flex; gap:12px; margin-top:20px;">
               ${ytLink ? `<a href="${ytLink}" target="_blank" class="btn-frosted-gold"><i class="fab fa-youtube"></i> YOUTUBE</a>` : ''}
               ${s.score_url ? `<a href="${s.score_url}" target="_blank" class="btn-frosted-gold"><i class="fas fa-file-pdf"></i> 歌谱</a>` : ''}
-              <a href="feedback.html?id=${s.id}" class="btn-frosted-gold"><i class="fas fa-bullhorn"></i> 回声</a>
+              <a href="contact.html#echo" class="btn-frosted-gold"><i class="fas fa-bullhorn"></i> 回声</a>
             </div>
           </div>
         </div>`;
