@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="javascript:void(0)" onclick="switchModule('singers')" class="nav-item ${currentModule==='singers'?'active':''}">🎙️ Singers</a>
             <a href="javascript:void(0)" onclick="switchModule('events')" class="nav-item ${currentModule==='events'?'active':''}">📅 Events</a>
             <a href="javascript:void(0)" onclick="switchModule('diary')" class="nav-item ${currentModule==='diary'?'active':''}">📂 Field Diary</a>
+            <a href="javascript:void(0)" onclick="switchModule('about')" class="nav-item ${currentModule==='about'?'active':''}">📖 About Us / 关于我们</a>
 
             <p class="nav-section-title" style="margin-top:25px;">Interact</p>
             <a href="javascript:void(0)" onclick="switchModule('echo')" class="nav-item ${currentModule==='echo'?'active':''}">🌌 Echo Space</a>
@@ -111,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (currentModule === 'events') renderEvents(body);
     else if (currentModule === 'singers') renderSingers(body);
     else if (currentModule === 'diary') renderDiary(body);
+    else if (currentModule === 'about') renderAboutCMS(body);
     else if (currentModule === 'echo') renderEchoes(body);
     else if (currentModule === 'reminders') renderReminders(body);
     else if (currentModule === 'submissions') renderSubmissions(body);
@@ -1338,6 +1340,555 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.body.appendChild(modal);
     if(s.status === 'pending') await db.from('submissions').update({status:'reviewed'}).eq('id', id);
+  };
+
+  // --- 📖 ABOUT US CMS MODULE ---
+  async function renderAboutCMS(container) {
+    const { data: configs } = await db.from('site_config').select('*');
+    const c = (configs || []).reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
+
+    let aboutData = {};
+    if (c['cfg_about_content_json']) {
+      try {
+        aboutData = typeof c['cfg_about_content_json'] === 'string' ? JSON.parse(c['cfg_about_content_json']) : c['cfg_about_content_json'];
+      } catch(e) { console.warn("Parse error:", e); }
+    }
+
+    const d = (key, fallback = '') => {
+      return (aboutData && aboutData[key] !== undefined && aboutData[key] !== null) ? aboutData[key] : fallback;
+    };
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:15px;">
+        <div>
+          <h1 style="color:var(--gold); margin:0;">📖 关于我们 动态内容管理 (About Us CMS)</h1>
+          <p style="color:#888; font-size:0.9rem; margin-top:5px;">
+            在此可视化编辑“关于我们”页面的每一个板块文字、双语文案与配图。保存后前台立即实时生效。
+          </p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <a href="about.html" target="_blank" class="btn-tiny" style="padding:10px 16px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; color:var(--gold); border-color:var(--gold);">
+            <i class="fas fa-external-link-alt"></i> 前往预览页面
+          </a>
+          <button class="btn btn-submit" style="width:auto; padding:10px 24px;" onclick="saveAboutCMS()">💾 保存所有图文修改</button>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:2.5rem; max-width:1100px;">
+
+        <!-- 🌾 板块 1: 名字的由来 (NAME ORIGIN) -->
+        <div class="cms-card" style="border-left: 4px solid var(--gold);">
+          <h3 style="color:var(--gold); margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>🌾</span> 板块一：名字的由来 (Name Origin)
+          </h3>
+          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">对应前台顶部“收割机的故事”与约翰福音 4:37 经文启发。</p>
+          
+          <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px;">
+            <div>
+              <div style="margin-bottom:15px;">
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">主标题 (Main Title)</label>
+                <input type="text" id="in_about_origin_main_title" value="${d('about_origin_main_title', '收 割 机 的 故 事')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              </div>
+
+              <div style="margin-bottom:15px;">
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">启发经文 中文 (Scripture CN)</label>
+                <textarea id="in_about_origin_scripture" style="width:100%; height:65px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">${d('about_origin_scripture', '「那人撒种，这人收割，这话可见是真的。」')}</textarea>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div>
+                  <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">经文出处 (Reference)</label>
+                  <input type="text" id="in_about_origin_ref" value="${d('about_origin_ref', '—— 约翰福音 4:37 · JOHN 4:37')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                </div>
+                <div>
+                  <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">启发经文 英文 (Scripture EN)</label>
+                  <input type="text" id="in_about_origin_scripture_en" value="${d('about_origin_scripture_en', 'ONE SOWS AND ANOTHER REAPS. THIS SAYING IS TRUE.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                </div>
+              </div>
+
+              <div style="margin-bottom:15px;">
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">名字意义 中文 (Meaning CN)</label>
+                <textarea id="in_about_origin_meaning" style="width:100%; height:75px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">${d('about_origin_meaning', '以“收割机”命名，象征着神国的丰收。\n音乐作品如同撒下的种子，触动人心，在神的时间里结出果实。')}</textarea>
+              </div>
+
+              <div>
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">名字意义 英文 (Meaning EN)</label>
+                <textarea id="in_about_origin_meaning_en" style="width:100%; height:65px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">${d('about_origin_meaning_en', 'The name \'Harvester\' symbolizes the abundant harvest in God\'s kingdom. Music is like a seed that touches hearts and bears fruit in God\'s timing.')}</textarea>
+              </div>
+            </div>
+
+            <!-- 配图上传 -->
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+              <label style="display:block; color:var(--gold); font-size:0.85rem; font-weight:bold; margin-bottom:10px;">名字由来展示配图 (Origin Photo)</label>
+              <img id="prev_about_origin_img" src="${d('about_origin_img', 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80')}" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:12px; border:1px solid #222;">
+              <input type="file" id="f_about_origin_img" style="font-size:0.8rem; width:100%; margin-bottom:8px;">
+              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_origin_img', 'in_about_origin_img', 'prev_about_origin_img')">📤 上传并更换配图</button>
+              <input type="hidden" id="in_about_origin_img" value="${d('about_origin_img', 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80')}">
+            </div>
+          </div>
+        </div>
+
+        <!-- 🕊️ 板块 2: 愿景与使命 (VISION & MISSION) -->
+        <div class="cms-card" style="border-left: 4px solid #64D28A;">
+          <h3 style="color:#64D28A; margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>🕊️</span> 板块二：愿景与使命 (Vision & Mission)
+          </h3>
+          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">双翼卡片展示，包含双语愿景与使命核心宣告。</p>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:25px;">
+            <!-- 愿景 (Vision) -->
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222;">
+              <h4 style="color:var(--gold); margin-top:0; margin-bottom:15px;">🌟 愿景 (Vision)</h4>
+              <div style="margin-bottom:12px;">
+                <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">愿景标题</label>
+                <input type="text" id="in_about_vision_title" value="${d('about_vision_title', '愿 景')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:12px;">
+                <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">愿景要点 1 (中文)</label>
+                <textarea id="in_about_vision_1" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_vision_1', '推动现代流行基督教音乐的推广与发展')}</textarea>
+              </div>
+              <div style="margin-bottom:12px;">
+                <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">愿景要点 1 (英文)</label>
+                <input type="text" id="in_about_vision_1_en" value="${d('about_vision_1_en', 'To promote and develop modern contemporary Christian music')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:12px;">
+                <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">愿景要点 2 (中文)</label>
+                <textarea id="in_about_vision_2" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_vision_2', '同心合一，为神国度收割灵魂，透过音乐传扬福音')}</textarea>
+              </div>
+              <div>
+                <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">愿景要点 2 (英文)</label>
+                <input type="text" id="in_about_vision_2_en" value="${d('about_vision_2_en', 'United as one, harvesting souls for God\'s kingdom through the power of music')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+            </div>
+
+            <!-- 使命 (Mission) -->
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222;">
+              <h4 style="color:#64D28A; margin-top:0; margin-bottom:15px;">🎯 使命 (Mission)</h4>
+              <div style="margin-bottom:12px;">
+                <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">使命标题</label>
+                <input type="text" id="in_about_mission_title" value="${d('about_mission_title', '使 命')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:12px;">
+                <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">使命要点 1 (中文)</label>
+                <textarea id="in_about_mission_1" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_mission_1', '为主兴起这世代的中文诗歌词曲创作人和音乐人')}</textarea>
+              </div>
+              <div style="margin-bottom:12px;">
+                <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">使命要点 1 (英文)</label>
+                <input type="text" id="in_about_mission_1_en" value="${d('about_mission_1_en', 'To raise up the songwriters and musicians of this generation for the Lord through Chinese poetry and song creation')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:12px;">
+                <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">使命要点 2 (中文)</label>
+                <textarea id="in_about_mission_2" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_mission_2', '通过创作歌曲引导人认识神，并传播真理、信望与爱')}</textarea>
+              </div>
+              <div>
+                <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">使命要点 2 (英文)</label>
+                <input type="text" id="in_about_mission_2_en" value="${d('about_mission_2_en', 'To guide people to know God through song creation and spread truth, faith, hope, and love')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🏛️ 板块 3: 使命四大支柱 (4 MISSION PILLARS) -->
+        <div class="cms-card" style="border-left: 4px solid #70a1ff;">
+          <h3 style="color:#70a1ff; margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>🏛️</span> 板块三：使命四大支柱 (Four Mission Pillars)
+          </h3>
+          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">01 推动诗歌创作 / 02 提供服事平台 / 03 建立版权制度 / 04 传承培育下一代</p>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <!-- Pillar 1 -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">支柱 01</span>
+              <div style="margin:10px 0 8px;">
+                <label style="font-size:0.75rem; color:#aaa;">中文标题</label>
+                <input type="text" id="in_about_p1_t" value="${d('about_p1_t', '推动诗歌创作')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">英文标题</label>
+                <input type="text" id="in_about_p1_te" value="${d('about_p1_te', 'Promoting Songwriting')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">中文说明</label>
+                <textarea id="in_about_p1_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p1_d', '鼓励并支持创作能够传递信仰的诗歌与歌曲。')}</textarea>
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:#aaa;">英文说明</label>
+                <textarea id="in_about_p1_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p1_de', 'Encourage and support the creation of songs and hymns that communicate faith.')}</textarea>
+              </div>
+            </div>
+
+            <!-- Pillar 2 -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">支柱 02</span>
+              <div style="margin:10px 0 8px;">
+                <label style="font-size:0.75rem; color:#aaa;">中文标题</label>
+                <input type="text" id="in_about_p2_t" value="${d('about_p2_t', '提供服事平台')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">英文标题</label>
+                <input type="text" id="in_about_p2_te" value="${d('about_p2_te', 'Providing a Service Platform')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">中文说明</label>
+                <textarea id="in_about_p2_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p2_d', '创建一个平台，让音乐人能够分享、服事，达到共赢。')}</textarea>
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:#aaa;">英文说明</label>
+                <textarea id="in_about_p2_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p2_de', 'Create a platform where musicians can share and serve, achieving a win-win situation.')}</textarea>
+              </div>
+            </div>
+
+            <!-- Pillar 3 -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">支柱 03</span>
+              <div style="margin:10px 0 8px;">
+                <label style="font-size:0.75rem; color:#aaa;">中文标题</label>
+                <input type="text" id="in_about_p3_t" value="${d('about_p3_t', '建立版权制度')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">英文标题</label>
+                <input type="text" id="in_about_p3_te" value="${d('about_p3_te', 'Establishing a Copyright System')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">中文说明</label>
+                <textarea id="in_about_p3_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p3_d', '保护创作人的版权，确保每首歌曲在法律框架下得到保障。')}</textarea>
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:#aaa;">英文说明</label>
+                <textarea id="in_about_p3_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p3_de', 'Protect creators\' copyrights and ensure that each song is legally protected.')}</textarea>
+              </div>
+            </div>
+
+            <!-- Pillar 4 -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">支柱 04</span>
+              <div style="margin:10px 0 8px;">
+                <label style="font-size:0.75rem; color:#aaa;">中文标题</label>
+                <input type="text" id="in_about_p4_t" value="${d('about_p4_t', '传承培育下一代')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">英文标题</label>
+                <input type="text" id="in_about_p4_te" value="${d('about_p4_te', 'Passing on and Cultivating the Next Generation')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#aaa;">中文说明</label>
+                <textarea id="in_about_p4_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p4_d', '培养下一代音乐人才，为神的事业贡献创意与才华。')}</textarea>
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:#aaa;">英文说明</label>
+                <textarea id="in_about_p4_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p4_de', 'Cultivate the next generation of music talent, contributing creativity and skills to God\'s work.')}</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 👥 板块 4: 创作群体与目标受众 (CALLING & AUDIENCE) -->
+        <div class="cms-card" style="border-left: 4px solid #ffa502;">
+          <h3 style="color:#ffa502; margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>👥</span> 板块四：创作群体与目标受众 (Calling Group & Target Audience)
+          </h3>
+          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑号召的门徒群体与歌曲面向的受众（支持双语及各自照片更换）。</p>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:25px;">
+            <!-- Group 1: Calling -->
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222;">
+              <h4 style="color:var(--gold); margin-top:0; margin-bottom:12px;">🎸 主要号召群体 (Calling Group)</h4>
+              <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:#aaa;">标题 CN / EN</label>
+                <div style="display:flex; gap:10px;">
+                  <input type="text" id="in_about_aud_call_t" value="${d('about_aud_call_t', '主要的号召群体')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                  <input type="text" id="in_about_aud_call_te" value="${d('about_aud_call_te', 'Primary Calling Group')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                </div>
+              </div>
+              <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:#aaa;">描述 1 CN / EN</label>
+                <textarea id="in_about_aud_call_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_call_d1', '号召一群已经在上帝给的恩赐中装备成熟的门徒。')}</textarea>
+                <input type="text" id="in_about_aud_call_d1e" value="${d('about_aud_call_d1e', 'Call upon disciples who are spiritually mature and equipped with God\'s gifts.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:15px;">
+                <label style="font-size:0.75rem; color:#aaa;">描述 2 CN / EN</label>
+                <textarea id="in_about_aud_call_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_call_d2', '通过他们的创作，帮助更多的人认识神、领受真理，并传递信望与爱的作品。')}</textarea>
+                <input type="text" id="in_about_aud_call_d2e" value="${d('about_aud_call_d2e', 'Through their creations, help others know God, receive the truth, and spread works of faith, hope, and love.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:var(--gold); display:block; margin-bottom:5px;">群体配图 (Photo)</label>
+                <img id="prev_about_aud_call_img" src="${d('about_aud_call_img', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80')}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin-bottom:8px; border:1px solid #333;">
+                <input type="file" id="f_about_aud_call_img" style="font-size:0.8rem; width:100%; margin-bottom:5px;">
+                <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_aud_call_img', 'in_about_aud_call_img', 'prev_about_aud_call_img')">📤 上传群体配图</button>
+                <input type="hidden" id="in_about_aud_call_img" value="${d('about_aud_call_img', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80')}">
+              </div>
+            </div>
+
+            <!-- Group 2: Target Audience -->
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222;">
+              <h4 style="color:#ffa502; margin-top:0; margin-bottom:12px;">🎯 目标受众 (Target Audience)</h4>
+              <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:#aaa;">标题 CN / EN</label>
+                <div style="display:flex; gap:10px;">
+                  <input type="text" id="in_about_aud_target_t" value="${d('about_aud_target_t', '目标受众')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                  <input type="text" id="in_about_aud_target_te" value="${d('about_aud_target_te', 'Target Audience')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                </div>
+              </div>
+              <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:#aaa;">描述 1 CN / EN</label>
+                <textarea id="in_about_aud_target_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_target_d1', '主要是那些未认识神的年轻人，甚至是年长的未信者。')}</textarea>
+                <input type="text" id="in_about_aud_target_d1e" value="${d('about_aud_target_d1e', 'Mainly young people who have not yet known God, as well as older non-believers.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div style="margin-bottom:15px;">
+                <label style="font-size:0.75rem; color:#aaa;">描述 2 CN / EN</label>
+                <textarea id="in_about_aud_target_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_target_d2', '让他们在这些歌曲中找到人生的盼望、希望与爱，这一切都在耶稣基督里。')}</textarea>
+                <input type="text" id="in_about_aud_target_d2e" value="${d('about_aud_target_d2e', 'Help them find hope, purpose, and love in these songs, all of which are found in Jesus Christ.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:var(--gold); display:block; margin-bottom:5px;">受众配图 (Photo)</label>
+                <img id="prev_about_aud_target_img" src="${d('about_aud_target_img', 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=800&q=80')}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin-bottom:8px; border:1px solid #333;">
+                <input type="file" id="f_about_aud_target_img" style="font-size:0.8rem; width:100%; margin-bottom:5px;">
+                <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_aud_target_img', 'in_about_aud_target_img', 'prev_about_aud_target_img')">📤 上传受众配图</button>
+                <input type="hidden" id="in_about_aud_target_img" value="${d('about_aud_target_img', 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=800&q=80')}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🎼 板块 5: 主要诗歌创作方向 (SONGWRITING DIRECTIONS) -->
+        <div class="cms-card" style="border-left: 4px solid #ff6b81;">
+          <h3 style="color:#ff6b81; margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>🎼</span> 板块五：主要诗歌创作方向 (Main Songwriting Categories)
+          </h3>
+          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">布道型、教会型、商业型、机构主题曲 4 大类别文案与缩略图。</p>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <!-- Cat 1 -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">类别 01 · 布道型</span>
+              <div style="display:flex; gap:10px; margin:10px 0 8px;">
+                <input type="text" id="in_about_cat1_t" value="${d('about_cat1_t', '布道型')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat1_te" value="${d('about_cat1_te', 'Evangelistic')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <textarea id="in_about_cat1_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat1_d1', '适用于布道会或福音外展活动，结合流行音乐元素，使福音信息更具吸引力。')}</textarea>
+              <textarea id="in_about_cat1_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat1_d2', '目的在于带动气氛，并整体传达基督信仰的核心价值观。')}</textarea>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <img id="prev_about_cat1_img" src="${d('about_cat1_img', 'https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
+                <div style="flex:1;">
+                  <input type="file" id="f_about_cat1_img" style="font-size:0.75rem; width:100%;">
+                  <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_cat1_img', 'in_about_cat1_img', 'prev_about_cat1_img')">上传缩略图</button>
+                  <input type="hidden" id="in_about_cat1_img" value="${d('about_cat1_img', 'https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&w=600&q=80')}">
+                </div>
+              </div>
+            </div>
+
+            <!-- Cat 2 -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">类别 02 · 教会型</span>
+              <div style="display:flex; gap:10px; margin:10px 0 8px;">
+                <input type="text" id="in_about_cat2_t" value="${d('about_cat2_t', '教会型')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat2_te" value="${d('about_cat2_te', 'Church Worship')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <textarea id="in_about_cat2_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat2_d1', '适用于教会敬拜、团契、主日崇拜等，歌词内容以赞美、敬拜、祷告为主，符合教会使用需求。')}</textarea>
+              <textarea id="in_about_cat2_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat2_d2', '旨在帮助信徒更深入地进入敬拜神的氛围。')}</textarea>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <img id="prev_about_cat2_img" src="${d('about_cat2_img', 'https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
+                <div style="flex:1;">
+                  <input type="file" id="f_about_cat2_img" style="font-size:0.75rem; width:100%;">
+                  <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_cat2_img', 'in_about_cat2_img', 'prev_about_cat2_img')">上传缩略图</button>
+                  <input type="hidden" id="in_about_cat2_img" value="${d('about_cat2_img', 'https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&w=600&q=80')}">
+                </div>
+              </div>
+            </div>
+
+            <!-- Cat 3 -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">类别 03 · 商业型</span>
+              <div style="display:flex; gap:10px; margin:10px 0 8px;">
+                <input type="text" id="in_about_cat3_t" value="${d('about_cat3_t', '商业型')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat3_te" value="${d('about_cat3_te', 'Commercial / Contemporary')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <textarea id="in_about_cat3_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat3_d1', '结合当代专业流行编曲与叙事结构，在主流流媒体与大众文化中播种真理。')}</textarea>
+              <textarea id="in_about_cat3_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat3_d2', '让信仰通过高质量的流行艺术触及更广泛的大众听众。')}</textarea>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <img id="prev_about_cat3_img" src="${d('about_cat3_img', 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
+                <div style="flex:1;">
+                  <input type="file" id="f_about_cat3_img" style="font-size:0.75rem; width:100%;">
+                  <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_cat3_img', 'in_about_cat3_img', 'prev_about_cat3_img')">上传缩略图</button>
+                  <input type="hidden" id="in_about_cat3_img" value="${d('about_cat3_img', 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=600&q=80')}">
+                </div>
+              </div>
+            </div>
+
+            <!-- Cat 4 -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">类别 04 · 机构主题曲</span>
+              <div style="display:flex; gap:10px; margin:10px 0 8px;">
+                <input type="text" id="in_about_cat4_t" value="${d('about_cat4_t', '机构主题曲')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat4_te" value="${d('about_cat4_te', 'Organization Theme Songs')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              </div>
+              <textarea id="in_about_cat4_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat4_d1', '为教会、特会、营会、事工及机构量身定制专属主题旋律与纪念赞美诗。')}</textarea>
+              <textarea id="in_about_cat4_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat4_d2', '凝聚异象与使命，成为群体长久传唱的属灵见证。')}</textarea>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <img id="prev_about_cat4_img" src="${d('about_cat4_img', 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
+                <div style="flex:1;">
+                  <input type="file" id="f_about_cat4_img" style="font-size:0.75rem; width:100%;">
+                  <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_cat4_img', 'in_about_cat4_img', 'prev_about_cat4_img')">上传缩略图</button>
+                  <input type="hidden" id="in_about_cat4_img" value="${d('about_cat4_img', 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=600&q=80')}">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🎯 板块 6: 平台定位 (POSITIONING) -->
+        <div class="cms-card" style="border-left: 4px solid #2ed573;">
+          <h3 style="color:#2ed573; margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>🎯</span> 板块六：平台定位 (Brand Positioning)
+          </h3>
+          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑定位口号、大标题及两大核心支柱。</p>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:15px;">
+            <div>
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">英文标语 (Tagline)</label>
+              <input type="text" id="in_about_pos_tagline" value="${d('about_pos_tagline', 'PROMOTING CONTEMPORARY CHRISTIAN MUSIC')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px;">
+            </div>
+            <div>
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">主标题 (Main Title)</label>
+              <input type="text" id="in_about_pos_title" value="${d('about_pos_title', '推 广 现 代 流 行 基 督 教 音 乐')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px;">
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <div style="background:#111; padding:15px; border-radius:8px; border:1px solid #222;">
+              <label style="font-size:0.75rem; color:#aaa;">定位要点 1 标题</label>
+              <input type="text" id="in_about_pos_p1_t" value="${d('about_pos_p1_t', '为神创作的门徒培养平台')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:8px;">
+              <label style="font-size:0.75rem; color:#aaa;">定位要点 1 中文描述</label>
+              <textarea id="in_about_pos_p1_d" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:8px;">${d('about_pos_p1_d', '专注于培养具备创作才能的门徒，让原创音符成为敬拜与传道的器皿。')}</textarea>
+              <label style="font-size:0.75rem; color:#aaa;">定位要点 1 英文描述</label>
+              <input type="text" id="in_about_pos_p1_de" value="${d('about_pos_p1_de', 'Positioned as a platform for music created for God, focusing on cultivating disciples with creative talents.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+            </div>
+
+            <div style="background:#111; padding:15px; border-radius:8px; border:1px solid #222;">
+              <label style="font-size:0.75rem; color:#aaa;">定位要点 2 标题</label>
+              <input type="text" id="in_about_pos_p2_t" value="${d('about_pos_p2_t', '触及年轻一代与福音禾场')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:8px;">
+              <label style="font-size:0.75rem; color:#aaa;">定位要点 2 中文描述</label>
+              <textarea id="in_about_pos_p2_d" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:8px;">${d('about_pos_p2_d', '通过现代音乐语言向世人传递信仰、希望与爱，尤其是年轻群体和未认识神的群体。')}</textarea>
+              <label style="font-size:0.75rem; color:#aaa;">定位要点 2 英文描述</label>
+              <input type="text" id="in_about_pos_p2_de" value="${d('about_pos_p2_de', 'Use music to convey faith, hope, and love, especially to young people and those who have not yet known God.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- 🎬 板块 7: 视听故事与品牌媒体 (MEDIA & FOOTER TEXT) -->
+        <div class="cms-card" style="border-left: 4px solid var(--gold);">
+          <h3 style="color:var(--gold); margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>🎬</span> 板块七：品牌视听与结语 (Media Showcase & Closing Words)
+          </h3>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:25px; margin-bottom:20px;">
+            <!-- Video -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <label style="color:var(--gold); font-size:0.8rem; font-weight:bold;">品牌宣传视频 (Brand Video)</label>
+              <video id="prev_about_video_file" src="${c['cfg_about_video']||''}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin:8px 0; background:#000;" muted controls></video>
+              <input type="file" id="f_about_v_file" style="font-size:0.75rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_about_v_file', 'in_about_video', 'prev_about_video_file')">上传视频</button>
+              <input type="hidden" id="in_about_video" value="${c['cfg_about_video']||''}">
+            </div>
+
+            <!-- Banner / Main Image -->
+            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
+              <label style="color:var(--gold); font-size:0.8rem; font-weight:bold;">宣传主视觉海报 (Main Image Fallback)</label>
+              <img id="prev_about_banner_file" src="${c['cfg_about_banner']||'https://images.unsplash.com/photo-1514525253361-9ee1a07b7ec2?auto=format&fit=crop&w=1200&q=80'}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin:8px 0; border:1px solid #333;">
+              <input type="file" id="f_about_b_file" style="font-size:0.75rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_about_b_file', 'in_about_banner', 'prev_about_banner_file')">上传海报</button>
+              <input type="hidden" id="in_about_banner" value="${c['cfg_about_banner']||'https://images.unsplash.com/photo-1514525253361-9ee1a07b7ec2?auto=format&fit=crop&w=1200&q=80'}">
+            </div>
+          </div>
+
+          <div>
+            <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">视听展区底部金句 / 品牌结语 (Closing Quote)</label>
+            <textarea id="in_about_text" style="width:100%; height:60px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:10px; border-radius:4px; font-size:0.95rem;">${c['cfg_about_text'] || '让每一首写给神的歌都被听见，让每一颗跳动的心灵被主爱收割。'}</textarea>
+          </div>
+        </div>
+
+        <!-- Sticky Floating Save Bar -->
+        <div style="position:sticky; bottom:20px; background:rgba(10,10,10,0.95); backdrop-filter:blur(15px); border:1px solid var(--gold); border-radius:14px; padding:1.2rem 2rem; display:flex; justify-content:space-between; align-items:center; box-shadow:0 15px 40px rgba(0,0,0,0.9); z-index:100;">
+          <div>
+            <span style="color:var(--gold); font-weight:bold;">⚡ 一键同步到“关于我们”前台</span>
+            <span style="color:#888; font-size:0.8rem; margin-left:10px;">所有修改将实时打包并安全保存至数据库</span>
+          </div>
+          <button class="btn btn-submit" style="width:auto; padding:12px 35px; font-size:1rem;" onclick="saveAboutCMS()">💾 保存所有图文修改</button>
+        </div>
+
+      </div>
+    `;
+  }
+
+  window.saveAboutCMS = async () => {
+    const keys = [
+      'about_origin_main_title',
+      'about_origin_scripture',
+      'about_origin_ref',
+      'about_origin_scripture_en',
+      'about_origin_meaning',
+      'about_origin_meaning_en',
+      'about_origin_img',
+
+      'about_vision_title',
+      'about_vision_1',
+      'about_vision_1_en',
+      'about_vision_2',
+      'about_vision_2_en',
+
+      'about_mission_title',
+      'about_mission_1',
+      'about_mission_1_en',
+      'about_mission_2',
+      'about_mission_2_en',
+
+      'about_p1_t', 'about_p1_te', 'about_p1_d', 'about_p1_de',
+      'about_p2_t', 'about_p2_te', 'about_p2_d', 'about_p2_de',
+      'about_p3_t', 'about_p3_te', 'about_p3_d', 'about_p3_de',
+      'about_p4_t', 'about_p4_te', 'about_p4_d', 'about_p4_de',
+
+      'about_aud_call_t', 'about_aud_call_te', 'about_aud_call_d1', 'about_aud_call_d1e', 'about_aud_call_d2', 'about_aud_call_d2e', 'about_aud_call_img',
+      'about_aud_target_t', 'about_aud_target_te', 'about_aud_target_d1', 'about_aud_target_d1e', 'about_aud_target_d2', 'about_aud_target_d2e', 'about_aud_target_img',
+
+      'about_cat1_t', 'about_cat1_te', 'about_cat1_d1', 'about_cat1_d2', 'about_cat1_img',
+      'about_cat2_t', 'about_cat2_te', 'about_cat2_d1', 'about_cat2_d2', 'about_cat2_img',
+      'about_cat3_t', 'about_cat3_te', 'about_cat3_d1', 'about_cat3_d2', 'about_cat3_img',
+      'about_cat4_t', 'about_cat4_te', 'about_cat4_d1', 'about_cat4_d2', 'about_cat4_img',
+
+      'about_pos_tagline',
+      'about_pos_title',
+      'about_pos_p1_t', 'about_pos_p1_d', 'about_pos_p1_de',
+      'about_pos_p2_t', 'about_pos_p2_d', 'about_pos_p2_de'
+    ];
+
+    const payload = {};
+    for (let k of keys) {
+      const el = document.getElementById('in_' + k);
+      if (el) payload[k] = el.value;
+    }
+
+    try {
+      // 1. Save JSON bundle
+      await db.from('site_config').upsert({
+        key: 'cfg_about_content_json',
+        value: JSON.stringify(payload)
+      }, { onConflict: 'key' });
+
+      // 2. Save media & text
+      const vEl = document.getElementById('in_about_video');
+      if (vEl) await db.from('site_config').upsert({ key: 'cfg_about_video', value: vEl.value }, { onConflict: 'key' });
+
+      const bEl = document.getElementById('in_about_banner');
+      if (bEl) await db.from('site_config').upsert({ key: 'cfg_about_banner', value: bEl.value }, { onConflict: 'key' });
+
+      const tEl = document.getElementById('in_about_text');
+      if (tEl) await db.from('site_config').upsert({ key: 'cfg_about_text', value: tEl.value }, { onConflict: 'key' });
+
+      alert("🎉 关于我们所有文案与配图已成功保存并实时生效！");
+      renderCMS();
+    } catch(err) {
+      alert("保存失败: " + err.message);
+    }
   };
 
   // --- ⚙️ CONFIG MODULE ---

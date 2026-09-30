@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=16.2.0">
+  <link rel="stylesheet" href="styles.css?v=16.3.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* ========================================================
@@ -61,21 +61,35 @@
       position: relative;
       overflow: hidden;
     }
-    .origin-hero-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -20%;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(246, 210, 138, 0.08) 0%, transparent 70%);
-      pointer-events: none;
+    .origin-layout {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .origin-photo-frame {
+      border: 1.5px solid rgba(246, 210, 138, 0.35);
+      border-radius: var(--hand-radius-soft);
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+      background: #000;
+      position: relative;
+    }
+    .origin-photo-frame img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .origin-photo-frame:hover img {
+      transform: scale(1.04);
     }
 
     .origin-quote-box {
       border-left: 3px solid var(--gold);
       padding-left: 1.8rem;
-      margin: 1.8rem 0 2.2rem;
+      margin: 1.4rem 0 1.8rem;
     }
     .origin-scripture {
       font-family: var(--font-hand-cn);
@@ -96,20 +110,20 @@
 
     .origin-meaning {
       font-family: var(--font-hand-cn);
-      font-size: 1.45rem;
+      font-size: 1.4rem;
       color: #ede4d5;
-      line-height: 2.0;
+      line-height: 1.9;
       letter-spacing: 1.5px;
       margin: 0;
     }
     .origin-meaning-en {
       font-family: var(--font-hand-en);
-      font-size: 1.05rem;
+      font-size: 1rem;
       color: #9c9083;
       line-height: 1.6;
-      letter-spacing: 1.5px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      margin-top: 0.8rem;
+      margin-top: 0.6rem;
     }
 
     /* 🌟 Section 2: Vision & Mission Dual Wing Cards */
@@ -293,7 +307,146 @@
       margin: 0;
     }
 
-    /* 🎯 Section 4: Brand Positioning (平台定位) */
+    /* 👥 Section 4: Creative Group & Target Audience (创作群体与目标受众) */
+    .audience-section {
+      margin-bottom: 5.5rem;
+    }
+    .audience-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+    .audience-card {
+      background: rgba(22, 18, 14, 0.85);
+      border: 1.5px solid rgba(246, 210, 138, 0.28);
+      border-radius: var(--hand-radius-soft);
+      padding: 2.5rem 2.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+      transition: all 0.35s ease;
+    }
+    .audience-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(246, 210, 138, 0.55);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 25px rgba(246, 210, 138, 0.08);
+    }
+    .audience-card-header {
+      border-bottom: 1px dashed rgba(246, 210, 138, 0.25);
+      padding-bottom: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .audience-card-header h3 {
+      font-family: var(--font-hand-cn);
+      font-size: 1.9rem;
+      color: #fffaf0;
+      margin: 0 0 0.2rem 0;
+      letter-spacing: 2px;
+    }
+    .audience-card-header span {
+      font-family: var(--font-hand-en);
+      font-size: 1.15rem;
+      color: var(--gold);
+      letter-spacing: 2px;
+    }
+    .audience-photo-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(246, 210, 138, 0.3);
+      max-height: 200px;
+      background: #000;
+    }
+    .audience-photo-wrap img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .audience-photo-wrap:hover img {
+      transform: scale(1.04);
+    }
+
+    /* 🎼 Section 5: Main Songwriting Categories (主要创作方向 4大类别) */
+    .categories-section {
+      margin-bottom: 5.5rem;
+    }
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+    .category-card {
+      background: rgba(20, 16, 13, 0.85);
+      border: 1.5px solid rgba(246, 210, 138, 0.25);
+      border-radius: var(--hand-radius-soft);
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 1.5rem;
+      align-items: center;
+      transition: all 0.35s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .category-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+      background: rgba(28, 22, 18, 0.95);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.7), 0 0 25px rgba(246, 210, 138, 0.08);
+    }
+    .category-thumb {
+      width: 140px;
+      height: 140px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(246, 210, 138, 0.3);
+      background: #000;
+      flex-shrink: 0;
+    }
+    .category-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .category-card:hover .category-thumb img {
+      transform: scale(1.06);
+    }
+    .category-content h4 {
+      font-family: var(--font-hand-cn);
+      font-size: 1.65rem;
+      color: var(--gold);
+      margin: 0 0 0.2rem 0;
+      letter-spacing: 2px;
+    }
+    .category-content-en {
+      font-family: var(--font-hand-en);
+      font-size: 0.95rem;
+      color: #9c9083;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    .category-text {
+      font-family: var(--font-hand-cn);
+      font-size: 1.15rem;
+      color: #ded6c8;
+      line-height: 1.7;
+      letter-spacing: 1px;
+      margin-bottom: 0.3rem;
+    }
+    .category-text-en {
+      font-family: var(--font-hand-en);
+      font-size: 0.88rem;
+      color: #8c8276;
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* 🎯 Section 6: Brand Positioning (平台定位) */
     .position-card {
       background: radial-gradient(ellipse at center, rgba(32, 26, 21, 0.9) 0%, rgba(16, 13, 11, 0.95) 100%);
       border: 1.5px dashed rgba(246, 210, 138, 0.35);
@@ -353,12 +506,12 @@
       margin: 0;
     }
 
-    /* 🎬 Section 5: Brand Media Showcase */
+    /* 🎬 Section 7: Brand Media Showcase */
     .media-card-wrapper {
       margin-bottom: 5rem;
     }
 
-    /* 🤝 Section 6: Action & Connect */
+    /* 🤝 Section 8: Action & Connect */
     .about-cta-card {
       background: linear-gradient(135deg, rgba(28, 23, 19, 0.9) 0%, rgba(16, 13, 10, 0.95) 100%);
       border: 1.5px solid rgba(246, 210, 138, 0.35);
@@ -393,11 +546,21 @@
 
     /* 📱 Mobile Responsive Adjustments */
     @media (max-width: 860px) {
+      .origin-layout,
       .dual-wing-grid,
       .pillars-grid,
+      .audience-grid,
+      .categories-grid,
       .position-points-grid {
         grid-template-columns: 1fr;
         gap: 1.8rem;
+      }
+      .category-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .category-thumb {
+        margin: 0 auto;
       }
       .origin-hero-card {
         padding: 2.2rem 1.6rem;
@@ -493,38 +656,47 @@
     <section class="origin-hero-card fade-in">
       <div style="text-align: center; margin-bottom: 2rem;">
         <span class="sketch-pill">🌾 NAME ORIGIN · 名字由来</span>
-        <h2 style="font-size: 2.8rem; color: #fffaf0; font-family: var(--font-hand-cn); letter-spacing: 4px; margin: 0;">
+        <h2 id="about_origin_main_title" style="font-size: 2.8rem; color: #fffaf0; font-family: var(--font-hand-cn); letter-spacing: 4px; margin: 0;">
           收 割 机 的 故 事
         </h2>
       </div>
 
-      <!-- 经文启发 -->
-      <div style="margin-bottom: 2.2rem;">
-        <span style="font-family: var(--font-hand-en); color: var(--gold); font-size: 1.15rem; letter-spacing: 2px;">
-          ✦ 经文启发 / BIBLICAL INSPIRATION
-        </span>
-        <div class="origin-quote-box">
-          <p class="origin-scripture">「那人撒种，这人收割，这话可见是真的。」</p>
-          <p class="origin-scripture-ref">—— 约翰福音 4:37 · JOHN 4:37</p>
-          <p style="font-family: var(--font-hand-en); font-size: 0.95rem; color: #9c9083; letter-spacing: 1px; text-transform: uppercase; margin: 4px 0 0 0;">
-            ONE SOWS AND ANOTHER REAPS. THIS SAYING IS TRUE.
-          </p>
-        </div>
-      </div>
+      <div class="origin-layout">
+        <div>
+          <!-- 经文启发 -->
+          <div style="margin-bottom: 1.8rem;">
+            <span style="font-family: var(--font-hand-en); color: var(--gold); font-size: 1.15rem; letter-spacing: 2px;">
+              ✦ 经文启发 / BIBLICAL INSPIRATION
+            </span>
+            <div class="origin-quote-box">
+              <p id="about_origin_scripture" class="origin-scripture">「那人撒种，这人收割，这话可见是真的。」</p>
+              <p id="about_origin_ref" class="origin-scripture-ref">—— 约翰福音 4:37 · JOHN 4:37</p>
+              <p id="about_origin_scripture_en" style="font-family: var(--font-hand-en); font-size: 0.95rem; color: #9c9083; letter-spacing: 1px; text-transform: uppercase; margin: 4px 0 0 0;">
+                ONE SOWS AND ANOTHER REAPS. THIS SAYING IS TRUE.
+              </p>
+            </div>
+          </div>
 
-      <!-- 名字意义 -->
-      <div>
-        <span style="font-family: var(--font-hand-en); color: var(--gold); font-size: 1.15rem; letter-spacing: 2px;">
-          ✦ 名字意义 / MEANING OF THE NAME
-        </span>
-        <div style="background: rgba(0,0,0,0.3); border: 1px dashed rgba(246,210,138,0.25); border-radius: 14px; padding: 1.8rem; margin-top: 10px;">
-          <p class="origin-meaning">
-            以“收割机”命名，象征着<b>神国的丰收</b>。<br>
-            音乐作品如同撒下的种子，触动人心，在神的时间里结出果实。
-          </p>
-          <p class="origin-meaning-en">
-            The name 'Harvester' symbolizes the abundant harvest in God's kingdom. Music is like a seed that touches hearts and bears fruit in God's timing.
-          </p>
+          <!-- 名字意义 -->
+          <div>
+            <span style="font-family: var(--font-hand-en); color: var(--gold); font-size: 1.15rem; letter-spacing: 2px;">
+              ✦ 名字意义 / MEANING OF THE NAME
+            </span>
+            <div style="background: rgba(0,0,0,0.3); border: 1px dashed rgba(246,210,138,0.25); border-radius: 14px; padding: 1.6rem; margin-top: 10px;">
+              <p id="about_origin_meaning" class="origin-meaning">
+                以“收割机”命名，象征着<b>神国的丰收</b>。<br>
+                音乐作品如同撒下的种子，触动人心，在神的时间里结出果实。
+              </p>
+              <p id="about_origin_meaning_en" class="origin-meaning-en">
+                The name 'Harvester' symbolizes the abundant harvest in God's kingdom. Music is like a seed that touches hearts and bears fruit in God's timing.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 名字由来配图 -->
+        <div class="origin-photo-frame">
+          <img id="about_origin_img" src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80" alt="收割与田野">
         </div>
       </div>
     </section>
@@ -537,24 +709,24 @@
       <div class="wing-card">
         <div>
           <div class="wing-badge">
-            <h2>愿 景</h2>
+            <h2 id="about_vision_title">愿 景</h2>
             <span>VISION</span>
           </div>
 
           <div class="wing-item">
             <div class="wing-item-title">
               <i class="fas fa-globe-asia"></i>
-              <span>推动现代流行基督教音乐的推广与发展</span>
+              <span id="about_vision_1">推动现代流行基督教音乐的推广与发展</span>
             </div>
-            <p class="wing-item-desc">To promote and develop modern contemporary Christian music</p>
+            <p id="about_vision_1_en" class="wing-item-desc">To promote and develop modern contemporary Christian music</p>
           </div>
 
           <div class="wing-item">
             <div class="wing-item-title">
               <i class="fas fa-heart"></i>
-              <span>同心合一，为神国度收割灵魂，透过音乐传扬福音</span>
+              <span id="about_vision_2">同心合一，为神国度收割灵魂，透过音乐传扬福音</span>
             </div>
-            <p class="wing-item-desc">United as one, harvesting souls for God's kingdom through the power of music</p>
+            <p id="about_vision_2_en" class="wing-item-desc">United as one, harvesting souls for God's kingdom through the power of music</p>
           </div>
         </div>
       </div>
@@ -563,24 +735,24 @@
       <div class="wing-card">
         <div>
           <div class="wing-badge">
-            <h2>使 命</h2>
+            <h2 id="about_mission_title">使 命</h2>
             <span>MISSION</span>
           </div>
 
           <div class="wing-item">
             <div class="wing-item-title">
               <i class="fas fa-microphone-alt"></i>
-              <span>为主兴起这世代的中文诗歌词曲创作人和音乐人</span>
+              <span id="about_mission_1">为主兴起这世代的中文诗歌词曲创作人和音乐人</span>
             </div>
-            <p class="wing-item-desc">To raise up the songwriters and musicians of this generation for the Lord through Chinese poetry and song creation</p>
+            <p id="about_mission_1_en" class="wing-item-desc">To raise up the songwriters and musicians of this generation for the Lord through Chinese poetry and song creation</p>
           </div>
 
           <div class="wing-item">
             <div class="wing-item-title">
               <i class="fas fa-cross"></i>
-              <span>通过创作歌曲引导人认识神，并传播真理、信望与爱</span>
+              <span id="about_mission_2">通过创作歌曲引导人认识神，并传播真理、信望与爱</span>
             </div>
-            <p class="wing-item-desc">To guide people to know God through song creation and spread truth, faith, hope, and love</p>
+            <p id="about_mission_2_en" class="wing-item-desc">To guide people to know God through song creation and spread truth, faith, hope, and love</p>
           </div>
         </div>
       </div>
@@ -601,73 +773,201 @@
         <div class="pillar-card">
           <span class="pillar-num">01</span>
           <div class="pillar-icon"><i class="fas fa-pen-nib"></i></div>
-          <h3 class="pillar-title">推动诗歌创作</h3>
-          <p class="pillar-title-en">Promoting Songwriting</p>
-          <p class="pillar-desc">鼓励并支持创作能够传递信仰的诗歌与歌曲。</p>
-          <p class="pillar-desc-en">Encourage and support the creation of songs and hymns that communicate faith.</p>
+          <h3 id="about_p1_t" class="pillar-title">推动诗歌创作</h3>
+          <p id="about_p1_te" class="pillar-title-en">Promoting Songwriting</p>
+          <p id="about_p1_d" class="pillar-desc">鼓励并支持创作能够传递信仰的诗歌与歌曲。</p>
+          <p id="about_p1_de" class="pillar-desc-en">Encourage and support the creation of songs and hymns that communicate faith.</p>
         </div>
 
         <!-- 支柱 02 -->
         <div class="pillar-card">
           <span class="pillar-num">02</span>
           <div class="pillar-icon"><i class="fas fa-users"></i></div>
-          <h3 class="pillar-title">提供服事平台</h3>
-          <p class="pillar-title-en">Providing a Service Platform</p>
-          <p class="pillar-desc">创建一个平台，让音乐人能够分享、服事，达到共赢。</p>
-          <p class="pillar-desc-en">Create a platform where musicians can share and serve, achieving a win-win situation.</p>
+          <h3 id="about_p2_t" class="pillar-title">提供服事平台</h3>
+          <p id="about_p2_te" class="pillar-title-en">Providing a Service Platform</p>
+          <p id="about_p2_d" class="pillar-desc">创建一个平台，让音乐人能够分享、服事，达到共赢。</p>
+          <p id="about_p2_de" class="pillar-desc-en">Create a platform where musicians can share and serve, achieving a win-win situation.</p>
         </div>
 
         <!-- 支柱 03 -->
         <div class="pillar-card">
           <span class="pillar-num">03</span>
           <div class="pillar-icon"><i class="fas fa-shield-alt"></i></div>
-          <h3 class="pillar-title">建立版权制度</h3>
-          <p class="pillar-title-en">Establishing a Copyright System</p>
-          <p class="pillar-desc">保护创作人的版权，确保每首歌曲在法律框架下得到保障。</p>
-          <p class="pillar-desc-en">Protect creators' copyrights and ensure that each song is legally protected.</p>
+          <h3 id="about_p3_t" class="pillar-title">建立版权制度</h3>
+          <p id="about_p3_te" class="pillar-title-en">Establishing a Copyright System</p>
+          <p id="about_p3_d" class="pillar-desc">保护创作人的版权，确保每首歌曲在法律框架下得到保障。</p>
+          <p id="about_p3_de" class="pillar-desc-en">Protect creators' copyrights and ensure that each song is legally protected.</p>
         </div>
 
         <!-- 支柱 04 -->
         <div class="pillar-card">
           <span class="pillar-num">04</span>
           <div class="pillar-icon"><i class="fas fa-seedling"></i></div>
-          <h3 class="pillar-title">传承培育下一代</h3>
-          <p class="pillar-title-en">Passing on and Cultivating the Next Generation</p>
-          <p class="pillar-desc">培养下一代音乐人才，为神的事业贡献创意与才华。</p>
-          <p class="pillar-desc-en">Cultivate the next generation of music talent, contributing creativity and skills to God's work.</p>
+          <h3 id="about_p4_t" class="pillar-title">传承培育下一代</h3>
+          <p id="about_p4_te" class="pillar-title-en">Passing on and Cultivating the Next Generation</p>
+          <p id="about_p4_d" class="pillar-desc">培养下一代音乐人才，为神的事业贡献创意与才华。</p>
+          <p id="about_p4_de" class="pillar-desc-en">Cultivate the next generation of music talent, contributing creativity and skills to God's work.</p>
         </div>
       </div>
     </section>
 
     <!-- ===================================================
-         🎯 4. 平台定位 (POSITIONING)
+         👥 4. 创作群体与目标受众 (CREATIVE GROUP & TARGET AUDIENCE)
+         =================================================== -->
+    <section class="audience-section fade-in">
+      <div class="section-sketch-header">
+        <span class="sketch-pill">👥 CALLING & AUDIENCE · 群体与受众</span>
+        <h2>创 作 群 体 与 目 标 受 众</h2>
+        <p>CREATIVE GROUP AND TARGET AUDIENCE</p>
+      </div>
+
+      <div class="audience-grid">
+        <!-- 号召群体 -->
+        <div class="audience-card">
+          <div>
+            <div class="audience-card-header">
+              <h3 id="about_aud_call_t">主要的号召群体</h3>
+              <span id="about_aud_call_te">Primary Calling Group</span>
+            </div>
+            <p id="about_aud_call_d1" style="font-family: var(--font-hand-cn); font-size: 1.3rem; color: #fffaf0; line-height: 1.7; margin: 1rem 0 0.3rem;">
+              号召一群已经在上帝给的恩赐中装备成熟的门徒。
+            </p>
+            <p id="about_aud_call_d1e" style="font-family: var(--font-hand-en); font-size: 0.95rem; color: #9c9083; margin-bottom: 1.2rem;">
+              Call upon disciples who are spiritually mature and equipped with God's gifts.
+            </p>
+            <p id="about_aud_call_d2" style="font-family: var(--font-hand-cn); font-size: 1.25rem; color: #ded6c8; line-height: 1.7; margin-bottom: 0.3rem;">
+              通过他们的创作，帮助更多的人认识神、领受真理，并传递信望与爱的作品。
+            </p>
+            <p id="about_aud_call_d2e" style="font-family: var(--font-hand-en); font-size: 0.95rem; color: #9c9083; margin: 0;">
+              Through their creations, help others know God, receive the truth, and spread works of faith, hope, and love.
+            </p>
+          </div>
+          <div class="audience-photo-wrap">
+            <img id="about_aud_call_img" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80" alt="创作门徒乐手">
+          </div>
+        </div>
+
+        <!-- 目标受众 -->
+        <div class="audience-card">
+          <div>
+            <div class="audience-card-header">
+              <h3 id="about_aud_target_t">目标受众</h3>
+              <span id="about_aud_target_te">Target Audience</span>
+            </div>
+            <p id="about_aud_target_d1" style="font-family: var(--font-hand-cn); font-size: 1.3rem; color: #fffaf0; line-height: 1.7; margin: 1rem 0 0.3rem;">
+              主要是那些未认识神的年轻人，甚至是年长的未信者。
+            </p>
+            <p id="about_aud_target_d1e" style="font-family: var(--font-hand-en); font-size: 0.95rem; color: #9c9083; margin-bottom: 1.2rem;">
+              Mainly young people who have not yet known God, as well as older non-believers.
+            </p>
+            <p id="about_aud_target_d2" style="font-family: var(--font-hand-cn); font-size: 1.25rem; color: #ded6c8; line-height: 1.7; margin-bottom: 0.3rem;">
+              让他们在这些歌曲中找到人生的盼望、希望与爱，这一切都在耶稣基督里。
+            </p>
+            <p id="about_aud_target_d2e" style="font-family: var(--font-hand-en); font-size: 0.95rem; color: #9c9083; margin: 0;">
+              Help them find hope, purpose, and love in these songs, all of which are found in Jesus Christ.
+            </p>
+          </div>
+          <div class="audience-photo-wrap">
+            <img id="about_aud_target_img" src="https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=800&q=80" alt="现场敬拜青年">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         🎼 5. 主要的诗歌创作方向 (MAIN SONGWRITING CATEGORIES)
+         =================================================== -->
+    <section class="categories-section fade-in">
+      <div class="section-sketch-header">
+        <span class="sketch-pill">🎼 SONGWRITING DIRECTIONS · 创作方向</span>
+        <h2>主 要 的 诗 歌 创 作 方 向</h2>
+        <p>MAIN SONGWRITING CATEGORIES</p>
+      </div>
+
+      <div class="categories-grid">
+        <!-- 类别 1: 布道型 -->
+        <div class="category-card">
+          <div class="category-thumb">
+            <img id="about_cat1_img" src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&w=600&q=80" alt="布道型">
+          </div>
+          <div class="category-content">
+            <h4 id="about_cat1_t">布道型</h4>
+            <div id="about_cat1_te" class="category-content-en">Evangelistic</div>
+            <p id="about_cat1_d1" class="category-text">适用于布道会或福音外展活动，结合流行音乐元素，使福音信息更具吸引力。</p>
+            <p id="about_cat1_d2" class="category-text" style="color:var(--gold);">目的在于带动气氛，并整体传达基督信仰的核心价值观。</p>
+          </div>
+        </div>
+
+        <!-- 类别 2: 教会型 -->
+        <div class="category-card">
+          <div class="category-thumb">
+            <img id="about_cat2_img" src="https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&w=600&q=80" alt="教会型">
+          </div>
+          <div class="category-content">
+            <h4 id="about_cat2_t">教会型</h4>
+            <div id="about_cat2_te" class="category-content-en">Church Worship</div>
+            <p id="about_cat2_d1" class="category-text">适用于教会敬拜、团契、主日崇拜等，歌词内容以赞美、敬拜、祷告为主，符合教会使用需求。</p>
+            <p id="about_cat2_d2" class="category-text" style="color:var(--gold);">旨在帮助信徒更深入地进入敬拜神的氛围。</p>
+          </div>
+        </div>
+
+        <!-- 类别 3: 商业型 -->
+        <div class="category-card">
+          <div class="category-thumb">
+            <img id="about_cat3_img" src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=600&q=80" alt="商业型">
+          </div>
+          <div class="category-content">
+            <h4 id="about_cat3_t">商业型</h4>
+            <div id="about_cat3_te" class="category-content-en">Commercial / Contemporary</div>
+            <p id="about_cat3_d1" class="category-text">结合当代专业流行编曲与叙事结构，在主流流媒体与大众文化中播种真理。</p>
+            <p id="about_cat3_d2" class="category-text" style="color:var(--gold);">让信仰通过高质量的流行艺术触及更广泛的大众听众。</p>
+          </div>
+        </div>
+
+        <!-- 类别 4: 机构主题曲 -->
+        <div class="category-card">
+          <div class="category-thumb">
+            <img id="about_cat4_img" src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=600&q=80" alt="机构主题曲">
+          </div>
+          <div class="category-content">
+            <h4 id="about_cat4_t">机构主题曲</h4>
+            <div id="about_cat4_te" class="category-content-en">Organization Theme Songs</div>
+            <p id="about_cat4_d1" class="category-text">为教会、特会、营会、事工及机构量身定制专属主题旋律与纪念赞美诗。</p>
+            <p id="about_cat4_d2" class="category-text" style="color:var(--gold);">凝聚异象与使命，成为群体长久传唱的属灵见证。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         🎯 6. 平台定位 (POSITIONING)
          =================================================== -->
     <section class="position-card fade-in">
       <span class="sketch-pill">🎯 POSITIONING · 平台定位</span>
-      <p class="position-tagline">PROMOTING CONTEMPORARY CHRISTIAN MUSIC</p>
-      <h2 class="position-main-title">推 广 现 代 流 行 基 督 教 音 乐</h2>
+      <p id="about_pos_tagline" class="position-tagline">PROMOTING CONTEMPORARY CHRISTIAN MUSIC</p>
+      <h2 id="about_pos_title" class="position-main-title">推 广 现 代 流 行 基 督 教 音 乐</h2>
 
       <div class="position-points-grid">
         <div class="position-point-box">
-          <h4><i class="fas fa-compact-disc"></i> 为神创作的门徒培养平台</h4>
-          <p style="font-family: var(--font-hand-cn); font-size: 1.18rem; color: #ded6c8; margin-bottom: 0.4rem; letter-spacing: 1px;">
+          <h4><i class="fas fa-compact-disc"></i> <span id="about_pos_p1_t">为神创作的门徒培养平台</span></h4>
+          <p id="about_pos_p1_d" style="font-family: var(--font-hand-cn); font-size: 1.18rem; color: #ded6c8; margin-bottom: 0.4rem; letter-spacing: 1px;">
             专注于培养具备创作才能的门徒，让原创音符成为敬拜与传道的器皿。
           </p>
-          <p>Positioned as a platform for music created for God, focusing on cultivating disciples with creative talents.</p>
+          <p id="about_pos_p1_de">Positioned as a platform for music created for God, focusing on cultivating disciples with creative talents.</p>
         </div>
 
         <div class="position-point-box">
-          <h4><i class="fas fa-hands-helping"></i> 触及年轻一代与福音禾场</h4>
-          <p style="font-family: var(--font-hand-cn); font-size: 1.18rem; color: #ded6c8; margin-bottom: 0.4rem; letter-spacing: 1px;">
+          <h4><i class="fas fa-hands-helping"></i> <span id="about_pos_p2_t">触及年轻一代与福音禾场</span></h4>
+          <p id="about_pos_p2_d" style="font-family: var(--font-hand-cn); font-size: 1.18rem; color: #ded6c8; margin-bottom: 0.4rem; letter-spacing: 1px;">
             通过现代音乐语言向世人传递信仰、希望与爱，尤其是年轻群体和未认识神的群体。
           </p>
-          <p>Use music to convey faith, hope, and love, especially to young people and those who have not yet known God.</p>
+          <p id="about_pos_p2_de">Use music to convey faith, hope, and love, especially to young people and those who have not yet known God.</p>
         </div>
       </div>
     </section>
 
     <!-- ===================================================
-         🎬 5. 品牌视听与图文展区 (MEDIA SHOWCASE)
+         🎬 7. 品牌视听与图文展区 (MEDIA SHOWCASE)
          =================================================== -->
     <section class="media-card-wrapper fade-in">
       <div class="section-sketch-header">
@@ -688,7 +988,7 @@
     </section>
 
     <!-- ===================================================
-         🤝 6. 呼召同行与社交连接 (CALL TO ACTION & CONNECT)
+         🤝 8. 呼召同行与社交连接 (CALL TO ACTION & CONNECT)
          =================================================== -->
     <section class="about-cta-card fade-in">
       <h3 class="about-cta-title">与 我 们 一 起 同 行 撒 种</h3>
@@ -744,8 +1044,8 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js?v=16.2.0"></script>
-  <script src="app.js?v=16.2.0"></script>
+  <script src="config.js?v=16.3.0"></script>
+  <script src="app.js?v=16.3.0"></script>
   <script>
     // Fail-safe for About Video Autoplay
     window.addEventListener('DOMContentLoaded', () => {

@@ -100,6 +100,25 @@ document.addEventListener('DOMContentLoaded', () => {
         </video>
       `;
     }
+
+    // --- 📖 About Page Full Dynamic Content Hydration ---
+    const aboutJson = siteConfigs['cfg_about_content_json'];
+    if (aboutJson) {
+      try {
+        const aboutData = typeof aboutJson === 'string' ? JSON.parse(aboutJson) : aboutJson;
+        if (aboutData && typeof aboutData === 'object') {
+          Object.keys(aboutData).forEach(key => {
+            const el = document.getElementById(key);
+            if (!el) return;
+            const val = aboutData[key];
+            if (!val && val !== '') return;
+            if (el.tagName === 'IMG') el.src = val;
+            else if (el.tagName === 'A') el.href = val;
+            else el.innerText = val;
+          });
+        }
+      } catch(e) { console.warn("About Data parse note:", e); }
+    }
   }
 
   async function fetchLatestMusicForHome() {
