@@ -9,8 +9,8 @@
 
 @font-face {
   font-family: 'ChenYuluoyan';
-  src: url('assets/fonts/ChenYuluoyan-SC.woff2') format('woff2'),
-       url('assets/fonts/ChenYuluoyan-SC.ttf') format('truetype');
+  src: url('assets/fonts/ChenYuluoyan-SC.woff2?v=12.0.0') format('woff2'),
+       url('assets/fonts/ChenYuluoyan-SC.ttf?v=12.0.0') format('truetype');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;

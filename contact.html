@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=11.2.0">
+  <link rel="stylesheet" href="styles.css?v=12.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* --- 💎 Contact Form Light White Frosted Standard --- */
@@ -37,9 +37,23 @@
       margin-bottom: 1.8rem !important;
       width: 100% !important;
       outline: none;
-      font-size: 0.95rem;
+      font-size: 1.15rem !important;
+      font-family: var(--font-hand-cn), var(--font-hand-en) !important;
     }
-    .contact-form label { color: var(--gold); font-size: 0.85rem; letter-spacing: 2px; display: block; margin-bottom: 0.6rem; margin-left: 10px; }
+    .contact-form input::placeholder, .contact-form textarea::placeholder {
+      font-family: var(--font-hand-cn), var(--font-hand-en) !important;
+      font-size: 1.15rem !important;
+      color: rgba(255, 255, 255, 0.45) !important;
+    }
+    .contact-form label { 
+      color: var(--gold); 
+      font-size: 1.25rem !important; 
+      letter-spacing: 2px; 
+      display: block; 
+      margin-bottom: 0.6rem; 
+      margin-left: 10px; 
+      font-family: var(--font-hand-cn), var(--font-hand-en) !important;
+    }
   </style>
 </head>
 <body style="position: relative;">
@@ -115,10 +129,8 @@
         
         <div style="margin-top: 2rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
           <a id="cfg_contact_wa" href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry." target="_blank" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-          <a id="cfg_contact_sp" href="https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ" target="_blank" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="Spotify"><i class="fab fa-spotify"></i></a>
           <a id="cfg_contact_fb" href="#" target="_blank" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a id="cfg_contact_ig" href="#" target="_blank" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="Instagram"><i class="fab fa-instagram"></i></a>
-          <a id="cfg_contact_yt" href="#" target="_blank" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="YouTube"><i class="fab fa-youtube"></i></a>
+          <a id="cfg_contact_email" href="mailto:harvestermusicproduction@gmail.com" class="social-icon" style="font-size: 1.5rem; color: #fff; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="Email"><i class="fas fa-envelope"></i></a>
         </div>
 
         <img id="cfg_contact_banner" 
@@ -154,7 +166,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=2.6.0"></script>
-  <script src="app.js?v=11.2.0"></script>
+  <script src="app.js?v=12.0.0"></script>
   <script>
     document.getElementById('contactForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
