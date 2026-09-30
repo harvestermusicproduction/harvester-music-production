@@ -1,7 +1,29 @@
-/* 🖋️ 乐米秋叙手书体 (LemiQiuXuShouShuTi) & 全局字体声明 */
+/* 🖋️ 乐米秋叙手书体 / 漓雨手书 (LemiQiuXuShouShuTi / LiyuShouShu) & 全局字体声明 */
+@font-face {
+  font-family: '漓雨手书';
+  src: url('assets/fonts/LiyuShouShu.woff2') format('woff2'),
+       url('assets/fonts/LiyuShouShu.ttf') format('truetype'),
+       local('漓雨手书'), local('LiyuShouShu'), local('LiYuShouShu'), local('Liyu-Shoushu');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LiyuShouShu';
+  src: url('assets/fonts/LiyuShouShu.woff2') format('woff2'),
+       url('assets/fonts/LiyuShouShu.ttf') format('truetype'),
+       local('漓雨手书'), local('LiyuShouShu'), local('LiYuShouShu'), local('Liyu-Shoushu');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: '乐米秋叙手书体';
-  src: local('乐米秋叙手书体'),
+  src: url('assets/fonts/LemiQiuXuShouShuTi.woff2') format('woff2'),
+       url('assets/fonts/LemiQiuXuShouShuTi.ttf') format('truetype'),
+       local('乐米秋叙手书体'),
        local('LemiQiuXuShouShuTi'),
        local('Lemi-QiuXu-ShouShuTi'),
        local('Lemi QiuXu ShouShu Ti'),
@@ -13,7 +35,9 @@
 
 @font-face {
   font-family: 'LemiQiuXuShouShuTi';
-  src: local('乐米秋叙手书体'),
+  src: url('assets/fonts/LemiQiuXuShouShuTi.woff2') format('woff2'),
+       url('assets/fonts/LemiQiuXuShouShuTi.ttf') format('truetype'),
+       local('乐米秋叙手书体'),
        local('LemiQiuXuShouShuTi'),
        local('Lemi-QiuXu-ShouShuTi'),
        local('Lemi QiuXu ShouShu Ti'),
@@ -71,8 +95,8 @@
   --panel: #1a1512;
   --panel-warm: rgba(28, 23, 19, 0.75);
   
-  /* 🖋️ 乐米秋叙手书体 (自带温柔叙事感的硬笔手写体) & 中文字体系统 */
-  --font-qiuxu: '乐米秋叙手书体', 'LemiQiuXuShouShuTi', 'Lemi-QiuXu-ShouShuTi', 'Lemi QiuXu ShouShu Ti', 'ChenYuluoyan', 'Yozai', '乐米宋刻', 'Noto Serif SC', 'Noto Sans SC', sans-serif;
+  /* 🖋️ 乐米秋叙手书体 / 漓雨手书 & 中文字体系统 */
+  --font-qiuxu: '漓雨手书', 'LiyuShouShu', '乐米秋叙手书体', 'LemiQiuXuShouShuTi', 'Lemi-QiuXu-ShouShuTi', 'Lemi QiuXu ShouShu Ti', 'ChenYuluoyan', 'Yozai', '乐米宋刻', 'Noto Serif SC', 'Noto Sans SC', sans-serif;
   --font-songke: '乐米秋叙手书体', 'LemiQiuXuShouShuTi', '乐米宋刻', 'Noto Serif SC', 'Noto Sans SC', serif;
   --font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   
