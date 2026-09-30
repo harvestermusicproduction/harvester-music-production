@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Handlee&family=Indie+Flower&family=Klee+One:wght@400;600&family=Patrick+Hand&family=Shantell+Sans:wght@400;600;700&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css');
+
 @font-face {
   font-family: 'ChenYuluoyan';
   src: url('assets/fonts/ChenYuluoyan-2.0-Thin.ttf') format('truetype');
@@ -14,9 +17,6 @@
   font-display: swap;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Handlee&family=Indie+Flower&family=Klee+One:wght@400;600&family=Patrick+Hand&family=Shantell+Sans:wght@400;600;700&display=swap');
-@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css');
-
 :root {
   --gold: #f6d28a;
   --gold-warm: #f4be6a;
@@ -29,17 +29,17 @@
   --panel: #1a1512;
   --panel-warm: rgba(28, 23, 19, 0.75);
   
-  /* Brand Typography System: Unified Authentic ChenYuluoyan + Yozai Hand-drawn Fonts */
-  --font-eng-title: 'ChenYuluoyan', 'Gaegu', 'Patrick Hand', 'Yozai', 'LXGW WenKai', sans-serif;
-  --font-eng-body:  'ChenYuluoyan', 'Patrick Hand', 'Yozai', 'LXGW WenKai', sans-serif;
-  --font-chn-title: 'ChenYuluoyan', 'Yozai', 'LXGW WenKai', 'Klee One', cursive, sans-serif;
-  --font-chn-body:  'ChenYuluoyan', 'Yozai', 'LXGW WenKai', 'Klee One', cursive, sans-serif;
-  --font-hand-title: 'ChenYuluoyan', 'Yozai', 'Gaegu', 'Patrick Hand', 'LXGW WenKai', cursive;
-  --font-hand-en:    'ChenYuluoyan', 'Gaegu', 'Patrick Hand', 'Yozai', cursive;
-  --font-hand-cn:    'ChenYuluoyan', 'Yozai', 'LXGW WenKai', 'Klee One', cursive;
-  --font-serif-cn:   'ChenYuluoyan', 'Yozai', 'LXGW WenKai', serif;
-  --font-kaiti:      'ChenYuluoyan', 'Yozai', 'LXGW WenKai', cursive;
-  --font-kai:        'ChenYuluoyan', 'Yozai', 'LXGW WenKai', cursive;
+  /* Brand Typography System: 100% Unified Authentic Hand-drawn & Pen Fonts */
+  --font-eng-title: 'Gaegu', 'Patrick Hand', 'LXGW WenKai', 'Handlee', cursive;
+  --font-eng-body:  'Patrick Hand', 'Gaegu', 'LXGW WenKai', cursive;
+  --font-chn-title: 'LXGW WenKai', 'Klee One', 'ChenYuluoyan', 'Yozai', cursive, sans-serif;
+  --font-chn-body:  'LXGW WenKai', 'Klee One', 'ChenYuluoyan', 'Yozai', cursive, sans-serif;
+  --font-hand-title: 'Gaegu', 'Patrick Hand', 'LXGW WenKai', 'ChenYuluoyan', cursive;
+  --font-hand-en:    'Gaegu', 'Patrick Hand', 'Handlee', cursive;
+  --font-hand-cn:    'LXGW WenKai', 'Klee One', 'ChenYuluoyan', 'Yozai', cursive;
+  --font-serif-cn:   'LXGW WenKai', 'Klee One', serif;
+  --font-kaiti:      'LXGW WenKai', 'Klee One', cursive;
+  --font-kai:        'LXGW WenKai', 'Klee One', cursive;
   
   /* Helper Assignments */
   --font-display: var(--font-hand-title);
