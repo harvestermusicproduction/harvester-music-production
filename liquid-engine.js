@@ -73,8 +73,8 @@ class LiquidRipple {
     });
 
     // 3. Final Surface Material
-    // Brighter environmental base (Navy Blue instead of pitch black)
-    const fallbackTexture = new THREE.DataTexture(new Uint8Array([15, 15, 25, 255]), 1, 1, THREE.RGBAFormat);
+    // Warm Obsidian Dark Base matching site theme (#12100e)
+    const fallbackTexture = new THREE.DataTexture(new Uint8Array([18, 16, 14, 255]), 1, 1, THREE.RGBAFormat);
     fallbackTexture.needsUpdate = true;
 
     this.surfaceMaterial = new THREE.ShaderMaterial({
@@ -83,7 +83,7 @@ class LiquidRipple {
         tBackground: { value: fallbackTexture },
         delta: { value: new THREE.Vector2(1.0 / simWidth, 1.0 / simHeight) },
         lightPosition: { value: new THREE.Vector3(1, 1, 3) },
-        edgeColor: { value: new THREE.Color(0x0a0a1a) }, // Slightly deeper blue
+        edgeColor: { value: new THREE.Color(0x12100e) },
         iTime: { value: 0 }
       },
       vertexShader: window.WATER_SHADERS.vertex,
