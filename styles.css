@@ -1,4 +1,20 @@
 @font-face {
+  font-family: 'LemiSongKe';
+  src: local('乐米宋刻'), local('LemiSongKe'), local('Lemi-Songke'), local('Lemi Songke');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: '乐米宋刻';
+  src: local('乐米宋刻'), local('LemiSongKe'), local('Lemi-Songke'), local('Lemi Songke');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Yozai';
   src: url('assets/fonts/Yozai.woff2') format('woff2'),
        url('assets/fonts/Yozai-Medium.ttf') format('truetype');
@@ -13,10 +29,10 @@
        url('assets/fonts/ChenYuluoyan-SC.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Handlee&family=Indie+Flower&family=Patrick+Hand&family=Shantell+Sans:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Patrick+Hand&display=swap');
 
 :root {
   --gold: #f6d28a;
@@ -30,21 +46,24 @@
   --panel: #1a1512;
   --panel-warm: rgba(28, 23, 19, 0.75);
   
-  /* Brand Typography System: 100% Authentic ChenYuluoyan & Gaegu/Patrick Hand */
-  --font-eng-title: 'Gaegu', 'Patrick Hand', 'ChenYuluoyan', cursive, sans-serif;
-  --font-eng-body:  'Patrick Hand', 'Gaegu', 'ChenYuluoyan', cursive, sans-serif;
-  --font-chn-title: 'ChenYuluoyan', 'Yozai', cursive, sans-serif;
-  --font-chn-body:  'ChenYuluoyan', 'Yozai', cursive, sans-serif;
-  --font-hand-title: 'Gaegu', 'Patrick Hand', 'ChenYuluoyan', cursive;
-  --font-hand-en:    'Gaegu', 'Patrick Hand', 'ChenYuluoyan', cursive;
-  --font-hand-cn:    'ChenYuluoyan', 'Yozai', cursive;
-  --font-serif-cn:   'ChenYuluoyan', 'Yozai', serif;
-  --font-kaiti:      'ChenYuluoyan', 'Yozai', cursive;
-  --font-kai:        'ChenYuluoyan', 'Yozai', cursive;
+  /* 📖 乐米宋刻 & 高清晰度简体中文排版系统 (Lemi Songke & High-Clarity Typography) */
+  --font-songke: '乐米宋刻', 'LemiSongKe', 'Lemi Songke', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', STSong, serif;
+  --font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  
+  --font-eng-title: 'Gaegu', 'Patrick Hand', var(--font-songke), cursive, sans-serif;
+  --font-eng-body:  'Patrick Hand', 'Gaegu', var(--font-sans), cursive, sans-serif;
+  --font-chn-title: var(--font-songke);
+  --font-chn-body:  var(--font-sans);
+  --font-hand-title: var(--font-songke);
+  --font-hand-en:    'Gaegu', 'Patrick Hand', var(--font-songke), cursive;
+  --font-hand-cn:    var(--font-songke);
+  --font-serif-cn:   var(--font-songke);
+  --font-kaiti:      var(--font-songke);
+  --font-kai:        var(--font-songke);
   
   /* Helper Assignments */
-  --font-display: var(--font-hand-title);
-  --font-body:    var(--font-chn-body);
+  --font-display: var(--font-songke);
+  --font-body:    var(--font-sans);
   
   --transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
   --hand-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
@@ -59,8 +78,11 @@ body {
   background: var(--bg);
   background-color: var(--bg);
   color: var(--text);
-  line-height: 1.9;
+  line-height: 1.85;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* 🎵 Ambient Floating Music Notes Background */
