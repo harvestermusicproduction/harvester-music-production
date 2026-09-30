@@ -385,13 +385,26 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // --- 📅 EVENTS MODULE (Upgraded) ---
+  // --- 📅 EVENTS MODULE (Upgraded with Order Controls & Full Details) ---
   async function renderEvents(container) {
-    const { data: rawEvents } = await db.from('events').select('*').order('display_order', {ascending: true, nullsFirst: false}).order('created_at', {ascending: false});
+    let rawEvents = [];
+    try {
+      const { data, error } = await db.from('events').select('*');
+      if (error) console.warn("Events fetch note:", error);
+      rawEvents = data || [];
+    } catch(err) {
+      console.error("Events fetch error:", err);
+    }
+
     const { data: bannerCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_banner').maybeSingle();
     const currentBanner = bannerCfg?.value || '';
-    
-    // Parse metadata if present (Regex for maximum robustness)
-    const events = rawEvents?.map(e => {
+
+    // Fetch custom order from site_config
+    const { data: ordCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_order').maybeSingle();
+    let customOrderIds = ordCfg?.value ? ordCfg.value.split(',').filter(Boolean) : [];
+
+    // Parse metadata for maximum robustness
+    const events = rawEvents.map(e => {
       let desc = e.description || "";
       let evDate = e.event_date || e.date || "";
       let evTime = e.event_time || e.time || "";
@@ -399,6 +412,10 @@ document.addEventListener('DOMContentLoaded', () => {
       let murl = e.map_url || e.mapUrl || "";
       let img = e.image_url || e.cover_url || "";
       let et = e.email_template || "";
+      let ord = e.display_order ?? 0;
+      let stag = e.status_tag || "";
+      let turl = e.ticket_url || "";
+      let ttext = e.ticket_text || "前往购票/索票/报名";
 
       const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
       if (metaMatch) {
@@ -410,97 +427,220 @@ document.addEventListener('DOMContentLoaded', () => {
           murl = meta.murl || meta.map_url || meta.mapUrl || murl;
           img = meta.img || meta.image_url || meta.cover_url || img;
           et = meta.et || meta.email_template || et;
+          ord = meta.ord ?? meta.display_order ?? ord;
+          stag = meta.status_tag || meta.stag || stag;
+          turl = meta.ticket_url || meta.turl || turl;
+          ttext = meta.ticket_text || meta.ttext || ttext;
           desc = desc.replace(metaMatch[0], '').trim();
         } catch (err) {
-          console.warn("Meta parse fail:", err);
           desc = desc.replace(metaMatch[0], '').trim();
         }
       }
+
+      // Title status tag extraction if present
+      let rawTitle = e.title || "";
+      const titleTagMatch = rawTitle.match(/^(\[[^\]]+\]|\【[^\】]+\】)/);
+      if (!stag && titleTagMatch) {
+        stag = titleTagMatch[1];
+        rawTitle = rawTitle.replace(titleTagMatch[0], '').trim();
+      }
+
       if (!evTime && evDate) {
         if (evDate.includes('T')) {
           const parts = evDate.split('T');
           evDate = parts[0];
           if (parts[1]) evTime = parts[1].replace('Z', '').substring(0, 5);
         } else if (evDate.includes(' ')) {
-          const m = evDate.match(/^(.*?)[ ]+([0-9]{1,2}[:：.][0-9]{2}(?::[0-9]{2})?(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
-          if (m) {
-            evDate = m[1].trim();
-            evTime = m[2].trim();
-          }
+          const m = evDate.match(/^(.*?)[ ]+([0-9]{1,2}[:：.][0-9]{2})/);
+          if (m) { evDate = m[1].trim(); evTime = m[2].trim(); }
         }
-      }
-      if (!evTime && desc) {
-        const m1 = desc.match(/(?:时间|time|⏰|时段|开场|开始)[：:\s]*([0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
-        if (m1) evTime = m1[1].trim();
       }
 
       return {
         ...e,
+        title: rawTitle,
+        status_tag: stag,
         event_date: evDate,
         event_time: evTime,
         location: loc,
         map_url: murl,
         image_url: img,
+        ticket_url: turl,
+        ticket_text: ttext,
         email_template: et,
+        display_order: parseInt(ord, 10) || 0,
         description: desc
       };
     });
 
+    // 排序逻辑：
+    // 1. cfg_events_order 自定义排序优先
+    // 2. 其次按 display_order 升序
+    // 3. 再次按日期
+    events.sort((a, b) => {
+      if (customOrderIds.length > 0) {
+        const idxA = customOrderIds.indexOf(String(a.id));
+        const idxB = customOrderIds.indexOf(String(b.id));
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1;
+        if (idxB !== -1) return 1;
+      }
+      if (a.display_order !== b.display_order) return a.display_order - b.display_order;
+      if (a.event_date && b.event_date) return a.event_date.localeCompare(b.event_date);
+      return (b.created_at || '').localeCompare(a.created_at || '');
+    });
+
+    // Keep global events list for order swapping
+    window._currentAdminEvents = events;
+
     container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-        <h1 style="color:var(--gold); margin:0;">活动预告管理</h1>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h1 style="color:var(--gold); margin:0;">📅 活动排期与详情管理 (Events CMS)</h1>
+          <p style="color:#888; font-size:0.85rem; margin-top:4px;">可直接使用 ⬆️ ⬇️ 调整活动前后顺序，或进入编辑修改地点、标签、购票链接与海报等细节。</p>
+        </div>
         <div style="display:flex; gap:10px;">
-          <button class="btn btn-submit" style="width:auto; padding:10px 25px; background:#444;" onclick="triggerBlast()">🚀 一键发送提醒</button>
-          <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openEventModal()">+ 新建活动</button>
+          <button class="btn btn-submit" style="width:auto; padding:10px 22px; background:#333; color:#ccc;" onclick="triggerBlast()">🚀 一键发送提醒</button>
+          <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openEventModal()">+ 发布新活动</button>
         </div>
       </div>
 
       <!-- 🌟 精彩活动页面顶部主海报管理卡片 -->
-      <div style="background:#0e0e0e; border:1px solid rgba(246,210,138,0.25); border-radius:14px; padding:20px; margin-bottom:35px; box-shadow:0 8px 30px rgba(0,0,0,0.6);">
-        <div style="margin-bottom:15px;">
-          <h3 style="margin:0; color:var(--gold); font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+      <div style="background:#0e0e0e; border:1px solid rgba(246,210,138,0.25); border-radius:14px; padding:20px; margin-bottom:28px; box-shadow:0 8px 30px rgba(0,0,0,0.6);">
+        <div style="margin-bottom:12px;">
+          <h3 style="margin:0; color:var(--gold); font-size:1.05rem; display:flex; align-items:center; gap:8px;">
             <i class="fas fa-image"></i> 精彩活动 顶部主海报 (Events Top Banner)
           </h3>
-          <p style="margin:6px 0 0 0; color:#888; font-size:0.8rem; line-height:1.5;">
-            在此上传的海报将直接展示在官网活动页面的「精彩活动」标题正下方。如果此处留空，系统将自动显示排在第 1 位的活动海报。
+          <p style="margin:4px 0 0 0; color:#888; font-size:0.8rem;">
+            在此上传的海报将置顶展示在活动页面标题正下方。留空则自动选用排在第 1 位的活动海报。
           </p>
         </div>
-        <div style="display:grid; grid-template-columns: minmax(260px, 360px) 1fr; gap:20px; align-items:center; background:#050505; padding:15px; border-radius:10px; border:1px solid #1c1c1c;">
+        <div style="display:grid; grid-template-columns: minmax(220px, 320px) 1fr; gap:20px; align-items:center; background:#050505; padding:15px; border-radius:10px; border:1px solid #1c1c1c;">
           <div>
-            <img id="ev_hero_prev" src="${currentBanner || 'https://via.placeholder.com/1200x500?text=Events+Hero+Banner'}" style="width:100%; max-height:160px; object-fit:contain; border-radius:8px; border:1px solid #333; background:#111;">
+            <img id="ev_hero_prev" src="${currentBanner || 'https://via.placeholder.com/1200x500?text=Events+Hero+Banner'}" style="width:100%; max-height:140px; object-fit:contain; border-radius:8px; border:1px solid #333; background:#111;">
           </div>
           <div>
             <label style="display:block; font-size:0.75rem; color:#aaa; margin-bottom:6px;">选择新海报图片 (推荐比例 21:9 或 16:9)</label>
-            <input type="file" id="f_ev_hero" style="font-size:0.8rem; color:#aaa; margin-bottom:12px; width:100%;">
+            <input type="file" id="f_ev_hero" style="font-size:0.8rem; color:#aaa; margin-bottom:10px; width:100%;">
             <input type="hidden" id="url_ev_hero" value="${currentBanner}">
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="btn-tiny" style="padding:8px 18px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); font-weight:600;" onclick="uploadAndSaveEventsBanner('f_ev_hero', 'url_ev_hero', 'ev_hero_prev')">📤 上传并设为主海报</button>
-              ${currentBanner ? `<button class="btn-tiny danger" style="padding:8px 15px;" onclick="clearEventsBanner()">✖ 移除独立主海报 (改用自动展示首位)</button>` : ''}
+              <button class="btn-tiny" style="padding:8px 16px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); font-weight:600;" onclick="uploadAndSaveEventsBanner('f_ev_hero', 'url_ev_hero', 'ev_hero_prev')">📤 上传并设为主海报</button>
+              ${currentBanner ? `<button class="btn-tiny danger" style="padding:8px 14px;" onclick="clearEventsBanner()">✖ 移除独立主海报</button>` : ''}
             </div>
           </div>
         </div>
       </div>
 
-      <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="margin:0; color:#ccc; font-size:1.05rem;"><i class="fas fa-list"></i> 各活动列表 (${events?.length || 0} 个)</h3>
-        <span style="font-size:0.75rem; color:#666;">越小排位越靠前</span>
-      </div>
+      <!-- 🌟 各活动列表与顺序调整 (Strip Manager Table) -->
+      <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px;">
+        <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <h3 style="margin:0; color:var(--gold); font-size:1.05rem;">
+            <i class="fas fa-list-ol"></i> 活动排期与排序列表 (${events.length} 个活动)
+          </h3>
+          <span style="font-size:0.8rem; color:#888;">使用 <b>⬆️ ⬇️</b> 按钮可直接上下调整活动排期顺序</span>
+        </div>
 
-      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
-        ${events?.map(e => `
-          <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:10px;">
-            <img src="${e.image_url || 'https://via.placeholder.com/1920x1080?text=Event+Poster'}" style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:8px; border:1px solid #333;">
-            <h3 style="margin:0; color:var(--gold);">${e.title}</h3>
-            <p style="color:#888; font-size:0.85rem; margin:0;"><i class="fas fa-calendar-alt"></i> ${e.event_date || '未设置日期'} | <i class="fas fa-clock"></i> ${e.event_time || '未设置时间'}</p>
-            <div style="display:flex; gap:10px; margin-top:10px; justify-content:flex-end;">
-              <button class="btn-tiny" onclick="openEventModal('${e.id}')">编辑</button>
-              <button class="btn-tiny danger" onclick="deleteItem('events', '${e.id}')">删除</button>
-            </div>
-          </div>
-        `).join('') || '<p>暂无活动，请点击右上角新建。</p>'}
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; color:#eee; min-width:750px;">
+            <thead>
+              <tr style="border-bottom:1px solid #333; text-align:left; background:#111; font-size:0.8rem; color:#888;">
+                <th style="padding:14px; width:90px; text-align:center;">排序</th>
+                <th style="padding:14px; width:100px;">海报</th>
+                <th style="padding:14px; width:120px;">日期/时间</th>
+                <th style="padding:14px;">活动名称与状态</th>
+                <th style="padding:14px;">地点 / 场馆</th>
+                <th style="padding:14px;">购票/报名</th>
+                <th style="padding:14px; text-align:right; width:150px;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${events.map((e, index) => {
+                const isFirst = index === 0;
+                const isLast = index === events.length - 1;
+                let tagBadge = '';
+                if (e.status_tag) {
+                  const tagUpper = e.status_tag.toUpperCase();
+                  const isSold = tagUpper.includes('SOLD') || tagUpper.includes('售罄');
+                  const isCancel = tagUpper.includes('取消') || tagUpper.includes('CANCEL');
+                  tagBadge = `<span style="padding:2px 8px; border-radius:4px; font-size:0.75rem; font-weight:bold; margin-right:6px; background:${isSold ? 'rgba(255,107,129,0.15)' : (isCancel ? 'rgba(164,176,190,0.15)' : 'rgba(46,213,115,0.15)')}; color:${isSold ? '#ff6b81' : (isCancel ? '#a4b0be' : '#2ed573')}; border:1px solid ${isSold ? 'rgba(255,107,129,0.3)' : (isCancel ? 'rgba(164,176,190,0.3)' : 'rgba(46,213,115,0.3)')};">${e.status_tag}</span>`;
+                }
+
+                return `
+                  <tr style="border-bottom:1px solid #1a1a1a; transition:0.25s;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
+                    <td style="padding:14px; text-align:center;">
+                      <div style="display:flex; align-items:center; justify-content:center; gap:4px;">
+                        <button class="btn-tiny" ${isFirst ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''} onclick="moveEventOrder('${e.id}', 'up')" title="上移一位">⬆️</button>
+                        <button class="btn-tiny" ${isLast ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''} onclick="moveEventOrder('${e.id}', 'down')" title="下移一位">⬇️</button>
+                      </div>
+                      <span style="font-size:0.7rem; color:#666; display:block; margin-top:4px;">#${index + 1}</span>
+                    </td>
+                    <td style="padding:14px;">
+                      <img src="${e.image_url || 'https://via.placeholder.com/600x338?text=Event'}" style="width:75px; height:45px; object-fit:cover; border-radius:6px; border:1px solid #333; background:#000;">
+                    </td>
+                    <td style="padding:14px; font-size:0.85rem; color:#ccc;">
+                      <b style="color:#fff;">${e.event_date || '未定'}</b>
+                      <div style="font-size:0.75rem; color:#888;">${e.event_time || ''}</div>
+                    </td>
+                    <td style="padding:14px;">
+                      <div style="font-size:1rem; font-weight:500; color:#fff; display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
+                        ${tagBadge}
+                        <span>${e.title}</span>
+                      </div>
+                    </td>
+                    <td style="padding:14px; font-size:0.85rem; color:#aaa;">
+                      ${e.location || '待定'}
+                    </td>
+                    <td style="padding:14px; font-size:0.8rem;">
+                      ${e.ticket_url ? `<a href="${e.ticket_url}" target="_blank" style="color:var(--gold); text-decoration:underline;">${e.ticket_text || '外部链接'} ↗</a>` : `<span style="color:#666;">站内详情</span>`}
+                    </td>
+                    <td style="padding:14px; text-align:right; white-space:nowrap;">
+                      <button class="btn-tiny" style="margin-right:6px; border-color:var(--gold); color:var(--gold);" onclick="openEventModal('${e.id}')">✏️ 编辑</button>
+                      <button class="btn-tiny danger" onclick="deleteItem('events', '${e.id}')" title="删除活动">🗑️</button>
+                    </td>
+                  </tr>
+                `;
+              }).join('') || '<tr><td colspan="7" style="padding:40px; text-align:center; color:#666;">暂无活动，请点击右上角「发布新活动」</td></tr>'}
+            </tbody>
+          </table>
+        </div>
       </div>
     `;
   }
+
+  // --- 🌟 上移 / 下移 活动排序逻辑 ---
+  window.moveEventOrder = async (id, direction) => {
+    const list = window._currentAdminEvents || [];
+    const index = list.findIndex(e => String(e.id) === String(id));
+    if (index === -1) return;
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === list.length - 1) return;
+
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    // Swap
+    const temp = list[index];
+    list[index] = list[targetIndex];
+    list[targetIndex] = temp;
+
+    const newOrderIds = list.map(e => String(e.id));
+
+    try {
+      await db.from('site_config').upsert({
+        key: 'cfg_events_order',
+        value: newOrderIds.join(',')
+      }, { onConflict: 'key' });
+
+      // Also update display_order on items where possible
+      for (let i = 0; i < list.length; i++) {
+        try {
+          await db.from('events').update({ display_order: i }).eq('id', list[i].id);
+        } catch(e){}
+      }
+
+      renderCMS();
+    } catch(err) {
+      alert("排序更新失败: " + err.message);
+    }
+  };
   
   window.uploadAndSaveEventsBanner = async (fileInputId, targetId, previewId) => {
     const fileInput = document.getElementById(fileInputId);
@@ -564,8 +704,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
   window.openEventModal = async (id = null) => {
     const btn = event.currentTarget;
-    const originalText = btn.innerText;
-    if (id) { btn.innerText = "⏳ 正在拉取..."; btn.disabled = true; }
+    const originalText = btn ? btn.innerText : '';
+    if (id && btn) { btn.innerText = "⏳ 正在拉取..."; btn.disabled = true; }
 
     try {
       let e = null;
@@ -573,15 +713,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const { data, error } = await db.from('events').select('*').eq('id', id).single();
         if (error) throw error;
         e = data;
-        // Handle meta parsing if description has it
+
         let evDate = e.event_date || e.date || "";
         let evTime = e.event_time || e.time || "";
         let loc = e.location || e.loc || "";
         let murl = e.map_url || e.mapUrl || "";
         let img = e.image_url || e.cover_url || "";
         let et = e.email_template || "";
-        let ord = e.display_order || 0;
+        let ord = e.display_order ?? 0;
         let desc = e.description || "";
+        let stag = e.status_tag || "";
+        let turl = e.ticket_url || "";
+        let ttext = e.ticket_text || "前往购票/索票/报名";
 
         if (desc.includes('EXT_META:')) {
            const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
@@ -594,98 +737,131 @@ document.addEventListener('DOMContentLoaded', () => {
                 murl = meta.murl || meta.map_url || meta.mapUrl || murl;
                 img = meta.img || meta.image_url || meta.cover_url || img;
                 et = meta.et || meta.email_template || et;
-                ord = meta.ord || meta.display_order || ord;
+                ord = meta.ord ?? meta.display_order ?? ord;
+                stag = meta.status_tag || meta.stag || stag;
+                turl = meta.ticket_url || meta.turl || turl;
+                ttext = meta.ticket_text || meta.ttext || ttext;
                 desc = desc.replace(metaMatch[0], '').trim();
               } catch(err) {
                 desc = desc.replace(metaMatch[0], '').trim();
               }
            }
         }
+
+        let rawTitle = e.title || "";
+        const titleTagMatch = rawTitle.match(/^(\[[^\]]+\]|\【[^\】]+\】)/);
+        if (!stag && titleTagMatch) {
+          stag = titleTagMatch[1];
+          rawTitle = rawTitle.replace(titleTagMatch[0], '').trim();
+        }
+
         if (!evTime && evDate) {
           if (evDate.includes('T')) {
             const parts = evDate.split('T');
             evDate = parts[0];
             if (parts[1]) evTime = parts[1].replace('Z', '').substring(0, 5);
           } else if (evDate.includes(' ')) {
-            const m = evDate.match(/^(.*?)[ ]+([0-9]{1,2}[:：.][0-9]{2}(?::[0-9]{2})?(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
-            if (m) {
-              evDate = m[1].trim();
-              evTime = m[2].trim();
-            }
+            const m = evDate.match(/^(.*?)[ ]+([0-9]{1,2}[:：.][0-9]{2})/);
+            if (m) { evDate = m[1].trim(); evTime = m[2].trim(); }
           }
         }
-        if (!evTime && desc) {
-          const m1 = desc.match(/(?:时间|time|⏰|时段|开场|开始)[：:\s]*([0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
-          if (m1) evTime = m1[1].trim();
-        }
+
         e = {
           ...e,
+          title: rawTitle,
+          status_tag: stag,
           event_date: evDate,
           event_time: evTime,
           location: loc,
           map_url: murl,
           image_url: img,
+          ticket_url: turl,
+          ticket_text: ttext,
           email_template: et,
           display_order: ord,
           description: desc
         };
       }
+
       const isEdit = !!e;
       const modal = document.createElement('div');
       modal.id = "eventEditModal";
       modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
       modal.innerHTML = `
-        <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; position:relative; box-shadow: 0 20px 60px rgba(0,0,0,1);">
+        <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:600px; max-height:90vh; overflow-y:auto; position:relative; box-shadow: 0 20px 60px rgba(0,0,0,1);">
           <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑活动详情' : '发布新活动'}</h2>
           
+          <!-- 活动海报 -->
           <div style="margin-bottom:20px; background: #0a0a0a; padding: 15px; border-radius: 12px; border:1px solid #222;">
-            <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">活动海报预览</label>
+            <label style="display:block; margin-bottom:8px; color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">活动海报预览 (Poster)</label>
             <img id="ev_prev" src="${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}" style="width:100%; max-height:180px; object-fit:cover; border-radius:8px; margin-bottom:10px; border:1px solid #333;">
             <input type="file" id="f_ev" style="font-size:0.8rem; color:#888;">
-            <button class="btn-tiny" style="margin-top:10px; width:100%; padding:8px;" onclick="uploadFile('f_ev', 'ev_url', 'ev_prev')">📤 上传活动海报</button>
+            <button class="btn-tiny" style="margin-top:10px; width:100%; padding:8px;" onclick="uploadFile('f_ev', 'ev_url', 'ev_prev')">📤 上传活动海报图片</button>
             <input type="hidden" id="ev_url" value="${e?.image_url || ''}">
           </div>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+          <!-- 标题与状态标签 -->
+          <div style="display:grid; grid-template-columns: 2fr 1fr; gap:15px; margin-bottom:15px;">
             <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动名称</label>
-              <input type="text" id="ev_t" value="${e?.title || ''}" placeholder="例如：赞美祭" style="width:100%; padding:10px;">
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动名称 (Title)</label>
+              <input type="text" id="ev_t" value="${e?.title || ''}" placeholder="例如：东京敬拜赞美节庆" style="width:100%; padding:10px;">
             </div>
             <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动地点 (名称)</label>
-              <input type="text" id="ev_l" value="${e?.location || ''}" placeholder="例如：吉隆坡大礼堂" style="width:100%; padding:10px;">
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">状态标签 (Tag)</label>
+              <input type="text" id="ev_stag" value="${e?.status_tag || ''}" placeholder="如 [SOLD OUT] 或 [已取消]" style="width:100%; padding:10px;">
             </div>
           </div>
 
-          <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Google Map 链接 (可选)</label>
-            <input type="text" id="ev_ml" value="${e?.map_url || ''}" placeholder="https://goo.gl/maps/..." style="width:100%; padding:10px;">
-          </div>
-
+          <!-- 日期与时间 -->
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
             <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动日期</label>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动日期 (Date)</label>
               <input type="date" id="ev_d" value="${e?.event_date || ''}" style="width:100%; padding:10px;">
             </div>
             <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">开始时间</label>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">开始时间 (Time)</label>
               <input type="time" id="ev_tm" value="${e?.event_time || ''}" style="width:100%; padding:10px;">
             </div>
           </div>
 
+          <!-- 地点与地图 -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+            <div>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">地点/场馆 (Venue - City)</label>
+              <input type="text" id="ev_l" value="${e?.location || ''}" placeholder="例如：YOHAN TOKYO CHRIST CHURCH - 东京" style="width:100%; padding:10px;">
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Google Map 地图链接 (可选)</label>
+              <input type="text" id="ev_ml" value="${e?.map_url || ''}" placeholder="https://maps.app.goo.gl/..." style="width:100%; padding:10px;">
+            </div>
+          </div>
+
+          <!-- 购票/报名链接与按钮文字 -->
+          <div style="display:grid; grid-template-columns: 2fr 1.2fr; gap:15px; margin-bottom:15px;">
+            <div>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">购票/索票/报名链接 (Ticket URL)</label>
+              <input type="text" id="ev_turl" value="${e?.ticket_url || ''}" placeholder="https://... 留空则链接到站内详情" style="width:100%; padding:10px;">
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">按钮文字 (Button Text)</label>
+              <input type="text" id="ev_ttext" value="${e?.ticket_text || '前往购票/索票/报名'}" placeholder="前往购票/索票/报名" style="width:100%; padding:10px;">
+            </div>
+          </div>
+
+          <!-- 排位顺序 -->
           <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">排位顺序 Order (越小越靠前)</label>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">显示排序序号 Order (数值越小排在越前面)</label>
             <input type="number" id="ev_order" value="${e?.display_order || 0}" style="width:100%; padding:10px;">
           </div>
 
-          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动详情描述</label>
-          <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:100px; margin-bottom:15px; padding:10px;">${e?.description || ''}</textarea>
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动详情描述 (Description)</label>
+          <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:90px; margin-bottom:15px; padding:10px;">${e?.description || ''}</textarea>
 
-          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">提醒邮件定制内容 (如果不填则使用系统默认)</label>
-          <textarea id="ev_email" placeholder="支持自动换行。例：请记得明天穿白色上衣出席哦！" style="width:100%; height:80px; margin-bottom:20px; padding:10px;">${e?.email_template || ''}</textarea>
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">定制提醒邮件内容 (Email Notification Template)</label>
+          <textarea id="ev_email" placeholder="输入在活动前给订阅听众发送的专属提醒通知..." style="width:100%; height:70px; margin-bottom:20px; padding:10px;">${e?.email_template || ''}</textarea>
 
           <div style="display:flex; gap:15px; position:sticky; bottom:0; background:#111; padding-top:10px; border-top:1px solid #222;">
-            <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveEvent('${e?.id || ''}')">🚀 立即保存</button>
+            <button class="btn btn-submit" id="btnSaveEventSubmit" style="flex:2; padding:12px;" onclick="saveEvent('${e?.id || ''}')">🚀 保存活动信息</button>
             <button class="btn-tiny" style="flex:1;" onclick="this.closest('#eventEditModal').remove()">取消</button>
           </div>
         </div>
@@ -695,43 +871,57 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error("openEventModal Fail:", err);
       alert("😰 无法加载活动数据: " + (err.message || err));
     } finally {
-      if (id) { btn.innerText = originalText; btn.disabled = false; }
+      if (id && btn) { btn.innerText = originalText; btn.disabled = false; }
     }
   };
 
   window.saveEvent = async(id) => {
-    const btn = document.querySelector('.btn-submit');
-    const originalText = btn.innerText;
-    btn.innerText = "⏳ 正在同步到云端...";
-    btn.disabled = true;
+    const btn = document.getElementById('btnSaveEventSubmit');
+    const originalText = btn ? btn.innerText : '保存';
+    if (btn) { btn.innerText = "⏳ 正在同步到云端..."; btn.disabled = true; }
+
+    const rawTitle = document.getElementById('ev_t').value.trim();
+    const stag = document.getElementById('ev_stag').value.trim();
+    const finalTitle = stag ? `${stag} ${rawTitle}` : rawTitle;
 
     const payload = {
-      title: document.getElementById('ev_t').value,
+      title: finalTitle,
       event_date: document.getElementById('ev_d').value,
       event_time: document.getElementById('ev_tm').value,
       location: document.getElementById('ev_l').value,
       map_url: document.getElementById('ev_ml').value,
       image_url: document.getElementById('ev_url').value,
+      ticket_url: document.getElementById('ev_turl').value,
+      ticket_text: document.getElementById('ev_ttext').value || '前往购票/索票/报名',
+      status_tag: stag,
       email_template: document.getElementById('ev_email').value,
       description: document.getElementById('ev_desc').value,
-      display_order: parseInt(document.getElementById('ev_order').value) || 0
+      display_order: parseInt(document.getElementById('ev_order').value, 10) || 0
     };
 
-    try {
-      // 尝试直接保存（如果数据库表已有这些栏位）
-      const { error } = id 
-        ? await db.from('events').update(payload).eq('id', id)
-        : await db.from('events').insert([payload]);
+    if (!payload.title) {
+      alert("请输入活动名称");
+      if (btn) { btn.innerText = originalText; btn.disabled = false; }
+      return;
+    }
 
-      if (error) {
-        console.warn("Retrying with fallback due to missing columns:", error);
-        // Fallback: 将多余数据打包进 description 避免乱码
+    try {
+      // 1. 尝试直接保存
+      let saveRes = id 
+        ? await db.from('events').update(payload).eq('id', id)
+        : await db.from('events').insert([payload]).select();
+
+      if (saveRes.error) {
+        console.warn("Direct save failed, packing structured meta into description fallback:", saveRes.error);
         const meta = {
           d: payload.event_date,
           tm: payload.event_time,
           loc: payload.location,
           murl: payload.map_url,
           img: payload.image_url,
+          turl: payload.ticket_url,
+          ttext: payload.ticket_text,
+          stag: payload.status_tag,
           et: payload.email_template,
           ord: payload.display_order
         };
@@ -741,20 +931,21 @@ document.addEventListener('DOMContentLoaded', () => {
           description: `EXT_META:${JSON.stringify(meta)}||${payload.description}`
         };
         
-        const { error: fError } = id 
+        const fRes = id 
           ? await db.from('events').update(fallbackPayload).eq('id', id)
           : await db.from('events').insert([fallbackPayload]);
         
-        if (fError) throw fError;
+        if (fRes.error) throw fRes.error;
       }
       
       const modal = document.getElementById('eventEditModal');
-      if (modal) modal.remove();
-      renderCMS(); 
-    } catch (err) {
+      if(modal) modal.remove();
+      alert("✅ 活动信息已成功保存并同步！");
+      renderCMS();
+    } catch(err) {
+      console.error("Save error:", err);
       alert("❌ 保存失败: " + err.message);
-      btn.innerText = originalText;
-      btn.disabled = false;
+      if (btn) { btn.innerText = originalText; btn.disabled = false; }
     }
   };
 

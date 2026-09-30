@@ -206,16 +206,65 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Parse Day, Month, Year for sleek tour layout
+    let day = "01";
+    let month = "01 月";
+    let year = "2026";
+    
+    // Check YYYY-MM-DD or YYYY/MM/DD or YYYY.MM.DD
+    const dMatch = datePart.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
+    if (dMatch) {
+      year = dMatch[1];
+      const mNum = parseInt(dMatch[2], 10);
+      month = `${String(mNum).padStart(2, '0')} 月`;
+      day = String(parseInt(dMatch[3], 10)).padStart(2, '0');
+    } else {
+      const cnMatch = datePart.match(/(\d{4})年\s*(\d{1,2})月(?:\s*(\d{1,2})日)?/);
+      if (cnMatch) {
+        year = cnMatch[1];
+        month = `${String(parseInt(cnMatch[2], 10)).padStart(2, '0')} 月`;
+        day = cnMatch[3] ? String(parseInt(cnMatch[3], 10)).padStart(2, '0') : "01";
+      } else {
+        const mdMatch = datePart.match(/(\d{1,2})[-/.](\d{1,2})/);
+        if (mdMatch) {
+          month = `${String(parseInt(mdMatch[1], 10)).padStart(2, '0')} 月`;
+          day = String(parseInt(mdMatch[2], 10)).padStart(2, '0');
+        }
+      }
+    }
+
+    // Status Tag extraction
+    let statusTag = "";
+    let cleanTitle = item.title || "";
+    const titleTagMatch = cleanTitle.match(/^(\[[^\]]+\]|\【[^\】]+\】)/);
+    if (titleTagMatch) {
+      statusTag = titleTagMatch[1];
+      cleanTitle = cleanTitle.replace(titleTagMatch[0], '').trim();
+    }
+
+    let ticketUrl = "";
+    let ticketText = "前往购票/索票/报名";
+    if (desc.includes('EXT_META:')) {
+      // already parsed above
+    }
+    // Check if meta had ticket info
+    const metaMatch2 = (item.description || "").match(/EXT_META:(.*?)\|\|/);
+    if (metaMatch2) {
+      try {
+        const metaObj = JSON.parse(metaMatch2[1]);
+        if (metaObj.ticket_url || metaObj.ticketUrl || metaObj.turl) ticketUrl = metaObj.ticket_url || metaObj.ticketUrl || metaObj.turl;
+        if (metaObj.ticket_text || metaObj.ticketText || metaObj.ttext) ticketText = metaObj.ticket_text || metaObj.ticketText || metaObj.ttext;
+        if (metaObj.status_tag || metaObj.statusTag || metaObj.stag) statusTag = metaObj.status_tag || metaObj.statusTag || metaObj.stag;
+      } catch(e){}
+    }
+    if (item.ticket_url) ticketUrl = item.ticket_url;
+    if (item.ticket_text) ticketText = item.ticket_text;
+    if (item.status_tag) statusTag = item.status_tag;
+
     // Format Date (e.g. 2026-08-25 -> 2026年8月25日)
     let dateStr = datePart;
-    const dateMatch = datePart.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);
-    if (dateMatch) {
-      dateStr = `${dateMatch[1]}年${parseInt(dateMatch[2], 10)}月${parseInt(dateMatch[3], 10)}日`;
-    } else {
-      const yearMonthMatch = datePart.match(/^(\d{4})[-/.](\d{1,2})$/);
-      if (yearMonthMatch) {
-        dateStr = `${yearMonthMatch[1]}年${parseInt(yearMonthMatch[2], 10)}月`;
-      }
+    if (dMatch) {
+      dateStr = `${dMatch[1]}年${parseInt(dMatch[2], 10)}月${parseInt(dMatch[3], 10)}日`;
     }
 
     // Format Time (e.g. 19:30 or 19:30 - 21:30 or 7:30 PM)
@@ -235,19 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (isAM && h === 12) h = 0;
           timeStr = `${String(h).padStart(2, '0')}:${m}`;
         } else {
-          const hourOnlyMatch = cleanTime.match(/(\d{1,2})(?:\s*(?:pm|am|点|时|:00))?/i);
-          if (hourOnlyMatch && !isNaN(parseInt(hourOnlyMatch[1], 10))) {
-            let h = parseInt(hourOnlyMatch[1], 10);
-            if (isPM && h < 12) h += 12;
-            if (isAM && h === 12) h = 0;
-            if (h >= 0 && h <= 24) {
-              timeStr = `${String(h).padStart(2, '0')}:00`;
-            } else {
-              timeStr = cleanTime;
-            }
-          } else {
-            timeStr = cleanTime;
-          }
+          timeStr = cleanTime;
         }
       }
     }
@@ -257,11 +294,18 @@ document.addEventListener('DOMContentLoaded', () => {
     return {
       id: item.id,
       title: item.title || '',
+      cleanTitle: cleanTitle || item.title || '',
+      statusTag,
+      day,
+      month,
+      year,
       dateStr,
       timeStr,
       location: rawLoc,
       mapUrl: rawMapUrl,
       image_url: rawImg,
+      ticketUrl,
+      ticketText,
       description: desc,
       rawDate,
       rawTime,
@@ -282,22 +326,37 @@ document.addEventListener('DOMContentLoaded', () => {
       const rawEvents = res.data || [];
 
       if (rawEvents.length === 0) {
-        container.innerHTML = `<p style="text-align:center; opacity:0.5; font-size:0.95rem; margin-top:2rem; grid-column:1/-1;">暂无活动预告 敬请期待</p>`;
+        container.innerHTML = `<p style="text-align:center; opacity:0.5; font-size:0.95rem; margin:3rem 0;">暂无活动预告 敬请期待</p>`;
         if (posterWrapper) posterWrapper.style.display = 'none';
         return;
       }
 
+      // Fetch custom order from site_config if present
+      let customOrderIds = [];
+      try {
+        const { data: ordCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_order').maybeSingle();
+        if (ordCfg?.value) customOrderIds = ordCfg.value.split(',').filter(Boolean);
+      } catch(e){}
+
       const events = rawEvents.map(e => parseEventData(e));
 
       // 排序逻辑：
-      // 1. 如果设置了 display_order，按照数值由小到大排序 (0, 1, 2...)
-      // 2. 未设置则按日期或创建时间倒序排
+      // 1. 如果 site_config cfg_events_order 有设置，以此顺序排
+      // 2. 其次按 display_order 升序 (0, 1, 2...)
+      // 3. 再次按日期
       events.sort((a, b) => {
+        if (customOrderIds.length > 0) {
+          const idxA = customOrderIds.indexOf(String(a.id));
+          const idxB = customOrderIds.indexOf(String(b.id));
+          if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+          if (idxA !== -1) return -1;
+          if (idxB !== -1) return 1;
+        }
         const orderA = (a.order !== null && a.order !== undefined && !isNaN(a.order)) ? a.order : 999999;
         const orderB = (b.order !== null && b.order !== undefined && !isNaN(b.order)) ? b.order : 999999;
         if (orderA !== orderB) return orderA - orderB;
         if (b.rawDate && a.rawDate) {
-          const comp = b.rawDate.localeCompare(a.rawDate);
+          const comp = a.rawDate.localeCompare(b.rawDate);
           if (comp !== 0) return comp;
         }
         return (b.created_at || '').localeCompare(a.created_at || '');
@@ -317,32 +376,61 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // 🌟 各活动详情卡片（横向网格排列）
+      // 🌟 各活动横向条状列表渲染 (Horizontal Tour Strips)
       container.innerHTML = events.map(e => {
-        const displayDate = e.dateStr ? `<span class="event-meta-pill"><i class="fas fa-calendar-alt"></i> ${e.dateStr}</span>` : '';
-        const displayTime = e.timeStr ? `<span class="event-meta-pill"><i class="fas fa-clock"></i> ${e.timeStr}</span>` : '';
-        const displayLocation = e.location ? `<span class="event-meta-pill"><i class="fas fa-map-marker-alt"></i> ${e.location}</span>` : '';
-        const displayImage = e.image_url 
-          ? `<a href="event.html?id=${e.id}" class="event-card-img-wrap"><img src="${e.image_url}" alt="${e.title}" class="event-card-img" onerror="this.src='https://via.placeholder.com/600x338?text=Harvester+Event'"></a>` 
-          : `<a href="event.html?id=${e.id}" class="event-card-img-wrap"><img src="https://via.placeholder.com/600x338?text=Harvester+Event" alt="${e.title}" class="event-card-img"></a>`;
-        
-        const cleanTitle = (e.title || "").replace(/'/g, "\\'");
+        // Tag badge formatting
+        let tagClass = "event-tag-open";
+        const tagText = e.statusTag ? e.statusTag.toUpperCase() : "";
+        if (tagText.includes("SOLD") || tagText.includes("售罄") || tagText.includes("满额")) {
+          tagClass = "event-tag-sold-out";
+        } else if (tagText.includes("取消") || tagText.includes("CANCEL")) {
+          tagClass = "event-tag-cancelled";
+        }
+        const tagHtml = e.statusTag ? `<span class="${tagClass}">${e.statusTag}</span> ` : '';
+
+        // Action Link logic
+        let actionHtml = '';
+        const isCancelled = tagText.includes("取消") || tagText.includes("CANCEL");
+        const isSoldOut = tagText.includes("SOLD") || tagText.includes("售罄");
+
+        if (isCancelled) {
+          actionHtml = `<span class="event-strip-disabled">已取消</span>`;
+        } else if (isSoldOut) {
+          actionHtml = `<span class="event-strip-disabled" style="color:#ff6b81;">已售罄 / 满额</span>`;
+        } else if (e.ticketUrl) {
+          actionHtml = `<a href="${e.ticketUrl}" target="_blank" class="event-strip-link">${e.ticketText || '前往购票/索票/报名'}</a>`;
+        } else {
+          actionHtml = `<a href="event.html?id=${e.id}" class="event-strip-link">${e.ticketText || '前往购票/索票/报名'}</a>`;
+        }
+
+        const safeTitle = (e.title || "").replace(/'/g, "\\'");
 
         return `
-          <div class="event-card-item fade-in">
-            ${displayImage}
-            <div class="event-card-body">
-              <div class="event-meta-list">
-                ${displayDate}
-                ${displayTime}
-                ${displayLocation}
+          <div class="event-strip-row fade-in">
+            <!-- Left: Date -->
+            <div class="event-date-block">
+              <span class="event-day">${e.day}</span>
+              <div class="event-month-year">
+                <span class="event-month">${e.month}</span>
+                <span class="event-year">${e.year}</span>
               </div>
-              <h3 class="event-card-title"><a href="event.html?id=${e.id}">${e.title}</a></h3>
-              ${e.description ? `<p class="event-card-desc">${e.description}</p>` : ''}
-              <div class="event-card-actions">
-                <a href="event.html?id=${e.id}" class="btn-event-detail">查看详情 <i class="fas fa-arrow-right"></i></a>
-                <button class="btn-event-remind" onclick="openReminderModal('${e.id}', '${cleanTitle}', '${e.fullDateTime}')"><i class="fas fa-bell"></i> 提醒我</button>
-              </div>
+            </div>
+
+            <!-- Center: Info -->
+            <div class="event-info-block">
+              <h3 class="event-strip-title">
+                ${tagHtml}
+                <a href="event.html?id=${e.id}">${e.cleanTitle}</a>
+              </h3>
+              <p class="event-strip-venue">${e.location || 'HARVESTER MUSIC PRODUCTION'}</p>
+            </div>
+
+            <!-- Right: Action -->
+            <div class="event-action-block">
+              ${actionHtml}
+              <button class="btn-strip-remind" title="提醒我" onclick="openReminderModal('${e.id}', '${safeTitle}', '${e.fullDateTime}')">
+                <i class="fas fa-bell"></i>
+              </button>
             </div>
           </div>`;
       }).join('');
