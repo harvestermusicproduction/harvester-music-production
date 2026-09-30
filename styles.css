@@ -9,11 +9,11 @@
 
 @font-face {
   font-family: 'ChenYuluoyan';
-  src: url('assets/fonts/ChenYuluoyan-SC.woff2?v=12.0.0') format('woff2'),
-       url('assets/fonts/ChenYuluoyan-SC.ttf?v=12.0.0') format('truetype');
+  src: url('assets/fonts/ChenYuluoyan-SC.woff2') format('woff2'),
+       url('assets/fonts/ChenYuluoyan-SC.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Handlee&family=Indie+Flower&family=Patrick+Hand&family=Shantell+Sans:wght@400;600;700&display=swap');
