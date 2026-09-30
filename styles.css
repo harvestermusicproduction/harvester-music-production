@@ -53,7 +53,7 @@
 
 /* Base resets */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 16px; }
+html { scroll-behavior: smooth; font-size: 18px; }
 body {
   font-family: var(--font-body);
   background-color: var(--bg);
@@ -62,7 +62,7 @@ body {
     radial-gradient(ellipse 60% 40% at 50% 65%, rgba(246, 210, 138, 0.04) 0%, transparent 70%);
   background-attachment: fixed;
   color: var(--text);
-  line-height: 1.8;
+  line-height: 1.9;
   overflow-x: hidden;
 }
 
@@ -105,7 +105,7 @@ body {
 
 .hero-hand-title {
   font-family: var(--font-hand-title) !important;
-  font-size: 5.5rem !important;
+  font-size: 6.2rem !important;
   font-weight: normal !important;
   color: #fffaf0 !important;
   letter-spacing: 6px !important;
@@ -127,25 +127,26 @@ h1, h2, h3, h4, h5, h6 {
 }
 p { 
   font-family: var(--font-chn-body); 
-  color: rgba(250, 246, 240, 0.9); 
+  color: rgba(250, 246, 240, 0.95); 
   font-weight: normal; 
   margin-bottom: 1.5rem; 
-  letter-spacing: 1px;
-  line-height: 1.9;
+  letter-spacing: 1.2px;
+  font-size: 1.18rem;
+  line-height: 2.0;
 }
-a { color: var(--text); text-decoration: none; transition: var(--transition); font-family: var(--font-hand-cn), var(--font-eng-body); }
+a { color: var(--text); text-decoration: none; transition: var(--transition); font-family: var(--font-hand-cn), var(--font-eng-body); font-size: 1.05rem; }
 a:hover { color: var(--gold); }
 img, video { max-width: 100%; display: block; border-radius: 6px; }
 section { padding: 8rem 2rem; max-width: 1000px; margin: 0 auto; }
 
 /* 🖋️ Typography Helper Classes */
-.font-title-en { font-family: var(--font-eng-title); }
-.font-title-cn { font-family: var(--font-chn-title); font-weight: normal; }
-.font-body-en  { font-family: var(--font-eng-body); }
-.font-body-cn  { font-family: var(--font-chn-body); }
-.font-hand-en  { font-family: var(--font-hand-en); }
-.font-hand-cn  { font-family: var(--font-hand-cn); }
-.font-serif-cn { font-family: var(--font-serif-cn); }
+.font-title-en { font-family: var(--font-eng-title); font-size: 1.35rem; }
+.font-title-cn { font-family: var(--font-chn-title); font-weight: normal; font-size: 1.4rem; }
+.font-body-en  { font-family: var(--font-eng-body); font-size: 1.15rem; }
+.font-body-cn  { font-family: var(--font-chn-body); font-size: 1.18rem; }
+.font-hand-en  { font-family: var(--font-hand-en); font-size: 1.25rem; }
+.font-hand-cn  { font-family: var(--font-hand-cn); font-size: 1.25rem; }
+.font-serif-cn { font-family: var(--font-serif-cn); font-size: 1.25rem; }
 
 /* 🌾 Hand-drawn Badges / Tags */
 .hand-tag {
