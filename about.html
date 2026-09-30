@@ -804,6 +804,59 @@
       margin-top: 2px;
     }
 
+    /* 🕊️ Pastoral Advisory Team Card (牧师顾问团 / 属灵遮盖与监督) */
+    .pastoral-advisory-card {
+      margin-top: 3.5rem;
+      background: radial-gradient(ellipse at center, rgba(28, 22, 18, 0.95) 0%, rgba(14, 11, 9, 0.98) 100%);
+      border: 1.5px dashed rgba(246, 210, 138, 0.4);
+      border-radius: var(--hand-radius-soft);
+      padding: 3rem 2.5rem;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.65), 0 0 30px rgba(246, 210, 138, 0.06);
+    }
+    .pastoral-advisory-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .pastoral-photo-polaroid {
+      background: #fbf9f4;
+      border-radius: 4px;
+      padding: 14px 14px 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      position: relative;
+      transform: rotate(-1.8deg);
+      transition: all 0.4s ease;
+      color: #1a1a1a;
+      text-align: center;
+    }
+    .pastoral-photo-polaroid:hover {
+      transform: rotate(0deg) scale(1.02);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.8), 0 0 25px rgba(246, 210, 138, 0.2);
+    }
+    .pastoral-photo-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      background: #000;
+      border-radius: 2px;
+      display: block;
+      margin-bottom: 12px;
+      filter: contrast(108%);
+    }
+    .pastoral-role-block {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(246, 210, 138, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 1.2rem;
+      transition: border-color 0.3s ease;
+    }
+    .pastoral-role-block:hover {
+      border-color: var(--gold);
+    }
+
     /* 📱 Mobile Responsive Adjustments */
     @media (max-width: 860px) {
       .origin-layout,
@@ -815,7 +868,8 @@
       .position-points-grid,
       .coop-layout-top,
       .coop-cards-grid,
-      .team-grid-top {
+      .team-grid-top,
+      .pastoral-advisory-grid {
         grid-template-columns: 1fr;
         gap: 1.8rem;
       }
@@ -1551,6 +1605,60 @@ Edward</div>
           <div class="polaroid-role-en" id="about_team_r7_te">Singers</div>
           <div class="polaroid-names" id="about_team_r7_names" style="font-size:1.15rem;">依歌曲需求而定</div>
           <div class="polaroid-names-sub" id="about_team_r7_names_en">Selected based on song requirements</div>
+        </div>
+      </div>
+
+      <!-- 🕊️ 牧师顾问团 / 属灵遮盖与监督 (PASTORAL ADVISORY TEAM & SPIRITUAL COVERING) -->
+      <div class="pastoral-advisory-card">
+        <div class="polaroid-tape"></div>
+        <div class="pastoral-advisory-grid">
+          <!-- Left: Polaroid with Bible and Cross -->
+          <div class="pastoral-photo-polaroid">
+            <img id="about_pastoral_img" src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80" alt="圣经与属灵遮盖" class="pastoral-photo-img">
+            <div class="polaroid-role-badge" id="about_pastoral_badge" style="font-size:1.2rem; color:#b37d2e;">属灵遮盖与歌词监督</div>
+            <div class="polaroid-role-en" id="about_pastoral_badge_en" style="font-size:0.75rem;">Spiritual Covering & Supervision</div>
+          </div>
+
+          <!-- Right: Advisory & Supervisory Roles -->
+          <div>
+            <div style="margin-bottom:1.4rem;">
+              <span class="sketch-pill" style="font-size:0.85rem; margin-bottom:0.6rem;">🕊️ SPIRITUAL OVERSIGHT · 属灵掌舵</span>
+              <h3 id="about_pastoral_title" style="font-family: var(--font-hand-cn); font-size: 2.3rem; color: #fffaf0; margin: 0.3rem 0 0.1rem; letter-spacing: 3px;">
+                牧 师 团
+              </h3>
+              <p id="about_pastoral_subtitle" style="font-family: var(--font-hand-en); font-size: 1rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin: 0;">
+                PASTORAL ADVISORY TEAM
+              </p>
+            </div>
+
+            <!-- 1. 顾问团队 / Advisory Team -->
+            <div class="pastoral-role-block">
+              <h4 style="font-family: var(--font-hand-cn); font-size: 1.35rem; color: var(--gold); margin: 0 0 0.4rem; letter-spacing: 1.5px; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-bible"></i> <span id="about_pastoral_adv_title">顾问团队 / Advisory Team</span>
+              </h4>
+              <p id="about_pastoral_adv_desc" style="font-family: var(--font-hand-cn); font-size: 1.25rem; color: #fffaf0; line-height: 1.7; margin: 0 0 0.3rem; letter-spacing: 1px;">
+                需要 4 位牧师成为顾问，提供属灵遮盖，并监督歌词的神学准确性。
+              </p>
+              <p id="about_pastoral_adv_desc_en" style="font-family: var(--font-hand-en); font-size: 0.9rem; color: #9c9083; margin: 0; line-height: 1.4;">
+                Four pastors will serve as advisors, providing spiritual covering and ensuring theological accuracy in lyrics.
+              </p>
+            </div>
+
+            <!-- 2. 监督职责 / Supervisory Role -->
+            <div class="pastoral-role-block" style="margin-bottom:0;">
+              <h4 style="font-family: var(--font-hand-cn); font-size: 1.35rem; color: var(--gold); margin: 0 0 0.6rem; letter-spacing: 1.5px; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-shield-alt"></i> <span id="about_pastoral_sup_title">监督职责 / Supervisory Role</span>
+              </h4>
+              <ul style="margin:0; padding-left:1.2rem; font-family: var(--font-hand-cn); font-size: 1.18rem; color: #ded6c8; line-height: 1.8; letter-spacing: 1px;">
+                <li id="about_pastoral_sup_r1">检查歌词是否符合神学教导。</li>
+                <li id="about_pastoral_sup_r2">在非传统教会诗歌中提供指导，避免误导性用词。</li>
+                <li id="about_pastoral_sup_r3">作为创作坊的属灵掌舵人，确保财务透明，防止滥用资源。</li>
+              </ul>
+              <p id="about_pastoral_sup_en" style="font-family: var(--font-hand-en); font-size: 0.88rem; color: #8c8276; margin: 0.6rem 0 0; line-height: 1.4;">
+                Review lyrics for theological accuracy, provide guidance on non-traditional songs, and ensure financial transparency to prevent misuse of resources.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

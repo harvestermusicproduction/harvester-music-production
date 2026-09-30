@@ -2078,6 +2078,51 @@ document.addEventListener('DOMContentLoaded', () => {
               <input type="hidden" id="in_about_team_r7_img" value="${d('about_team_r7_img', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80')}">
             </div>
           </div>
+
+          <!-- 🕊️ 牧师顾问团 / 属灵遮盖与监督 (PASTORAL ADVISORY TEAM) -->
+          <div style="background:#141210; padding:18px; border-radius:10px; border:1px solid rgba(246,210,138,0.3); margin-top:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px dashed #333; padding-bottom:8px;">
+              <h4 style="color:var(--gold); margin:0; display:flex; align-items:center; gap:8px;">
+                <span>🕊️</span> 牧师顾问团 / 属灵遮盖与监督 (Pastoral Advisory Team)
+              </h4>
+              <div style="display:flex; gap:8px;">
+                <input type="text" id="in_about_pastoral_title" value="${d('about_pastoral_title', '牧 师 团')}" style="background:#1a1a1a; border:1px solid #333; color:#fff; padding:4px 8px; border-radius:4px; font-size:0.8rem; width:100px;">
+                <input type="text" id="in_about_pastoral_subtitle" value="${d('about_pastoral_subtitle', 'PASTORAL ADVISORY TEAM')}" style="background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:4px 8px; border-radius:4px; font-size:0.8rem;">
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 240px 1fr; gap:20px; align-items:start;">
+              <!-- Photo -->
+              <div style="background:#111; padding:12px; border-radius:8px; border:1px dashed #333; text-align:center;">
+                <label style="font-size:0.75rem; color:#aaa; display:block; margin-bottom:4px;">顾问团圣经配图</label>
+                <img id="prev_about_pastoral_img" src="${d('about_pastoral_img', 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80')}" style="width:100%; height:110px; object-fit:cover; border-radius:4px; margin-bottom:6px;">
+                <input type="file" id="f_about_pastoral_img" style="font-size:0.7rem; width:100%;">
+                <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_pastoral_img', 'in_about_pastoral_img', 'prev_about_pastoral_img')">更换圣经相片</button>
+                <input type="hidden" id="in_about_pastoral_img" value="${d('about_pastoral_img', 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80')}">
+              </div>
+
+              <!-- Content details -->
+              <div>
+                <!-- 1. Advisory Team -->
+                <div style="margin-bottom:12px; background:#111; padding:12px; border-radius:6px; border:1px solid #222;">
+                  <label style="font-size:0.75rem; color:var(--gold); font-weight:bold; display:block; margin-bottom:4px;">📖 顾问团队 (Advisory Team)</label>
+                  <input type="text" id="in_about_pastoral_adv_title" value="${d('about_pastoral_adv_title', '顾问团队 / Advisory Team')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
+                  <textarea id="in_about_pastoral_adv_desc" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">${d('about_pastoral_adv_desc', '需要 4 位牧师成为顾问，提供属灵遮盖，并监督歌词的神学准确性。')}</textarea>
+                  <input type="text" id="in_about_pastoral_adv_desc_en" value="${d('about_pastoral_adv_desc_en', 'Four pastors will serve as advisors, providing spiritual covering and ensuring theological accuracy in lyrics.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#aaa; padding:6px; border-radius:4px; font-size:0.75rem;">
+                </div>
+
+                <!-- 2. Supervisory Role -->
+                <div style="background:#111; padding:12px; border-radius:6px; border:1px solid #222;">
+                  <label style="font-size:0.75rem; color:var(--gold); font-weight:bold; display:block; margin-bottom:4px;">🛡️ 监督职责 (Supervisory Role)</label>
+                  <input type="text" id="in_about_pastoral_sup_title" value="${d('about_pastoral_sup_title', '监督职责 / Supervisory Role')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
+                  <input type="text" id="in_about_pastoral_sup_r1" value="${d('about_pastoral_sup_r1', '检查歌词是否符合神学教导。')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">
+                  <input type="text" id="in_about_pastoral_sup_r2" value="${d('about_pastoral_sup_r2', '在非传统教会诗歌中提供指导，避免误导性用词。')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">
+                  <input type="text" id="in_about_pastoral_sup_r3" value="${d('about_pastoral_sup_r3', '作为创作坊的属灵掌舵人，确保财务透明，防止滥用资源。')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">
+                  <input type="text" id="in_about_pastoral_sup_en" value="${d('about_pastoral_sup_en', 'Review lyrics for theological accuracy, provide guidance on non-traditional songs, and ensure financial transparency to prevent misuse of resources.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#aaa; padding:5px; border-radius:4px; font-size:0.75rem;">
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- 🎯 板块 9: 平台定位 (POSITIONING) -->
@@ -2220,6 +2265,9 @@ document.addEventListener('DOMContentLoaded', () => {
       'about_team_r5_t', 'about_team_r5_te', 'about_team_r5_names', 'about_team_r5_img',
       'about_team_r6_t', 'about_team_r6_te', 'about_team_r6_names', 'about_team_r6_img',
       'about_team_r7_t', 'about_team_r7_te', 'about_team_r7_names', 'about_team_r7_names_en', 'about_team_r7_img',
+      'about_pastoral_title', 'about_pastoral_subtitle', 'about_pastoral_img',
+      'about_pastoral_adv_title', 'about_pastoral_adv_desc', 'about_pastoral_adv_desc_en',
+      'about_pastoral_sup_title', 'about_pastoral_sup_r1', 'about_pastoral_sup_r2', 'about_pastoral_sup_r3', 'about_pastoral_sup_en',
 
       'about_pos_tagline',
       'about_pos_title',
