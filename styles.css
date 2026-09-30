@@ -150,13 +150,12 @@ body {
 
 .hero-hand-title {
   font-family: var(--font-hand-title) !important;
-  font-size: clamp(2.6rem, 6.5vw, 5.5rem) !important;
+  font-size: clamp(2.2rem, 5.5vw, 5.2rem) !important;
   font-weight: normal !important;
   color: #fffaf0 !important;
-  letter-spacing: 4px !important;
+  letter-spacing: 3px !important;
   text-shadow: 0 8px 30px rgba(0,0,0,0.85), 0 0 40px rgba(246, 210, 138, 0.35) !important;
-  line-height: 1.2 !important;
-  white-space: nowrap !important;
+  line-height: 1.25 !important;
   display: block !important;
   width: 100% !important;
   text-align: center !important;
