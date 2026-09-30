@@ -8,7 +8,7 @@
   <title>收割机创作工作坊 Harvester Music Production | 现代福音音乐平台</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Gaegu:wght@400;700&family=Inter:wght@400;500;600;700&family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@300;400;600&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Gaegu:wght@400;700&family=Inter:wght@400;500;600;700&family=Kaushan+Script&family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@300;400;600&family=Patrick+Hand&family=Satisfy&display=swap" rel="stylesheet">
   <meta name="google-site-verification" content="WAqLLdIzznBQlsZuj8A3oXHGzKAOJXaTpTBIwSY-syw" />
 
   <!-- Open Graph / Social Media Meta Tags -->
@@ -38,7 +38,7 @@
     "genre": ["Christian", "Worship", "Gospel", "Pop"]
   }
   </script>
-  <link rel="stylesheet" href="styles.css?v=5.2.0">
+  <link rel="stylesheet" href="styles.css?v=5.3.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
     window.onerror = function(msg, url, line) {
@@ -48,7 +48,13 @@
 </head>
 <body style="position: relative; background: transparent !important; margin: 0; padding: 0;">
   <!-- Liquid Ripple Background (Layer 1) -->
-  <div id="liquid-canvas-container" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; background:#000; pointer-events: none;"></div>
+  <div id="liquid-canvas-container" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; background:#12100e; pointer-events: none;"></div>
+
+  <!-- 🎼 Floating Musical Staves Waves Layer (Layer 2) -->
+  <div class="music-staves-wave"></div>
+
+  <!-- 🎵 Ambient Floating Music Notes Background (Layer 3) -->
+  <div id="music-ambient-bg"></div>
 
   <canvas id="bgParticles" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; opacity: 0.15; pointer-events: none;"></canvas>
 
@@ -113,11 +119,8 @@
     </video>
     <div class="hero-overlay" style="z-index: 7;"></div>
     <div class="hero-content-layer fade-in" style="text-align: center; position: relative; z-index: 10;">
-      <div class="hand-tag font-hand-en" style="margin-bottom: 1.2rem;">
-        <i class="fas fa-feather-alt" style="font-size: 0.9rem;"></i> Handcrafted CCM & Original Praise
-      </div>
       <img src="assets/logo.png" alt="Harvester Logo" class="floating-ui home-hero-logo" style="height: 220px; width: auto; margin: 0 auto 1.8rem; display: block; filter: drop-shadow(0 0 35px rgba(246,210,138,0.35));">
-      <h1 class="floating-ui" style="font-size: 4rem; margin-bottom: 1.2rem; text-shadow: 0 10px 30px rgba(0,0,0,0.8); line-height: 1.1;">Harvester Music</h1>
+      <h1 class="floating-ui hero-hand-title">Harvester Music</h1>
       <p class="floating-ui font-title-cn" style="font-size: 1.25rem; color: var(--gold); letter-spacing: 8px; margin-top: 1.2rem; margin-bottom: 1.5rem; opacity: 1;">收 割 机 创 作 工 作 坊</p>
       <div class="floating-ui" style="margin-top: 1.8rem;">
         <p class="hero-slogan font-title-cn" style="font-size: 1.4rem; color: #fffaf0; letter-spacing: 4px; font-weight: 500; margin-bottom: 0.8rem; text-shadow: 0 4px 15px rgba(0,0,0,0.8);">
@@ -217,6 +220,39 @@
       console.log("💎 Harvester Diamond V1.7: Engine Active");
       if (typeof LiquidRipple !== 'undefined') {
         window.liquid = new LiquidRipple('liquid-canvas-container');
+      }
+
+      // --- 🎵 Ambient Floating Musical Notes Background ---
+      const ambientBg = document.getElementById('music-ambient-bg');
+      if (ambientBg) {
+        const AMBIENT_SYMBOLS = ['♪', '♫', '♬', '♩', '𝄞', '✦', '✧'];
+        function spawnAmbientNote() {
+          if (document.hidden) return;
+          const note = document.createElement('div');
+          note.className = 'ambient-note';
+          note.innerText = AMBIENT_SYMBOLS[Math.floor(Math.random() * AMBIENT_SYMBOLS.length)];
+          const left = Math.random() * 94 + 3;
+          const size = Math.random() * 1.1 + 0.9;
+          const duration = Math.random() * 7 + 11;
+          const driftX = (Math.random() - 0.5) * 80;
+          const rot = (Math.random() - 0.5) * 60;
+          
+          note.style.left = `${left}%`;
+          note.style.fontSize = `${size}rem`;
+          note.style.animationDuration = `${duration}s`;
+          note.style.setProperty('--drift-x', `${driftX}px`);
+          note.style.setProperty('--rot', `${rot}deg`);
+          
+          ambientBg.appendChild(note);
+          setTimeout(() => {
+            note.remove();
+          }, duration * 1000);
+        }
+
+        for (let i = 0; i < 10; i++) {
+          setTimeout(spawnAmbientNote, i * 700);
+        }
+        setInterval(spawnAmbientNote, 1600);
       }
 
       // --- Vinyl Note Interaction ---
