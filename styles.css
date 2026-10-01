@@ -155,14 +155,66 @@
 html { scroll-behavior: smooth; font-size: 17px; }
 body {
   font-family: var(--font-body);
-  background: var(--bg);
-  background-color: var(--bg);
+  background: radial-gradient(circle at 50% 15%, #242f3a 0%, #1b232c 45%, #141a20 100%);
+  background-color: #1b232c;
   color: var(--text);
   line-height: 1.8;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  min-height: 100vh;
+}
+
+/* =========================================================================
+   🎨 MORANDI COLOR PALETTE PAGE BACKGROUND SYSTEM (莫兰迪治愈柔和全站背景)
+   ========================================================================= */
+/* 1. 主页 (Home) - 莫兰迪·深灰湖蓝 (Slate Teal & Amber Oat) */
+body.page-home, .page-home {
+  background: radial-gradient(circle at 50% 15%, #242f3a 0%, #1b232c 45%, #141a20 100%) !important;
+  background-color: #1b232c !important;
+}
+
+/* 2. 音乐与歌谱集 (Music & Scores) - 莫兰迪·雾霭松石黛蓝 (Dusty Sage Teal & Slate) */
+body.page-music, body.page-scores, .page-music, .page-scores {
+  background: radial-gradient(circle at 50% 15%, #1f2d32 0%, #172327 50%, #111a1d 100%) !important;
+  background-color: #172327 !important;
+}
+
+/* 3. 活动与日历 (Events) - 莫兰迪·暖褐陶土 (Muted Terracotta Clay & Charcoal Espresso) */
+body.page-events, body.page-event, .page-events, .page-event {
+  background: radial-gradient(circle at 50% 15%, #272120 0%, #1e1918 50%, #151211 100%) !important;
+  background-color: #1e1918 !important;
+}
+
+/* 4. 照片集 (Diary / Footprints) - 莫兰迪·复古亚麻卡其 (Muted Kraft Linen & Warm Earth) */
+body.page-diary, .page-diary {
+  background: radial-gradient(circle at 50% 15%, #272825 0%, #1f201d 50%, #161715 100%) !important;
+  background-color: #1f201d !important;
+}
+
+/* 5. 我要投稿 (Submit) - 莫兰迪·灰绿鼠尾草 (Dusty Sage Green & Forest Slate) */
+body.page-submit, .page-submit {
+  background: radial-gradient(circle at 50% 15%, #1f2b25 0%, #17211c 50%, #121915 100%) !important;
+  background-color: #17211c !important;
+}
+
+/* 6. 关于我们 (About & Singers) - 莫兰迪·暖砂胡桃木 (Warm Sand & Walnut Slate) */
+body.page-about, body.page-singers, .page-about, .page-singers {
+  background: radial-gradient(circle at 50% 15%, #28241e 0%, #1f1b16 50%, #161310 100%) !important;
+  background-color: #1f1b16 !important;
+}
+
+/* 7. 支持我们 (Support) - 莫兰迪·干枯玫瑰粉黛 (Dusty Rose & Vintage Burgundy Slate) */
+body.page-support, .page-support {
+  background: radial-gradient(circle at 50% 15%, #2a2024 0%, #20171b 50%, #171114 100%) !important;
+  background-color: #20171b !important;
+}
+
+/* 8. 联系我们 (Contact) - 莫兰迪·燕麦炭灰 (Oatmeal Sand & Charcoal Kraft) */
+body.page-contact, .page-contact {
+  background: radial-gradient(circle at 50% 15%, #22272c 0%, #191e23 50%, #121619 100%) !important;
+  background-color: #191e23 !important;
 }
 
 /* 🎵 Ambient Floating Music Notes Background */
