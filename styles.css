@@ -3082,73 +3082,14 @@ body.immersive-modal-active header {
   z-index: 10;
 }
 
-/* 📜 Authentic 3D Paper Accordion Unfold (Z-Fold Leaflet) */
-@keyframes accordionPaperUnfold1 {
-  0% { 
-    opacity: 0; 
-    transform: perspective(2200px) rotateY(-88deg) scaleX(0.04); 
-    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.7);
-  }
-  30% {
-    opacity: 0.95;
-  }
-  100% { 
-    opacity: 1; 
-    transform: perspective(2200px) rotateY(0deg) scaleX(1); 
-    box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35);
-  }
-}
-
-@keyframes accordionPaperUnfold2 {
-  0% { 
-    opacity: 0; 
-    transform: perspective(2200px) rotateY(88deg) scaleX(0.04); 
-    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.7);
-  }
-  30% {
-    opacity: 0.95;
-  }
-  100% { 
-    opacity: 1; 
-    transform: perspective(2200px) rotateY(0deg) scaleX(1); 
-    box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35);
-  }
-}
-
-@keyframes accordionPaperUnfold3 {
-  0% { 
-    opacity: 0; 
-    transform: perspective(2200px) rotateY(-88deg) scaleX(0.04); 
-    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.7);
-  }
-  30% {
-    opacity: 0.95;
-  }
-  100% { 
-    opacity: 1; 
-    transform: perspective(2200px) rotateY(0deg) scaleX(1); 
-    box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35);
-  }
-}
-
-/* Staggered Sequential Paper Unfolding (Page by Page: Fold 1 -> Fold 2 -> Fold 3) */
-.unfold-panel-1 {
-  opacity: 0;
-  transform-origin: left center;
-  border-radius: 0 !important;
-  animation: accordionPaperUnfold1 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
-}
-.unfold-panel-2 {
-  opacity: 0;
-  transform-origin: left center;
-  border-radius: 0 !important;
-  animation: accordionPaperUnfold2 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.24s forwards;
-}
+.unfold-panel-1,
+.unfold-panel-2,
 .unfold-panel-3 {
-  opacity: 0;
   transform-origin: left center;
   border-radius: 0 !important;
-  animation: accordionPaperUnfold3 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.44s forwards;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .cutout-sticker {
