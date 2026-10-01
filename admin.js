@@ -1308,16 +1308,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const gospelSingers = (singers || []).filter(s => s.category === 'gospel');
     const worshipSingers = (singers || []).filter(s => s.category === 'worship');
+    const coWorkersList = getCoWorkersListFromConfig(aboutData);
 
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:15px;">
         <div>
           <h1 style="color:var(--gold); margin:0;">🎙️ 主要同工与歌手管理 (Co-workers & Singers)</h1>
-          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理 7 大核心服事同工团队、福音歌手及敬拜赞美歌手名册。</p>
+          <p style="color:#888; font-size:0.85rem; margin-top:5px;">自由管理主要服事同工团队、福音歌手及敬拜赞美歌手名册。</p>
         </div>
         <div style="display:flex; gap:10px;">
           ${currentSingerSubTab === 'core' 
-            ? `<button class="btn btn-submit" style="width:auto; padding:10px 24px;" onclick="saveCoreCoWorkersCMS()">💾 保存所有同工修改</button>`
+            ? `
+              <button class="btn btn-tiny" style="background:#222; color:var(--gold); border:1px solid var(--gold); padding:8px 16px; font-weight:600;" onclick="addCoWorkerCard()">+ 添加同工职务</button>
+              <button class="btn btn-submit" style="width:auto; padding:8px 24px;" onclick="saveCoreCoWorkersCMS()">💾 保存所有同工修改</button>
+            `
             : `<button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="addSinger('${currentSingerSubTab}')">+ 邀请新歌手</button>`}
         </div>
       </div>
@@ -1325,7 +1329,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <!-- Tab Switcher -->
       <div style="display:flex; gap:10px; margin-bottom:25px; border-bottom:1px solid #222; padding-bottom:10px;">
         <button onclick="switchSingerTab('core')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentSingerSubTab==='core' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
-          👥 主要服事同工 (7 大核心职务)
+          👥 主要服事同工 <span id="coWorkersCountBadge" style="opacity:0.8; font-size:0.8rem;">(${coWorkersList.length})</span>
         </button>
         <button onclick="switchSingerTab('gospel')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentSingerSubTab==='gospel' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
           🎤 福音歌手 (${gospelSingers.length})
@@ -1336,93 +1340,30 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       ${currentSingerSubTab === 'core' ? `
-        <!-- 👥 主要同工管理 (7 大核心职务) -->
+        <!-- 👥 主要同工管理 (自由增减同工职务) -->
         <div style="background:#0a0a0a; border:1px solid #1f1f1f; border-radius:12px; padding:25px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #222; padding-bottom:12px;">
-            <h3 style="color:var(--gold); margin:0;">7 大核心服事职务与拍立得相片管理</h3>
-            <span style="color:#777; font-size:0.8rem;">保存后将实时同步更新至前台「主要同工」与「关于我们」页面</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #222; padding-bottom:12px; flex-wrap:wrap; gap:10px;">
+            <div>
+              <h3 style="color:var(--gold); margin:0;">主要同工职务与拍立得相片管理</h3>
+              <span style="color:#777; font-size:0.8rem;">可随时添加新职务或删除同工，保存后将实时同步更新至前台「主要同工」与「关于我们」页面</span>
+            </div>
+            <button class="btn btn-tiny" style="background:rgba(246,210,138,0.15); border:1px solid var(--gold); color:var(--gold); padding:8px 18px; font-weight:bold;" onclick="addCoWorkerCard()">
+              + 添加新同工职务 (Add Role)
+            </button>
           </div>
 
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px; margin-bottom:25px;">
-            <!-- 1. 创办启发人 -->
-            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">01 创办启发人 (Founding Inspirer)</span>
-              <input type="text" id="in_about_team_r1_t" value="${d('about_team_r1_t', '创作平台创办启发人')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
-              <textarea id="in_about_team_r1_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r1_names', '汤小康\nWarren 沈自强')}</textarea>
-              <img id="prev_about_team_r1_img" src="${d('about_team_r1_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
-              <input type="file" id="f_about_team_r1_img" style="font-size:0.75rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r1_img', 'in_about_team_r1_img', 'prev_about_team_r1_img')">📤 更换相片</button>
-              <input type="hidden" id="in_about_team_r1_img" value="${d('about_team_r1_img', '')}">
-            </div>
-
-            <!-- 2. 创作 -->
-            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">02 创作 (Music Creation)</span>
-              <input type="text" id="in_about_team_r2_t" value="${d('about_team_r2_t', '创作')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
-              <textarea id="in_about_team_r2_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r2_names', 'Natasha')}</textarea>
-              <img id="prev_about_team_r2_img" src="${d('about_team_r2_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
-              <input type="file" id="f_about_team_r2_img" style="font-size:0.75rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r2_img', 'in_about_team_r2_img', 'prev_about_team_r2_img')">📤 更换相片</button>
-              <input type="hidden" id="in_about_team_r2_img" value="${d('about_team_r2_img', '')}">
-            </div>
-
-            <!-- 3. 制作 -->
-            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">03 制作 (Music Production)</span>
-              <input type="text" id="in_about_team_r3_t" value="${d('about_team_r3_t', '制作')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
-              <textarea id="in_about_team_r3_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r3_names', '制作团队')}</textarea>
-              <img id="prev_about_team_r3_img" src="${d('about_team_r3_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
-              <input type="file" id="f_about_team_r3_img" style="font-size:0.75rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r3_img', 'in_about_team_r3_img', 'prev_about_team_r3_img')">📤 更换相片</button>
-              <input type="hidden" id="in_about_team_r3_img" value="${d('about_team_r3_img', '')}">
-            </div>
-
-            <!-- 4. 影视设计 -->
-            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">04 影视设计 (Visual & Video Design)</span>
-              <input type="text" id="in_about_team_r4_t" value="${d('about_team_r4_t', '影视设计')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
-              <textarea id="in_about_team_r4_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r4_names', '影视设计组')}</textarea>
-              <img id="prev_about_team_r4_img" src="${d('about_team_r4_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
-              <input type="file" id="f_about_team_r4_img" style="font-size:0.75rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r4_img', 'in_about_team_r4_img', 'prev_about_team_r4_img')">📤 更换相片</button>
-              <input type="hidden" id="in_about_team_r4_img" value="${d('about_team_r4_img', '')}">
-            </div>
-
-            <!-- 5. 企划推广 -->
-            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">05 企划推广 (Marketing & Promotion)</span>
-              <input type="text" id="in_about_team_r5_t" value="${d('about_team_r5_t', '企划推广')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
-              <textarea id="in_about_team_r5_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r5_names', '企划团队')}</textarea>
-              <img id="prev_about_team_r5_img" src="${d('about_team_r5_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
-              <input type="file" id="f_about_team_r5_img" style="font-size:0.75rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r5_img', 'in_about_team_r5_img', 'prev_about_team_r5_img')">📤 更换相片</button>
-              <input type="hidden" id="in_about_team_r5_img" value="${d('about_team_r5_img', '')}">
-            </div>
-
-            <!-- 6. 行政 -->
-            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">06 行政 (Administration)</span>
-              <input type="text" id="in_about_team_r6_t" value="${d('about_team_r6_t', '行政')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
-              <textarea id="in_about_team_r6_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r6_names', '行政支持团队')}</textarea>
-              <img id="prev_about_team_r6_img" src="${d('about_team_r6_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
-              <input type="file" id="f_about_team_r6_img" style="font-size:0.75rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r6_img', 'in_about_team_r6_img', 'prev_about_team_r6_img')">📤 更换相片</button>
-              <input type="hidden" id="in_about_team_r6_img" value="${d('about_team_r6_img', '')}">
-            </div>
-
-            <!-- 7. 音响舞台 -->
-            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">07 音响舞台 (Live Stage & Audio)</span>
-              <input type="text" id="in_about_team_r7_t" value="${d('about_team_r7_t', '音响舞台团队')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
-              <textarea id="in_about_team_r7_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r7_names', '敬拜工程音响组')}</textarea>
-              <img id="prev_about_team_r7_img" src="${d('about_team_r7_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
-              <input type="file" id="f_about_team_r7_img" style="font-size:0.75rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r7_img', 'in_about_team_r7_img', 'prev_about_team_r7_img')">📤 更换相片</button>
-              <input type="hidden" id="in_about_team_r7_img" value="${d('about_team_r7_img', '')}">
-            </div>
+          <div id="coWorkersListGrid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px; margin-bottom:25px;">
+            ${renderCoWorkerCardsHTML(coWorkersList)}
           </div>
 
-          <button class="btn btn-submit" style="width:100%; padding:14px; font-size:1rem;" onclick="saveCoreCoWorkersCMS()">💾 立即保存 7 大主要服事同工</button>
+          <div style="display:flex; gap:15px;">
+            <button class="btn" style="flex:1; background:#181818; border:1px dashed var(--gold); color:var(--gold); padding:14px; font-size:0.95rem; font-weight:600;" onclick="addCoWorkerCard()">
+              + 添加新同工职务 (Add New Co-worker Role)
+            </button>
+            <button class="btn btn-submit" style="flex:2; padding:14px; font-size:1rem;" onclick="saveCoreCoWorkersCMS()">
+              💾 立即保存主要服事同工名册
+            </button>
+          </div>
         </div>
       ` : `
         <!-- 歌手名册列表 (Gospel or Worship) -->
@@ -1446,6 +1387,137 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
+  // Dynamic co-worker team management helper
+  window.getCoWorkersListFromConfig = function(aboutData) {
+    if (aboutData && Array.isArray(aboutData.about_team_list) && aboutData.about_team_list.length > 0) {
+      return aboutData.about_team_list;
+    }
+    const list = [];
+    for (let i = 1; i <= 20; i++) {
+      const role = aboutData[`about_team_r${i}_t`];
+      const role_en = aboutData[`about_team_r${i}_te`];
+      const names = aboutData[`about_team_r${i}_names`];
+      const img = aboutData[`about_team_r${i}_img`];
+      if (role || names || img) {
+        list.push({
+          id: `staff_${i}`,
+          role: role || `职务 ${i}`,
+          role_en: role_en || '',
+          names: names || '',
+          image_url: img || 'assets/logo.png'
+        });
+      }
+    }
+    if (list.length > 0) return list;
+
+    return [
+      { id: "staff_1", role: "创作平台创办启发人", role_en: "Founding Inspirer", names: "汤小康\nWarren 沈自强", image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80" },
+      { id: "staff_2", role: "创作", role_en: "Music Creation", names: "Warren 沈自强\n汤小康\nNatasha", image_url: "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80" },
+      { id: "staff_3", role: "制作", role_en: "Music Production", names: "汤小康\nWarren 沈自强\nEdward", image_url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80" },
+      { id: "staff_4", role: "拍摄", role_en: "Visual & Video Design", names: "陈宏亮", image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80" },
+      { id: "staff_5", role: "宣传", role_en: "Marketing & Promotion", names: "Sherlyn", image_url: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80" },
+      { id: "staff_6", role: "行政", role_en: "Administration", names: "梁苡乐", image_url: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80" },
+      { id: "staff_7", role: "歌手与主领", role_en: "Singers & Worship Leaders", names: "依歌曲需求而定", image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80" }
+    ];
+  };
+
+  window.renderCoWorkerCardsHTML = function(teamList) {
+    return teamList.map((item, index) => {
+      const idx = index + 1;
+      const numStr = idx < 10 ? '0' + idx : '' + idx;
+      const itemId = item.id || `staff_${idx}`;
+      return `
+        <div class="coworker-item-card" data-id="${itemId}" style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222; position:relative; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span class="coworker-badge" style="color:var(--gold); font-size:0.82rem; font-weight:bold;">${numStr} 职务与成员</span>
+              <button class="btn-tiny danger" style="padding:2px 8px; font-size:0.75rem;" onclick="removeCoWorkerCard(this)" title="删除此同工职务">🗑️ 删除</button>
+            </div>
+            
+            <label style="font-size:0.75rem; color:#aaa;">中文职务名称 (Role Title) *</label>
+            <input type="text" class="coworker-role-input" value="${item.role || ''}" placeholder="例如：创作平台创办启发人" style="width:100%; margin:4px 0 8px; font-size:0.85rem; padding:7px 10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px;">
+            
+            <label style="font-size:0.75rem; color:#aaa;">英文职务 (Role EN, 可选)</label>
+            <input type="text" class="coworker-role-en-input" value="${item.role_en || ''}" placeholder="例如：Founding Inspirer" style="width:100%; margin:4px 0 8px; font-size:0.8rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color:#aaa; border-radius:4px;">
+
+            <label style="font-size:0.75rem; color:#aaa;">同工姓名 (成员名单，换行分隔)</label>
+            <textarea class="coworker-names-input" placeholder="输入同工名字，如：汤小康&#10;Warren 沈自强" style="width:100%; height:55px; margin:4px 0 8px; font-size:0.85rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px;">${item.names || ''}</textarea>
+
+            <label style="font-size:0.75rem; color:#aaa;">拍立得相片 (Polaroid Photo)</label>
+            <div style="margin-top:4px;">
+              <img id="prev_cw_${idx}" class="coworker-prev-img" src="${item.image_url || 'assets/logo.png'}" style="width:100%; height:110px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000; border:1px solid #333;" onerror="this.src='assets/logo.png'">
+              <input type="file" id="f_cw_${idx}" style="font-size:0.75rem; width:100%; color:#888;">
+              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_cw_${idx}', 'in_cw_${idx}', 'prev_cw_${idx}')">📤 更换相片</button>
+              <input type="hidden" id="in_cw_${idx}" class="coworker-img-val" value="${item.image_url || ''}">
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  };
+
+  window.addCoWorkerCard = function() {
+    const container = document.getElementById('coWorkersListGrid');
+    if (!container) return;
+    const count = container.querySelectorAll('.coworker-item-card').length + 1;
+    const numStr = count < 10 ? '0' + count : '' + count;
+    const uid = Date.now();
+    const newCard = document.createElement('div');
+    newCard.className = 'coworker-item-card';
+    newCard.dataset.id = 'staff_' + uid;
+    newCard.style = "background:#121212; padding:18px; border-radius:10px; border:1.5px dashed var(--gold); position:relative; display:flex; flex-direction:column; justify-content:space-between; animation:fadeIn 0.3s ease;";
+    newCard.innerHTML = `
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span class="coworker-badge" style="color:var(--gold); font-size:0.82rem; font-weight:bold;">${numStr} 新增职务与同工</span>
+          <button class="btn-tiny danger" style="padding:2px 8px; font-size:0.75rem;" onclick="removeCoWorkerCard(this)" title="删除此同工职务">🗑️ 删除</button>
+        </div>
+        
+        <label style="font-size:0.75rem; color:#aaa;">中文职务名称 (Role Title) *</label>
+        <input type="text" class="coworker-role-input" value="" placeholder="例如：诗歌编曲组" style="width:100%; margin:4px 0 8px; font-size:0.85rem; padding:7px 10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px;">
+        
+        <label style="font-size:0.75rem; color:#aaa;">英文职务 (Role EN, 可选)</label>
+        <input type="text" class="coworker-role-en-input" value="" placeholder="例如：Music Arranger" style="width:100%; margin:4px 0 8px; font-size:0.8rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color:#aaa; border-radius:4px;">
+
+        <label style="font-size:0.75rem; color:#aaa;">同工姓名 (成员名单，换行分隔)</label>
+        <textarea class="coworker-names-input" placeholder="输入同工名字..." style="width:100%; height:55px; margin:4px 0 8px; font-size:0.85rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px;"></textarea>
+
+        <label style="font-size:0.75rem; color:#aaa;">拍立得相片 (Polaroid Photo)</label>
+        <div style="margin-top:4px;">
+          <img id="prev_cw_${uid}" class="coworker-prev-img" src="assets/logo.png" style="width:100%; height:110px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000; border:1px solid #333;">
+          <input type="file" id="f_cw_${uid}" style="font-size:0.75rem; width:100%; color:#888;">
+          <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_cw_${uid}', 'in_cw_${uid}', 'prev_cw_${uid}')">📤 上传相片</button>
+          <input type="hidden" id="in_cw_${uid}" class="coworker-img-val" value="assets/logo.png">
+        </div>
+      </div>
+    `;
+    container.appendChild(newCard);
+    updateCoWorkerBadges();
+  };
+
+  window.removeCoWorkerCard = function(btn) {
+    if (!confirm("确定要删除这个职务与同工吗？保存后前台将不再显示。")) return;
+    const card = btn.closest('.coworker-item-card');
+    if (card) {
+      card.remove();
+      updateCoWorkerBadges();
+    }
+  };
+
+  window.updateCoWorkerBadges = function() {
+    const container = document.getElementById('coWorkersListGrid');
+    if (!container) return;
+    const cards = container.querySelectorAll('.coworker-item-card');
+    cards.forEach((card, index) => {
+      const idx = index + 1;
+      const numStr = idx < 10 ? '0' + idx : '' + idx;
+      const badge = card.querySelector('.coworker-badge');
+      if (badge) badge.innerText = `${numStr} 职务与成员`;
+    });
+    const countSpan = document.getElementById('coWorkersCountBadge');
+    if (countSpan) countSpan.innerText = `(${cards.length})`;
+  };
+
   window.saveCoreCoWorkersCMS = async () => {
     const { data: configs } = await db.from('site_config').select('*');
     const c = (configs || []).reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
@@ -1456,14 +1528,37 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch(e){}
     }
 
-    for (let i = 1; i <= 7; i++) {
-      const tEl = document.getElementById(`in_about_team_r${i}_t`);
-      const nEl = document.getElementById(`in_about_team_r${i}_names`);
-      const imgEl = document.getElementById(`in_about_team_r${i}_img`);
-      if (tEl) aboutData[`about_team_r${i}_t`] = tEl.value;
-      if (nEl) aboutData[`about_team_r${i}_names`] = nEl.value;
-      if (imgEl) aboutData[`about_team_r${i}_img`] = imgEl.value;
+    const cards = document.querySelectorAll('.coworker-item-card');
+    const teamList = [];
+    cards.forEach((card, i) => {
+      const role = card.querySelector('.coworker-role-input')?.value || '';
+      const role_en = card.querySelector('.coworker-role-en-input')?.value || '';
+      const names = card.querySelector('.coworker-names-input')?.value || '';
+      const img = card.querySelector('.coworker-img-val')?.value || '';
+      const id = card.dataset.id || `staff_${i+1}`;
+      teamList.push({
+        id,
+        role,
+        role_en,
+        names,
+        image_url: img
+      });
+
+      // Maintain backwards compatibility
+      aboutData[`about_team_r${i+1}_t`] = role;
+      aboutData[`about_team_r${i+1}_te`] = role_en;
+      aboutData[`about_team_r${i+1}_names`] = names;
+      aboutData[`about_team_r${i+1}_img`] = img;
+    });
+
+    for (let k = teamList.length + 1; k <= 30; k++) {
+      delete aboutData[`about_team_r${k}_t`];
+      delete aboutData[`about_team_r${k}_te`];
+      delete aboutData[`about_team_r${k}_names`];
+      delete aboutData[`about_team_r${k}_img`];
     }
+
+    aboutData.about_team_list = teamList;
 
     try {
       await db.from('site_config').upsert({
@@ -1471,7 +1566,7 @@ document.addEventListener('DOMContentLoaded', () => {
         value: JSON.stringify(aboutData)
       }, { onConflict: 'key' });
 
-      alert("🎉 7 大主要服事同工资料已成功保存并实时生效！");
+      alert("🎉 主要服事同工与职务名册已成功保存并实时生效！");
       renderCMS();
     } catch(err) {
       alert("保存失败: " + err.message);
@@ -2738,91 +2833,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- 👥 板块 8: 主要同工 (KEY CO-WORKERS POLAROIDS) -->
         <div class="cms-card" style="border-left: 4px solid #1dd1a1;">
-          <h3 style="color:#1dd1a1; margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>👥</span> 板块八：主要同工拍立得画廊 (Key Co-workers Polaroids)
-          </h3>
-          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑 7 大职务成员名单、中英文职称以及拍立得照片。</p>
-
-          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; margin-bottom:20px;">
-            <!-- 1. 创办启发人 -->
-            <div style="background:#111; padding:15px; border-radius:8px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">01 创办启发人</span>
-              <input type="text" id="in_about_team_r1_t" value="${d('about_team_r1_t', '创作平台创办启发人')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; margin:6px 0 4px; border-radius:4px; font-size:0.8rem;">
-              <textarea id="in_about_team_r1_names" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.85rem; margin-bottom:8px;">${d('about_team_r1_names', '汤小康\nWarren 沈自强')}</textarea>
-              <img id="prev_about_team_r1_img" src="${d('about_team_r1_img', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:80px; object-fit:cover; border-radius:4px; margin-bottom:6px;">
-              <input type="file" id="f_about_team_r1_img" style="font-size:0.7rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r1_img', 'in_about_team_r1_img', 'prev_about_team_r1_img')">更换相片</button>
-              <input type="hidden" id="in_about_team_r1_img" value="${d('about_team_r1_img', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80')}">
-            </div>
-
-            <!-- 2. 创作 -->
-            <div style="background:#111; padding:15px; border-radius:8px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">02 创作</span>
-              <input type="text" id="in_about_team_r2_t" value="${d('about_team_r2_t', '创作')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; margin:6px 0 4px; border-radius:4px; font-size:0.8rem;">
-              <textarea id="in_about_team_r2_names" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.85rem; margin-bottom:8px;">${d('about_team_r2_names', 'Warren 沈自强\n汤小康\nNatasha')}</textarea>
-              <img id="prev_about_team_r2_img" src="${d('about_team_r2_img', 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:80px; object-fit:cover; border-radius:4px; margin-bottom:6px;">
-              <input type="file" id="f_about_team_r2_img" style="font-size:0.7rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r2_img', 'in_about_team_r2_img', 'prev_about_team_r2_img')">更换相片</button>
-              <input type="hidden" id="in_about_team_r2_img" value="${d('about_team_r2_img', 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80')}">
-            </div>
-
-            <!-- 3. 制作 -->
-            <div style="background:#111; padding:15px; border-radius:8px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">03 制作</span>
-              <input type="text" id="in_about_team_r3_t" value="${d('about_team_r3_t', '制作')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; margin:6px 0 4px; border-radius:4px; font-size:0.8rem;">
-              <textarea id="in_about_team_r3_names" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.85rem; margin-bottom:8px;">${d('about_team_r3_names', '汤小康\nWarren 沈自强\nEdward')}</textarea>
-              <img id="prev_about_team_r3_img" src="${d('about_team_r3_img', 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:80px; object-fit:cover; border-radius:4px; margin-bottom:6px;">
-              <input type="file" id="f_about_team_r3_img" style="font-size:0.7rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r3_img', 'in_about_team_r3_img', 'prev_about_team_r3_img')">更换相片</button>
-              <input type="hidden" id="in_about_team_r3_img" value="${d('about_team_r3_img', 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80')}">
-            </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+            <h3 style="color:#1dd1a1; margin:0; display:flex; align-items:center; gap:8px;">
+              <span>👥</span> 板块八：主要同工拍立得画廊 (Key Co-workers Polaroids)
+            </h3>
+            <button class="btn btn-tiny" style="background:#1dd1a1; color:#000; font-weight:bold; border:none; padding:8px 18px;" onclick="switchModule('singers'); switchSingerTab('core');">
+              👥 前往主要同工管理页面编辑 (+/- 自由增减)
+            </button>
           </div>
+          <p style="font-size:0.8rem; color:#888; margin-bottom:1.2rem;">编辑各职务成员名单、中英文职称以及拍立得照片（现已全面支持自由添加或删除职务）。</p>
 
-          <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px;">
-            <!-- 4. 拍摄 -->
-            <div style="background:#111; padding:12px; border-radius:8px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">04 拍摄</span>
-              <input type="text" id="in_about_team_r4_t" value="${d('about_team_r4_t', '拍摄')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; margin:4px 0; border-radius:4px; font-size:0.75rem;">
-              <input type="text" id="in_about_team_r4_names" value="${d('about_team_r4_names', '陈宏亮')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
-              <img id="prev_about_team_r4_img" src="${d('about_team_r4_img', 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:70px; object-fit:cover; border-radius:4px; margin-bottom:5px;">
-              <input type="file" id="f_about_team_r4_img" style="font-size:0.7rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:3px;" onclick="uploadFile('f_about_team_r4_img', 'in_about_team_r4_img', 'prev_about_team_r4_img')">更换相片</button>
-              <input type="hidden" id="in_about_team_r4_img" value="${d('about_team_r4_img', 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80')}">
-            </div>
-
-            <!-- 5. 宣传 -->
-            <div style="background:#111; padding:12px; border-radius:8px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">05 宣传</span>
-              <input type="text" id="in_about_team_r5_t" value="${d('about_team_r5_t', '宣传')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; margin:4px 0; border-radius:4px; font-size:0.75rem;">
-              <input type="text" id="in_about_team_r5_names" value="${d('about_team_r5_names', 'Sherlyn')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
-              <img id="prev_about_team_r5_img" src="${d('about_team_r5_img', 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:70px; object-fit:cover; border-radius:4px; margin-bottom:5px;">
-              <input type="file" id="f_about_team_r5_img" style="font-size:0.7rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:3px;" onclick="uploadFile('f_about_team_r5_img', 'in_about_team_r5_img', 'prev_about_team_r5_img')">更换相片</button>
-              <input type="hidden" id="in_about_team_r5_img" value="${d('about_team_r5_img', 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80')}">
-            </div>
-
-            <!-- 6. 行政 -->
-            <div style="background:#111; padding:12px; border-radius:8px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">06 行政</span>
-              <input type="text" id="in_about_team_r6_t" value="${d('about_team_r6_t', '行政')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; margin:4px 0; border-radius:4px; font-size:0.75rem;">
-              <input type="text" id="in_about_team_r6_names" value="${d('about_team_r6_names', '梁苡乐')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
-              <img id="prev_about_team_r6_img" src="${d('about_team_r6_img', 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:70px; object-fit:cover; border-radius:4px; margin-bottom:5px;">
-              <input type="file" id="f_about_team_r6_img" style="font-size:0.7rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:3px;" onclick="uploadFile('f_about_team_r6_img', 'in_about_team_r6_img', 'prev_about_team_r6_img')">更换相片</button>
-              <input type="hidden" id="in_about_team_r6_img" value="${d('about_team_r6_img', 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80')}">
-            </div>
-
-            <!-- 7. 歌手 -->
-            <div style="background:#111; padding:12px; border-radius:8px; border:1px solid #222;">
-              <span style="color:var(--gold); font-size:0.75rem; font-weight:bold;">07 歌手</span>
-              <input type="text" id="in_about_team_r7_t" value="${d('about_team_r7_t', '歌手')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; margin:4px 0; border-radius:4px; font-size:0.75rem;">
-              <input type="text" id="in_about_team_r7_names" value="${d('about_team_r7_names', '依歌曲需求而定')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
-              <img id="prev_about_team_r7_img" src="${d('about_team_r7_img', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80')}" style="width:100%; height:70px; object-fit:cover; border-radius:4px; margin-bottom:5px;">
-              <input type="file" id="f_about_team_r7_img" style="font-size:0.7rem; width:100%;">
-              <button class="btn-tiny" style="width:100%; margin-top:3px;" onclick="uploadFile('f_about_team_r7_img', 'in_about_team_r7_img', 'prev_about_team_r7_img')">更换相片</button>
-              <input type="hidden" id="in_about_team_r7_img" value="${d('about_team_r7_img', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80')}">
-            </div>
+          <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222; text-align:center;">
+            <p style="color:#aaa; font-size:0.9rem; margin:0 0 12px;">主要同工职务与拍立得相片已统一在「👥 主要同工」模块管理，支持自由添加新职务或删除同工。</p>
+            <button class="btn btn-submit" style="width:auto; padding:10px 24px;" onclick="switchModule('singers'); switchSingerTab('core');">
+              👉 点击立即前往「👥 主要同工」管理职务与相片
+            </button>
           </div>
+        </div>
 
           <!-- 🕊️ 牧师顾问团 / 属灵遮盖与监督 (PASTORAL ADVISORY TEAM) -->
           <div style="background:#141210; padding:18px; border-radius:10px; border:1px solid rgba(246,210,138,0.3); margin-top:20px;">

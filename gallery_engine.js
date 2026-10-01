@@ -76,34 +76,45 @@ async function fetchArtists() {
     let remoteSingers = [];
 
     if (db) {
-      // 1. Fetch customized 7 Core Co-workers from site_config cfg_about_content_json
+      // 1. Fetch customized Core Co-workers from site_config cfg_about_content_json
       const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_about_content_json').maybeSingle();
       if (cfg && cfg.value) {
         try {
           const customTeam = typeof cfg.value === 'string' ? JSON.parse(cfg.value) : cfg.value;
-          const dynamicCore = [];
           
-          for (let i = 1; i <= 7; i++) {
-            const roleTitle = customTeam[`about_team_r${i}_t`];
-            const names = customTeam[`about_team_r${i}_names`];
-            const img = customTeam[`about_team_r${i}_img`];
+          if (customTeam && Array.isArray(customTeam.about_team_list) && customTeam.about_team_list.length > 0) {
+            coreStaffList = customTeam.about_team_list.map((item, idx) => ({
+              id: item.id || `custom_staff_${idx + 1}`,
+              name: (item.names || item.name || `服事同工 ${idx + 1}`).replace(/\n/g, ' & '),
+              category: "core",
+              role: item.role || item.roleTitle || "主要服事同工",
+              image_url: item.image_url || item.img || "assets/logo.png",
+              bio: `${item.role || '主要服事同工'}：${(item.names || item.name || '').replace(/\n/g, '、')}\n\n忠心服事神国度，将恩赐化为敬拜的赞美与见证。`
+            }));
+          } else if (customTeam) {
+            const dynamicCore = [];
+            for (let i = 1; i <= 20; i++) {
+              const roleTitle = customTeam[`about_team_r${i}_t`];
+              const names = customTeam[`about_team_r${i}_names`];
+              const img = customTeam[`about_team_r${i}_img`];
 
-            if (roleTitle || names || img) {
-              dynamicCore.push({
-                id: `custom_staff_r${i}`,
-                name: (names || defaultCoreStaff[i-1]?.name || `服事团队 ${i}`).replace(/\n/g, ' & '),
-                category: "core",
-                role: roleTitle || defaultCoreStaff[i-1]?.role || "主要服事同工",
-                image_url: img || defaultCoreStaff[i-1]?.image_url || "assets/logo.png",
-                bio: `${roleTitle || '主要服事同工'}：${names || ''}\n\n忠心服事神国度，将恩赐化为敬拜的赞美与见证。`
-              });
-            } else if (defaultCoreStaff[i-1]) {
-              dynamicCore.push(defaultCoreStaff[i-1]);
+              if (roleTitle || names || img) {
+                dynamicCore.push({
+                  id: `custom_staff_r${i}`,
+                  name: (names || defaultCoreStaff[i-1]?.name || `服事团队 ${i}`).replace(/\n/g, ' & '),
+                  category: "core",
+                  role: roleTitle || defaultCoreStaff[i-1]?.role || "主要服事同工",
+                  image_url: img || defaultCoreStaff[i-1]?.image_url || "assets/logo.png",
+                  bio: `${roleTitle || '主要服事同工'}：${names || ''}\n\n忠心服事神国度，将恩赐化为敬拜的赞美与见证。`
+                });
+              } else if (i <= defaultCoreStaff.length && defaultCoreStaff[i-1]) {
+                dynamicCore.push(defaultCoreStaff[i-1]);
+              }
             }
-          }
 
-          if (dynamicCore.length > 0) {
-            coreStaffList = dynamicCore;
+            if (dynamicCore.length > 0) {
+              coreStaffList = dynamicCore;
+            }
           }
         } catch(e) {
           console.warn("Parse team config note:", e);

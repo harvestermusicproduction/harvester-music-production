@@ -112,6 +112,40 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const aboutData = typeof aboutJson === 'string' ? JSON.parse(aboutJson) : aboutJson;
         if (aboutData && typeof aboutData === 'object') {
+          // Dynamic team list rendering for about.html polaroid gallery
+          if (Array.isArray(aboutData.about_team_list) && aboutData.about_team_list.length > 0) {
+            const teamSection = document.getElementById('section-team');
+            if (teamSection) {
+              let gridWrap = teamSection.querySelector('.team-grid-dynamic');
+              if (!gridWrap) {
+                const topGrid = teamSection.querySelector('.team-grid-top');
+                const btmGrid = teamSection.querySelector('.team-grid-bottom');
+                if (topGrid) topGrid.remove();
+                if (btmGrid) btmGrid.remove();
+                gridWrap = document.createElement('div');
+                gridWrap.className = 'team-grid-dynamic';
+                gridWrap.style = "display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2rem; margin-bottom: 2.5rem;";
+                const header = teamSection.querySelector('.section-sketch-header');
+                if (header && header.nextSibling) {
+                  teamSection.insertBefore(gridWrap, header.nextSibling);
+                } else {
+                  teamSection.appendChild(gridWrap);
+                }
+              }
+              gridWrap.innerHTML = aboutData.about_team_list.map((m, idx) => `
+                <div class="polaroid-card">
+                  <div class="polaroid-tape"></div>
+                  <div class="polaroid-img-box">
+                    <img src="${m.image_url || m.img || 'assets/logo.png'}" alt="${m.role || '同工'}" onerror="this.src='assets/logo.png'">
+                  </div>
+                  <div class="polaroid-role-badge">${m.role || '主要服事同工'}</div>
+                  ${m.role_en ? `<div class="polaroid-role-en">${m.role_en}</div>` : ''}
+                  <div class="polaroid-names" style="white-space:pre-line;">${m.names || m.name || ''}</div>
+                </div>
+              `).join('');
+            }
+          }
+
           Object.keys(aboutData).forEach(key => {
             const el = document.getElementById(key);
             if (!el) return;
