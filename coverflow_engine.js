@@ -742,7 +742,7 @@ You have set my feet upon the rock!`
           <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#242f3a'};">
             <span class="spine-top-stamp">${album.year || '2025'}</span>
             <div class="spine-inner-text">
-              <span class="spine-title">${album.title}</span>
+              <span class="spine-title">${album.spine_text || album.title}</span>
             </div>
             <span class="spine-bottom-stamp">VOL.${(origIdx + 1).toString().padStart(2, '0')}</span>
           </div>

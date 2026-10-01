@@ -73,7 +73,25 @@
 }
 
 @font-face {
+  font-family: '悠哉体';
+  src: url('assets/fonts/Yozai.woff2') format('woff2'),
+       url('assets/fonts/Yozai-Medium.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'ChenYuluoyan';
+  src: url('assets/fonts/ChenYuluoyan-SC.woff2') format('woff2'),
+       url('assets/fonts/ChenYuluoyan-SC.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: '辰宇落雁体';
   src: url('assets/fonts/ChenYuluoyan-SC.woff2') format('woff2'),
        url('assets/fonts/ChenYuluoyan-SC.ttf') format('truetype');
   font-weight: 100 900;
@@ -3091,10 +3109,10 @@ section[id], div[id^="section-"] {
 }
 
 .spine-top-stamp, .spine-bottom-stamp {
-  font-size: 0.42rem;
-  font-family: var(--font-times-new-roman), serif;
-  color: rgba(246, 210, 138, 0.85);
-  letter-spacing: 1px;
+  font-size: 0.44rem;
+  font-family: 'Apple Chancery', 'Snell Roundhand', 'Dancing Script', 'Caveat', cursive, serif;
+  color: rgba(246, 210, 138, 0.9);
+  letter-spacing: 1.5px;
   transform: rotate(90deg);
   white-space: nowrap;
 }
@@ -3113,10 +3131,10 @@ section[id], div[id^="section-"] {
 }
 
 .spine-title {
-  font-family: var(--font-wenkai), var(--font-times-new-roman), serif !important;
-  font-size: 0.88rem;
-  font-weight: 600;
-  letter-spacing: 1.2px;
+  font-family: 'Apple Chancery', 'Snell Roundhand', 'ChenYuluoyan', '辰宇落雁体', 'Yozai', '悠哉体', 'Caveat', 'Dancing Script', 'Kalam', cursive, serif !important;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 2px;
   color: #F6F4F0;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.3);
 }
