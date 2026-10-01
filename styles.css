@@ -3011,7 +3011,7 @@ body.immersive-modal-active header {
   transform: translateY(-2px);
 }
 
-/* Tracklist Column (Frame 15) */
+/* Tracklist Column */
 .imm-right-col {
   flex: 1;
   min-width: 0;
@@ -3019,6 +3019,9 @@ body.immersive-modal-active header {
   display: flex;
   align-items: stretch;
   padding-right: 0;
+  overflow: visible !important;
+  perspective: 2500px;
+  -webkit-perspective: 2500px;
 }
 
 /* =========================================================
@@ -3031,10 +3034,10 @@ body.immersive-modal-active header {
   width: 100%;
   min-width: 0;
   height: 100%;
-  perspective: 2000px;
-  -webkit-perspective: 2000px;
-  transform-style: preserve-3d;
-  overflow: visible;
+  perspective: 2500px !important;
+  -webkit-perspective: 2500px !important;
+  transform-style: preserve-3d !important;
+  overflow: visible !important;
 }
 
 .accordion-panel {
@@ -3048,7 +3051,7 @@ body.immersive-modal-active header {
   border-radius: 0 !important;
   box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35), inset 1px 0 0 rgba(255, 255, 255, 0.12);
   transform-origin: left center;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  transform-style: preserve-3d;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

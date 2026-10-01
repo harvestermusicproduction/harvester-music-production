@@ -899,20 +899,23 @@ You have set my feet upon the rock!`
     renderSingleSongDetail();
 
     if (window.gsap) {
-      gsap.fromTo(view, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" });
+      gsap.fromTo(view, { opacity: 0, scale: 0.98 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power2.out" });
       
       const panels = view.querySelectorAll('.accordion-panel');
       if (panels.length >= 3) {
         gsap.killTweensOf(panels);
-        // Start from completely closed accordion state
-        gsap.set(panels[0], { transformOrigin: 'left center', rotateY: -88, scaleX: 0.05, opacity: 0 });
-        gsap.set(panels[1], { transformOrigin: 'left center', rotateY: 88, scaleX: 0.05, opacity: 0 });
-        gsap.set(panels[2], { transformOrigin: 'left center', rotateY: -88, scaleX: 0.05, opacity: 0 });
+        // Start from folded 3D paper accordion state (Z-fold paper stack)
+        gsap.set(panels[0], { transformOrigin: 'left center', rotateY: -82, opacity: 0.15, boxShadow: '-25px 0 40px rgba(0,0,0,0.65)' });
+        gsap.set(panels[1], { transformOrigin: 'left center', rotateY: 82, opacity: 0.1, boxShadow: '-25px 0 40px rgba(0,0,0,0.65)' });
+        gsap.set(panels[2], { transformOrigin: 'left center', rotateY: -82, opacity: 0.05, boxShadow: '-25px 0 40px rgba(0,0,0,0.65)' });
 
-        const tl = gsap.timeline({ delay: 0.12 });
-        tl.to(panels[0], { rotateY: 0, scaleX: 1, opacity: 1, duration: 0.65, ease: "cubic.out" })
-          .to(panels[1], { rotateY: 0, scaleX: 1, opacity: 1, duration: 0.68, ease: "cubic.out" }, "-=0.45")
-          .to(panels[2], { rotateY: 0, scaleX: 1, opacity: 1, duration: 0.72, ease: "cubic.out" }, "-=0.48");
+        const tl = gsap.timeline({ delay: 0.1 });
+        // Fold 1 unfolds from base
+        tl.to(panels[0], { rotateY: 0, opacity: 1, boxShadow: '-6px 0 20px rgba(0,0,0,0.35)', duration: 0.75, ease: "power2.out" })
+          // Fold 2 unfolds from Fold 1
+          .to(panels[1], { rotateY: 0, opacity: 1, boxShadow: '-6px 0 20px rgba(0,0,0,0.35)', duration: 0.8, ease: "power2.out" }, "-=0.55")
+          // Fold 3 unfolds from Fold 2
+          .to(panels[2], { rotateY: 0, opacity: 1, boxShadow: '-6px 0 20px rgba(0,0,0,0.35)', duration: 0.85, ease: "power2.out" }, "-=0.60");
       }
     }
   };
