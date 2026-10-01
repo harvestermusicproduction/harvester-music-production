@@ -329,6 +329,16 @@ You have set my feet upon the rock!`
   // Initialize Engine
   async function init() {
     await fetchSupabaseSongs();
+    allAlbums = allAlbums.map((a, idx) => {
+      const pal = a.palette || getMorandiFivePalette(a, idx);
+      return {
+        ...a,
+        palette: pal,
+        theme_color: a.theme_color || pal.theme_color,
+        spine_bg: a.spine_bg || pal.spine_bg,
+        glow: pal.glow
+      };
+    });
     allAlbums = sortAlbumsByYear(allAlbums);
     albums = [...allAlbums];
     renderAppLayout();
@@ -338,7 +348,7 @@ You have set my feet upon the rock!`
     startPhysicsLoop();
   }
 
-  // Fetch Dynamic CMS Songs and Map 1:1 to 3D Albums with Childlike Doodle Art
+  // Fetch Dynamic CMS Songs and Map 1:1 to 3D Albums with Morandi Artwork
   async function fetchSupabaseSongs() {
     try {
       if (window.supabase) {
@@ -361,6 +371,7 @@ You have set my feet upon the rock!`
             const doodleFallback = childlikeDoodles[idx % childlikeDoodles.length];
             const customMatch = customAlbums?.find(c => c.id === s.id || c.title === s.title);
             const songYear = customMatch?.year || s.year || "2025";
+            const pal = getMorandiFivePalette(s, idx);
             
             return {
               id: s.id,
@@ -369,9 +380,10 @@ You have set my feet upon the rock!`
               artist: customMatch?.artist || s.artist || "Harvester Worship",
               genre: customMatch?.genre || `Worship / CCM · ${songYear}`,
               year: songYear,
-              theme_color: customMatch?.theme_color || ["#1c2b36", "#1a242f", "#2a2421", "#242f3a", "#202933", "#1c242d", "#2b2a27", "#161d24", "#1e2229"][idx % 9],
-              spine_bg: customMatch?.spine_bg || ["#3b5a5b", "#52796f", "#b06d60", "#2d3748", "#c47b6a", "#4a5568", "#8c7b75", "#3d5a80", "#6b705c"][idx % 9],
-              spine_color: customMatch?.spine_color || "#ffffff",
+              palette: pal,
+              theme_color: customMatch?.theme_color || pal.theme_color,
+              spine_bg: customMatch?.spine_bg || pal.spine_bg,
+              spine_color: customMatch?.spine_color || "#F6F4F0",
               spine_text: customMatch?.spine_text || s.title,
               cover_url: s.cover_url || customMatch?.cover_url || doodleFallback,
               duration: "4'15\"",
@@ -509,90 +521,130 @@ You have set my feet upon the rock!`
   }
 
   // =========================================================================
-  // 🌈 DYNAMIC MORANDI COLOR PALETTE & AMBIENT BACKGROUND SYSTEM
+  // 🎨 5 SIGNATURE MORANDI COLOR PALETTES (时光密语 · 五大高定治愈色系)
+  // 1. 鼠尾草灰绿 (#C1C2A7, #778585, #EBD6CE, #FDF9EE)
+  // 2. 雾霭薰衣紫 (#C6B7CF, #7C7582, #D5DEDD, #FDF9EE)
+  // 3. 尤加利草木 (#B4C2B6, #857979, #E0CEE0, #FDF9EE)
+  // 4. 烟粉豆沙灰 (#CFB7BC, #858479, #D6DAEB, #FDF9EE)
+  // 5. 勃艮第夜幕 (#5c2734, #dfd5c4, #dedad4, #FDF9EE)
   // =========================================================================
-  const albumPalettes = {
-    "更新敬拜": {
-      bg_center: "#2c4858",
-      bg_mid: "#1b2f3b",
-      bg_outer: "#101e26",
-      accent: "#68a6bd",
-      glow: "rgba(104, 166, 189, 0.45)"
+  const MORANDI_FIVE_PALETTES = [
+    {
+      id: "palette_1_sage",
+      name: "时光密语 · 鼠尾草灰绿",
+      primary: "#778585", // 冷青石灰
+      accent: "#C1C2A7",  // 鼠尾草浅灰绿
+      soft: "#EBD6CE",    // 柔粉砂色
+      cream: "#FDF9EE",   // 暖象牙白
+      spine_bg: "#607272",
+      theme_color: "#182222",
+      bg_center: "#384a4a",
+      bg_mid: "#222e2e",
+      bg_outer: "#131b1b",
+      glow: "rgba(193, 194, 167, 0.45)",
+      fold1_bg: "#EBD6CE",
+      fold1_text: "#2c3434",
+      fold2_bg: "#687676",
+      fold2_text: "#FDF9EE",
+      fold3_bg: "#C1C2A7",
+      fold3_text: "#222a2a"
     },
-    "灵火 Awakening": {
-      bg_center: "#284d46",
-      bg_mid: "#1a342f",
-      bg_outer: "#10221f",
-      accent: "#60ab9a",
-      glow: "rgba(96, 171, 154, 0.45)"
+    {
+      id: "palette_2_lavender",
+      name: "时光密语 · 雾霭薰衣紫",
+      primary: "#7C7582", // 暗灰紫
+      accent: "#C6B7CF",  // 雾紫灰
+      soft: "#D5DEDD",    // 薄荷雾白
+      cream: "#FDF9EE",   // 暖象牙白
+      spine_bg: "#6c6374",
+      theme_color: "#211b27",
+      glow: "rgba(198, 183, 207, 0.45)",
+      bg_center: "#42374b",
+      bg_mid: "#2a2231",
+      bg_outer: "#17121b",
+      fold1_bg: "#D5DEDD",
+      fold1_text: "#2a2330",
+      fold2_bg: "#6c6473",
+      fold2_text: "#FDF9EE",
+      fold3_bg: "#C6B7CF",
+      fold3_text: "#221a28"
     },
-    "因为祢 上帝": {
-      bg_center: "#563832",
-      bg_mid: "#3a2420",
-      bg_outer: "#241412",
-      accent: "#d68d7d",
-      glow: "rgba(214, 141, 125, 0.45)"
+    {
+      id: "palette_3_eucalyptus",
+      name: "时光密语 · 尤加利草木",
+      primary: "#857979", // 暖木灰褐
+      accent: "#B4C2B6",  // 尤加利浅绿
+      soft: "#E0CEE0",    // 柔淡紫
+      cream: "#FDF9EE",   // 暖象牙白
+      spine_bg: "#556958",
+      theme_color: "#1b241d",
+      glow: "rgba(180, 194, 182, 0.45)",
+      bg_center: "#37493b",
+      bg_mid: "#233026",
+      bg_outer: "#141c16",
+      fold1_bg: "#E0CEE0",
+      fold1_text: "#2a2323",
+      fold2_bg: "#7a6d6d",
+      fold2_text: "#FDF9EE",
+      fold3_bg: "#B4C2B6",
+      fold3_text: "#1c241e"
     },
-    "Im Alive": {
-      bg_center: "#2e4157",
-      bg_mid: "#1e2c3c",
-      bg_outer: "#131b25",
-      accent: "#7da8d9",
-      glow: "rgba(125, 168, 217, 0.45)"
+    {
+      id: "palette_4_dusty_rose",
+      name: "时光密语 · 烟粉豆沙灰",
+      primary: "#858479", // 橄榄褐灰
+      accent: "#CFB7BC",  // 烟粉豆沙
+      soft: "#D6DAEB",    // 雾蓝紫
+      cream: "#FDF9EE",   // 暖象牙白
+      spine_bg: "#755963",
+      theme_color: "#241b1f",
+      glow: "rgba(207, 183, 188, 0.45)",
+      bg_center: "#48343b",
+      bg_mid: "#2d2025",
+      bg_outer: "#191114",
+      fold1_bg: "#D6DAEB",
+      fold1_text: "#2b2326",
+      fold2_bg: "#79786d",
+      fold2_text: "#FDF9EE",
+      fold3_bg: "#CFB7BC",
+      fold3_text: "#261b20"
     },
-    "收割的呼召": {
-      bg_center: "#4e3d30",
-      bg_mid: "#35291f",
-      bg_outer: "#211812",
-      accent: "#cca078",
-      glow: "rgba(204, 160, 120, 0.45)"
-    },
-    "祢是唯一": {
-      bg_center: "#42354c",
-      bg_mid: "#2b2234",
-      bg_outer: "#1a1421",
-      accent: "#aa94c7",
-      glow: "rgba(170, 148, 199, 0.45)"
-    },
-    "我心所愿": {
-      bg_center: "#463d35",
-      bg_mid: "#302a24",
-      bg_outer: "#1f1b17",
-      accent: "#bfa48e",
-      glow: "rgba(191, 164, 142, 0.45)"
-    },
-    "在祢圣所中": {
-      bg_center: "#2a4356",
-      bg_mid: "#1c2e3c",
-      bg_outer: "#111d26",
-      accent: "#6fa6c9",
-      glow: "rgba(111, 166, 201, 0.45)"
-    },
-    "晨光破晓": {
-      bg_center: "#3d473b",
-      bg_mid: "#293128",
-      bg_outer: "#191e18",
-      accent: "#9cb696",
-      glow: "rgba(156, 182, 150, 0.45)"
+    {
+      id: "palette_5_burgundy_wine",
+      name: "时光密语 · 勃艮第夜幕",
+      primary: "#5c2734", // 勃艮第酒红
+      accent: "#dfd5c4",  // 暖砂陶土
+      soft: "#dedad4",    // 亚麻草木灰
+      cream: "#FDF9EE",   // 暖象牙白
+      spine_bg: "#52222e",
+      theme_color: "#210e14",
+      glow: "rgba(180, 70, 95, 0.45)",
+      bg_center: "#481a25",
+      bg_mid: "#2d0f17",
+      bg_outer: "#19080d",
+      fold1_bg: "#dfd5c4",
+      fold1_text: "#2c241c",
+      fold2_bg: "#5c2734",
+      fold2_text: "#fae8ec",
+      fold3_bg: "#dedad4",
+      fold3_text: "#26221f"
     }
-  };
+  ];
+
+  // 🎲 Deterministic Pseudo-Random Assignment for All Current & Future Singles
+  function getMorandiFivePalette(song, index = 0) {
+    const key = String(song?.id || song?.title || index);
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash * 31 + key.charCodeAt(i)) & 0xFFFFFFFF;
+    }
+    const palIdx = Math.abs(hash + (index * 7)) % MORANDI_FIVE_PALETTES.length;
+    return MORANDI_FIVE_PALETTES[palIdx];
+  }
 
   function getAlbumPalette(album, idx) {
-    if (album && albumPalettes[album.title]) {
-      return albumPalettes[album.title];
-    }
-    // Fallback rotation through harmonious Morandi palettes
-    const fallbacks = [
-      { bg_center: "#2c4858", bg_mid: "#1b2f3b", bg_outer: "#101e26", accent: "#68a6bd", glow: "rgba(104, 166, 189, 0.45)" },
-      { bg_center: "#284d46", bg_mid: "#1a342f", bg_outer: "#10221f", accent: "#60ab9a", glow: "rgba(96, 171, 154, 0.45)" },
-      { bg_center: "#563832", bg_mid: "#3a2420", bg_outer: "#241412", accent: "#d68d7d", glow: "rgba(214, 141, 125, 0.45)" },
-      { bg_center: "#2e4157", bg_mid: "#1e2c3c", bg_outer: "#131b25", accent: "#7da8d9", glow: "rgba(125, 168, 217, 0.45)" },
-      { bg_center: "#4e3d30", bg_mid: "#35291f", bg_outer: "#211812", accent: "#cca078", glow: "rgba(204, 160, 120, 0.45)" },
-      { bg_center: "#42354c", bg_mid: "#2b2234", bg_outer: "#1a1421", accent: "#aa94c7", glow: "rgba(170, 148, 199, 0.45)" },
-      { bg_center: "#4e303e", bg_mid: "#351f2a", bg_outer: "#22131b", accent: "#cc7c9b", glow: "rgba(204, 124, 155, 0.45)" },
-      { bg_center: "#3d473b", bg_mid: "#293128", bg_outer: "#191e18", accent: "#9cb696", glow: "rgba(156, 182, 150, 0.45)" }
-    ];
-    return fallbacks[idx % fallbacks.length];
+    if (album && album.palette) return album.palette;
+    return getMorandiFivePalette(album, idx);
   }
 
   let activeAmbientLayer = 'A';
@@ -1158,6 +1210,7 @@ You have set my feet upon the rock!`
     const photo1 = activeSong.photo_1 || activeSong.cover_url || childlikeDoodles[0];
     const photo2 = activeSong.photo_2 || activeSong.cover_url || childlikeDoodles[1];
     const photo3 = activeSong.photo_3 || activeSong.cover_url || childlikeDoodles[2];
+    const pal = activeSong.palette || getMorandiFivePalette(activeSong);
 
     stage.innerHTML = `
       <div class="immersive-page page-1" style="align-items:stretch; gap:24px;">
@@ -1165,15 +1218,15 @@ You have set my feet upon the rock!`
         <div class="imm-left-col" style="background:transparent; border:none; box-shadow:none; padding:6px 10px; justify-content:space-between; position:relative;">
           <div style="position:relative; z-index:2;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; background:rgba(0,0,0,0.3); padding:3px 8px; border-radius:4px; color:#4ecdc4;">AUDIO ARCHIVE</span>
+              <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; background:rgba(0,0,0,0.3); padding:3px 8px; border-radius:4px; color:${pal.accent};">AUDIO ARCHIVE</span>
               <span style="font-family:var(--font-times); font-size:0.78rem; color:var(--gold);">VOL. 01</span>
             </div>
 
             <div style="margin-top:6px;">
               <h1 style="font-family:var(--font-eng-title); font-size:1.65rem; font-weight:900; color: #F6F4F0; line-height:1.15; letter-spacing:1px; margin:0; text-shadow:0 2px 10px rgba(0,0,0,0.5);">
-                HARVESTER <br><span style="font-size:1.15rem; font-weight:700; color:var(--gold); letter-spacing:2px;">MUSIC PRODUCTION</span> <span style="font-size:1rem; color:#4ecdc4;">&#10022;</span>
+                HARVESTER <br><span style="font-size:1.15rem; font-weight:700; color:var(--gold); letter-spacing:2px;">MUSIC PRODUCTION</span> <span style="font-size:1rem; color:${pal.accent};">&#10022;</span>
               </h1>
-              <div style="width:110px; height:3px; background:linear-gradient(to right, #ffd166, #4ecdc4, transparent); margin-top:6px;"></div>
+              <div style="width:110px; height:3px; background:linear-gradient(to right, ${pal.accent}, var(--gold), transparent); margin-top:6px;"></div>
             </div>
           </div>
 
@@ -1219,107 +1272,107 @@ You have set my feet upon the rock!`
           </div>
         </div>
 
-        <!-- Right Column: Accordion Fold Stage (风琴折展开: 沙色折页 + 勃艮第红折页 + 浅灰麻布折页) -->
+        <!-- Right Column: Accordion Fold Stage (风琴折展开: 动态莫兰迪三折页) -->
         <div class="imm-right-col">
           <div class="accordion-booklet-stage">
             
-            <!-- FOLD 1: 沙色莫兰迪 (WARM KRAFT SAND CREAM) -->
-            <div class="accordion-panel unfold-panel-1" style="background:#dfd5c4; color:#2c241c; border-radius:0; padding:24px 26px; border-right:1px solid #c9bda8;">
+            <!-- FOLD 1: 莫兰迪一折页 (LYRICS) -->
+            <div class="accordion-panel unfold-panel-1" style="background:${pal.fold1_bg}; color:${pal.fold1_text}; border-radius:0; padding:24px 26px; border-right:1px solid rgba(0,0,0,0.1);">
               <div style="width:288px; min-width:288px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <!-- Top Polaroid Photo (01 badge) -->
-                  <div style="width:100%; height:140px; border-radius:0; overflow:hidden; border:1px solid #c9bda8; position:relative; margin-bottom:14px; background:#c9bda8;">
+                  <div style="width:100%; height:140px; border-radius:0; overflow:hidden; border:1px solid rgba(0,0,0,0.15); position:relative; margin-bottom:14px; background:${pal.fold3_bg};">
                     <img src="${photo1}" alt="Art 01" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.onerror=null; this.src='${childlikeDoodles[0]}'">
-                    <div style="position:absolute; bottom:6px; right:6px; background:#000; color: #F6F4F0; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">01</div>
+                    <div style="position:absolute; bottom:6px; right:6px; background:${pal.primary}; color: #F6F4F0; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">01</div>
                   </div>
 
-                  <div style="border-bottom:1px solid rgba(44,36,28,0.15); padding-bottom:8px; margin-bottom:12px;">
-                    <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:#7c664d;">FOLD 01 · LYRICS</span>
-                    <h3 style="margin:2px 0 0; color:#2c241c; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">完整歌词 (LYRICS)</h3>
+                  <div style="border-bottom:1px solid rgba(0,0,0,0.12); padding-bottom:8px; margin-bottom:12px;">
+                    <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:${pal.primary};">FOLD 01 · LYRICS</span>
+                    <h3 style="margin:2px 0 0; color:${pal.fold1_text}; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">完整歌词 (LYRICS)</h3>
                   </div>
 
-                  <div style="font-family:var(--font-songti), serif; font-size:1rem; line-height:1.9; color:#3a3025; white-space:pre-wrap; max-height:270px; overflow-y:auto; padding-right:6px;">
+                  <div style="font-family:var(--font-songti), serif; font-size:1rem; line-height:1.9; color:${pal.fold1_text}; white-space:pre-wrap; max-height:270px; overflow-y:auto; padding-right:6px;">
 ${activeSong.lyrics}
                   </div>
                 </div>
 
-                <div style="border-top:1px solid rgba(44,36,28,0.15); padding-top:14px; display:flex; justify-content:space-between; font-family:var(--font-times); font-size:0.75rem; color:#6e5d48;">
+                <div style="border-top:1px solid rgba(0,0,0,0.12); padding-top:14px; display:flex; justify-content:space-between; font-family:var(--font-times); font-size:0.75rem; color:${pal.fold1_text}; opacity:0.85;">
                   <span>${activeSong.key_bpm || 'KEY: C · 72 BPM'}</span>
-                  <span style="color:#2c241c; font-weight:700;">ORIGINAL MASTER</span>
+                  <span style="color:${pal.fold1_text}; font-weight:700;">ORIGINAL MASTER</span>
                 </div>
               </div>
             </div>
 
-            <!-- FOLD 2: 勃艮第红莫兰迪 (MUTED BURGUNDY / WINE) -->
-            <div class="accordion-panel unfold-panel-2" style="background:#5c2734; color:#fae8ec; border-radius:0; padding:24px 26px; border-right:1px solid #451c27;">
+            <!-- FOLD 2: 莫兰迪二折页 (WORSHIP INSPIRATION / NOTES) -->
+            <div class="accordion-panel unfold-panel-2" style="background:${pal.fold2_bg}; color:${pal.fold2_text}; border-radius:0; padding:24px 26px; border-right:1px solid rgba(0,0,0,0.18);">
               <div style="width:288px; min-width:288px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
-                  <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:8px; margin-bottom:14px;">
-                    <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:var(--gold);">FOLD 02 · WORSHIP INSPIRATION</span>
+                  <div style="border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; margin-bottom:14px;">
+                    <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:${pal.cream};">FOLD 02 · WORSHIP INSPIRATION</span>
                     <h3 style="margin:2px 0 0; color: #F6F4F0; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">创作心得与经文 (NOTES)</h3>
                   </div>
 
-                  <div style="font-family:var(--font-songti), serif; font-size:0.98rem; line-height:1.85; color:#f3d7df; space-y:10px;">
+                  <div style="font-family:var(--font-songti), serif; font-size:0.98rem; line-height:1.85; color:${pal.fold2_text}; space-y:10px;">
                     ${activeSong.scripture ? `
-                      <div style="background:rgba(0,0,0,0.25); border-left:3px solid var(--gold); padding:10px 12px; border-radius:0; font-size:0.88rem; color:var(--gold); margin-bottom:12px;">
+                      <div style="background:rgba(0,0,0,0.22); border-left:3px solid ${pal.cream}; padding:10px 12px; border-radius:0; font-size:0.88rem; color:${pal.cream}; margin-bottom:12px;">
                         ${activeSong.scripture}
                       </div>
                     ` : ''}
-                    <div style="white-space:pre-wrap; max-height:200px; overflow-y:auto;">
+                    <div style="white-space:pre-wrap; max-height:200px; overflow-y:auto; color:${pal.fold2_text};">
                       ${activeSong.notes || '在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。'}
                     </div>
                   </div>
                 </div>
 
                 <!-- Bottom Polaroid photo -->
-                <div style="width:100%; height:140px; border-radius:0; overflow:hidden; border:1px solid rgba(255,255,255,0.2); position:relative; margin-top:16px; background:#451c27;">
+                <div style="width:100%; height:140px; border-radius:0; overflow:hidden; border:1px solid rgba(255,255,255,0.2); position:relative; margin-top:16px; background:rgba(0,0,0,0.3);">
                   <img src="${photo2}" alt="Art 02" style="width:100%; height:100%; object-fit:cover; opacity:0.9;" onerror="this.onerror=null; this.src='${childlikeDoodles[1]}'">
-                  <div style="position:absolute; bottom:6px; left:6px; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); color:var(--gold); font-family:var(--font-times); font-size:0.7rem; padding:2px 8px; border-radius:0;">
+                  <div style="position:absolute; bottom:6px; left:6px; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); color:${pal.cream}; font-family:var(--font-times); font-size:0.7rem; padding:2px 8px; border-radius:0;">
                     WORSHIP HEART · 02
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- FOLD 3: 浅灰麻布莫兰迪 (MUTED LINEN / STONE GREY) -->
-            <div class="accordion-panel unfold-panel-3" style="background:#dedad4; color:#26221f; border-radius:0; padding:24px 26px;">
+            <!-- FOLD 3: 莫兰迪三折页 (PRODUCTION CREDITS) -->
+            <div class="accordion-panel unfold-panel-3" style="background:${pal.fold3_bg}; color:${pal.fold3_text}; border-radius:0; padding:24px 26px;">
               <div style="width:288px; min-width:288px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
-                  <div style="width:100%; height:150px; border-radius:0; overflow:hidden; border:1px solid #c6c0b6; position:relative; margin-bottom:16px; background:#c6c0b6;">
+                  <div style="width:100%; height:150px; border-radius:0; overflow:hidden; border:1px solid rgba(0,0,0,0.12); position:relative; margin-bottom:16px; background:${pal.fold1_bg};">
                     <img src="${photo3}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.onerror=null; this.src='${childlikeDoodles[2]}'">
-                    <div style="position:absolute; bottom:6px; right:6px; background:#000; color: #F6F4F0; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">03</div>
+                    <div style="position:absolute; bottom:6px; right:6px; background:${pal.primary}; color: #F6F4F0; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">03</div>
                   </div>
 
-                  <div style="border-bottom:1px solid rgba(38,34,31,0.15); padding-bottom:8px; margin-bottom:12px;">
-                    <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:#665e56;">FOLD 03 · PRODUCTION CREDITS</span>
-                    <h3 style="margin:2px 0 0; color:#26221f; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">同工团队 (CREDITS)</h3>
+                  <div style="border-bottom:1px solid rgba(0,0,0,0.12); padding-bottom:8px; margin-bottom:12px;">
+                    <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:${pal.primary};">FOLD 03 · PRODUCTION CREDITS</span>
+                    <h3 style="margin:2px 0 0; color:${pal.fold3_text}; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">同工团队 (CREDITS)</h3>
                   </div>
 
-                  <div style="font-size:0.88rem; space-y:8px; color:#423b35; font-family:var(--font-body);">
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
-                      <span style="color:#756a60;">词曲创作：</span>
-                      <span style="font-weight:600; color:#1c1815;">${activeSong.composer || activeSong.artist}</span>
+                  <div style="font-size:0.88rem; space-y:8px; color:${pal.fold3_text}; font-family:var(--font-body);">
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
+                      <span style="opacity:0.75;">词曲创作：</span>
+                      <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.composer || activeSong.artist}</span>
                     </div>
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
-                      <span style="color:#756a60;">编曲制作：</span>
-                      <span style="font-weight:600; color:#1c1815;">${activeSong.arrangement || 'Harvester Music Production'}</span>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
+                      <span style="opacity:0.75;">编曲制作：</span>
+                      <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.arrangement || 'Harvester Music Production'}</span>
                     </div>
                     ${activeSong.vocals ? `
-                      <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
-                        <span style="color:#756a60;">人声主唱：</span>
-                        <span style="font-weight:600; color:#1c1815;">${activeSong.vocals}</span>
+                      <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
+                        <span style="opacity:0.75;">人声主唱：</span>
+                        <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.vocals}</span>
                       </div>
                     ` : ''}
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
-                      <span style="color:#756a60;">录音母带：</span>
-                      <span style="font-weight:600; color:#1c1815;">${activeSong.mixing || 'Harvester Studio HQ'}</span>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
+                      <span style="opacity:0.75;">录音母带：</span>
+                      <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.mixing || 'Harvester Studio HQ'}</span>
                     </div>
                   </div>
                 </div>
 
-                <div style="border-top:1px solid rgba(38,34,31,0.15); padding-top:14px; display:flex; justify-content:space-between; align-items:center;">
-                  <span style="font-family:var(--font-times); font-size:0.75rem; color:#665e56;">PDF SCORES</span>
-                  <button onclick="toggleAudioPlay()" class="imm-pill-btn" style="background:#26221f; color:#dedad4; border:none; font-size:0.82rem; padding:7px 16px; font-family:var(--font-times);">
+                <div style="border-top:1px solid rgba(0,0,0,0.12); padding-top:14px; display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-family:var(--font-times); font-size:0.75rem; color:${pal.fold3_text}; opacity:0.8;">PDF SCORES</span>
+                  <button onclick="toggleAudioPlay()" class="imm-pill-btn" style="background:${pal.primary}; color:#F6F4F0; border:none; font-size:0.82rem; padding:7px 16px; font-family:var(--font-times); box-shadow:0 4px 12px rgba(0,0,0,0.25);">
                     <i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '试听'}
                   </button>
                 </div>
