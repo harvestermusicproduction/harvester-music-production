@@ -1,20 +1,21 @@
 /**
- * 🎵 Harvester 3D Album Cover Flow & Booklet Engine v2.0
- * Fully matching Image 1 (3D Stacked Album Shelf with Thick Spines) & Image 2 (Interactive Booklet)
+ * 🎵 Harvester 3D Album Cover Flow & Booklet Engine v2.5
+ * Pixel-Perfect Replica of Image 1 (3D Stacked Album Shelf with Thick Spines) & Image 2 (Interactive Booklet)
  */
 
 (function() {
-  // Built-in Curated Album Catalog with Distinctive Colored Spines (Matching Image 1)
+  // Built-in Curated Album Catalog with Distinctive Colored Spines (Exact Aesthetic of Image 1)
   const defaultAlbums = [
     {
       id: "album_renew",
       title: "更新敬拜",
       title_en: "Renewed Worship",
-      artist: "Harvester Music Production",
-      artist_short: "HARVESTER",
+      artist: "Harvester Worship",
+      artist_short: "Harvester Worship",
+      spine_text: "更新敬拜 · Harvester Worship",
       year: "2025",
-      spine_bg: "linear-gradient(180deg, #2b241e 0%, #171310 100%)",
-      color: "#f6d28a",
+      spine_bg: "#1c1815",
+      spine_color: "#f6d28a",
       cover_url: "assets/logo.png",
       description: "汇聚原创敬拜诗歌，以真理与圣灵重燃当代敬拜之火。",
       tracks: [
@@ -117,13 +118,7 @@ Lyrics & Music: Harvester Praise
 I'm alive in Your love, Jesus
 Every breath I take is by Your grace
 From the darkness into Your glorious light
-You have set my feet upon the rock
-
-(Chorus)
-I'm alive, I will sing
-For the victory You bring
-No more fear, no more shame
-Praise the power of Your name!`
+You have set my feet upon the rock`
         }
       ]
     },
@@ -132,10 +127,11 @@ Praise the power of Your name!`
       title: "灵火 Awakening",
       title_en: "Spiritual Fire Awakening",
       artist: "Harvester Creative Team",
-      artist_short: "AWAKENING",
+      artist_short: "Creative Team",
+      spine_text: "灵火 Awakening · Harvester Creative",
       year: "2024",
-      spine_bg: "linear-gradient(180deg, #137a6b 0%, #0a473e 100%)",
-      color: "#2dd4bf",
+      spine_bg: "#00b894",
+      spine_color: "#ffffff",
       cover_url: "assets/placeholder.jpg",
       description: "在旷野与安静中，寻求圣灵的复兴与更新。",
       tracks: [
@@ -148,7 +144,7 @@ Praise the power of Your name!`
           youtube_url: "https://www.youtube.com/@harvestermusic.production",
           spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
           score_url: "assets/scores/sample.pdf",
-          lyrics: `【灵火 (Acoustic)】\n木吉他与清澈人声版，带你回到内室的祷告与默想。\n\n愿圣灵的烈火 洁净我心思\n让我的敬拜 单单归于祢\n放下一切重担 紧随祢脚踪\n在祢爱中 重获自由与新生`
+          lyrics: `【灵火 (Acoustic)】\n木吉他与清澈人声版，带你回到内室的祷告与默想。\n\n愿圣灵的烈火 洁净我心思\n让我的敬拜 单单归于祢`
         },
         {
           id: "track_fire_02",
@@ -160,17 +156,6 @@ Praise the power of Your name!`
           spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
           score_url: "assets/scores/sample.pdf",
           lyrics: `【晨星升起】\n黑夜将尽，晨光破晓。\n主耶稣是明亮的晨星，照亮我们前面的道路。`
-        },
-        {
-          id: "track_fire_03",
-          track_no: "03",
-          title: "安静溪水旁",
-          artist: "Harvester Team",
-          duration: "5:05",
-          youtube_url: "https://www.youtube.com/@harvestermusic.production",
-          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
-          score_url: "assets/scores/sample.pdf",
-          lyrics: `【安静溪水旁】\n诗篇23篇默想诗歌。\n祂使我躺卧在青草地上，领我在可安歇的水边。`
         }
       ]
     },
@@ -179,10 +164,11 @@ Praise the power of Your name!`
       title: "田野收割精选",
       title_en: "Harvest Field Collection",
       artist: "Harvester Gospel Collective",
-      artist_short: "HARVEST FIELD",
+      artist_short: "Gospel Collective",
+      spine_text: "田野收割精选 · Gospel Collective",
       year: "2024",
-      spine_bg: "linear-gradient(180deg, #1f4f89 0%, #112d52 100%)",
-      color: "#60a5fa",
+      spine_bg: "#0984e3",
+      spine_color: "#ffffff",
       cover_url: "assets/logo.png",
       description: "「那人撒种，这人收割」—— 用现代流行音乐播种福音种子。",
       tracks: [
@@ -196,17 +182,6 @@ Praise the power of Your name!`
           spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
           score_url: "assets/scores/sample.pdf",
           lyrics: `【收割的呼召】\n庄稼已经熟了，求庄稼的主打发工人出去收祂的庄稼！`
-        },
-        {
-          id: "track_h_02",
-          track_no: "02",
-          title: "因为祢 上帝 (Live)",
-          artist: "Worship Live",
-          duration: "5:20",
-          youtube_url: "https://www.youtube.com/@harvestermusic.production",
-          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
-          score_url: "assets/scores/sample.pdf",
-          lyrics: `【因为祢 上帝 (现场敬拜版)】\n全会众同心高声合唱，充满恩膏的敬拜现场。`
         }
       ]
     },
@@ -215,10 +190,11 @@ Praise the power of Your name!`
       title: "生命涌流 CCM",
       title_en: "Living Stream Praise",
       artist: "Harvester Praise Band",
-      artist_short: "LIVING STREAM",
+      artist_short: "Praise Band",
+      spine_text: "生命涌流 CCM · Harvester Band",
       year: "2025",
-      spine_bg: "linear-gradient(180deg, #42291a 0%, #20130b 100%)",
-      color: "#fb923c",
+      spine_bg: "#3d271d",
+      spine_color: "#f6d28a",
       cover_url: "assets/placeholder.jpg",
       description: "融合流行与节奏布鲁斯现代风格，充满活力的赞美。",
       tracks: [
@@ -232,17 +208,6 @@ Praise the power of Your name!`
           spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
           score_url: "assets/scores/sample.pdf",
           lyrics: `【Im Alive (Radio Mix)】\n充满阳光与盼望的现代流行敬拜旋律！`
-        },
-        {
-          id: "track_al_02",
-          track_no: "02",
-          title: "恩典之路",
-          artist: "Harvester Band",
-          duration: "4:05",
-          youtube_url: "https://www.youtube.com/@harvestermusic.production",
-          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
-          score_url: "assets/scores/sample.pdf",
-          lyrics: `【恩典之路】\n一步又一步，这是恩典之路。\n主的手必亲自搀拉我前行。`
         }
       ]
     },
@@ -251,10 +216,11 @@ Praise the power of Your name!`
       title: "祢是唯一",
       title_en: "You Are My All",
       artist: "Harvester Acoustic",
-      artist_short: "YOU ARE MY ALL",
+      artist_short: "Acoustic",
+      spine_text: "祢是唯一 · You Are My All",
       year: "2024",
-      spine_bg: "linear-gradient(180deg, #eceae4 0%, #cac6bd 100%)",
-      color: "#181411",
+      spine_bg: "#f5f6fa",
+      spine_color: "#111111",
       cover_url: "assets/logo.png",
       description: "纯净钢琴与弦乐，向主倾心吐意的深情告白。",
       tracks: [
@@ -268,17 +234,6 @@ Praise the power of Your name!`
           spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
           score_url: "assets/scores/sample.pdf",
           lyrics: `【祢是唯一】\n在天地之间，唯有祢是我心所慕，是我永远的福分。`
-        },
-        {
-          id: "track_all_02",
-          track_no: "02",
-          title: "主祢是我的一切",
-          artist: "Harvester Acoustic",
-          duration: "4:12",
-          youtube_url: "https://www.youtube.com/@harvestermusic.production",
-          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
-          score_url: "assets/scores/sample.pdf",
-          lyrics: `【主祢是我的一切】\n除祢以外，在天上我有谁呢？除祢以外，在地上我也没有所爱慕的。`
         }
       ]
     },
@@ -287,10 +242,11 @@ Praise the power of Your name!`
       title: "心愿诗歌",
       title_en: "Heart's Desire",
       artist: "Harvester Strings Ensemble",
-      artist_short: "HEART'S DESIRE",
+      artist_short: "Strings Ensemble",
+      spine_text: "心愿诗歌 · Heart's Desire",
       year: "2025",
-      spine_bg: "linear-gradient(180deg, #d9534f 0%, #8c2320 100%)",
-      color: "#f87171",
+      spine_bg: "#e77f67",
+      spine_color: "#111111",
       cover_url: "assets/placeholder.jpg",
       description: "当代灵修弦乐诗歌，温暖抚慰每一个疲惫的心灵。",
       tracks: [
@@ -312,10 +268,11 @@ Praise the power of Your name!`
       title: "圣所之中",
       title_en: "In The Sanctuary",
       artist: "Harvester Chamber Choir",
-      artist_short: "SANCTUARY",
+      artist_short: "Chamber Choir",
+      spine_text: "圣所之中 · In The Sanctuary",
       year: "2024",
-      spine_bg: "linear-gradient(180deg, #2b4566 0%, #15263a 100%)",
-      color: "#93c5fd",
+      spine_bg: "#1b2a4a",
+      spine_color: "#ffffff",
       cover_url: "assets/logo.png",
       description: "庄严大气的圣殿敬拜，重现古老诗篇的荣美回响。",
       tracks: [
@@ -337,10 +294,11 @@ Praise the power of Your name!`
       title: "十字架的传人",
       title_en: "Disciple of The Cross",
       artist: "Harvester Mission Team",
-      artist_short: "DISCIPLE",
+      artist_short: "Mission Team",
+      spine_text: "十字架的传人 · Mission Team",
       year: "2025",
-      spine_bg: "linear-gradient(180deg, #96562b 0%, #542b10 100%)",
-      color: "#fdba74",
+      spine_bg: "#d38b5d",
+      spine_color: "#111111",
       cover_url: "assets/placeholder.jpg",
       description: "立志委身、背起十架跟随基督的宣教呼召之歌。",
       tracks: [
@@ -362,10 +320,11 @@ Praise the power of Your name!`
       title: "恩典洋溢",
       title_en: "Abundant Grace",
       artist: "Harvester Worship Collective",
-      artist_short: "ABUNDANT GRACE",
+      artist_short: "Worship Collective",
+      spine_text: "恩典洋溢 · Abundant Grace",
       year: "2025",
-      spine_bg: "linear-gradient(180deg, #741728 0%, #3e0b14 100%)",
-      color: "#f472b6",
+      spine_bg: "#801323",
+      spine_color: "#ffffff",
       cover_url: "assets/logo.png",
       description: "诉说神在生命每一步奇妙带领与丰盛恩典。",
       tracks: [
@@ -381,11 +340,63 @@ Praise the power of Your name!`
           lyrics: `【恩典洋溢】\n祢以恩典为年岁的冠冕，祢的路径都滴下脂油。`
         }
       ]
+    },
+    {
+      id: "album_everlasting",
+      title: "万古磐石",
+      title_en: "Everlasting Rock",
+      artist: "Harvester Praise",
+      artist_short: "Praise Collective",
+      spine_text: "万古磐石 · Everlasting Rock",
+      year: "2025",
+      spine_bg: "#134e4a",
+      spine_color: "#ffffff",
+      cover_url: "assets/placeholder.jpg",
+      description: "高举神坚定不移的应许与救恩磐石。",
+      tracks: [
+        {
+          id: "track_er_01",
+          track_no: "01",
+          title: "万古磐石为我开",
+          artist: "Praise Collective",
+          duration: "4:50",
+          youtube_url: "https://www.youtube.com/@harvestermusic.production",
+          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
+          score_url: "assets/scores/sample.pdf",
+          lyrics: `【万古磐石为我开】\n万古磐石为我开，容我藏身在祢怀。`
+        }
+      ]
+    },
+    {
+      id: "album_amethyst",
+      title: "晨光破晓",
+      title_en: "Daybreak Glory",
+      artist: "Harvester Ensemble",
+      artist_short: "Ensemble",
+      spine_text: "晨光破晓 · Daybreak Glory",
+      year: "2025",
+      spine_bg: "#6c5ce7",
+      spine_color: "#ffffff",
+      cover_url: "assets/logo.png",
+      description: "黑夜已过，晨光已显，在晨光中苏醒赞美神。",
+      tracks: [
+        {
+          id: "track_db_01",
+          track_no: "01",
+          title: "晨光破晓",
+          artist: "Harvester Ensemble",
+          duration: "4:10",
+          youtube_url: "https://www.youtube.com/@harvestermusic.production",
+          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
+          score_url: "assets/scores/sample.pdf",
+          lyrics: `【晨光破晓】\n早晨我们要歌唱祢的慈爱，因祢是我的避难所。`
+        }
+      ]
     }
   ];
 
   let albums = [...defaultAlbums];
-  let currentIndex = 0;
+  let currentIndex = 5; // Start in center (Heart's Desire / You Are All) for balanced left/right accordion stack
   let activeAlbum = null;
   let activeTrack = null;
   let isPlaying = false;
@@ -427,12 +438,25 @@ Praise the power of Your name!`
     }
   }
 
-  // Render 3D Cover Flow Carousel with Full 3D Slabs (Thick Spines - Image 1)
+  // Render 3D Cover Flow Carousel with Full 3D Slabs (Exact match to Image 1)
   function renderCoverFlow() {
     const stage = document.getElementById('coverflowStage');
     if (!stage) return;
 
     stage.innerHTML = `
+      <!-- Top Pill Selector (Image 1 Style) -->
+      <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+        <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(246,210,138,0.25); border-radius: 50px; padding: 4px; display: inline-flex; gap: 4px;">
+          <button style="background: var(--gold); color: #12100e; border: none; padding: 7px 22px; border-radius: 50px; font-weight: 700; font-size: 0.85rem; font-family: var(--font-eng-title); letter-spacing: 1px; cursor: pointer;">
+            ALBUMS (专辑)
+          </button>
+          <button style="background: transparent; color: var(--gold); border: none; padding: 7px 22px; border-radius: 50px; font-size: 0.85rem; font-family: var(--font-eng-title); letter-spacing: 1px; cursor: pointer; opacity: 0.7;">
+            PLAYLISTS (歌单)
+          </button>
+        </div>
+      </div>
+
+      <!-- 3D Carousel Stage -->
       <div class="coverflow-carousel" id="coverflowCarousel">
         ${albums.map((album, idx) => `
           <div class="album-3d-box" data-index="${idx}" onclick="handleAlbumClick(${idx})">
@@ -444,26 +468,22 @@ Praise the power of Your name!`
                 <div class="album-inner-border"></div>
               </div>
 
-              <!-- 2. Left Spine (Thick Side Facing Viewer - Image 1) -->
-              <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#1a1816'};">
-                <div class="spine-content" style="color: ${album.id === 'album_you_are_all' ? '#111' : '#fff'};">
-                  <span class="spine-logo"><i class="fas fa-compact-disc"></i></span>
-                  <span class="spine-title">${album.title}</span>
-                  <span class="spine-artist">${album.artist_short || 'HARVESTER'}</span>
-                </div>
+              <!-- 2. Left Spine (Thick Side Facing Viewer on Left - Image 1) -->
+              <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#1c1815'};">
+                <span class="spine-inner-text" style="color: ${album.spine_color || '#ffffff'};">
+                  ${album.spine_text || (album.title + ' · ' + album.artist)}
+                </span>
               </div>
 
-              <!-- 3. Right Spine -->
-              <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1a1816'};">
-                <div class="spine-content" style="color: ${album.id === 'album_you_are_all' ? '#111' : '#fff'};">
-                  <span class="spine-logo"><i class="fas fa-compact-disc"></i></span>
-                  <span class="spine-title">${album.title}</span>
-                  <span class="spine-artist">${album.artist_short || 'HARVESTER'}</span>
-                </div>
+              <!-- 3. Right Spine (Thick Side Facing Viewer on Right - Image 1) -->
+              <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1c1815'};">
+                <span class="spine-inner-text" style="color: ${album.spine_color || '#ffffff'};">
+                  ${album.spine_text || (album.title + ' · ' + album.artist)}
+                </span>
               </div>
 
               <!-- 4. Top Thickness Edge -->
-              <div class="cube-face cube-top" style="background: ${album.spine_bg || '#1a1816'}; filter: brightness(1.25);"></div>
+              <div class="cube-face cube-top" style="background: ${album.spine_bg || '#1c1815'}; filter: brightness(1.25);"></div>
 
               <!-- 5. Bottom Thickness Edge -->
               <div class="cube-face cube-bottom"></div>
@@ -495,9 +515,9 @@ Praise the power of Your name!`
       <div class="coverflow-meta-bar fade-in">
         <button class="cf-nav-btn prev" onclick="navigateCoverFlow(-1)" title="上一张 (Previous)"><i class="fas fa-chevron-left"></i></button>
         <div class="active-album-info" id="activeAlbumInfo">
-          <span class="cf-tag font-eng-title" id="cfAlbumYear">${albums[0].year} RELEASE</span>
-          <h2 class="cf-album-title" id="cfAlbumTitle">${albums[0].title}</h2>
-          <p class="cf-album-artist" id="cfAlbumArtist">${albums[0].artist} · ${albums[0].tracks.length} 首歌曲</p>
+          <span class="cf-tag font-eng-title" id="cfAlbumYear">${albums[currentIndex].year} RELEASE</span>
+          <h2 class="cf-album-title" id="cfAlbumTitle">${albums[currentIndex].title}</h2>
+          <p class="cf-album-artist" id="cfAlbumArtist">${albums[currentIndex].artist} · ${albums[currentIndex].tracks.length} 首歌曲</p>
           <button class="btn-open-booklet" onclick="openAlbumBooklet(${currentIndex})">
             <i class="fas fa-book-open"></i> 翻开专辑与歌谱 (View Album & Scores)
           </button>
@@ -509,9 +529,13 @@ Praise the power of Your name!`
     updateCoverFlow3DPositions();
   }
 
-  // Calculate 3D Matrix & Offset for all albums (Matching Image 1 Perspective)
+  // Calculate 3D Matrix & Offset for all albums (Exact Image 1 Geometry)
   function updateCoverFlow3DPositions() {
     const boxes = document.querySelectorAll('.album-3d-box');
+    const isMobile = window.innerWidth <= 768;
+    const stepX = isMobile ? 52 : 72;
+    const centerGap = isMobile ? 35 : 55;
+
     boxes.forEach((box, i) => {
       const offset = i - currentIndex;
       box.classList.toggle('active', offset === 0);
@@ -521,24 +545,24 @@ Praise the power of Your name!`
       let opacity = 1;
 
       if (offset === 0) {
-        // Active Center Album: Tilted slightly at -18deg so user sees both the front artwork AND the 3D thick spine!
-        transformStyle = `translateX(0px) translateZ(120px) rotateY(-18deg) scale(1.12)`;
+        // Active Center Album: Standing at 65deg slightly turned forward with shine (Exact Image 1 focal position)
+        transformStyle = `translateX(0px) translateZ(70px) rotateY(65deg) scale(1.08)`;
         opacity = 1;
       } else if (offset < 0) {
-        // Left Side Albums: Tilted +64deg showing the front cover slanted right and thick spine facing forward
-        const xOffset = offset * 85 - 130;
-        const zOffset = Math.abs(offset) * -55;
-        const rotY = 64;
-        const scale = Math.max(0.72, 1 - Math.abs(offset) * 0.05);
-        opacity = Math.max(0.35, 1 - Math.abs(offset) * 0.12);
+        // Left Side Albums: Tilted +75deg showing the thick spine facing viewer-left and cover facing right
+        const xOffset = offset * stepX - centerGap;
+        const zOffset = Math.abs(offset) * -38;
+        const rotY = 75;
+        const scale = Math.max(0.75, 1 - Math.abs(offset) * 0.035);
+        opacity = Math.max(0.4, 1 - Math.abs(offset) * 0.08);
         transformStyle = `translateX(${xOffset}px) translateZ(${zOffset}px) rotateY(${rotY}deg) scale(${scale})`;
       } else {
-        // Right Side Albums: Tilted -64deg showing the front cover slanted left and thick spine facing forward
-        const xOffset = offset * 85 + 130;
-        const zOffset = Math.abs(offset) * -55;
-        const rotY = -64;
-        const scale = Math.max(0.72, 1 - Math.abs(offset) * 0.05);
-        opacity = Math.max(0.35, 1 - Math.abs(offset) * 0.12);
+        // Right Side Albums: Tilted -75deg showing the thick spine facing viewer-right and cover facing left
+        const xOffset = offset * stepX + centerGap;
+        const zOffset = Math.abs(offset) * -38;
+        const rotY = -75;
+        const scale = Math.max(0.75, 1 - Math.abs(offset) * 0.035);
+        opacity = Math.max(0.4, 1 - Math.abs(offset) * 0.08);
         transformStyle = `translateX(${xOffset}px) translateZ(${zOffset}px) rotateY(${rotY}deg) scale(${scale})`;
       }
 
@@ -694,7 +718,7 @@ Praise the power of Your name!`
     }
   };
 
-  // Keyboard and Wheel navigation
+  // Keyboard, Wheel, and Window Resize
   function setupEventListeners() {
     window.addEventListener('keydown', (e) => {
       const modal = document.getElementById('albumBookletModal');
@@ -709,12 +733,14 @@ Praise the power of Your name!`
     const carousel = document.getElementById('coverflowStage');
     if (carousel) {
       carousel.addEventListener('wheel', (e) => {
-        if (Math.abs(e.deltaX) > 30 || Math.abs(e.deltaY) > 30) {
+        if (Math.abs(e.deltaX) > 25 || Math.abs(e.deltaY) > 25) {
           if (e.deltaY > 0 || e.deltaX > 0) navigateCoverFlow(1);
           else navigateCoverFlow(-1);
         }
       }, { passive: true });
     }
+
+    window.addEventListener('resize', updateCoverFlow3DPositions);
   }
 
   // Mobile Touch & Drag Gestures
@@ -734,7 +760,7 @@ Praise the power of Your name!`
       isDragging = false;
       const endX = e.changedTouches[0].clientX;
       const diff = endX - startX;
-      if (Math.abs(diff) > 40) {
+      if (Math.abs(diff) > 35) {
         if (diff < 0) navigateCoverFlow(1);
         else navigateCoverFlow(-1);
       }

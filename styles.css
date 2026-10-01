@@ -2357,11 +2357,11 @@ section[id], div[id^="section-"] {
   user-select: none;
 }
 
-/* 3D Realistic Album Jewel / Vinyl Box (Image 1) */
+/* 3D Realistic Album Jewel / Vinyl Box (Image 1 Model) */
 .album-3d-box {
   position: absolute;
-  width: 280px;
-  height: 280px;
+  width: 240px;
+  height: 330px;
   transform-style: preserve-3d;
   transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
   cursor: pointer;
@@ -2386,14 +2386,14 @@ section[id], div[id^="section-"] {
 .cube-face.cube-front {
   top: 0;
   left: 0;
-  width: 280px;
-  height: 280px;
-  transform: translateZ(14px);
-  border-radius: 4px;
+  width: 240px;
+  height: 330px;
+  transform: translateZ(10px);
+  border-radius: 3px;
   overflow: hidden;
   background: #181411;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.85), inset 0 0 0 1px rgba(0, 0, 0, 0.4);
 }
 
 .cube-face.cube-front img {
@@ -2409,7 +2409,7 @@ section[id], div[id^="section-"] {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.03) 40%, transparent 60%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.03) 40%, transparent 60%);
   pointer-events: none;
 }
 
@@ -2421,84 +2421,84 @@ section[id], div[id^="section-"] {
   bottom: 0;
   border: 1px solid rgba(246, 210, 138, 0.25);
   pointer-events: none;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 /* 2. Left Spine (Thick Side Facing Out - Image 1) */
 .cube-face.cube-spine-left {
   top: 0;
   left: 0;
-  width: 28px;
-  height: 280px;
+  width: 20px;
+  height: 330px;
   transform-origin: 0% 50%;
-  transform: rotateY(-90deg) translateX(-14px);
-  border-left: 1px solid rgba(255, 255, 255, 0.28);
-  border-right: 1px solid rgba(0, 0, 0, 0.7);
+  transform: rotateY(-90deg) translateX(-10px);
+  border-left: 1px solid rgba(255, 255, 255, 0.35);
+  border-right: 1px solid rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7);
 }
 
 /* 3. Right Spine */
 .cube-face.cube-spine-right {
   top: 0;
   right: 0;
-  width: 28px;
-  height: 280px;
+  width: 20px;
+  height: 330px;
   transform-origin: 100% 50%;
-  transform: rotateY(90deg) translateX(14px);
-  border-right: 1px solid rgba(255, 255, 255, 0.28);
-  border-left: 1px solid rgba(0, 0, 0, 0.7);
+  transform: rotateY(90deg) translateX(10px);
+  border-right: 1px solid rgba(255, 255, 255, 0.35);
+  border-left: 1px solid rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7);
 }
 
-/* 4. Top Thickness */
+/* 4. Top Thickness Edge */
 .cube-face.cube-top {
   top: 0;
   left: 0;
-  width: 280px;
-  height: 28px;
+  width: 240px;
+  height: 20px;
   transform-origin: 50% 0%;
-  transform: rotateX(90deg) translateY(-14px);
-  border-top: 1px solid rgba(255, 255, 255, 0.35);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+  transform: rotateX(90deg) translateY(-10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
-/* 5. Bottom Thickness */
+/* 5. Bottom Thickness Edge */
 .cube-face.cube-bottom {
   bottom: 0;
   left: 0;
-  width: 280px;
-  height: 28px;
+  width: 240px;
+  height: 20px;
   transform-origin: 50% 100%;
-  transform: rotateX(-90deg) translateY(14px);
+  transform: rotateX(-90deg) translateY(10px);
   background: #0d0b09;
   border-bottom: 1px solid rgba(0, 0, 0, 0.9);
 }
 
-/* 6. Back Cover */
+/* 6. Back Cover Face */
 .cube-face.cube-back {
   top: 0;
   left: 0;
-  width: 280px;
-  height: 280px;
-  transform: rotateY(180deg) translateZ(14px);
+  width: 240px;
+  height: 330px;
+  transform: rotateY(180deg) translateZ(10px);
   background: #14110e;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
+  border-radius: 3px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 24px 20px;
+  padding: 24px 18px;
   color: rgba(255, 255, 255, 0.7);
-  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.95);
 }
 
 .cube-back-header {
@@ -2537,52 +2537,30 @@ section[id], div[id^="section-"] {
   padding-top: 6px;
 }
 
-/* Spine Text & Details (Vertical Spine Typography - Image 1) */
-.spine-content {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 94%;
-  padding: 10px 0;
-  font-family: var(--font-songti), serif;
-  font-size: 0.76rem;
+/* Spine Text - Exact match to Image 1 (Rotated 90deg, crisp single-line along spine) */
+.spine-inner-text {
+  display: block;
+  white-space: nowrap;
+  font-size: 0.74rem;
   font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: 1.2px;
+  transform: rotate(90deg);
+  transform-origin: center center;
+  width: 310px;
+  text-align: center;
   user-select: none;
-  box-sizing: border-box;
-}
-
-.spine-title {
-  color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
-.spine-artist {
-  font-family: var(--font-eng-title);
-  font-size: 0.62rem;
-  letter-spacing: 1px;
-  opacity: 0.85;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
-}
-
-.spine-logo {
-  font-size: 0.7rem;
-  opacity: 0.75;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  font-family: var(--font-songti), serif;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 /* Floor Shadow & Reflection (Image 1) */
 .album-shadow-3d {
   position: absolute;
-  bottom: -45px;
-  left: 3%;
-  width: 94%;
-  height: 36px;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.9) 0%, rgba(246, 210, 138, 0.06) 35%, transparent 72%);
+  bottom: -40px;
+  left: 2%;
+  width: 96%;
+  height: 32px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.9) 0%, rgba(246, 210, 138, 0.05) 35%, transparent 72%);
   transform: rotateX(90deg) translateZ(-16px);
   filter: blur(8px);
   pointer-events: none;
