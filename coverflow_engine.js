@@ -9,20 +9,20 @@
  */
 
 (function() {
-  // Curated Collection of Childlike Hand-Drawn & Whimsical Crayon / Watercolor Doodle Illustrations
+  // Curated Collection of Morandi Tone & Childlike Hand-Drawn / Crayon Doodle Illustrations
   const childlikeDoodles = [
-    "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=900&auto=format&fit=crop&q=80", // colorful whimsical painting
-    "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=900&auto=format&fit=crop&q=80", // watercolor splash & doodle
-    "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=900&auto=format&fit=crop&q=80", // playful abstract shapes
-    "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=900&auto=format&fit=crop&q=80", // botanical playful sketch
-    "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=900&auto=format&fit=crop&q=80", // cute hand-drawn illustration
-    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=900&auto=format&fit=crop&q=80", // pastel childlike dream
-    "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=900&auto=format&fit=crop&q=80", // creative vibrant brushstrokes
-    "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=900&auto=format&fit=crop&q=80", // bright playful colors
-    "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=900&auto=format&fit=crop&q=80", // childlike expressive painting
-    "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?w=900&auto=format&fit=crop&q=80", // warm joyful mountains & sun
-    "https://images.unsplash.com/photo-1579783901586-d88db74b4fe4?w=900&auto=format&fit=crop&q=80", // whimsical starry dream doodle
-    "https://images.unsplash.com/photo-1549490349-8643362247b5?w=900&auto=format&fit=crop&q=80"  // pastel crayon art
+    "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=900&auto=format&fit=crop&q=80", // cute hand-drawn cat & botanical doodle (Morandi kraft cream)
+    "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?w=900&auto=format&fit=crop&q=80", // warm joyful sun, mountains & naive childlike crayon art
+    "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=900&auto=format&fit=crop&q=80", // Morandi pastel botanical paper sketch
+    "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=900&auto=format&fit=crop&q=80", // whimsical watercolor splash & doodle
+    "https://images.unsplash.com/photo-1549490349-8643362247b5?w=900&auto=format&fit=crop&q=80", // soft pastel crayon naive doodle
+    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=900&auto=format&fit=crop&q=80", // dreamy Morandi pastel organic shapes & doodle
+    "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=900&auto=format&fit=crop&q=80", // playful modern paper cut-out collage
+    "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=900&auto=format&fit=crop&q=80", // expressive childlike brushstrokes & textured paper
+    "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=900&auto=format&fit=crop&q=80", // naive childlike artistic gouache painting
+    "https://images.unsplash.com/photo-1579783901586-d88db74b4fe4?w=900&auto=format&fit=crop&q=80", // whimsical starry night doodle & soft clouds
+    "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=900&auto=format&fit=crop&q=80", // warm hand-drawn storybook illustration
+    "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=900&auto=format&fit=crop&q=80"  // Morandi muted botanical hand painting
   ];
 
   // Default Curated Single Songs (1 Album = 1 Single Track) with Childlike Doodle Art
