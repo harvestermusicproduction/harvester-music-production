@@ -662,53 +662,71 @@ You have set my feet upon the rock!`
     carousel.innerHTML = virtualList.map(({ album, origIdx, vIdx }) => `
       <div class="album-3d-box ${origIdx === currentIndex && vIdx === 0 ? 'active' : ''}" data-vindex="${vIdx}" data-real-index="${origIdx}">
         <div class="album-cube">
-          <!-- 1. Front Cover Face (Heavyweight Textured Gatefold Cardboard) -->
-          <div class="cube-face cube-front">
+          
+          <!-- 💽 Heavyweight 180g Vinyl Disc (Glides out from inside the sleeve) -->
+          <div class="vinyl-disc-container">
+            <div class="album-vinyl-disc">
+              <div class="vinyl-groove-layer"></div>
+              <div class="vinyl-rainbow-sheen"></div>
+              <div class="vinyl-center-label" style="background: ${album.spine_bg || '#24464c'};">
+                <span class="vinyl-label-tag">STEREO 33⅓ RPM</span>
+                <span class="vinyl-label-title">${album.title}</span>
+                <span class="vinyl-label-cat">HARV-${album.year || '25'}</span>
+                <div class="vinyl-spindle-hole"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 1. Front Outer Cardboard Sleeve (现代黑胶纸质封套) -->
+          <div class="cube-face cube-front sleeve-outer-front">
             <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
+            
+            <!-- Left Spine Fold Crease -->
             <div class="album-spine-crease"></div>
+            
+            <!-- Modern Satin Specular Reflection -->
             <div class="album-glass-sheen"></div>
-            <!-- Top Left Gold Foil Collector Seal -->
-            <div class="album-collector-seal">
-              ${album.year || '2025'} · HARV-${(origIdx + 1).toString().padStart(2, '0')}
+
+            <!-- Right Edge Open Sleeve Slot & Die-Cut Thumb Notch (黑胶套右侧开口与取盘凹口) -->
+            <div class="sleeve-open-edge">
+              <div class="sleeve-thumb-cutout"></div>
             </div>
-            <!-- Bottom Right Hi-Res Master Stamp -->
-            <div class="album-hi-res-badge">
-              <i class="fas fa-certificate" style="font-size:0.5rem; color:var(--gold); margin-right:3px;"></i> MASTER
+
+            <!-- Modern Record Store Hype Sticker (现代黑胶封套特色角标贴纸) -->
+            <div class="vinyl-hype-sticker">
+              <span class="hype-badge-top">HARVESTER RECORDS</span>
+              <span class="hype-badge-main">180G VINYL · HI-RES</span>
+              <span class="hype-badge-code">${album.year || '2025'} · CAT-${(origIdx + 1).toString().padStart(2, '0')}</span>
+            </div>
+
+            <!-- Bottom Right Master Fidelity Badge -->
+            <div class="sleeve-barcode-badge">
+              <i class="fas fa-compact-disc" style="font-size:0.55rem; color:var(--gold); margin-right:3px;"></i> MASTER LP
             </div>
           </div>
 
-          <!-- 💽 High-End Realistic Physical Vinyl Record (Glides out on Active) -->
-          <div class="album-vinyl-disc">
-            <div class="vinyl-groove-layer"></div>
-            <div class="vinyl-rainbow-sheen"></div>
-            <div class="vinyl-center-label" style="background: ${album.spine_bg || '#24464c'};">
-              <span class="vinyl-label-title">${album.title}</span>
-              <span class="vinyl-label-cat">HARV-${album.year || '25'}</span>
-              <div class="vinyl-spindle-hole"></div>
-            </div>
-          </div>
-
-          <!-- 2. Left Spine (Luxury Gold-Stamped Tactile Spine) -->
+          <!-- 2. Left Spine (LP Outer Jacket Spine - 现代平直书脊) -->
           <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#242f3a'};">
-            <span class="spine-top-stamp">CCM · ${album.year || '2025'}</span>
+            <span class="spine-top-stamp">LP · ${album.year || '2025'}</span>
             <div class="spine-inner-text">
               <span class="spine-title">${album.title}</span>
             </div>
             <span class="spine-bottom-stamp">HARV-${(origIdx + 1).toString().padStart(2, '0')}</span>
           </div>
 
-          <!-- Top Thickness Edge -->
+          <!-- Top Sealed Edge -->
           <div class="cube-face cube-top" style="background: ${album.spine_bg || '#242f3a'}; filter: brightness(1.2);"></div>
 
-          <!-- Bottom Thickness Edge -->
+          <!-- Bottom Sealed Edge -->
           <div class="cube-face cube-bottom"></div>
 
-          <!-- Back Cover Face -->
-          <div class="cube-face cube-back">
+          <!-- Back Outer Sleeve Face -->
+          <div class="cube-face cube-back sleeve-outer-back">
             <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
             <div class="album-glass-sheen"></div>
-            <div class="album-collector-seal" style="left:auto; right:10px;">
-              ${album.year || '2025'}
+            <div class="vinyl-hype-sticker" style="left:auto; right:12px;">
+              <span class="hype-badge-top">HARVESTER MUSIC</span>
+              <span class="hype-badge-main">${album.year || '2025'} RELEASE</span>
             </div>
           </div>
         </div>
