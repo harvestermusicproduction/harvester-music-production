@@ -344,7 +344,7 @@ You have set my feet upon the rock!`
               title: s.title,
               title_en: customMatch?.title_en || "Harvester Single",
               artist: s.artist || customMatch?.artist || "Harvester Worship",
-              genre: customMatch?.genre || "CCM / Worship · 2025",
+              genre: customMatch?.genre || "Worship / CCM · 2025",
               year: customMatch?.year || "2025",
               theme_color: customMatch?.theme_color || ["#1c2b36", "#169b9b", "#3a2d10", "#b06d60", "#182736", "#255977", "#271b16", "#0f1c24", "#1f1d36"][idx % 9],
               spine_bg: customMatch?.spine_bg || ["#1877F2", "#00b894", "#f39c12", "#ea8676", "#0984e3", "#2d3436", "#e77f67", "#1b2a4a", "#6c5ce7"][idx % 9],
@@ -356,7 +356,17 @@ You have set my feet upon the rock!`
               youtube_url: s.audio_url || s.youtube_url || "https://www.youtube.com/@harvestermusic.production",
               spotify_url: s.spotify_url || "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
               score_url: s.score_url || "assets/scores/sample.pdf",
-              lyrics: s.description ? s.description : `【${s.title}】\n\n词曲：Harvester Music Production\n愿每一首写给神的歌都被听见。\n欢迎下载歌谱使用并在各处传唱。`
+              lyrics: s.description ? s.description : `【${s.title}】\n\n词曲：Harvester Music Production\n愿每一首写给神的歌都被听见。\n欢迎下载歌谱使用并在各处传唱。`,
+              key_bpm: customMatch?.key_bpm || "KEY: C · 72 BPM",
+              scripture: customMatch?.scripture || "「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24",
+              notes: customMatch?.notes || "在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。",
+              composer: customMatch?.composer || s.artist || "Harvester Worship",
+              arrangement: customMatch?.arrangement || "Mango Jump & Harvester",
+              vocals: customMatch?.vocals || "Creative Vocalists",
+              mixing: customMatch?.mixing || "Harvester Studio HQ",
+              photo_1: customMatch?.photo_1 || s.cover_url || doodleFallback,
+              photo_2: customMatch?.photo_2 || childlikeDoodles[1],
+              photo_3: customMatch?.photo_3 || childlikeDoodles[2]
             };
           });
 
@@ -898,7 +908,7 @@ You have set my feet upon the rock!`
               <div>
                 <!-- Top Polaroid Photo (01 badge) -->
                 <div style="width:100%; height:150px; border-radius:8px; overflow:hidden; border:2px solid #c9bda8; position:relative; margin-bottom:16px;">
-                  <img src="${activeSong.cover_url}" alt="Art 01" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='assets/logo.png'">
+                  <img src="${activeSong.photo_1 || activeSong.cover_url}" alt="Art 01" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='assets/logo.png'">
                   <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-eng-title); font-size:0.75rem; padding:2px 8px; border-radius:4px; font-weight:700;">01</div>
                 </div>
 
@@ -913,8 +923,8 @@ ${activeSong.lyrics}
               </div>
 
               <div style="border-top:1px solid rgba(44,36,28,0.15); padding-top:12px; display:flex; justify-content:space-between; font-family:var(--font-eng-title); font-size:0.75rem; color:#6e5d48;">
-                <span>ORIGINAL MASTER</span>
-                <span style="color:#2c241c; font-weight:700;">HARVESTER</span>
+                <span>${activeSong.key_bpm || 'KEY: C · 72 BPM'}</span>
+                <span style="color:#2c241c; font-weight:700;">ORIGINAL MASTER</span>
               </div>
             </div>
 
@@ -927,21 +937,20 @@ ${activeSong.lyrics}
                 </div>
 
                 <div style="font-family:var(--font-songti), serif; font-size:0.95rem; line-height:1.8; color:#f3d7df; space-y:10px;">
-                  <div style="background:rgba(0,0,0,0.25); border-left:3px solid var(--gold); padding:10px 12px; border-radius:4px; font-size:0.85rem; color:var(--gold); margin-bottom:12px;">
-                    「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24
+                  ${activeSong.scripture ? `
+                    <div style="background:rgba(0,0,0,0.25); border-left:3px solid var(--gold); padding:10px 12px; border-radius:4px; font-size:0.85rem; color:var(--gold); margin-bottom:12px;">
+                      ${activeSong.scripture}
+                    </div>
+                  ` : ''}
+                  <div style="white-space:pre-wrap; max-height:200px; overflow-y:auto;">
+                    ${activeSong.notes || '在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。'}
                   </div>
-                  <p style="margin:0 0 10px;">
-                    在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。
-                  </p>
-                  <p style="margin:0;">
-                    无论行过高山或低谷，神的爱总如晨曦般恒常守护，指引前行的道路。
-                  </p>
                 </div>
               </div>
 
               <!-- Bottom Polaroid photo -->
               <div style="width:100%; height:130px; border-radius:8px; overflow:hidden; border:2px solid rgba(255,255,255,0.2); position:relative; margin-top:16px;">
-                <img src="${childlikeDoodles[1] || activeSong.cover_url}" alt="Art 02" style="width:100%; height:100%; object-fit:cover; opacity:0.9;" onerror="this.src='${activeSong.cover_url}'">
+                <img src="${activeSong.photo_2 || activeSong.cover_url}" alt="Art 02" style="width:100%; height:100%; object-fit:cover; opacity:0.9;" onerror="this.src='${activeSong.cover_url}'">
                 <div style="position:absolute; bottom:6px; left:6px; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); color:var(--gold); font-family:var(--font-eng-title); font-size:0.7rem; padding:2px 8px; border-radius:4px;">
                   WORSHIP HEART · 02
                 </div>
@@ -952,7 +961,7 @@ ${activeSong.lyrics}
             <div class="accordion-panel unfold-panel-3" style="background:#dedad4; color:#26221f; border-radius:0 12px 12px 0; padding:24px;">
               <div>
                 <div style="width:100%; height:150px; border-radius:8px; overflow:hidden; border:2px solid #c6c0b6; position:relative; margin-bottom:16px;">
-                  <img src="${childlikeDoodles[2] || activeSong.cover_url}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='${activeSong.cover_url}'">
+                  <img src="${activeSong.photo_3 || activeSong.cover_url}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='${activeSong.cover_url}'">
                   <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-eng-title); font-size:0.75rem; padding:2px 8px; border-radius:4px; font-weight:700;">03</div>
                 </div>
 
@@ -964,15 +973,21 @@ ${activeSong.lyrics}
                 <div style="font-size:0.85rem; space-y:8px; color:#423b35; font-family:var(--font-body);">
                   <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
                     <span style="color:#756a60;">词曲创作：</span>
-                    <span style="font-weight:600; color:#1c1815;">${activeSong.artist}</span>
+                    <span style="font-weight:600; color:#1c1815;">${activeSong.composer || activeSong.artist}</span>
                   </div>
                   <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
                     <span style="color:#756a60;">编曲制作：</span>
-                    <span style="font-weight:600; color:#1c1815;">Mango Jump & Harvester</span>
+                    <span style="font-weight:600; color:#1c1815;">${activeSong.arrangement || 'Mango Jump & Harvester'}</span>
                   </div>
+                  ${activeSong.vocals ? `
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
+                      <span style="color:#756a60;">人声主唱：</span>
+                      <span style="font-weight:600; color:#1c1815;">${activeSong.vocals}</span>
+                    </div>
+                  ` : ''}
                   <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
                     <span style="color:#756a60;">录音母带：</span>
-                    <span style="font-weight:600; color:#1c1815;">Harvester Studio HQ</span>
+                    <span style="font-weight:600; color:#1c1815;">${activeSong.mixing || 'Harvester Studio HQ'}</span>
                   </div>
                 </div>
               </div>

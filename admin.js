@@ -480,20 +480,37 @@ document.addEventListener('DOMContentLoaded', () => {
       const spineBg = spineCustom?.spine_bg || "#1877F2";
       const spineClr = spineCustom?.spine_color || "#ffffff";
       const spineTxt = spineCustom?.spine_text || (s?.title ? `${s.title} · ${s.artist || 'Harvester'}` : "");
+      const themeColor = spineCustom?.theme_color || "#2e6b82";
+      const titleEn = spineCustom?.title_en || "Harvester Single";
+      const year = spineCustom?.year || "2025";
+      const genre = spineCustom?.genre || "Worship / CCM · 2025";
+      const keyBpm = spineCustom?.key_bpm || "KEY: C · 72 BPM";
+      const scripture = spineCustom?.scripture || "「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24";
+      const notes = spineCustom?.notes || "在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。";
+      const composer = spineCustom?.composer || s?.artist || "Harvester Worship";
+      const arrangement = spineCustom?.arrangement || "Mango Jump & Harvester";
+      const vocals = spineCustom?.vocals || "Creative Vocalists";
+      const mixing = spineCustom?.mixing || "Harvester Studio HQ";
+      const photo1 = spineCustom?.photo_1 || initialCover;
+      const photo2 = spineCustom?.photo_2 || childlikeDoodles[1];
+      const photo3 = spineCustom?.photo_3 || childlikeDoodles[2];
 
       const modal = document.createElement('div');
       modal.id = 'musicEditModal';
       modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(12px); padding:20px;";
       modal.innerHTML = `
-        <div style="background:#111; border:1.5px solid var(--gold); border-radius:18px; padding:2.2rem; width:100%; max-width:680px; max-height:92vh; overflow-y:auto; box-shadow:0 25px 70px rgba(0,0,0,1);">
+        <div style="background:#111; border:1.5px solid var(--gold); border-radius:18px; padding:2.2rem; width:100%; max-width:760px; max-height:92vh; overflow-y:auto; box-shadow:0 25px 70px rgba(0,0,0,1);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid #222; padding-bottom:10px;">
-            <h2 style="color:var(--gold); margin:0;">${isEdit ? '编辑单曲与 3D 唱片档案' : '发布新单曲 / 3D 唱片'}</h2>
+            <div>
+              <h2 style="color:var(--gold); margin:0; font-size:1.4rem;">${isEdit ? '编辑单曲与风琴折档案' : '发布新单曲 / 3D 唱片'}</h2>
+              <p style="color:#888; font-size:0.8rem; margin:4px 0 0;">可完整自定义前台 3D 展台、立体书脊与莫兰迪风琴折内页所有内容</p>
+            </div>
             <button class="btn-tiny" onclick="this.closest('#musicEditModal').remove()">✕ 关闭</button>
           </div>
           
           <!-- 1. 封面管理与童趣手绘预设 -->
           <div style="margin-bottom:20px; background:#0a0a0a; padding:18px; border-radius:12px; border:1px solid #222; text-align:center;">
-            <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">📸 唱片封面 (Album Cover)</label>
+            <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">📸 单曲主封面 (Single Cover / Poster Sticker)</label>
             <img id="m_prev" src="${initialCover}" style="width:140px; height:140px; object-fit:cover; border-radius:12px; display:block; margin:0 auto 12px; border:1.5px solid rgba(246,210,138,0.3); background:#181818;">
             
             <div style="display:flex; gap:10px; justify-content:center; margin-bottom:10px;">
@@ -508,14 +525,41 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <!-- 2. 基本信息 -->
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
-            <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲名称 (Title) *</label>
-              <input type="text" id="m_t" value="${s?.title || ''}" placeholder="例如：更新敬拜" style="width:100%; padding:10px;" oninput="document.getElementById('m_spine_t').value = this.value + ' · ' + (document.getElementById('m_artist').value || 'Harvester')">
+          <div style="background:#0a0a0a; border:1px solid #222; border-radius:10px; padding:15px; margin-bottom:15px;">
+            <label style="display:block; margin-bottom:12px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🏷️ 基础信息与莫兰迪主题色</label>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:12px;">
+              <div>
+                <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲中文名称 (Title) *</label>
+                <input type="text" id="m_t" value="${s?.title || ''}" placeholder="例如：更新敬拜" style="width:100%; padding:10px;" oninput="document.getElementById('m_spine_t').value = this.value + ' · ' + (document.getElementById('m_artist').value || 'Harvester')">
+              </div>
+              <div>
+                <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">英文译名 / 副标题 (English Title)</label>
+                <input type="text" id="m_title_en" value="${titleEn}" placeholder="例如：Renewed Worship" style="width:100%; padding:10px;">
+              </div>
             </div>
-            <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">所属歌手 / 团队</label>
-              <input type="text" id="m_artist" value="${s?.artist || 'Harvester Worship'}" placeholder="例如：Harvester Worship" style="width:100%; padding:10px;">
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
+              <div>
+                <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">所属歌手 / 团队</label>
+                <input type="text" id="m_artist" value="${s?.artist || 'Harvester Worship'}" placeholder="例如：Harvester Worship" style="width:100%; padding:8px;">
+              </div>
+              <div>
+                <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">发行年份 (Year)</label>
+                <input type="text" id="m_year" value="${year}" placeholder="2025" style="width:100%; padding:8px;">
+              </div>
+              <div>
+                <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">音乐流派 (Genre)</label>
+                <input type="text" id="m_genre" value="${genre}" placeholder="Worship / CCM · 2025" style="width:100%; padding:8px;">
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">海报及页面专属莫兰迪主题色 (Theme Color)</label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="color" id="m_theme_clr" value="${themeColor}" style="width:40px; height:35px; background:transparent; border:none; cursor:pointer;">
+                <input type="text" id="m_theme_clr_hex" value="${themeColor}" style="flex:1; padding:6px; font-family:monospace;" onchange="document.getElementById('m_theme_clr').value=this.value">
+              </div>
             </div>
           </div>
 
@@ -545,27 +589,91 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <!-- 4. 视听与外链 -->
-          <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">YouTube 播放链接 (Video / Audio URL)</label>
-            <input type="text" id="m_a" value="${s?.audio_url || ''}" placeholder="https://www.youtube.com/watch?v=..." style="width:100%; padding:10px;">
+          <div style="background:#0a0a0a; border:1px solid #222; border-radius:10px; padding:15px; margin-bottom:15px;">
+            <label style="display:block; margin-bottom:12px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🔗 试听、外链与歌谱资源</label>
+
+            <div style="margin-bottom:10px;">
+              <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">YouTube 播放链接 (Video / Audio URL)</label>
+              <input type="text" id="m_a" value="${s?.audio_url || ''}" placeholder="https://www.youtube.com/watch?v=..." style="width:100%; padding:8px;">
+            </div>
+
+            <div style="margin-bottom:10px;">
+              <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">Spotify 聆听链接 (Spotify URL)</label>
+              <input type="text" id="m_sp" value="${s?.spotify_url || ''}" placeholder="https://open.spotify.com/track/..." style="width:100%; padding:8px;">
+            </div>
+
+            <div style="margin-top:10px;">
+              <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">📄 PDF 歌谱链接 / 文件上传 (Score PDF)</label>
+              <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="可直接在下方上传 PDF 或粘贴链接" style="width:100%; padding:8px; margin-bottom:6px;">
+              <input type="file" id="mf_score" style="font-size:0.8rem; color:#aaa; margin-bottom:6px; width:100%;" accept=".pdf">
+              <button type="button" class="btn-tiny" style="width:100%; padding:6px;" onclick="uploadFile('mf_score', 'm_s')">📤 上传歌谱 PDF 文件</button>
+            </div>
           </div>
 
-          <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Spotify 聆听链接 (Spotify Track URL)</label>
-            <input type="text" id="m_sp" value="${s?.spotify_url || ''}" placeholder="https://open.spotify.com/track/..." style="width:100%; padding:10px;">
-          </div>
+          <!-- 5. 莫兰迪风琴折内页 (FOLD 01 / 02 / 03 完整配置) -->
+          <div style="background:#0a0a0a; border:1.5px solid rgba(78,205,196,0.3); border-radius:12px; padding:18px; margin-bottom:15px;">
+            <label style="display:block; margin-bottom:12px; color:#4ecdc4; font-size:0.9rem; font-weight:bold;">📖 莫兰迪风琴折内页详细内容 (3-Fold Concertina Booklet)</label>
+            
+            <!-- Fold 1 -->
+            <div style="background:#141414; padding:12px; border-radius:8px; margin-bottom:12px; border-left:3px solid #dfd5c4;">
+              <span style="color:#dfd5c4; font-weight:bold; font-size:0.85rem; display:block; margin-bottom:6px;">📂 折页一 (沙色)：完整歌词与曲速调号</span>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#888; display:block;">调号与速度 (Key & BPM)</label>
+                <input type="text" id="m_key_bpm" value="${keyBpm}" placeholder="KEY: C · 72 BPM" style="width:100%; padding:6px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#888; display:block;">折页一顶部拍立得照片 URL</label>
+                <input type="text" id="m_photo1" value="${photo1}" style="width:100%; padding:6px;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:#888; display:block;">完整歌词 (换行保留)</label>
+                <textarea id="m_d" placeholder="输入完整歌词..." style="width:100%; height:120px; padding:8px; line-height:1.5; font-size:0.85rem;">${s?.description || ''}</textarea>
+              </div>
+            </div>
 
-          <div style="margin-bottom:15px; background:#0a0a0a; padding:15px; border-radius:10px; border:1px solid #222;">
-            <label style="display:block; margin-bottom:6px; color:var(--gold); font-size:0.8rem; font-weight:bold;">📄 PDF 歌谱上传 / 链接 (Score PDF)</label>
-            <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="可直接在下方上传 PDF 或粘贴链接" style="width:100%; padding:8px; margin-bottom:8px;">
-            <input type="file" id="mf_score" style="font-size:0.8rem; color:#aaa; margin-bottom:6px; width:100%;" accept=".pdf">
-            <button type="button" class="btn-tiny" style="width:100%; padding:6px;" onclick="uploadFile('mf_score', 'm_s')">📤 上传歌谱 PDF 文件</button>
-          </div>
+            <!-- Fold 2 -->
+            <div style="background:#141414; padding:12px; border-radius:8px; margin-bottom:12px; border-left:3px solid #5c2734;">
+              <span style="color:#e28299; font-weight:bold; font-size:0.85rem; display:block; margin-bottom:6px;">📂 折页二 (勃艮第红)：创作心得与经文灵修</span>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#888; display:block;">核心圣经经文 (Scripture)</label>
+                <input type="text" id="m_scripture" value="${scripture}" placeholder="「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24" style="width:100%; padding:6px;">
+              </div>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#888; display:block;">折页二底部艺术配图 URL</label>
+                <input type="text" id="m_photo2" value="${photo2}" style="width:100%; padding:6px;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:#888; display:block;">创作背景与灵修故事 (Worship Notes)</label>
+                <textarea id="m_notes" placeholder="输入敬拜创作心得与祷告感受..." style="width:100%; height:90px; padding:8px; line-height:1.5; font-size:0.85rem;">${notes}</textarea>
+              </div>
+            </div>
 
-          <!-- 5. 歌词与简介 -->
-          <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">完整歌词与创作灵修背景 (Full Lyrics)</label>
-            <textarea id="m_d" placeholder="输入完整歌词（换行自动保留）与创作背景..." style="width:100%; height:130px; padding:10px; line-height:1.5; font-size:0.85rem;">${s?.description || ''}</textarea>
+            <!-- Fold 3 -->
+            <div style="background:#141414; padding:12px; border-radius:8px; border-left:3px solid #dedad4;">
+              <span style="color:#dedad4; font-weight:bold; font-size:0.85rem; display:block; margin-bottom:6px;">📂 折页三 (浅灰麻布)：同工团队与制作人员名单</span>
+              <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#888; display:block;">折页三顶部幕后相片 URL</label>
+                <input type="text" id="m_photo3" value="${photo3}" style="width:100%; padding:6px;">
+              </div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                <div>
+                  <label style="font-size:0.75rem; color:#888; display:block;">词曲创作</label>
+                  <input type="text" id="m_composer" value="${composer}" placeholder="Harvester Worship" style="width:100%; padding:6px;">
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; color:#888; display:block;">编曲制作</label>
+                  <input type="text" id="m_arrangement" value="${arrangement}" placeholder="Mango Jump & Harvester" style="width:100%; padding:6px;">
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; color:#888; display:block;">人声主唱</label>
+                  <input type="text" id="m_vocals" value="${vocals}" placeholder="Creative Vocalists" style="width:100%; padding:6px;">
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; color:#888; display:block;">录音混音母带</label>
+                  <input type="text" id="m_mixing" value="${mixing}" placeholder="Harvester Studio HQ" style="width:100%; padding:6px;">
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- 6. 首推设置 -->
@@ -584,6 +692,9 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       document.body.appendChild(modal);
 
+      document.getElementById('m_theme_clr').addEventListener('input', (e) => {
+        document.getElementById('m_theme_clr_hex').value = e.target.value;
+      });
       document.getElementById('m_spine_bg').addEventListener('input', (e) => {
         document.getElementById('m_spine_bg_hex').value = e.target.value;
       });
@@ -607,7 +718,12 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const isLatest = document.getElementById('m_latest').checked;
       const title = document.getElementById('m_t').value.trim();
+      const title_en = document.getElementById('m_title_en')?.value.trim() || "Harvester Single";
       const artist = document.getElementById('m_artist').value.trim() || 'Harvester Worship';
+      const year = document.getElementById('m_year')?.value.trim() || "2025";
+      const genre = document.getElementById('m_genre')?.value.trim() || "Worship / CCM · 2025";
+      const theme_color = document.getElementById('m_theme_clr_hex')?.value.trim() || "#2e6b82";
+
       const cover_url = document.getElementById('m_url').value.trim();
       const audio_url = document.getElementById('m_a').value.trim();
       const spotify_url = document.getElementById('m_sp')?.value.trim() || '';
@@ -617,6 +733,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const spine_text = document.getElementById('m_spine_t').value.trim() || `${title} · ${artist}`;
       const spine_bg = document.getElementById('m_spine_bg_hex').value.trim() || '#1877F2';
       const spine_color = document.getElementById('m_spine_clr_hex').value.trim() || '#ffffff';
+
+      const key_bpm = document.getElementById('m_key_bpm')?.value.trim() || "KEY: C · 72 BPM";
+      const scripture = document.getElementById('m_scripture')?.value.trim() || "";
+      const notes = document.getElementById('m_notes')?.value.trim() || "";
+      const composer = document.getElementById('m_composer')?.value.trim() || artist;
+      const arrangement = document.getElementById('m_arrangement')?.value.trim() || "Mango Jump & Harvester";
+      const vocals = document.getElementById('m_vocals')?.value.trim() || "Creative Vocalists";
+      const mixing = document.getElementById('m_mixing')?.value.trim() || "Harvester Studio HQ";
+      const photo_1 = document.getElementById('m_photo1')?.value.trim() || cover_url;
+      const photo_2 = document.getElementById('m_photo2')?.value.trim() || cover_url;
+      const photo_3 = document.getElementById('m_photo3')?.value.trim() || cover_url;
 
       if (!title) throw new Error("请输入歌曲名称");
 
@@ -650,18 +777,30 @@ document.addEventListener('DOMContentLoaded', () => {
       const albumObj = {
         id: savedId,
         title,
-        title_en: "Harvester Single",
+        title_en,
         artist,
+        year,
+        genre,
+        theme_color,
         spine_text,
         spine_bg,
         spine_color,
         cover_url,
-        year: "2025",
         description,
         score_url,
         audio_url,
         youtube_url: audio_url,
-        spotify_url
+        spotify_url,
+        key_bpm,
+        scripture,
+        notes,
+        composer,
+        arrangement,
+        vocals,
+        mixing,
+        photo_1,
+        photo_2,
+        photo_3
       };
       if (existingIdx >= 0) {
         albums[existingIdx] = albumObj;
