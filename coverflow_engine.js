@@ -390,7 +390,7 @@ You have set my feet upon the rock!`
 
         <div class="header-center">
           <div class="pill-segmented-control">
-            <button class="pill-btn active">🎵 3D 敬拜诗歌展台 (Single Works · 左右滑动浏览)</button>
+            <button class="pill-btn active">🎵 单曲 (Singles)</button>
           </div>
         </div>
 
@@ -725,19 +725,23 @@ You have set my feet upon the rock!`
       }
     });
 
-    // Mouse Wheel & Trackpad Continuous Scroll
+    // Mouse Wheel & Trackpad Scroll (Allows Natural Vertical Page Scroll)
     let wheelDebounce;
     shelf.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const delta = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY);
-      targetProgress += delta * 0.0025;
-      targetProgress = Math.max(0, Math.min(albums.length - 1, targetProgress));
+      // Only hijack when horizontal scrolling (deltaX) is dominant or when holding Shift key.
+      // Normal vertical mouse wheel (deltaY) allows the page to scroll down/up naturally!
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) {
+        e.preventDefault();
+        const delta = e.shiftKey ? e.deltaY : e.deltaX;
+        targetProgress += delta * 0.003;
+        targetProgress = Math.max(0, Math.min(albums.length - 1, targetProgress));
 
-      clearTimeout(wheelDebounce);
-      wheelDebounce = setTimeout(() => {
-        targetProgress = Math.round(targetProgress);
-        updateMetaBar();
-      }, 90);
+        clearTimeout(wheelDebounce);
+        wheelDebounce = setTimeout(() => {
+          targetProgress = Math.round(targetProgress);
+          updateMetaBar();
+        }, 90);
+      }
     }, { passive: false });
   }
 

@@ -411,12 +411,12 @@
     <!-- Navigation Tabs / Badges -->
     <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
       <button onclick="switchView('rack')" id="nav-rack-btn" class="text-teal-400 hover:text-white transition flex items-center space-x-2">
-        <i class="fa-solid fa-layer-group"></i>
-        <span>3D 唱片展架 (3D Rack)</span>
+        <i class="fa-solid fa-compact-disc"></i>
+        <span>单曲 (Singles)</span>
       </button>
       <button onclick="openDetailView(currentIndex)" id="nav-detail-btn" class="text-slate-400 hover:text-white transition flex items-center space-x-2">
         <i class="fa-solid fa-book-open"></i>
-        <span>莫兰迪风琴折内页 (Folded Booklet)</span>
+        <span>风琴折内页 (Folded Booklet)</span>
       </button>
       <div class="h-4 w-[1px] bg-white/20"></div>
       <span class="text-xs bg-amber-400/20 text-amber-300 px-2.5 py-1 rounded-full border border-amber-400/30 uppercase tracking-widest font-mono">
@@ -1300,10 +1300,11 @@
         if (isDragging) handleDragEnd();
       });
 
+      // Mouse Wheel (Allows Natural Vertical Page Scroll)
       carousel.addEventListener("wheel", (e) => {
-        if (e.deltaY !== 0 || e.deltaX !== 0) {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) {
           e.preventDefault();
-          const delta = (e.deltaY || e.deltaX) > 0 ? 1 : -1;
+          const delta = (e.shiftKey ? e.deltaY : e.deltaX) > 0 ? 1 : -1;
           navigateRack(delta);
         }
       }, { passive: false });
