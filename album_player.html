@@ -1260,7 +1260,7 @@
       requestAnimationFrame(tick);
     }
 
-    /* ================= 3D TRANSFORM CALCULATIONS (CYLINDRICAL ARC · INFINITE LOOP) ================= */
+    /* ================= 3D TRANSFORM CALCULATIONS (BOOKSHELF PERSPECTIVE WITH VISIBLE SPINES) ================= */
     function render3DTransforms() {
       const boxes = document.querySelectorAll(".album-3d-box");
       if (!boxes.length || !albumsData.length) return;
@@ -1268,9 +1268,8 @@
       const N = boxes.length;
       const M = albumsData.length;
       const isMobile = window.innerWidth <= 768;
-      const R = isMobile ? 620 : 880;
-      const degStep = isMobile ? 18 : 15.5;
-      const radStep = (degStep * Math.PI) / 180;
+      const stepX = isMobile ? 85 : 122;
+      const centerGap = isMobile ? 30 : 50;
       const activeRealIdx = ((Math.round(currentProgress) % M) + M) % M;
 
       boxes.forEach((box, i) => {
@@ -1281,14 +1280,17 @@
         }
 
         const absOffset = Math.abs(offset);
-        const rad = offset * radStep;
-        const deg = offset * degStep;
-
-        const x = R * Math.sin(rad);
-        const z = R * (Math.cos(rad) - 1) + 40 * Math.max(0, 1 - absOffset);
-        const rotY = -deg;
-
         const pActive = Math.max(0, 1 - absOffset);
+
+        // Bookshelf Perspective: all albums angled in 3D rack (-40deg to -52deg)
+        const baseAngle = isMobile ? -42 : -46;
+        const rotY = baseAngle + (6 * pActive) - (offset * 1.8);
+
+        let x = offset * stepX;
+        if (offset < 0) x -= centerGap * (1 - pActive);
+        else if (offset > 0) x += centerGap * (1 - pActive);
+
+        const z = 75 * pActive - (absOffset * 35);
         const scale = 0.90 + 0.25 * pActive;
 
         let opacity = 1;
@@ -1298,7 +1300,13 @@
           opacity = Math.max(0, 1 - (absOffset - 2.6) / 1.9);
         }
 
-        const zIndex = 1000 - Math.round(absOffset * 80);
+        let zIndex = 1000 - Math.round(absOffset * 70);
+        if (offset > 0) {
+          zIndex -= Math.round(offset * 5);
+        } else {
+          zIndex += Math.round(offset * 5);
+        }
+
         const realIdx = parseInt(box.dataset.realIndex, 10);
         const isActive = (realIdx === activeRealIdx) && (absOffset < 0.55);
         box.classList.toggle("active", isActive);

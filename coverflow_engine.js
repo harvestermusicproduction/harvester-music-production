@@ -568,7 +568,7 @@ You have set my feet upon the rock!`
     requestAnimationFrame(tick);
   }
 
-  // Continuous 3D Transform Rendering for All Slabs (Curved Arc Cylinder with Infinite Seamless Loop)
+  // Continuous 3D Transform Rendering for All Slabs (Bookshelf Perspective with Spines Always Visible)
   function render3DCoverflow() {
     const boxes = document.querySelectorAll('.album-3d-box');
     if (!boxes.length || !albums.length) return;
@@ -576,9 +576,8 @@ You have set my feet upon the rock!`
     const N = boxes.length;
     const M = albums.length;
     const isMobile = window.innerWidth <= 768;
-    const R = isMobile ? 620 : 880;
-    const degStep = isMobile ? 18 : 15.5;
-    const radStep = (degStep * Math.PI) / 180;
+    const stepX = isMobile ? 85 : 122;
+    const centerGap = isMobile ? 30 : 50;
 
     const activeRealIdx = ((Math.round(currentProgress) % M) + M) % M;
 
@@ -591,19 +590,21 @@ You have set my feet upon the rock!`
       }
 
       const absOffset = Math.abs(offset);
-      const rad = offset * radStep;
-      const deg = offset * degStep;
-
-      // Concave cylinder arc in 3D space: center is at (0, 0), wings curve backwards into distance
-      const x = R * Math.sin(rad);
-      const z = R * (Math.cos(rad) - 1) + 40 * Math.max(0, 1 - absOffset);
-      const rotY = -deg; // Arc tangential orientation facing viewer along the curve
-
-      // Center spotlight scale
       const pActive = Math.max(0, 1 - absOffset);
-      const scale = 0.90 + 0.25 * pActive; // 0.90 on wings -> 1.15 in center
 
-      // Opacity along arc: fade out smoothly on periphery
+      // Bookshelf Perspective: all albums are angled in 3D space like books on a rack (-40deg to -52deg)
+      // The spine is ALWAYS in front and NEVER disappears during sliding!
+      const baseAngle = isMobile ? -42 : -46;
+      const rotY = baseAngle + (6 * pActive) - (offset * 1.8);
+
+      let x = offset * stepX;
+      if (offset < 0) x -= centerGap * (1 - pActive);
+      else if (offset > 0) x += centerGap * (1 - pActive);
+
+      const z = 75 * pActive - (absOffset * 35);
+      const scale = 0.90 + 0.25 * pActive; // 0.90 on rack -> 1.15 in center spotlight
+
+      // Opacity along the shelf: smooth falloff on distant edges
       let opacity = 1;
       if (absOffset > 4.5) {
         opacity = 0;
@@ -611,8 +612,13 @@ You have set my feet upon the rock!`
         opacity = Math.max(0, 1 - (absOffset - 2.6) / 1.9);
       }
 
-      // Dynamic Z-Index stacking: items closest to center are always on top
-      const zIndex = 1000 - Math.round(absOffset * 80);
+      // Bookshelf Stacking Order: center is highest, and sides stack naturally along the shelf
+      let zIndex = 1000 - Math.round(absOffset * 70);
+      if (offset > 0) {
+        zIndex -= Math.round(offset * 5);
+      } else {
+        zIndex += Math.round(offset * 5);
+      }
 
       const realIdx = parseInt(box.dataset.realIndex, 10);
       const isActive = (realIdx === activeRealIdx) && (absOffset < 0.55);
