@@ -568,7 +568,7 @@ You have set my feet upon the rock!`
     requestAnimationFrame(tick);
   }
 
-  // Continuous 3D Transform Rendering for All Slabs (Bookshelf Perspective with Spines Always Visible)
+  // Continuous 3D Transform Rendering for All Slabs (Symmetrical Cylinder Arc Curve · 弧形展台)
   function render3DCoverflow() {
     const boxes = document.querySelectorAll('.album-3d-box');
     if (!boxes.length || !albums.length) return;
@@ -576,8 +576,11 @@ You have set my feet upon the rock!`
     const N = boxes.length;
     const M = albums.length;
     const isMobile = window.innerWidth <= 768;
-    const stepX = isMobile ? 85 : 122;
-    const centerGap = isMobile ? 30 : 50;
+    
+    // Spacing: comfortable, breathable distance like the reference image (not overcrowded)
+    const stepX = isMobile ? 96 : 142;
+    const centerGap = isMobile ? 36 : 64;
+    const maxRotAngle = isMobile ? 48 : 54; // Max angle for outer albums along the curved arc
 
     const activeRealIdx = ((Math.round(currentProgress) % M) + M) % M;
 
@@ -590,38 +593,41 @@ You have set my feet upon the rock!`
       }
 
       const absOffset = Math.abs(offset);
-      const pActive = Math.max(0, 1 - absOffset);
+      const pActive = Math.max(0, 1 - absOffset); // 1.0 at center, 0.0 when >= 1 unit away
 
-      // Bookshelf Perspective: all albums are angled in 3D space like books on a rack (-40deg to -52deg)
-      // The spine is ALWAYS in front and NEVER disappears during sliding!
-      const baseAngle = isMobile ? -42 : -46;
-      const rotY = baseAngle + (6 * pActive) - (offset * 1.8);
+      // 🌊 Symmetrical Cylinder Arc (弧形) Rotation:
+      // Left side (offset < 0): Rotates positive (+28° ~ +54°), front face angles towards center, left spine faces camera.
+      // Center (offset = 0): Smoothly transitions to 0° facing front in hero spotlight.
+      // Right side (offset > 0): Rotates negative (-28° ~ -54°), front face angles towards center, right spine faces camera.
+      const rotY = -Math.tanh(offset * 0.72) * maxRotAngle;
 
+      // 📏 Smooth X Spacing: generous spacing with soft hero opening around center
       let x = offset * stepX;
-      if (offset < 0) x -= centerGap * (1 - pActive);
-      else if (offset > 0) x += centerGap * (1 - pActive);
-
-      const z = 75 * pActive - (absOffset * 35);
-      const scale = 0.90 + 0.25 * pActive; // 0.90 on rack -> 1.15 in center spotlight
-
-      // Opacity along the shelf: smooth falloff on distant edges
-      let opacity = 1;
-      if (absOffset > 4.5) {
-        opacity = 0;
-      } else if (absOffset > 2.6) {
-        opacity = Math.max(0, 1 - (absOffset - 2.6) / 1.9);
-      }
-
-      // Bookshelf Stacking Order: center is highest, and sides stack naturally along the shelf
-      let zIndex = 1000 - Math.round(absOffset * 70);
       if (offset > 0) {
-        zIndex -= Math.round(offset * 5);
-      } else {
-        zIndex += Math.round(offset * 5);
+        x += centerGap * (1 - pActive * pActive);
+      } else if (offset < 0) {
+        x -= centerGap * (1 - pActive * pActive);
       }
+
+      // 🌌 3D Arc Depth (Z): Symmetrical concave curve receding into depth on both wings
+      const z = (70 * pActive) - (absOffset * 52) - (offset * offset * 5);
+
+      // 🔍 Scale: Hero album in center is 1.14x, smoothly tapering to 0.90x along the arc
+      const scale = 0.88 + 0.26 * Math.exp(-absOffset * 0.85);
+
+      // 🌟 Opacity Falloff on the far edges of the arc
+      let opacity = 1;
+      if (absOffset > 4.6) {
+        opacity = 0;
+      } else if (absOffset > 2.8) {
+        opacity = Math.max(0, 1 - (absOffset - 2.8) / 1.8);
+      }
+
+      // 📚 3D Stacking Order: Center is at the highest elevation (1000), outer items step down symmetrically
+      const zIndex = 1000 - Math.round(absOffset * 100);
 
       const realIdx = parseInt(box.dataset.realIndex, 10);
-      const isActive = (realIdx === activeRealIdx) && (absOffset < 0.55);
+      const isActive = (realIdx === activeRealIdx) && (absOffset < 0.5);
       box.classList.toggle('active', isActive);
 
       box.style.display = opacity <= 0.005 ? 'none' : 'block';
