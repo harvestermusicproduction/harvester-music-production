@@ -2331,50 +2331,551 @@ section[id], div[id^="section-"] {
 
 
 
-/* 📱 Mobile & Tablet Optimizations */
-@media screen and (max-width: 768px) {
-  .song-work-card {
-    flex-direction: column !important;
-    text-align: center;
-    padding: 25px 15px !important;
-    gap: 15px !important;
-  }
-  
-  .song-vinyl-wrapper {
-    width: 140px !important;
-    height: 140px !important;
-    margin: 0 auto !important;
-  }
-  
-  .song-card-actions {
-    justify-content: center !important;
-    flex-wrap: wrap !important;
-    gap: 10px !important;
-  }
+/* =========================================================
+   💿 3D Cover Flow Carousel & Album Booklet System (音乐与歌谱集)
+   ========================================================= */
 
-  #eventDate {
-    flex-wrap: wrap !important;
-    gap: 10px !important;
-  }
-  
-  #fb_link_exists {
-    margin-left: 0 !important;
-    width: 100%;
-    margin-top: 5px;
-  }
-  
-  .btn-social-fb {
-    width: 100% !important;
-    justify-content: center !important;
-  }
+.coverflow-section {
+  position: relative;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 5rem;
+  overflow: hidden;
+  perspective: 1200px;
+}
 
-  /* Admin & Modal Fixes */
-  #diaryAlbumModal > div, #photoManagerModal > div {
-    width: 95% !important;
-    padding: 1.5rem !important;
+.coverflow-carousel {
+  position: relative;
+  width: 100%;
+  height: 440px;
+  margin: 2rem auto 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform-style: preserve-3d;
+}
+
+.album-3d-box {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease;
+  cursor: pointer;
+  will-change: transform, opacity;
+}
+
+.album-spine {
+  position: absolute;
+  width: 22px;
+  height: 100%;
+  left: -22px;
+  top: 0;
+  transform-origin: right center;
+  transform: rotateY(-90deg);
+  background: linear-gradient(to right, #2a221b, #181411);
+  border-left: 1.5px solid rgba(246, 210, 138, 0.5);
+  border-top: 1.5px solid rgba(246, 210, 138, 0.3);
+  border-bottom: 1.5px solid rgba(246, 210, 138, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+}
+
+.spine-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  color: var(--gold);
+  font-family: var(--font-songti), serif;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  opacity: 0.85;
+}
+
+.album-face.album-front {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid rgba(246, 210, 138, 0.35);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 30px rgba(246, 210, 138, 0.15);
+  background: #181411;
+  transform: translateZ(11px);
+}
+
+.album-face.album-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.album-glass-sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.02) 40%, transparent 60%);
+  pointer-events: none;
+}
+
+.album-shadow {
+  position: absolute;
+  bottom: -45px;
+  left: 5%;
+  width: 90%;
+  height: 35px;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.85) 0%, rgba(246,210,138,0.08) 35%, transparent 70%);
+  transform: rotateX(90deg) translateZ(-15px);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+/* 3D Coverflow Meta Bar */
+.coverflow-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  max-width: 800px;
+  margin: 3rem auto 1rem;
+  text-align: center;
+}
+
+.cf-nav-btn {
+  background: rgba(246, 210, 138, 0.08);
+  border: 1.5px solid rgba(246, 210, 138, 0.3);
+  color: var(--gold);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.cf-nav-btn:hover {
+  background: rgba(246, 210, 138, 0.25);
+  border-color: var(--gold);
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(246, 210, 138, 0.4);
+}
+
+.active-album-info {
+  flex: 1;
+}
+
+.cf-tag {
+  font-size: 0.85rem;
+  color: var(--gold);
+  letter-spacing: 3px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.cf-album-title {
+  font-family: var(--font-songti), serif;
+  font-size: 2.4rem;
+  color: #fffaf0;
+  margin: 0 0 6px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.cf-album-artist {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin: 0 0 1.5rem;
+}
+
+.btn-open-booklet {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(246, 210, 138, 0.12);
+  border: 1.5px solid rgba(246, 210, 138, 0.4);
+  color: var(--gold);
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  transition: all 0.35s ease;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.btn-open-booklet:hover {
+  background: var(--gold);
+  color: #12100e;
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 15px 35px rgba(246, 210, 138, 0.4);
+}
+
+/* =========================================================
+   📖 Album & Song Booklet Modal (Matching Image 2)
+   ========================================================= */
+
+.album-booklet-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(12, 10, 8, 0.95);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  z-index: 100000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 20px 40px;
+  overflow-y: auto;
+}
+
+.booklet-container {
+  max-width: 1280px;
+  width: 100%;
+  max-height: 88vh;
+  min-height: 600px;
+  background: #181411;
+  border: 1.8px solid rgba(246, 210, 138, 0.35);
+  border-radius: 24px;
+  display: grid;
+  grid-template-columns: 310px 330px 1fr;
+  overflow: hidden;
+  box-shadow: 0 35px 90px rgba(0,0,0,0.95), 0 0 35px rgba(246, 210, 138, 0.15);
+  position: relative;
+}
+
+.booklet-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(246,210,138,0.3);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.6rem;
+  color: var(--gold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.booklet-close-btn:hover {
+  background: rgba(246,210,138,0.25);
+  transform: rotate(90deg) scale(1.1);
+}
+
+.booklet-back-btn {
+  position: absolute;
+  top: 20px;
+  left: 25px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(246,210,138,0.3);
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  color: var(--gold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  z-index: 10;
+  font-family: var(--font-body);
+}
+
+.booklet-back-btn:hover {
+  background: rgba(246,210,138,0.2);
+  transform: translateX(-3px);
+}
+
+/* Booklet Left: Artwork Panel */
+.booklet-artwork-panel {
+  background: #14100d;
+  padding: 75px 25px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-right: 1px solid rgba(246, 210, 138, 0.15);
+}
+
+.booklet-cover-wrap {
+  width: 220px;
+  height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1.5px solid rgba(246, 210, 138, 0.3);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.8);
+  margin-bottom: 1.5rem;
+}
+
+.booklet-cover-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.booklet-album-h2 {
+  font-family: var(--font-songti), serif;
+  font-size: 1.8rem;
+  color: #fffaf0;
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+
+.booklet-album-p {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0 0 1.8rem;
+}
+
+.btn-booklet-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--gold);
+  color: #12100e;
+  padding: 12px 36px;
+  border-radius: 50px;
+  font-family: var(--font-eng-title);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba(246, 210, 138, 0.35);
+}
+
+.btn-booklet-play:hover {
+  background: #fff;
+  transform: translateY(-2px) scale(1.04);
+}
+
+/* Booklet Middle: Tracklist Panel */
+.booklet-tracklist-panel {
+  background: #1a1612;
+  padding: 75px 20px 30px;
+  border-right: 1px solid rgba(246, 210, 138, 0.15);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.booklet-panel-heading {
+  font-family: var(--font-eng-title);
+  font-size: 0.85rem;
+  color: var(--gold);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  padding-left: 8px;
+}
+
+.track-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-bottom: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.track-item:hover {
+  background: rgba(246, 210, 138, 0.08);
+}
+
+.track-item.active {
+  background: rgba(246, 210, 138, 0.14);
+  border-color: rgba(246, 210, 138, 0.4);
+}
+
+.track-num {
+  font-size: 0.95rem;
+  color: var(--gold);
+  font-weight: 600;
+  min-width: 24px;
+}
+
+.track-meta {
+  flex: 1;
+  overflow: hidden;
+}
+
+.track-name {
+  display: block;
+  font-family: var(--font-songti), serif;
+  font-size: 1.05rem;
+  color: #fffaf0;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-artist {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.track-duration {
+  font-size: 0.85rem;
+  color: #8c8276;
+}
+
+/* Booklet Right: Lyrics & Actions Panel */
+.booklet-lyrics-panel {
+  background: #181411;
+  padding: 75px 35px 30px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.lyrics-track-title {
+  font-family: var(--font-songti), serif;
+  font-size: 2rem;
+  color: var(--gold);
+  margin: 0 0 1rem;
+  font-weight: 700;
+}
+
+.song-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid rgba(246, 210, 138, 0.15);
+}
+
+.btn-song-act {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-act-score {
+  background: rgba(246, 210, 138, 0.12);
+  border: 1.5px solid rgba(246, 210, 138, 0.4);
+  color: var(--gold);
+}
+.btn-act-score:hover {
+  background: var(--gold);
+  color: #12100e;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(246, 210, 138, 0.35);
+}
+
+.btn-act-yt {
+  background: rgba(255, 0, 0, 0.12);
+  border: 1.5px solid rgba(255, 68, 68, 0.4);
+  color: #ff5e5e;
+}
+.btn-act-yt:hover {
+  background: #ff0000;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 0, 0, 0.35);
+}
+
+.btn-act-spotify {
+  background: rgba(29, 185, 84, 0.12);
+  border: 1.5px solid rgba(29, 185, 84, 0.4);
+  color: #1ed760;
+}
+.btn-act-spotify:hover {
+  background: #1db954;
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(29, 185, 84, 0.35);
+}
+
+.booklet-lyrics-content {
+  flex: 1;
+  font-family: var(--font-songti), serif;
+  font-size: 1.05rem;
+  line-height: 2.1;
+  color: #e2d9cd;
+  white-space: pre-wrap;
+  overflow-y: auto;
+  padding-right: 15px;
+  max-height: 420px;
+}
+
+.booklet-lyrics-content::-webkit-scrollbar {
+  width: 5px;
+}
+.booklet-lyrics-content::-webkit-scrollbar-thumb {
+  background: rgba(246, 210, 138, 0.3);
+  border-radius: 10px;
+}
+
+@media (max-width: 1024px) {
+  .booklet-container {
+    grid-template-columns: 1fr;
+    max-height: 92vh;
+    overflow-y: auto;
   }
-  
-  h1 { font-size: 1.8rem !important; }
+  .booklet-artwork-panel, .booklet-tracklist-panel, .booklet-lyrics-panel {
+    border-right: none;
+    border-bottom: 1px solid rgba(246, 210, 138, 0.15);
+    padding: 30px 20px;
+  }
+  .booklet-artwork-panel {
+    padding-top: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .coverflow-carousel {
+    height: 350px;
+  }
+  .album-3d-box {
+    width: 230px;
+    height: 230px;
+  }
+  .cf-album-title {
+    font-size: 1.8rem;
+  }
+  .coverflow-meta-bar {
+    gap: 1.2rem;
+  }
+  .btn-open-booklet {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+  }
 }
 
 @media screen and (max-width: 480px) {
