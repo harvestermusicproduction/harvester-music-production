@@ -1,19 +1,20 @@
 /**
- * 🎵 Harvester 3D Album Cover Flow & Booklet Engine v1.0
- * Inspired by classic 3D Coverflow & Modern Booklet Album Experience
+ * 🎵 Harvester 3D Album Cover Flow & Booklet Engine v2.0
+ * Fully matching Image 1 (3D Stacked Album Shelf with Thick Spines) & Image 2 (Interactive Booklet)
  */
 
 (function() {
-  // Built-in Curated Album Catalog (Enhanced with Supabase Real-time Sync)
+  // Built-in Curated Album Catalog with Distinctive Colored Spines (Matching Image 1)
   const defaultAlbums = [
     {
       id: "album_renew",
       title: "更新敬拜",
       title_en: "Renewed Worship",
       artist: "Harvester Music Production",
+      artist_short: "HARVESTER",
       year: "2025",
+      spine_bg: "linear-gradient(180deg, #2b241e 0%, #171310 100%)",
       color: "#f6d28a",
-      theme_bg: "linear-gradient(135deg, #1f1a14 0%, #12100e 100%)",
       cover_url: "assets/logo.png",
       description: "汇聚原创敬拜诗歌，以真理与圣灵重燃当代敬拜之火。",
       tracks: [
@@ -74,12 +75,7 @@
 愿圣灵的烈火 洁净我心思
 让我的敬拜 单单归于祢
 放下一切重担 紧随祢脚踪
-在祢爱中 重获自由与新生
-
-（尾奏）
-圣灵请来 焚烧我心
-点燃生命的祭坛
-一生为主发光`
+在祢爱中 重获自由与新生`
         },
         {
           id: "track_03",
@@ -103,13 +99,7 @@
 哈利路亚 赞美归于宝座上的羔羊
 哈利路亚 祢配得万民尊崇
 从日出之地 到日落之处
-祢的名当受称颂
-
-（副歌二）
-因祢的慈爱比生命更好
-我的嘴唇要颂赞祢
-我还活的时候要这样称颂祢
-因祢的名举手赞美`
+祢的名当受称颂`
         },
         {
           id: "track_04",
@@ -133,13 +123,7 @@ You have set my feet upon the rock
 I'm alive, I will sing
 For the victory You bring
 No more fear, no more shame
-Praise the power of Your name!
-
-(Bridge)
-Higher than the mountains
-Deeper than the sea
-Your love unfailing
-Rescued me!`
+Praise the power of Your name!`
         }
       ]
     },
@@ -148,9 +132,10 @@ Rescued me!`
       title: "灵火 Awakening",
       title_en: "Spiritual Fire Awakening",
       artist: "Harvester Creative Team",
+      artist_short: "AWAKENING",
       year: "2024",
-      color: "#e8a848",
-      theme_bg: "linear-gradient(135deg, #24160d 0%, #12100e 100%)",
+      spine_bg: "linear-gradient(180deg, #137a6b 0%, #0a473e 100%)",
+      color: "#2dd4bf",
       cover_url: "assets/placeholder.jpg",
       description: "在旷野与安静中，寻求圣灵的复兴与更新。",
       tracks: [
@@ -194,9 +179,10 @@ Rescued me!`
       title: "田野收割精选",
       title_en: "Harvest Field Collection",
       artist: "Harvester Gospel Collective",
+      artist_short: "HARVEST FIELD",
       year: "2024",
-      color: "#f4be6a",
-      theme_bg: "linear-gradient(135deg, #1e1b15 0%, #12100e 100%)",
+      spine_bg: "linear-gradient(180deg, #1f4f89 0%, #112d52 100%)",
+      color: "#60a5fa",
       cover_url: "assets/logo.png",
       description: "「那人撒种，这人收割」—— 用现代流行音乐播种福音种子。",
       tracks: [
@@ -229,9 +215,10 @@ Rescued me!`
       title: "生命涌流 CCM",
       title_en: "Living Stream Praise",
       artist: "Harvester Praise Band",
+      artist_short: "LIVING STREAM",
       year: "2025",
-      color: "#d4a359",
-      theme_bg: "linear-gradient(135deg, #171c22 0%, #101214 100%)",
+      spine_bg: "linear-gradient(180deg, #42291a 0%, #20130b 100%)",
+      color: "#fb923c",
       cover_url: "assets/placeholder.jpg",
       description: "融合流行与节奏布鲁斯现代风格，充满活力的赞美。",
       tracks: [
@@ -258,6 +245,142 @@ Rescued me!`
           lyrics: `【恩典之路】\n一步又一步，这是恩典之路。\n主的手必亲自搀拉我前行。`
         }
       ]
+    },
+    {
+      id: "album_you_are_all",
+      title: "祢是唯一",
+      title_en: "You Are My All",
+      artist: "Harvester Acoustic",
+      artist_short: "YOU ARE MY ALL",
+      year: "2024",
+      spine_bg: "linear-gradient(180deg, #eceae4 0%, #cac6bd 100%)",
+      color: "#181411",
+      cover_url: "assets/logo.png",
+      description: "纯净钢琴与弦乐，向主倾心吐意的深情告白。",
+      tracks: [
+        {
+          id: "track_all_01",
+          track_no: "01",
+          title: "祢是唯一",
+          artist: "Harvester Acoustic",
+          duration: "4:40",
+          youtube_url: "https://www.youtube.com/@harvestermusic.production",
+          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
+          score_url: "assets/scores/sample.pdf",
+          lyrics: `【祢是唯一】\n在天地之间，唯有祢是我心所慕，是我永远的福分。`
+        },
+        {
+          id: "track_all_02",
+          track_no: "02",
+          title: "主祢是我的一切",
+          artist: "Harvester Acoustic",
+          duration: "4:12",
+          youtube_url: "https://www.youtube.com/@harvestermusic.production",
+          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
+          score_url: "assets/scores/sample.pdf",
+          lyrics: `【主祢是我的一切】\n除祢以外，在天上我有谁呢？除祢以外，在地上我也没有所爱慕的。`
+        }
+      ]
+    },
+    {
+      id: "album_heart_desire",
+      title: "心愿诗歌",
+      title_en: "Heart's Desire",
+      artist: "Harvester Strings Ensemble",
+      artist_short: "HEART'S DESIRE",
+      year: "2025",
+      spine_bg: "linear-gradient(180deg, #d9534f 0%, #8c2320 100%)",
+      color: "#f87171",
+      cover_url: "assets/placeholder.jpg",
+      description: "当代灵修弦乐诗歌，温暖抚慰每一个疲惫的心灵。",
+      tracks: [
+        {
+          id: "track_hd_01",
+          track_no: "01",
+          title: "我心所愿",
+          artist: "Strings Ensemble",
+          duration: "4:55",
+          youtube_url: "https://www.youtube.com/@harvestermusic.production",
+          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
+          score_url: "assets/scores/sample.pdf",
+          lyrics: `【我心所愿】\n愿我的祷告如香陈列在祢面前，愿我举手祈求如献晚祭。`
+        }
+      ]
+    },
+    {
+      id: "album_sanctuary",
+      title: "圣所之中",
+      title_en: "In The Sanctuary",
+      artist: "Harvester Chamber Choir",
+      artist_short: "SANCTUARY",
+      year: "2024",
+      spine_bg: "linear-gradient(180deg, #2b4566 0%, #15263a 100%)",
+      color: "#93c5fd",
+      cover_url: "assets/logo.png",
+      description: "庄严大气的圣殿敬拜，重现古老诗篇的荣美回响。",
+      tracks: [
+        {
+          id: "track_sc_01",
+          track_no: "01",
+          title: "在祢圣所中",
+          artist: "Chamber Choir",
+          duration: "5:30",
+          youtube_url: "https://www.youtube.com/@harvestermusic.production",
+          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
+          score_url: "assets/scores/sample.pdf",
+          lyrics: `【在祢圣所中】\n神啊，祢是我的神，我要切切地寻求祢。`
+        }
+      ]
+    },
+    {
+      id: "album_disciple",
+      title: "十字架的传人",
+      title_en: "Disciple of The Cross",
+      artist: "Harvester Mission Team",
+      artist_short: "DISCIPLE",
+      year: "2025",
+      spine_bg: "linear-gradient(180deg, #96562b 0%, #542b10 100%)",
+      color: "#fdba74",
+      cover_url: "assets/placeholder.jpg",
+      description: "立志委身、背起十架跟随基督的宣教呼召之歌。",
+      tracks: [
+        {
+          id: "track_dc_01",
+          track_no: "01",
+          title: "十字架的传人",
+          artist: "Mission Team",
+          duration: "4:48",
+          youtube_url: "https://www.youtube.com/@harvestermusic.production",
+          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
+          score_url: "assets/scores/sample.pdf",
+          lyrics: `【十字架的传人】\n背起十字架，跟随主脚踪。无论海角天涯，坚守使命到底。`
+        }
+      ]
+    },
+    {
+      id: "album_grace",
+      title: "恩典洋溢",
+      title_en: "Abundant Grace",
+      artist: "Harvester Worship Collective",
+      artist_short: "ABUNDANT GRACE",
+      year: "2025",
+      spine_bg: "linear-gradient(180deg, #741728 0%, #3e0b14 100%)",
+      color: "#f472b6",
+      cover_url: "assets/logo.png",
+      description: "诉说神在生命每一步奇妙带领与丰盛恩典。",
+      tracks: [
+        {
+          id: "track_gr_01",
+          track_no: "01",
+          title: "恩典洋溢",
+          artist: "Worship Collective",
+          duration: "4:22",
+          youtube_url: "https://www.youtube.com/@harvestermusic.production",
+          spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
+          score_url: "assets/scores/sample.pdf",
+          lyrics: `【恩典洋溢】\n祢以恩典为年岁的冠冕，祢的路径都滴下脂油。`
+        }
+      ]
     }
   ];
 
@@ -281,7 +404,6 @@ Rescued me!`
       if (window.supabase) {
         const { data: songs } = await window.supabase.from('music_works').select('*').order('created_at', { ascending: false });
         if (songs && songs.length > 0) {
-          // Merge dynamic songs into first album tracks
           const dynamicTracks = songs.map((s, idx) => ({
             id: s.id,
             track_no: String(idx + 1).padStart(2, '0'),
@@ -294,7 +416,6 @@ Rescued me!`
             lyrics: s.description ? s.description : `【${s.title}】\n\n词曲：Harvester Music Production\n愿每一首写给神的歌都被听见。\n欢迎下载歌谱使用并在各处传唱。`
           }));
 
-          // Prepend or enrich first album
           albums[0].tracks = dynamicTracks;
           if (songs[0]?.cover_url) {
             albums[0].cover_url = songs[0].cover_url;
@@ -306,7 +427,7 @@ Rescued me!`
     }
   }
 
-  // Render 3D Cover Flow Carousel
+  // Render 3D Cover Flow Carousel with Full 3D Slabs (Thick Spines - Image 1)
   function renderCoverFlow() {
     const stage = document.getElementById('coverflowStage');
     if (!stage) return;
@@ -315,26 +436,66 @@ Rescued me!`
       <div class="coverflow-carousel" id="coverflowCarousel">
         ${albums.map((album, idx) => `
           <div class="album-3d-box" data-index="${idx}" onclick="handleAlbumClick(${idx})">
-            <!-- 3D Spine (Box Thickness) -->
-            <div class="album-spine">
-              <span class="spine-text">${album.title}</span>
+            <div class="album-cube">
+              <!-- 1. Front Artwork Face -->
+              <div class="cube-face cube-front">
+                <img src="${album.cover_url || 'assets/logo.png'}" alt="${album.title}" onerror="this.src='assets/logo.png'">
+                <div class="album-glass-sheen"></div>
+                <div class="album-inner-border"></div>
+              </div>
+
+              <!-- 2. Left Spine (Thick Side Facing Viewer - Image 1) -->
+              <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#1a1816'};">
+                <div class="spine-content" style="color: ${album.id === 'album_you_are_all' ? '#111' : '#fff'};">
+                  <span class="spine-logo"><i class="fas fa-compact-disc"></i></span>
+                  <span class="spine-title">${album.title}</span>
+                  <span class="spine-artist">${album.artist_short || 'HARVESTER'}</span>
+                </div>
+              </div>
+
+              <!-- 3. Right Spine -->
+              <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1a1816'};">
+                <div class="spine-content" style="color: ${album.id === 'album_you_are_all' ? '#111' : '#fff'};">
+                  <span class="spine-logo"><i class="fas fa-compact-disc"></i></span>
+                  <span class="spine-title">${album.title}</span>
+                  <span class="spine-artist">${album.artist_short || 'HARVESTER'}</span>
+                </div>
+              </div>
+
+              <!-- 4. Top Thickness Edge -->
+              <div class="cube-face cube-top" style="background: ${album.spine_bg || '#1a1816'}; filter: brightness(1.25);"></div>
+
+              <!-- 5. Bottom Thickness Edge -->
+              <div class="cube-face cube-bottom"></div>
+
+              <!-- 6. Back Cover Face -->
+              <div class="cube-face cube-back">
+                <div class="cube-back-header">
+                  <span class="cube-back-title">${album.title}</span>
+                  <span class="cube-back-logo">HARVESTER</span>
+                </div>
+                <div class="cube-back-tracks">
+                  ${album.tracks.slice(0, 4).map(t => `<div>${t.track_no}. ${t.title}</div>`).join('')}
+                  ${album.tracks.length > 4 ? `<div>... +${album.tracks.length - 4} 首更多</div>` : ''}
+                </div>
+                <div class="cube-back-footer">
+                  <span>© ${album.year} HARVESTER</span>
+                  <span><i class="fas fa-barcode"></i></span>
+                </div>
+              </div>
             </div>
-            <!-- Front Cover -->
-            <div class="album-face album-front">
-              <img src="${album.cover_url || 'assets/logo.png'}" alt="${album.title}" onerror="this.src='assets/logo.png'">
-              <div class="album-glass-sheen"></div>
-            </div>
-            <!-- Reflection & Floor Shadow -->
-            <div class="album-shadow"></div>
+
+            <!-- Floor 3D Drop Shadow -->
+            <div class="album-shadow-3d"></div>
           </div>
         `).join('')}
       </div>
 
-      <!-- Active Album Indicator & Navigation -->
+      <!-- Active Album Indicator & Navigation Bar -->
       <div class="coverflow-meta-bar fade-in">
         <button class="cf-nav-btn prev" onclick="navigateCoverFlow(-1)" title="上一张 (Previous)"><i class="fas fa-chevron-left"></i></button>
         <div class="active-album-info" id="activeAlbumInfo">
-          <span class="cf-tag font-eng-title" id="cfAlbumYear">2025 RELEASE</span>
+          <span class="cf-tag font-eng-title" id="cfAlbumYear">${albums[0].year} RELEASE</span>
           <h2 class="cf-album-title" id="cfAlbumTitle">${albums[0].title}</h2>
           <p class="cf-album-artist" id="cfAlbumArtist">${albums[0].artist} · ${albums[0].tracks.length} 首歌曲</p>
           <button class="btn-open-booklet" onclick="openAlbumBooklet(${currentIndex})">
@@ -348,7 +509,7 @@ Rescued me!`
     updateCoverFlow3DPositions();
   }
 
-  // Calculate 3D Matrix & Offset for all albums
+  // Calculate 3D Matrix & Offset for all albums (Matching Image 1 Perspective)
   function updateCoverFlow3DPositions() {
     const boxes = document.querySelectorAll('.album-3d-box');
     boxes.forEach((box, i) => {
@@ -360,22 +521,25 @@ Rescued me!`
       let opacity = 1;
 
       if (offset === 0) {
-        // Center Active Album: Faces camera directly, lifted forward with shine
-        transformStyle = `translateX(0px) translateZ(140px) rotateY(0deg) scale(1.08)`;
+        // Active Center Album: Tilted slightly at -18deg so user sees both the front artwork AND the 3D thick spine!
+        transformStyle = `translateX(0px) translateZ(120px) rotateY(-18deg) scale(1.12)`;
+        opacity = 1;
       } else if (offset < 0) {
-        // Left Albums: Tilted right with depth
-        const xOffset = offset * 130 - 70;
-        const zOffset = Math.abs(offset) * -85;
-        const rotY = 52;
-        opacity = Math.max(0.25, 1 - Math.abs(offset) * 0.2);
-        transformStyle = `translateX(${xOffset}px) translateZ(${zOffset}px) rotateY(${rotY}deg) scale(${Math.max(0.7, 1 - Math.abs(offset) * 0.08)})`;
+        // Left Side Albums: Tilted +64deg showing the front cover slanted right and thick spine facing forward
+        const xOffset = offset * 85 - 130;
+        const zOffset = Math.abs(offset) * -55;
+        const rotY = 64;
+        const scale = Math.max(0.72, 1 - Math.abs(offset) * 0.05);
+        opacity = Math.max(0.35, 1 - Math.abs(offset) * 0.12);
+        transformStyle = `translateX(${xOffset}px) translateZ(${zOffset}px) rotateY(${rotY}deg) scale(${scale})`;
       } else {
-        // Right Albums: Tilted left with depth
-        const xOffset = offset * 130 + 70;
-        const zOffset = Math.abs(offset) * -85;
-        const rotY = -52;
-        opacity = Math.max(0.25, 1 - Math.abs(offset) * 0.2);
-        transformStyle = `translateX(${xOffset}px) translateZ(${zOffset}px) rotateY(${rotY}deg) scale(${Math.max(0.7, 1 - Math.abs(offset) * 0.08)})`;
+        // Right Side Albums: Tilted -64deg showing the front cover slanted left and thick spine facing forward
+        const xOffset = offset * 85 + 130;
+        const zOffset = Math.abs(offset) * -55;
+        const rotY = -64;
+        const scale = Math.max(0.72, 1 - Math.abs(offset) * 0.05);
+        opacity = Math.max(0.35, 1 - Math.abs(offset) * 0.12);
+        transformStyle = `translateX(${xOffset}px) translateZ(${zOffset}px) rotateY(${rotY}deg) scale(${scale})`;
       }
 
       box.style.transform = transformStyle;
@@ -406,10 +570,10 @@ Rescued me!`
   // Click on Album Card
   window.handleAlbumClick = function(idx) {
     if (idx === currentIndex) {
-      // Clicked current active album -> open booklet!
+      // Clicked current active album -> open booklet modal (Image 2)
       openAlbumBooklet(idx);
     } else {
-      // Clicked adjacent album -> focus it!
+      // Clicked adjacent album in stack -> focus it!
       currentIndex = idx;
       updateCoverFlow3DPositions();
     }
@@ -429,18 +593,25 @@ Rescued me!`
     document.body.style.overflow = 'hidden';
 
     renderBookletContent();
-    gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.4 });
-    gsap.fromTo(".booklet-container", { scale: 0.94, opacity: 0, y: 30 }, { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "power3.out" });
+    if (window.gsap) {
+      gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.35 });
+      gsap.fromTo(".booklet-container", { scale: 0.94, opacity: 0, y: 30 }, { scale: 1, opacity: 1, y: 0, duration: 0.45, ease: "power3.out" });
+    }
   };
 
   window.closeAlbumBooklet = function() {
     const modal = document.getElementById('albumBookletModal');
     if (!modal) return;
-    gsap.to(".booklet-container", { scale: 0.94, opacity: 0, y: 20, duration: 0.3 });
-    gsap.to(modal, { opacity: 0, duration: 0.3, onComplete: () => {
+    if (window.gsap) {
+      gsap.to(".booklet-container", { scale: 0.94, opacity: 0, y: 20, duration: 0.25 });
+      gsap.to(modal, { opacity: 0, duration: 0.25, onComplete: () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }});
+    } else {
       modal.style.display = 'none';
       document.body.style.overflow = '';
-    }});
+    }
   };
 
   function renderBookletContent() {
@@ -513,22 +684,6 @@ Rescued me!`
       btnSpEl.href = activeTrack.spotify_url || '#';
       btnSpEl.style.display = activeTrack.spotify_url ? 'inline-flex' : 'none';
     }
-
-    // Update Bottom Mini Player Bar
-    updateMiniPlayer(activeTrack);
-  }
-
-  // Update Bottom Mini Player
-  function updateMiniPlayer(track) {
-    const playerBar = document.getElementById('miniPlayerBar');
-    const miniTitle = document.getElementById('miniPlayerTitle');
-    const miniArtist = document.getElementById('miniPlayerArtist');
-    const miniCover = document.getElementById('miniPlayerCover');
-    if (!playerBar) return;
-
-    if (miniTitle) miniTitle.innerText = track.title;
-    if (miniArtist) miniArtist.innerText = track.artist || activeAlbum.artist;
-    if (miniCover) miniCover.src = activeAlbum.cover_url || 'assets/logo.png';
   }
 
   window.toggleAudioPlay = function() {
@@ -587,5 +742,9 @@ Rescued me!`
   }
 
   // Auto-init on DOMContentLoaded
-  document.addEventListener('DOMContentLoaded', init);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
