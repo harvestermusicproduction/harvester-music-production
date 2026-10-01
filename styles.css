@@ -2595,7 +2595,7 @@ section[id], div[id^="section-"] {
   transform: rotateY(-90deg) translateZ(0);
   border-left: 1px solid rgba(255, 255, 255, 0.45);
   border-right: 1px solid rgba(0, 0, 0, 0.85);
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   overflow: hidden;
@@ -2604,32 +2604,20 @@ section[id], div[id^="section-"] {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: geometricPrecision;
+  backface-visibility: visible !important;
+  -webkit-backface-visibility: visible !important;
+  z-index: 10;
 }
 
-/* 3. Right Spine (Thickness Edge) */
+/* 3. Right Spine (Opposite Edge - Hidden as requested) */
 .cube-face.cube-spine-right {
-  top: 0;
-  right: -13px;
-  width: 26px;
-  height: 320px;
-  transform: rotateY(90deg) translateZ(0);
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
-  border-left: 1px solid rgba(0, 0, 0, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
-  background-image: linear-gradient(to left, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 30%, rgba(0,0,0,0.35) 100%);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: geometricPrecision;
+  display: none !important;
 }
 
 .spine-inner-text {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 310px;
   transform: rotate(90deg) translateZ(0);
   transform-origin: center center;
@@ -2637,37 +2625,19 @@ section[id], div[id^="section-"] {
   user-select: none;
   font-family: var(--font-songti), serif;
   padding: 0 10px;
-  gap: 10px;
+  text-align: center;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: geometricPrecision;
 }
 
-.spine-catalog {
-  font-family: var(--font-times);
-  font-size: 0.72rem;
-  letter-spacing: 2px;
-  color: rgba(255, 255, 255, 0.95);
-  font-weight: 700;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-}
-
 .spine-title {
   font-family: var(--font-songti), serif;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 800;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
   color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.95), 0 0 1px rgba(0,0,0,1);
-}
-
-.spine-artist {
-  font-family: var(--font-times);
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: var(--gold);
-  letter-spacing: 1.5px;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.95), 0 0 2px rgba(0,0,0,1);
 }
 
 /* 4. Top Thickness Edge */
@@ -2705,6 +2675,8 @@ section[id], div[id^="section-"] {
   background: #1c242d;
   border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow: 0 15px 45px rgba(0, 0, 0, 0.9);
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
 }
 
 .cube-face.cube-back img {
@@ -2727,8 +2699,15 @@ section[id], div[id^="section-"] {
   pointer-events: none;
 }
 
-.album-3d-box:not(.active):hover {
-  filter: brightness(1.2) drop-shadow(0 0 15px rgba(246, 210, 138, 0.3));
+.album-3d-box:not(.active):hover .cube-face.cube-front img {
+  filter: brightness(1.15);
+}
+.album-3d-box:not(.active):hover .cube-face.cube-front {
+  border-color: rgba(246, 210, 138, 0.65);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 25px rgba(246, 210, 138, 0.25);
+}
+.album-3d-box:not(.active):hover .cube-face.cube-spine-left {
+  filter: brightness(1.15);
 }
 
 .album-3d-box.active .cube-face.cube-front {

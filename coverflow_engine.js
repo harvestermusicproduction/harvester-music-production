@@ -9,23 +9,24 @@
  */
 
 (function() {
-  // Curated Collection of Morandi Tone & Childlike Hand-Drawn / Crayon Doodle Illustrations
-  const childlikeDoodles = [
-    "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=900&auto=format&fit=crop&q=80", // cute hand-drawn cat & botanical doodle (Morandi kraft cream)
-    "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?w=900&auto=format&fit=crop&q=80", // warm joyful sun, mountains & naive childlike crayon art
-    "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=900&auto=format&fit=crop&q=80", // Morandi pastel botanical paper sketch
-    "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=900&auto=format&fit=crop&q=80", // whimsical watercolor splash & doodle
-    "https://images.unsplash.com/photo-1549490349-8643362247b5?w=900&auto=format&fit=crop&q=80", // soft pastel crayon naive doodle
-    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=900&auto=format&fit=crop&q=80", // dreamy Morandi pastel organic shapes & doodle
-    "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=900&auto=format&fit=crop&q=80", // playful modern paper cut-out collage
-    "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=900&auto=format&fit=crop&q=80", // expressive childlike brushstrokes & textured paper
-    "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=900&auto=format&fit=crop&q=80", // naive childlike artistic gouache painting
-    "https://images.unsplash.com/photo-1579783901586-d88db74b4fe4?w=900&auto=format&fit=crop&q=80", // whimsical starry night doodle & soft clouds
-    "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=900&auto=format&fit=crop&q=80", // warm hand-drawn storybook illustration
-    "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=900&auto=format&fit=crop&q=80"  // Morandi muted botanical hand painting
+  // Curated Collection of Modern Morandi Aesthetic Music Photography & Art
+  const morandiPhotos = [
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=900&auto=format&fit=crop&q=80", // Modern aesthetic portrait in muted studio lighting
+    "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=900&auto=format&fit=crop&q=80", // Modern architectural geometry in soft Morandi light
+    "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=900&auto=format&fit=crop&q=80", // Minimalist botanical in muted sage & clay
+    "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=900&auto=format&fit=crop&q=80", // Minimalist misty landscape in slate blue
+    "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=900&auto=format&fit=crop&q=80", // Acoustic studio guitar in warm Morandi tones
+    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=900&auto=format&fit=crop&q=80", // Live music stage in soft muted teal
+    "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=900&auto=format&fit=crop&q=80", // Atmospheric singer portrait in warm amber dusk
+    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=900&auto=format&fit=crop&q=80", // Audio mastering console in deep slate
+    "https://images.unsplash.com/photo-1520523839898-50712509e37b?w=900&auto=format&fit=crop&q=80", // Minimalist grand piano in Morandi kraft
+    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&auto=format&fit=crop&q=80", // Modern vocalist with microphone in soft monochrome
+    "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=900&auto=format&fit=crop&q=80", // Modern violin and sheet music in muted tones
+    "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=900&auto=format&fit=crop&q=80"  // Modern vinyl record in dusty rose & sand
   ];
+  const childlikeDoodles = morandiPhotos;
 
-  // Default Curated Single Songs (1 Album = 1 Single Track) with Childlike Doodle Art
+  // Default Curated Single Songs (1 Album = 1 Single Track) with Modern Morandi Artwork
   const defaultAlbums = [
     {
       id: "song_renew",
@@ -35,10 +36,10 @@
       genre: "Worship / CCM · 2025",
       year: "2025",
       theme_color: "#1c2b36",
-      spine_bg: "#1877F2",
+      spine_bg: "#3b5a5b",
       spine_color: "#ffffff",
-      spine_text: "更新敬拜 · Harvester Worship",
-      cover_url: childlikeDoodles[0],
+      spine_text: "更新敬拜",
+      cover_url: morandiPhotos[0],
       duration: "4'18\"",
       audio_url: "",
       youtube_url: "https://www.youtube.com/@harvestermusic.production",
@@ -76,11 +77,11 @@
       artist: "Harvester Creative Team",
       genre: "Acoustic Worship · 2024",
       year: "2024",
-      theme_color: "#169b9b",
-      spine_bg: "#00b894",
+      theme_color: "#1a242f",
+      spine_bg: "#52796f",
       spine_color: "#ffffff",
-      spine_text: "灵火 Awakening · Harvester Creative",
-      cover_url: childlikeDoodles[1],
+      spine_text: "灵火 Awakening",
+      cover_url: morandiPhotos[1],
       duration: "4'52\"",
       audio_url: "",
       youtube_url: "https://www.youtube.com/@harvestermusic.production",
@@ -107,11 +108,11 @@
       artist: "Harvester Worship",
       genre: "Praise & Worship · 2025",
       year: "2025",
-      theme_color: "#3a2d10",
-      spine_bg: "#f39c12",
-      spine_color: "#111111",
-      spine_text: "因为祢 上帝 · Harvester Worship",
-      cover_url: childlikeDoodles[2],
+      theme_color: "#2a2421",
+      spine_bg: "#b06d60",
+      spine_color: "#ffffff",
+      spine_text: "因为祢 上帝",
+      cover_url: morandiPhotos[2],
       duration: "5'10\"",
       audio_url: "",
       youtube_url: "https://www.youtube.com/@harvestermusic.production",
@@ -138,11 +139,11 @@
       artist: "Harvester Praise",
       genre: "Pop Praise · 2025",
       year: "2025",
-      theme_color: "#b06d60",
-      spine_bg: "#ea8676",
+      theme_color: "#242f3a",
+      spine_bg: "#2d3748",
       spine_color: "#ffffff",
-      spine_text: "Im Alive · Harvester Praise",
-      cover_url: childlikeDoodles[3],
+      spine_text: "Im Alive",
+      cover_url: morandiPhotos[3],
       duration: "3'45\"",
       audio_url: "",
       youtube_url: "https://www.youtube.com/@harvestermusic.production",
@@ -163,11 +164,11 @@ You have set my feet upon the rock!`
       artist: "Gospel Collective",
       genre: "Gospel / CCM · 2024",
       year: "2024",
-      theme_color: "#182736",
-      spine_bg: "#0984e3",
+      theme_color: "#202933",
+      spine_bg: "#c47b6a",
       spine_color: "#ffffff",
-      spine_text: "收割的呼召 · Gospel Collective",
-      cover_url: childlikeDoodles[4],
+      spine_text: "收割的呼召",
+      cover_url: morandiPhotos[4],
       duration: "4'15\"",
       audio_url: "",
       youtube_url: "https://www.youtube.com/@harvestermusic.production",
@@ -188,11 +189,11 @@ You have set my feet upon the rock!`
       artist: "Harvester Acoustic",
       genre: "Piano Devotional · 2024",
       year: "2024",
-      theme_color: "#255977",
-      spine_bg: "#2d3436",
+      theme_color: "#1c242d",
+      spine_bg: "#4a5568",
       spine_color: "#ffffff",
-      spine_text: "祢是唯一 · Harvester Acoustic",
-      cover_url: childlikeDoodles[5],
+      spine_text: "祢是唯一",
+      cover_url: morandiPhotos[5],
       duration: "4'40\"",
       audio_url: "",
       youtube_url: "https://www.youtube.com/@harvestermusic.production",
@@ -213,11 +214,11 @@ You have set my feet upon the rock!`
       artist: "Strings Ensemble",
       genre: "Strings Devotional · 2025",
       year: "2025",
-      theme_color: "#271b16",
-      spine_bg: "#e77f67",
-      spine_color: "#111111",
-      spine_text: "我心所愿 · Strings Ensemble",
-      cover_url: childlikeDoodles[6],
+      theme_color: "#2b2a27",
+      spine_bg: "#8c7b75",
+      spine_color: "#ffffff",
+      spine_text: "我心所愿",
+      cover_url: morandiPhotos[6],
       duration: "4'55\"",
       audio_url: "",
       youtube_url: "https://www.youtube.com/@harvestermusic.production",
@@ -238,11 +239,11 @@ You have set my feet upon the rock!`
       artist: "Harvester Chamber Choir",
       genre: "Choral Hymn · 2024",
       year: "2024",
-      theme_color: "#0f1c24",
-      spine_bg: "#1b2a4a",
+      theme_color: "#161d24",
+      spine_bg: "#3d5a80",
       spine_color: "#ffffff",
-      spine_text: "在祢圣所中 · Chamber Choir",
-      cover_url: childlikeDoodles[7],
+      spine_text: "在祢圣所中",
+      cover_url: morandiPhotos[7],
       duration: "5'30\"",
       audio_url: "",
       youtube_url: "https://www.youtube.com/@harvestermusic.production",
@@ -262,11 +263,11 @@ You have set my feet upon the rock!`
       artist: "Harvester Ensemble",
       genre: "Contemporary Worship · 2025",
       year: "2025",
-      theme_color: "#1f1d36",
-      spine_bg: "#6c5ce7",
+      theme_color: "#1e2229",
+      spine_bg: "#6b705c",
       spine_color: "#ffffff",
-      spine_text: "晨光破晓 · Harvester Ensemble",
-      cover_url: childlikeDoodles[8],
+      spine_text: "晨光破晓",
+      cover_url: morandiPhotos[8],
       duration: "4'10\"",
       audio_url: "",
       youtube_url: "https://www.youtube.com/@harvestermusic.production",
@@ -368,10 +369,10 @@ You have set my feet upon the rock!`
               artist: s.artist || customMatch?.artist || "Harvester Worship",
               genre: customMatch?.genre || `Worship / CCM · ${songYear}`,
               year: songYear,
-              theme_color: customMatch?.theme_color || ["#1c2b36", "#169b9b", "#3a2d10", "#b06d60", "#182736", "#255977", "#271b16", "#0f1c24", "#1f1d36"][idx % 9],
-              spine_bg: customMatch?.spine_bg || ["#1877F2", "#00b894", "#f39c12", "#ea8676", "#0984e3", "#2d3436", "#e77f67", "#1b2a4a", "#6c5ce7"][idx % 9],
+              theme_color: customMatch?.theme_color || ["#1c2b36", "#1a242f", "#2a2421", "#242f3a", "#202933", "#1c242d", "#2b2a27", "#161d24", "#1e2229"][idx % 9],
+              spine_bg: customMatch?.spine_bg || ["#3b5a5b", "#52796f", "#b06d60", "#2d3748", "#c47b6a", "#4a5568", "#8c7b75", "#3d5a80", "#6b705c"][idx % 9],
               spine_color: customMatch?.spine_color || "#ffffff",
-              spine_text: customMatch?.spine_text || `${s.title} · ${s.artist || 'Harvester'}`,
+              spine_text: customMatch?.spine_text || s.title,
               cover_url: s.cover_url || customMatch?.cover_url || doodleFallback,
               duration: "4'15\"",
               audio_url: s.audio_url || "",
@@ -535,26 +536,15 @@ You have set my feet upon the rock!`
             </div>
           </div>
 
-          <!-- Left Spine (Tactile CD Jewel Case Spine with 3D Depth) -->
-          <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#1c1815'};">
+          <!-- Left Spine (Tactile CD Jewel Case Spine with 3D Depth - Title Only) -->
+          <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#242f3a'};">
             <div class="spine-inner-text">
-              <span class="spine-catalog">${album.year || '2025'} · HMP-${String(origIdx + 1).padStart(3, '0')}</span>
               <span class="spine-title">${album.title}</span>
-              <span class="spine-artist">${album.artist}</span>
-            </div>
-          </div>
-
-          <!-- Right Spine (Thickness Edge with Title) -->
-          <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1c1815'};">
-            <div class="spine-inner-text">
-              <span class="spine-catalog">${album.year || '2025'} · HMP-${String(origIdx + 1).padStart(3, '0')}</span>
-              <span class="spine-title">${album.title}</span>
-              <span class="spine-artist">${album.artist}</span>
             </div>
           </div>
 
           <!-- Top Thickness Edge -->
-          <div class="cube-face cube-top" style="background: ${album.spine_bg || '#1c1815'}; filter: brightness(1.2);"></div>
+          <div class="cube-face cube-top" style="background: ${album.spine_bg || '#242f3a'}; filter: brightness(1.2);"></div>
 
           <!-- Bottom Thickness Edge -->
           <div class="cube-face cube-bottom"></div>

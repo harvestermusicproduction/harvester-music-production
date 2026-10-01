@@ -159,7 +159,7 @@
     .spine-inner-text {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       width: 300px;
       transform: rotate(90deg);
       transform-origin: center center;
@@ -167,47 +167,21 @@
       user-select: none;
       font-family: 'Noto Serif SC', serif;
       padding: 0 10px;
-    }
-
-    .spine-catalog {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 0.75rem;
-      letter-spacing: 2px;
-      color: rgba(255, 255, 255, 0.75);
-      font-weight: 600;
+      text-align: center;
     }
 
     .spine-title {
       font-family: 'Noto Serif SC', serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 2px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 3px;
       color: #ffffff;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.95);
     }
 
-    .spine-artist {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 0.75rem;
-      color: #f6d28a;
-      letter-spacing: 1px;
-    }
-
-    /* 3. Right Spine Edge */
+    /* 3. Right Spine Edge (Hidden) */
     .cube-face.cube-spine-right {
-      top: 0;
-      right: -12px;
-      width: 24px;
-      height: 330px;
-      transform: rotateY(90deg);
-      transform-origin: center center;
-      border-right: 1px solid rgba(255, 255, 255, 0.3);
-      border-left: 1px solid rgba(0, 0, 0, 0.85);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
+      display: none !important;
     }
 
     /* 4. Top Thickness Face */
@@ -1156,18 +1130,7 @@
             <!-- 2. Left Spine (CD Jewel Case Spine rigidly bound to Front Cover) -->
             <div class="cube-face cube-spine-left" style="background: ${album.spineBg};">
               <div class="spine-inner-text">
-                <span class="spine-catalog">HMP-${String(origIdx + 1).padStart(3, '0')}</span>
                 <span class="spine-title">${album.title}</span>
-                <span class="spine-artist">${album.artist}</span>
-              </div>
-            </div>
-
-            <!-- 3. Right Spine Edge -->
-            <div class="cube-face cube-spine-right" style="background: ${album.spineBg};">
-              <div class="spine-inner-text">
-                <span class="spine-catalog">HMP-${String(origIdx + 1).padStart(3, '0')}</span>
-                <span class="spine-title">${album.title}</span>
-                <span class="spine-artist">${album.artist}</span>
               </div>
             </div>
 
