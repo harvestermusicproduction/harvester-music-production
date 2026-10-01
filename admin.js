@@ -1991,10 +1991,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- 👥 板块 8: 核心团队 (CORE TEAM POLAROIDS) -->
+        <!-- 👥 板块 8: 主要同工 (KEY CO-WORKERS POLAROIDS) -->
         <div class="cms-card" style="border-left: 4px solid #1dd1a1;">
           <h3 style="color:#1dd1a1; margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>👥</span> 板块八：核心团队拍立得画廊 (Core Team Polaroids)
+            <span>👥</span> 板块八：主要同工拍立得画廊 (Key Co-workers Polaroids)
           </h3>
           <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑 7 大职务成员名单、中英文职称以及拍立得照片。</p>
 

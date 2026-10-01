@@ -1,37 +1,71 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <link rel="preload" href="assets/fonts/ChenYuluoyan-SC.woff2" as="font" type="font/woff2" crossorigin>
-  <meta name="keywords" content="harvester, 收割机, Harvester Music, 收割机音乐, CCM, 基督教音乐, 原创音乐, 福音音乐, 敬拜赞美, 赞美诗, 灵之火, 信仰艺术">
-  <meta name="description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我要投稿 Submit | Harvester Music Production 收割机创作工作坊</title>
+  <title>我要投稿与合作方案 Submissions & Cooperation | Harvester Music Production 收割机创作工作坊</title>
+  <meta name="keywords" content="harvester, 收割机, Harvester Music, 我要投稿, 版权分成, 合作方案, CCM, 基督教音乐, 原创音乐, 福音音乐, 敬拜赞美">
+  <meta name="description" content="Harvester Music Production - 我要投稿。了解收割机版权分成机制、合作方案与作品征集流程，让每一首写给神的歌都被听见。">
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="我要投稿 Submit | Harvester Music Production 收割机创作工作坊">
-  <meta property="og:description" content="Harvester Music Production - 收割机音乐工作坊。致力于现代基督教原创流行音乐 (CCM) 的创作、制作与推广。收割感动，播种福音。">
+  <meta property="og:title" content="我要投稿与合作方案 | Harvester Music Production">
+  <meta property="og:description" content="了解收割机版权分成机制、合作方案与作品征集流程，让每一首写给神的歌都被听见。">
   <meta property="og:image" content="https://www.harvestermusic.my/assets/logo.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=17.0.0">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    .submit-hero-card {
+      background: rgba(26, 21, 18, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(246, 210, 138, 0.3);
+      border-radius: 24px;
+      padding: 3rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      margin-bottom: 4rem;
+    }
+    .submit-nav-pills {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 1.5rem auto 3rem;
+      flex-wrap: wrap;
+    }
+    .submit-nav-pill {
+      background: rgba(246, 210, 138, 0.08);
+      border: 1px solid rgba(246, 210, 138, 0.3);
+      color: var(--gold);
+      padding: 10px 24px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-family: var(--font-body);
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .submit-nav-pill:hover, .submit-nav-pill.active {
+      background: var(--gold);
+      color: #12100e;
+      box-shadow: 0 5px 20px rgba(246, 210, 138, 0.35);
+      transform: translateY(-2px);
+    }
     @media (max-width: 768px) {
-      section { padding: 1rem !important; margin-top: 3rem !important; }
-      h1 { font-size: 2rem !important; margin-bottom: 1.5rem !important; }
-      #cfg_submit_text { padding: 1.5rem !important; font-size: 0.95rem !important; line-height: 1.6 !important; border-radius: 20px !important; }
-      #cfg_submit_text p { white-space: normal !important; margin-top: 0.5rem !important; }
-      .contact-form { padding: 1.5rem !important; margin-top: 2rem !important; }
-      .contact-form input, .contact-form textarea { padding: 10px !important; font-size: 0.9rem !important; }
-      .btn-submit { min-width: 160px !important; padding: 8px 25px !important; font-size: 0.85rem !important; }
+      .submit-hero-card { padding: 1.5rem; }
+      .submit-nav-pills { gap: 10px; }
+      .submit-nav-pill { font-size: 0.85rem; padding: 8px 16px; }
     }
   </style>
 </head>
 <body style="position: relative;">
   <canvas id="bgParticles"></canvas>
-    <header style="z-index:100;">
+  
+  <!-- Navigation Header -->
+  <header style="z-index:100;">
     <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
       <a href="index.html" class="logo" style="text-decoration:none;">
         <img src="assets/logo.png" alt="Harvester" class="nav-logo">
@@ -55,13 +89,13 @@
       <a href="events.html">活动</a>
       <a href="diary.html">田野日志</a>
       <div class="nav-dropdown">
-        <a href="javascript:void(0)">歌手 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
+        <a href="submit.html" class="active">我要投稿 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
         <div class="dropdown-content">
-          <a href="singers.html?tab=gospel"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v4M8 21h8"/></svg> 福音歌手</a>
-          <a href="singers.html?tab=worship"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M10 4h4M4 11l8-5 8 5v10H4V11zM10 21v-6h4v6"/></svg> 敬拜歌手</a>
+          <a href="submit.html#section-form"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 投稿须知与表单</a>
+          <a href="submit.html#section-profit"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="7" r="4"/><path d="M12 5v4M10.5 6.5h3M3 15h6l3 2h6a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-5M3 13v5"/></svg> 版权分成</a>
+          <a href="submit.html#section-coop"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 15l-2.5-2.5a2 2 0 0 0-2.8 0L2 16.2M13 9l2.5 2.5a2 2 0 0 0 2.8 0L22 7.8M7 11l4-4a2 2 0 0 1 2.8 0l2.2 2.2M10 14l2 2a2 2 0 0 0 2.8 0l2.2-2.2"/></svg> 合作方案</a>
         </div>
       </div>
-      <a href="submit.html" class="active">我要投稿</a>
       <div class="nav-dropdown">
         <a href="about.html">关于我们 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
         <div class="dropdown-content">
@@ -70,9 +104,7 @@
           <a href="about.html#section-pillars"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18M4 6l8-3 8 3M5 20h14M3 21h18M6 7v12M10 7v12M14 7v12M18 7v12"/></svg> 四大支柱</a>
           <a href="about.html#section-audience"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M15 14.5c1.8-.4 3.2.2 4.5 1.8 1 1.2 1 2.7 1 2.7"/></svg> 群体受众</a>
           <a href="about.html#section-categories"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="6.5" cy="17.5" r="2.5" fill="currentColor"/><circle cx="17.5" cy="14.5" r="2.5" fill="currentColor"/><path d="M9 17.5V6.5l11-2.5v10.5M9 10.5l11-2.5"/></svg> 创作方向</a>
-          <a href="about.html#section-profit"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="7" r="4"/><path d="M12 5v4M10.5 6.5h3M3 15h6l3 2h6a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-5M3 13v5"/></svg> 版权分成</a>
-          <a href="about.html#section-coop"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 15l-2.5-2.5a2 2 0 0 0-2.8 0L2 16.2M13 9l2.5 2.5a2 2 0 0 0 2.8 0L22 7.8M7 11l4-4a2 2 0 0 1 2.8 0l2.2 2.2M10 14l2 2a2 2 0 0 0 2.8 0l2.2-2.2"/></svg> 合作方案</a>
-          <a href="about.html#section-team"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="2" transform="rotate(-3 12 12)"/><rect x="6.5" y="5.5" width="11" height="9" rx="1"/><circle cx="12" cy="18" r="1.2" fill="currentColor"/></svg> 核心团队</a>
+          <a href="singers.html"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="2" transform="rotate(-3 12 12)"/><rect x="6.5" y="5.5" width="11" height="9" rx="1"/><circle cx="12" cy="18" r="1.2" fill="currentColor"/></svg> 主要同工</a>
           <a href="about.html#section-positioning"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5" stroke-dasharray="2.5 1.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> 平台定位</a>
           <a href="about.html#section-media"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M17 9.5h4M3 14.5h4M17 14.5h4"/><polygon points="10.5 10 14.5 12 10.5 14" fill="currentColor"/></svg> 视听故事</a>
         </div>
@@ -82,19 +114,20 @@
     </nav>
   </header>
 
+  <!-- Mobile Navigation Overlay -->
   <div id="mobileNavOverlay">
     <a href="index.html">主页</a>
     <a href="music.html">音乐与歌谱集</a>
     <a href="events.html">活动</a>
     <a href="diary.html">田野日志</a>
     <div class="mobile-dropdown">
-      <a href="javascript:void(0)" class="mobile-dropdown-toggle" onclick="event.preventDefault(); event.stopPropagation(); this.nextElementSibling.classList.toggle('show');">歌手 <i class="fas fa-caret-down"></i></a>
+      <a href="javascript:void(0)" class="mobile-dropdown-toggle" onclick="event.preventDefault(); event.stopPropagation(); this.nextElementSibling.classList.toggle('show');">我要投稿 <i class="fas fa-caret-down"></i></a>
       <div class="mobile-dropdown-content">
-        <a href="singers.html?tab=gospel"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v4M8 21h8"/></svg> 福音歌手</a>
-        <a href="singers.html?tab=worship"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M10 4h4M4 11l8-5 8 5v10H4V11zM10 21v-6h4v6"/></svg> 敬拜歌手</a>
+        <a href="submit.html#section-form"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 投稿须知与表单</a>
+        <a href="submit.html#section-profit"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="7" r="4"/><path d="M12 5v4M10.5 6.5h3M3 15h6l3 2h6a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-5M3 13v5"/></svg> 版权分成</a>
+        <a href="submit.html#section-coop"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 15l-2.5-2.5a2 2 0 0 0-2.8 0L2 16.2M13 9l2.5 2.5a2 2 0 0 0 2.8 0L22 7.8M7 11l4-4a2 2 0 0 1 2.8 0l2.2 2.2M10 14l2 2a2 2 0 0 0 2.8 0l2.2-2.2"/></svg> 合作方案</a>
       </div>
     </div>
-    <a href="submit.html" class="active">我要投稿</a>
     <div class="mobile-dropdown">
       <a href="javascript:void(0)" class="mobile-dropdown-toggle" onclick="event.preventDefault(); event.stopPropagation(); this.nextElementSibling.classList.toggle('show');">关于我们 <i class="fas fa-caret-down"></i></a>
       <div class="mobile-dropdown-content">
@@ -104,9 +137,7 @@
         <a href="about.html#section-pillars"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18M4 6l8-3 8 3M5 20h14M3 21h18M6 7v12M10 7v12M14 7v12M18 7v12"/></svg> 四大支柱</a>
         <a href="about.html#section-audience"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M15 14.5c1.8-.4 3.2.2 4.5 1.8 1 1.2 1 2.7 1 2.7"/></svg> 群体受众</a>
         <a href="about.html#section-categories"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="6.5" cy="17.5" r="2.5" fill="currentColor"/><circle cx="17.5" cy="14.5" r="2.5" fill="currentColor"/><path d="M9 17.5V6.5l11-2.5v10.5M9 10.5l11-2.5"/></svg> 创作方向</a>
-        <a href="about.html#section-profit"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="7" r="4"/><path d="M12 5v4M10.5 6.5h3M3 15h6l3 2h6a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-5M3 13v5"/></svg> 版权分成</a>
-        <a href="about.html#section-coop"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 15l-2.5-2.5a2 2 0 0 0-2.8 0L2 16.2M13 9l2.5 2.5a2 2 0 0 0 2.8 0L22 7.8M7 11l4-4a2 2 0 0 1 2.8 0l2.2 2.2M10 14l2 2a2 2 0 0 0 2.8 0l2.2-2.2"/></svg> 合作方案</a>
-        <a href="about.html#section-team"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="2" transform="rotate(-3 12 12)"/><rect x="6.5" y="5.5" width="11" height="9" rx="1"/><circle cx="12" cy="18" r="1.2" fill="currentColor"/></svg> 核心团队</a>
+        <a href="singers.html"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="2" transform="rotate(-3 12 12)"/><rect x="6.5" y="5.5" width="11" height="9" rx="1"/><circle cx="12" cy="18" r="1.2" fill="currentColor"/></svg> 主要同工</a>
         <a href="about.html#section-positioning"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5" stroke-dasharray="2.5 1.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> 平台定位</a>
         <a href="about.html#section-media"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M17 9.5h4M3 14.5h4M17 14.5h4"/><polygon points="10.5 10 14.5 12 10.5 14" fill="currentColor"/></svg> 视听故事</a>
       </div>
@@ -115,33 +146,278 @@
     <a href="contact.html">联系我们</a>
   </div>
 
+  <!-- Page Header -->
   <div class="ppt-header fade-in">
     <div class="ppt-line"></div>
-    <h1 class="ppt-title">我要投稿</h1>
-    <p class="ppt-subtitle">SUBMISSION GUIDELINES</p>
+    <h1 class="ppt-title">我要投稿与合作</h1>
+    <p class="ppt-subtitle">SUBMISSION GUIDELINES & COOPERATION</p>
   </div>
 
-  <section class="fade-in" style="max-width: 900px; margin-left: auto; margin-right: auto; padding: 2rem; padding-top: 0;">
-    
-    <div id="cfg_submit_text" style="padding: 0; line-height: 2.2; color: #fff; font-size: 1.1rem; background: transparent !important; border: none; white-space: normal !important; text-align: left; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
-      <p style="margin-bottom: 1.5rem; font-weight: 500;">所有经收割机制作与发行的作品，词曲版权由收割机拥有七年。七年后归还作者。</p>
-      <p style="margin-bottom: 0.8rem;">🔸 所有作品将以「收割机EP」形式发行。</p>
-      <p style="margin-bottom: 0.8rem;">🔸 发行时将在 FB / IG / YouTube 标注所有创作者，给予应有尊重。</p>
-      <p style="margin-bottom: 0.8rem;">🔸 有兴趣投稿可以扫描图中QR，或点击我要投稿</p>
-      <p>🔸 若有任何疑问欢迎询问</p>
-    </div>
-    
-    <div style="margin-top: 3.5rem; display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; max-width: 500px; margin-left: auto; margin-right: auto;">
-      <div style="background: transparent; padding: 0; width: 100%; text-align: center;">
-        <img id="cfg_submit_poster" src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80" alt="Submit Poster" style="width: 100%; height: auto; border-radius: 24px; display: block; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+  <!-- Quick Sub-Navigation Pills -->
+  <div class="submit-nav-pills fade-in">
+    <a href="#section-form" class="submit-nav-pill active"><i class="fas fa-file-signature"></i> 投稿须知与表单</a>
+    <a href="#section-profit" class="submit-nav-pill"><i class="fas fa-coins"></i> 版权分成结构</a>
+    <a href="#section-coop" class="submit-nav-pill"><i class="fas fa-handshake"></i> 合作方案与要求</a>
+  </div>
+
+  <!-- Main Container -->
+  <main style="max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 6rem;">
+
+    <!-- ===================================================
+         📝 SECTION 1: 投稿须知与表单入口
+         =================================================== -->
+    <section id="section-form" class="fade-in submit-hero-card">
+      <div class="section-sketch-header" style="margin-bottom: 2.5rem; text-align: left;">
+        <span class="sketch-pill">📝 SUBMISSION · 作品征集</span>
+        <h2 style="font-size: 2.2rem; color: #fffaf0; margin: 8px 0 4px; font-family: var(--font-songti), serif;">
+          收 割 机 诗 歌 征 集 启 动
+        </h2>
+        <p style="color: var(--gold); font-family: var(--font-eng-title); letter-spacing: 2px;">
+          HARVESTER WORSHIP SONG SUBMISSION
+        </p>
       </div>
-      <a id="cfg_submit_btn_link" href="#" class="btn btn-submit" style="min-width: 180px; text-align: center; text-decoration: none; padding: 10px 35px; font-size: 0.9rem; letter-spacing: 2px; border-radius: 50px;">我要投稿</a>
-    </div>
 
-    </div>
-  </section>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center;">
+        <!-- Left: Requirements & Process -->
+        <div id="cfg_submit_text" style="line-height: 2.2; color: #e2d9cd; font-size: 1.1rem;">
+          <p style="margin-bottom: 1.5rem; font-weight: 600; color: #fff; font-size: 1.2rem; border-left: 3px solid var(--gold); padding-left: 12px;">
+            所有经收割机制作与发行的作品，词曲版权由收割机拥有七年。七年后归还作者。
+          </p>
+          <p style="margin-bottom: 0.8rem;">
+            <span style="color: var(--gold); font-weight: bold;">✦ 发行形式：</span>所有作品将以「收割机EP」或数位单曲形式全球发行。
+          </p>
+          <p style="margin-bottom: 0.8rem;">
+            <span style="color: var(--gold); font-weight: bold;">✦ 创作者尊荣：</span>发行时将在 FB / IG / YouTube 及主流流媒体标注所有创作者，给予应有尊重。
+          </p>
+          <p style="margin-bottom: 0.8rem;">
+            <span style="color: var(--gold); font-weight: bold;">✦ 投稿方式：</span>扫描海报中 QR 码或点击下方按钮，填写在线投稿表单。
+          </p>
+          <p style="margin-top: 1.2rem; color: var(--text-muted); font-size: 0.95rem;">
+            如有任何疑问，欢迎随时通过 WhatsApp 或联系我们页面咨询。
+          </p>
+        </div>
 
-    <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+        <!-- Right: Poster & CTA Button -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+          <div style="border-radius: 20px; overflow: hidden; border: 1.5px solid rgba(246, 210, 138, 0.35); box-shadow: 0 15px 40px rgba(0,0,0,0.8); width: 100%; max-width: 420px; background: #000;">
+            <img id="cfg_submit_poster" src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80" alt="Submit Poster" style="width: 100%; height: auto; display: block; filter: brightness(0.95);">
+          </div>
+          <a id="cfg_submit_btn_link" href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20submit%20my%20song." target="_blank" class="btn" style="background: var(--gold); color: #12100e; font-weight: 700; min-width: 220px; text-align: center; text-decoration: none; padding: 14px 40px; font-size: 1.05rem; letter-spacing: 2px; border-radius: 50px; box-shadow: 0 10px 30px rgba(246, 210, 138, 0.4); transition: all 0.3s ease;">
+            <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> 立即提交作品 (SUBMIT)
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         💽 SECTION 2: 版权分成结构与收益
+         =================================================== -->
+    <section id="section-profit" class="profit-section fade-in" style="margin-bottom: 5rem;">
+      <div class="section-sketch-header">
+        <span class="sketch-pill">💽 PROFIT SHARING · 版权分成</span>
+        <h2 style="font-family: var(--font-songti), serif; font-size: 2.3rem; color: #fffaf0; letter-spacing: 3px;">
+          版 权 分 成 结 构 与 收 益
+        </h2>
+        <p style="color: var(--gold); font-family: var(--font-eng-title); letter-spacing: 2px;">
+          COPYRIGHT PROFIT SHARING STRUCTURE & REVENUE
+        </p>
+      </div>
+
+      <div class="profit-hero-layout" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem; align-items: stretch;">
+        <!-- 收入来源 -->
+        <div class="revenue-card" style="background: rgba(26, 21, 18, 0.65); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed rgba(246,210,138,0.25); padding-bottom: 1rem; margin-bottom: 1.2rem;">
+              <h3 style="font-family: var(--font-songti), serif; font-size: 1.5rem; color: #fffaf0; margin: 0; letter-spacing: 1px;">
+                REVENUE 收入来源
+              </h3>
+              <span style="font-family: var(--font-eng-title); font-size: 0.95rem; color: var(--gold); letter-spacing: 2px;">SOURCES</span>
+            </div>
+            <p style="font-family: var(--font-songti), serif; font-size: 1.25rem; color: #fffaf0; line-height: 1.7; margin-bottom: 0.5rem;">
+              主要来自 YouTube、Spotify、Apple Music 及各大数字流媒体音乐平台的播放与版税收益。
+            </p>
+            <p style="font-family: var(--font-eng-title); font-size: 0.85rem; color: #9c9083; text-transform: uppercase; letter-spacing: 1px; margin: 0;">
+              Mainly from YouTube, Spotify, Apple Music and digital streaming platforms.
+            </p>
+          </div>
+          <div class="revenue-photo-wrap" style="margin-top: 1.5rem; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+            <img id="about_rev_img" src="https://images.unsplash.com/photo-1520523839898-50712509e37b?auto=format&fit=crop&w=800&q=80" alt="钢琴与音乐创作" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+          </div>
+        </div>
+
+        <!-- 盈利分配比例表格 -->
+        <div class="sharing-table-card" style="background: rgba(26, 21, 18, 0.65); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2rem;">
+          <div class="sharing-table-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(246,210,138,0.25); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <h3 style="font-family: var(--font-songti), serif; font-size: 1.5rem; color: #fffaf0; margin: 0;">
+                盈利按比例分配
+              </h3>
+              <p style="font-family: var(--font-eng-title); font-size: 0.8rem; color: var(--gold); margin: 3px 0 0 0; letter-spacing: 1px;">
+                PROFITS WILL BE DISTRIBUTED AS FOLLOWS
+              </p>
+            </div>
+            <i class="fas fa-compact-disc" style="font-size: 2rem; color: var(--gold); opacity: 0.7;"></i>
+          </div>
+
+          <div class="sharing-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+            <!-- 01 词曲 -->
+            <div class="sharing-item-box" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(246,210,138,0.2); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
+              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">20%</div>
+              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #fff; font-weight: 600; margin: 4px 0 2px;">词曲</div>
+              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">创作部门 · Creation</p>
+            </div>
+
+            <!-- 02 制作 -->
+            <div class="sharing-item-box" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(246,210,138,0.2); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
+              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">20%</div>
+              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #fff; font-weight: 600; margin: 4px 0 2px;">制作</div>
+              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">制作部门 · Production</p>
+            </div>
+
+            <!-- 03 影片 -->
+            <div class="sharing-item-box" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(246,210,138,0.2); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
+              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">20%</div>
+              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #fff; font-weight: 600; margin: 4px 0 2px;">影片</div>
+              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">影片部门 · Film</p>
+            </div>
+
+            <!-- 04 推广 -->
+            <div class="sharing-item-box" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(246,210,138,0.2); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
+              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">20%</div>
+              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #fff; font-weight: 600; margin: 4px 0 2px;">推广</div>
+              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">宣传部门 · Promotion</p>
+            </div>
+
+            <!-- 05 歌手 -->
+            <div class="sharing-item-box" style="background: rgba(246, 210, 138, 0.08); border: 1px solid rgba(246, 210, 138, 0.4); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
+              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">10%</div>
+              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #fff; font-weight: 600; margin: 4px 0 2px;">歌手</div>
+              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">歌唱部门 · Singing</p>
+            </div>
+
+            <!-- 06 行政 -->
+            <div class="sharing-item-box" style="background: rgba(246, 210, 138, 0.08); border: 1px solid rgba(246, 210, 138, 0.4); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
+              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">10%</div>
+              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #fff; font-weight: 600; margin: 4px 0 2px;">行政</div>
+              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">行政部门 · Admin</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         🤝 SECTION 3: 合作方案与参与要求
+         =================================================== -->
+    <section id="section-coop" class="coop-section fade-in">
+      <div class="section-sketch-header">
+        <span class="sketch-pill">🤝 COLLABORATION · 合作方案</span>
+        <h2 style="font-family: var(--font-songti), serif; font-size: 2.3rem; color: #fffaf0; letter-spacing: 3px;">
+          收 割 机 和 独 立 创 作 人 的 合 作 方 案
+        </h2>
+        <p style="color: var(--gold); font-family: var(--font-eng-title); letter-spacing: 2px;">
+          HARVESTER MUSIC & INDEPENDENT SONGWRITERS PROPOSAL
+        </p>
+      </div>
+
+      <!-- Shared Vision Top Banner -->
+      <div style="background: rgba(26, 21, 18, 0.65); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.5rem; margin-bottom: 2.5rem; display: grid; grid-template-columns: 1.2fr 1fr; gap: 2.5rem; align-items: center;">
+        <div>
+          <span class="sketch-pill" style="margin-bottom:1rem; font-size:0.95rem;">✦ 认可共分共享共赢的分成制</span>
+          <p style="font-family: var(--font-eng-title); color: var(--gold); font-size: 1rem; letter-spacing: 2px; margin-bottom: 1.2rem; text-transform: uppercase;">
+            Support a fair and transparent model of shared rights and shared profits
+          </p>
+          <div style="background: rgba(0,0,0,0.35); border-left: 3px solid var(--gold); border-radius: 0 12px 12px 0; padding: 1.4rem 1.6rem;">
+            <p style="font-family: var(--font-songti), serif; font-size: 1.15rem; color: #fffaf0; line-height: 1.9; margin: 0;">
+              <strong>共分共享</strong>：共同『为作品贡献个人的恩赐』，后续共同『分享』所得的工价。<br>
+              <strong>共赢</strong>：在这个过程里，一同『赢得』未信之人、未得之民的灵魂，为复兴神的国度效力！
+            </p>
+          </div>
+        </div>
+        <div style="border: 1.5px solid rgba(246, 210, 138, 0.35); border-radius: 16px; overflow: hidden; background: #000; box-shadow: 0 15px 40px rgba(0,0,0,0.6);">
+          <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80" alt="录音室麦克风" style="width: 100%; height: 100%; min-height: 220px; object-fit: cover; display: block;">
+        </div>
+      </div>
+
+      <!-- Bottom Dual Cards: Model & Requirements -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Card A: 合作模式 -->
+        <div style="background: rgba(26, 21, 18, 0.65); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem;">
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px dashed rgba(246,210,138,0.25); padding-bottom:1rem; margin-bottom:1.5rem;">
+            <h3 style="font-family: var(--font-songti), serif; font-size: 1.5rem; color: #fffaf0; margin: 0; letter-spacing: 2px;">
+              合 作 模 式
+            </h3>
+            <span style="font-family: var(--font-eng-title); font-size: 0.95rem; color: var(--gold); letter-spacing: 2px;">MODEL</span>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:1.2rem;">
+            <div style="display:flex; align-items:flex-start; gap:12px;">
+              <i class="fas fa-building" style="color:var(--gold); margin-top:5px; font-size:1.1rem;"></i>
+              <div>
+                <strong style="color:var(--gold); font-size:1.05rem; font-family:var(--font-songti), serif;">出品公司</strong>
+                <p style="font-size:1rem; color:#ded6c8; margin:2px 0 0;">Harvester Music Production 收割机创作工作坊</p>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:flex-start; gap:12px;">
+              <i class="fas fa-layer-group" style="color:var(--gold); margin-top:5px; font-size:1.1rem;"></i>
+              <div>
+                <strong style="color:var(--gold); font-size:1.05rem; font-family:var(--font-songti), serif;">项目全流程包含</strong>
+                <p style="font-size:1rem; color:#ded6c8; margin:2px 0 0;">词曲创作、编曲制作、MV录制拍摄、全球宣发、专业演唱</p>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:flex-start; gap:12px;">
+              <i class="fas fa-certificate" style="color:var(--gold); margin-top:5px; font-size:1.1rem;"></i>
+              <div>
+                <strong style="color:var(--gold); font-size:1.05rem; font-family:var(--font-songti), serif;">版权说明</strong>
+                <p style="font-size:1rem; color:#ded6c8; margin:2px 0 0;">词曲版权由收割机拥有七年。七年后归还作者；宣发期全程受保护。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card B: 参与要求 -->
+        <div style="background: rgba(26, 21, 18, 0.65); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem;">
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px dashed rgba(246,210,138,0.25); padding-bottom:1rem; margin-bottom:1.5rem;">
+            <h3 style="font-family: var(--font-songti), serif; font-size: 1.5rem; color: #fffaf0; margin: 0; letter-spacing: 2px;">
+              参 与 要 求
+            </h3>
+            <span style="font-family: var(--font-eng-title); font-size: 0.95rem; color: var(--gold); letter-spacing: 2px;">REQUIREMENTS</span>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:1.2rem;">
+            <div style="display:flex; align-items:flex-start; gap:12px;">
+              <i class="fas fa-balance-scale" style="color:var(--gold); margin-top:5px; font-size:1.1rem;"></i>
+              <div>
+                <strong style="color:var(--gold); font-size:1.05rem; font-family:var(--font-songti), serif;">版权分成机制</strong>
+                <p style="font-size:1rem; color:#ded6c8; margin:2px 0 0;">按既定比例严格分配，确保每一位创作者透明获益</p>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:flex-start; gap:12px;">
+              <i class="fas fa-handshake" style="color:var(--gold); margin-top:5px; font-size:1.1rem;"></i>
+              <div>
+                <strong style="color:var(--gold); font-size:1.05rem; font-family:var(--font-songti), serif;">加入平台的要求</strong>
+                <p style="font-size:1rem; color:#ded6c8; margin:2px 0 0;">加入者须认同并签署版权分成与合作协议</p>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:flex-start; gap:12px;">
+              <i class="fas fa-door-open" style="color:var(--gold); margin-top:5px; font-size:1.1rem;"></i>
+              <div>
+                <strong style="color:var(--gold); font-size:1.05rem; font-family:var(--font-songti), serif;">自由选择与同心服事</strong>
+                <p style="font-size:1rem; color:#ded6c8; margin:2px 0 0;">在神的国度中自由选择，同心合意奔跑天路</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
       <img src="assets/logo.png" alt="Harvester" style="height: 20px; display: block; margin: 0 auto 1.2rem;">
     </a>
@@ -151,6 +427,6 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=2.6.0"></script>
-  <script src="app.js?v=15.0.0"></script>
+  <script src="app.js?v=17.0.0"></script>
 </body>
 </html>
