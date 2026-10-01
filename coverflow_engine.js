@@ -37,7 +37,7 @@
       year: "2025",
       theme_color: "#1c2b36",
       spine_bg: "#3b5a5b",
-      spine_color: "#ffffff",
+      spine_color: "#F6F4F0",
       spine_text: "更新敬拜",
       cover_url: morandiPhotos[0],
       duration: "4'18\"",
@@ -79,7 +79,7 @@
       year: "2024",
       theme_color: "#1a242f",
       spine_bg: "#52796f",
-      spine_color: "#ffffff",
+      spine_color: "#F6F4F0",
       spine_text: "灵火 Awakening",
       cover_url: morandiPhotos[1],
       duration: "4'52\"",
@@ -110,7 +110,7 @@
       year: "2025",
       theme_color: "#2a2421",
       spine_bg: "#b06d60",
-      spine_color: "#ffffff",
+      spine_color: "#F6F4F0",
       spine_text: "因为祢 上帝",
       cover_url: morandiPhotos[2],
       duration: "5'10\"",
@@ -141,7 +141,7 @@
       year: "2025",
       theme_color: "#242f3a",
       spine_bg: "#2d3748",
-      spine_color: "#ffffff",
+      spine_color: "#F6F4F0",
       spine_text: "Im Alive",
       cover_url: morandiPhotos[3],
       duration: "3'45\"",
@@ -166,7 +166,7 @@ You have set my feet upon the rock!`
       year: "2024",
       theme_color: "#202933",
       spine_bg: "#c47b6a",
-      spine_color: "#ffffff",
+      spine_color: "#F6F4F0",
       spine_text: "收割的呼召",
       cover_url: morandiPhotos[4],
       duration: "4'15\"",
@@ -191,7 +191,7 @@ You have set my feet upon the rock!`
       year: "2024",
       theme_color: "#1c242d",
       spine_bg: "#4a5568",
-      spine_color: "#ffffff",
+      spine_color: "#F6F4F0",
       spine_text: "祢是唯一",
       cover_url: morandiPhotos[5],
       duration: "4'40\"",
@@ -216,7 +216,7 @@ You have set my feet upon the rock!`
       year: "2025",
       theme_color: "#2b2a27",
       spine_bg: "#8c7b75",
-      spine_color: "#ffffff",
+      spine_color: "#F6F4F0",
       spine_text: "我心所愿",
       cover_url: morandiPhotos[6],
       duration: "4'55\"",
@@ -241,7 +241,7 @@ You have set my feet upon the rock!`
       year: "2024",
       theme_color: "#161d24",
       spine_bg: "#3d5a80",
-      spine_color: "#ffffff",
+      spine_color: "#F6F4F0",
       spine_text: "在祢圣所中",
       cover_url: morandiPhotos[7],
       duration: "5'30\"",
@@ -265,7 +265,7 @@ You have set my feet upon the rock!`
       year: "2025",
       theme_color: "#1e2229",
       spine_bg: "#6b705c",
-      spine_color: "#ffffff",
+      spine_color: "#F6F4F0",
       spine_text: "晨光破晓",
       cover_url: morandiPhotos[8],
       duration: "4'10\"",
@@ -1189,7 +1189,7 @@ You have set my feet upon the rock!`
             </div>
 
             <div style="margin-top:6px;">
-              <h1 style="font-family:var(--font-eng-title); font-size:1.65rem; font-weight:900; color:#ffffff; line-height:1.15; letter-spacing:1px; margin:0; text-shadow:0 2px 10px rgba(0,0,0,0.5);">
+              <h1 style="font-family:var(--font-eng-title); font-size:1.65rem; font-weight:900; color: #F6F4F0; line-height:1.15; letter-spacing:1px; margin:0; text-shadow:0 2px 10px rgba(0,0,0,0.5);">
                 HARVESTER <br><span style="font-size:1.15rem; font-weight:700; color:var(--gold); letter-spacing:2px;">MUSIC PRODUCTION</span> <span style="font-size:1rem; color:#4ecdc4;">&#10022;</span>
               </h1>
               <div style="width:110px; height:3px; background:linear-gradient(to right, #ffd166, #4ecdc4, transparent); margin-top:6px;"></div>
@@ -1200,14 +1200,14 @@ You have set my feet upon the rock!`
           <div style="position:relative; z-index:2; margin:10px 0; text-align:center;">
             <div class="cutout-sticker" style="width:190px; height:190px; margin:0 auto; overflow:hidden; position:relative;">
               <img src="${activeSong.cover_url}" alt="${activeSong.title}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='${childlikeDoodles[0]}'">
-              <div style="position:absolute; bottom:6px; left:6px; right:6px; background:rgba(0,0,0,0.65); backdrop-filter:blur(8px); padding:4px 10px; border-radius:6px; font-size:0.7rem; color:#fff; display:flex; justify-content:space-between;">
+              <div style="position:absolute; bottom:6px; left:6px; right:6px; background:rgba(0,0,0,0.65); backdrop-filter:blur(8px); padding:4px 10px; border-radius:6px; font-size:0.7rem; color: #F6F4F0; display:flex; justify-content:space-between;">
                 <span>${activeSong.artist}</span>
                 <span style="color:var(--gold); font-family:var(--font-times);">${activeSong.year || '2025'}</span>
               </div>
             </div>
 
             <div style="margin-top:10px;">
-              <h2 style="font-family:var(--font-songti), serif; font-size:1.45rem; font-weight:700; color:#fff; margin:0 0 3px; text-shadow:0 2px 8px rgba(0,0,0,0.6);">
+              <h2 style="font-family:var(--font-songti), serif; font-size:1.45rem; font-weight:700; color: #F6F4F0; margin:0 0 3px; text-shadow:0 2px 8px rgba(0,0,0,0.6);">
                 ${activeSong.title}
               </h2>
               <p style="font-size:0.82rem; color:rgba(255,255,255,0.8); margin:0; font-family:var(--font-body);">
@@ -1249,7 +1249,7 @@ You have set my feet upon the rock!`
                   <!-- Top Polaroid Photo (01 badge) -->
                   <div style="width:100%; height:140px; border-radius:0; overflow:hidden; border:1px solid #c9bda8; position:relative; margin-bottom:14px; background:#c9bda8;">
                     <img src="${photo1}" alt="Art 01" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.onerror=null; this.src='${childlikeDoodles[0]}'">
-                    <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">01</div>
+                    <div style="position:absolute; bottom:6px; right:6px; background:#000; color: #F6F4F0; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">01</div>
                   </div>
 
                   <div style="border-bottom:1px solid rgba(44,36,28,0.15); padding-bottom:8px; margin-bottom:12px;">
@@ -1275,7 +1275,7 @@ ${activeSong.lyrics}
                 <div>
                   <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:8px; margin-bottom:14px;">
                     <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:var(--gold);">FOLD 02 · WORSHIP INSPIRATION</span>
-                    <h3 style="margin:2px 0 0; color:#fff; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">创作心得与经文 (NOTES)</h3>
+                    <h3 style="margin:2px 0 0; color: #F6F4F0; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">创作心得与经文 (NOTES)</h3>
                   </div>
 
                   <div style="font-family:var(--font-songti), serif; font-size:0.98rem; line-height:1.85; color:#f3d7df; space-y:10px;">
@@ -1306,7 +1306,7 @@ ${activeSong.lyrics}
                 <div>
                   <div style="width:100%; height:150px; border-radius:0; overflow:hidden; border:1px solid #c6c0b6; position:relative; margin-bottom:16px; background:#c6c0b6;">
                     <img src="${photo3}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.onerror=null; this.src='${childlikeDoodles[2]}'">
-                    <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">03</div>
+                    <div style="position:absolute; bottom:6px; right:6px; background:#000; color: #F6F4F0; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">03</div>
                   </div>
 
                   <div style="border-bottom:1px solid rgba(38,34,31,0.15); padding-bottom:8px; margin-bottom:12px;">

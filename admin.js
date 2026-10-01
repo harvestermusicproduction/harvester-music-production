@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function renderCMS() {
     adminDashboard.innerHTML = `
-      <div class="cms-layout" style="display:flex; height:100vh; background:#050505; color:#fff; overflow:hidden; font-family: 'Inter', -apple-system, sans-serif;">
+      <div class="cms-layout" style="display:flex; height:100vh; background:#050505; color: #F6F4F0; overflow:hidden; font-family: 'Inter', -apple-system, sans-serif;">
         <!-- Clean Professional Sidebar -->
         <aside style="width:250px; background:#000; border-right:1px solid #1a1a1a; padding:2rem 1.2rem; display:flex; flex-direction:column;">
           <div style="margin-bottom:2rem; padding-left:10px;">
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         .cms-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 12px; padding: 2rem; }
         .btn-tiny { background: #111; border: 1px solid #222; color: #888; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: 0.3s; }
-        .btn-tiny:hover { background: #222; color: #fff; border-color: #444; }
+        .btn-tiny:hover { background: #222; color: #F6F4F0; border-color: #444; }
         .btn-tiny.danger:hover { background: #422; color: #f44; border-color: #622; }
       </style>
     `;
@@ -288,15 +288,15 @@ document.addEventListener('DOMContentLoaded', () => {
             <div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">顶部主标题 (Hero Title)</label>
-                <input type="text" id="in_home_hero_title" value="${c['cfg_home_hero_title'] || '收割感动，播种福音'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                <input type="text" id="in_home_hero_title" value="${c['cfg_home_hero_title'] || '收割感动，播种福音'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">顶部英文副标 (Hero Subtitle)</label>
-                <input type="text" id="in_home_hero_subtitle" value="${c['cfg_home_hero_subtitle'] || 'HARVESTING EMOTIONS, SOWING GOSPEL'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                <input type="text" id="in_home_hero_subtitle" value="${c['cfg_home_hero_subtitle'] || 'HARVESTING EMOTIONS, SOWING GOSPEL'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
               <div>
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">Hero 视频流或背景视频链接 (MP4 / WebM)</label>
-                <input type="text" id="in_hero_video_url" value="${c['cfg_hero_video_url'] || ''}" placeholder="https://... 或点击右侧上传" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                <input type="text" id="in_hero_video_url" value="${c['cfg_hero_video_url'] || ''}" placeholder="https://... 或点击右侧上传" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
             </div>
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">选择一首在主页“最新歌曲”板块高亮展示的原创作品。</p>
           <div style="margin-bottom:15px;">
             <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">选择推荐单曲 (Featured Single)</label>
-            <select id="in_latest_music_id" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:12px; border-radius:6px;">
+            <select id="in_latest_music_id" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:12px; border-radius:6px;">
               <option value="">-- 默认取最新发布的一首 --</option>
               ${(songs || []).map(s => `
                 <option value="${s.id}" ${c['cfg_latest_music_id'] === s.id ? 'selected' : ''}>${s.title} (${s.artist || 'Harvester'})</option>
@@ -332,23 +332,23 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:15px;">
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-whatsapp" style="color:#25D366;"></i> WhatsApp 咨询链接</label>
-              <input type="text" id="in_nav_wa" value="${c['cfg_nav_wa'] || 'https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry.'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_wa" value="${c['cfg_nav_wa'] || 'https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry.'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-spotify" style="color:#1DB954;"></i> Spotify 艺人主页</label>
-              <input type="text" id="in_nav_sp" value="${c['cfg_nav_sp'] || 'https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_sp" value="${c['cfg_nav_sp'] || 'https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-facebook" style="color:#1877F2;"></i> Facebook 专页</label>
-              <input type="text" id="in_nav_fb" value="${c['cfg_nav_fb'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_fb" value="${c['cfg_nav_fb'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-instagram" style="color:#E1306C;"></i> Instagram 账号</label>
-              <input type="text" id="in_nav_ig" value="${c['cfg_nav_ig'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_ig" value="${c['cfg_nav_ig'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div style="grid-column: 1/-1;">
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-youtube" style="color:#FF0000;"></i> YouTube 官方频道</label>
-              <input type="text" id="in_nav_yt" value="${c['cfg_nav_yt'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_yt" value="${c['cfg_nav_yt'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
           </div>
         </div>
@@ -473,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
                            style="width:75px; height:75px; object-fit:cover; border-radius:10px; border:1px solid #333; background:#181818;"
                            onerror="this.src='${childlikeDoodles[0]}'">
                       <div style="flex:1; overflow:hidden;">
-                        <h3 style="margin:0; color:#fff; font-size:1.1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:8px;">
+                        <h3 style="margin:0; color: #F6F4F0; font-size:1.1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:8px;">
                           ${s.title}
                           <span style="color:var(--gold); font-size:0.7rem; background:rgba(246,210,138,0.15); border:1px solid rgba(246,210,138,0.35); padding:2px 8px; border-radius:4px; font-family:monospace; font-weight:bold;">${s.year}</span>
                           ${s.id === latestId || s.is_latest ? '<span style="color:var(--gold); font-size:0.65rem; background:rgba(246,210,138,0.12); padding:2px 8px; border-radius:50px; border:1px solid rgba(246,210,138,0.3);">首推</span>' : ''}
@@ -1092,11 +1092,11 @@ document.addEventListener('DOMContentLoaded', () => {
                       <img src="${e.image_url || 'https://via.placeholder.com/600x338?text=Event'}" style="width:75px; height:45px; object-fit:cover; border-radius:6px; border:1px solid #333; background:#000;">
                     </td>
                     <td style="padding:14px; font-size:0.85rem; color:#ccc;">
-                      <b style="color:#fff;">${e.event_date || '未定'}</b>
+                      <b style="color: #F6F4F0;">${e.event_date || '未定'}</b>
                       <div style="font-size:0.75rem; color:#888;">${e.event_time || ''}</div>
                     </td>
                     <td style="padding:14px;">
-                      <div style="font-size:1rem; font-weight:500; color:#fff; display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
+                      <div style="font-size:1rem; font-weight:500; color: #F6F4F0; display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
                         ${tagBadge}
                         <span>${e.title}</span>
                       </div>
@@ -1362,7 +1362,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <!-- 是否需要购票/报名 (勾选切换) -->
           <div style="background:#0e0e0e; border:1px solid #222; border-radius:12px; padding:15px; margin-bottom:15px;">
-            <label style="display:flex; align-items:center; gap:12px; cursor:pointer; font-size:0.9rem; color:#fff; font-weight:600; user-select:none;">
+            <label style="display:flex; align-items:center; gap:12px; cursor:pointer; font-size:0.9rem; color: #F6F4F0; font-weight:600; user-select:none;">
               <input type="checkbox" id="ev_req_ticket" ${e && e.requires_ticket === false ? '' : 'checked'} onchange="document.getElementById('ev_ticket_fields').style.display = this.checked ? 'grid' : 'none';" style="width:20px; height:20px; accent-color:var(--gold); cursor:pointer;">
               <span>需要购票 / 报名 / 索票 (Require Ticket or Registration)</span>
             </label>
@@ -1635,13 +1635,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             
             <label style="font-size:0.75rem; color:#aaa;">中文职务名称 (Role Title) *</label>
-            <input type="text" class="coworker-role-input" value="${item.role || ''}" placeholder="例如：创作平台创办启发人" style="width:100%; margin:4px 0 8px; font-size:0.85rem; padding:7px 10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px;">
+            <input type="text" class="coworker-role-input" value="${item.role || ''}" placeholder="例如：创作平台创办启发人" style="width:100%; margin:4px 0 8px; font-size:0.85rem; padding:7px 10px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; border-radius:4px;">
             
             <label style="font-size:0.75rem; color:#aaa;">英文职务 (Role EN, 可选)</label>
             <input type="text" class="coworker-role-en-input" value="${item.role_en || ''}" placeholder="例如：Founding Inspirer" style="width:100%; margin:4px 0 8px; font-size:0.8rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color:#aaa; border-radius:4px;">
 
             <label style="font-size:0.75rem; color:#aaa;">同工姓名 (成员名单，换行分隔)</label>
-            <textarea class="coworker-names-input" placeholder="输入同工名字，如：汤小康&#10;Warren 沈自强" style="width:100%; height:55px; margin:4px 0 8px; font-size:0.85rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px;">${item.names || ''}</textarea>
+            <textarea class="coworker-names-input" placeholder="输入同工名字，如：汤小康&#10;Warren 沈自强" style="width:100%; height:55px; margin:4px 0 8px; font-size:0.85rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; border-radius:4px;">${item.names || ''}</textarea>
 
             <label style="font-size:0.75rem; color:#aaa;">拍立得相片 (Polaroid Photo)</label>
             <div style="margin-top:4px;">
@@ -1674,13 +1674,13 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         
         <label style="font-size:0.75rem; color:#aaa;">中文职务名称 (Role Title) *</label>
-        <input type="text" class="coworker-role-input" value="" placeholder="例如：诗歌编曲组" style="width:100%; margin:4px 0 8px; font-size:0.85rem; padding:7px 10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px;">
+        <input type="text" class="coworker-role-input" value="" placeholder="例如：诗歌编曲组" style="width:100%; margin:4px 0 8px; font-size:0.85rem; padding:7px 10px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; border-radius:4px;">
         
         <label style="font-size:0.75rem; color:#aaa;">英文职务 (Role EN, 可选)</label>
         <input type="text" class="coworker-role-en-input" value="" placeholder="例如：Music Arranger" style="width:100%; margin:4px 0 8px; font-size:0.8rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color:#aaa; border-radius:4px;">
 
         <label style="font-size:0.75rem; color:#aaa;">同工姓名 (成员名单，换行分隔)</label>
-        <textarea class="coworker-names-input" placeholder="输入同工名字..." style="width:100%; height:55px; margin:4px 0 8px; font-size:0.85rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px;"></textarea>
+        <textarea class="coworker-names-input" placeholder="输入同工名字..." style="width:100%; height:55px; margin:4px 0 8px; font-size:0.85rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; border-radius:4px;"></textarea>
 
         <label style="font-size:0.75rem; color:#aaa;">拍立得相片 (Polaroid Photo)</label>
         <div style="margin-top:4px;">
@@ -1794,10 +1794,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <input type="text" id="s_role_new" placeholder="例如：CCM 原创歌手 / 敬拜主领" style="width:100%; margin-bottom:15px; padding:10px;" value="">
         
         <label style="color:#aaa; font-size:0.8rem; display:block; margin-bottom:4px;">详细介绍 Description (显示在弹窗里)</label>
-        <textarea id="s_bio_new" placeholder="请输入详细的歌手介绍、信仰见证与音乐经历..." style="width:100%; height:100px; margin-bottom:15px; background:#181818; color:#fff; border:1px solid #333; padding:10px; border-radius:6px;"></textarea>
+        <textarea id="s_bio_new" placeholder="请输入详细的歌手介绍、信仰见证与音乐经历..." style="width:100%; height:100px; margin-bottom:15px; background:#181818; color: #F6F4F0; border:1px solid #333; padding:10px; border-radius:6px;"></textarea>
 
         <label style="color:#aaa; font-size:0.8rem; display:block; margin-bottom:4px;">展示分类 (Category)</label>
-        <select id="s_cat_new" style="width:100%; margin-bottom:15px; background: #181818; color: #fff; padding: 10px; border: 1px solid #333; border-radius:6px;">
+        <select id="s_cat_new" style="width:100%; margin-bottom:15px; background: #181818; color: #F6F4F0; padding: 10px; border: 1px solid #333; border-radius:6px;">
           <option value="gospel" ${defaultCat==='gospel'?'selected':''}>福音歌手 Gospel</option>
           <option value="worship" ${defaultCat==='worship'?'selected':''}>敬拜赞美歌手 Worship</option>
         </select>
@@ -1852,10 +1852,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <input type="text" id="sr" value="${s.role || ''}" style="width:100%; margin-bottom:15px;">
 
         <label>详细介绍 Description (显示在弹窗里)</label>
-        <textarea id="sb" style="width:100%; height:120px; margin-bottom:15px; background:#222; color:#fff; border:1px solid #444; padding:10px;">${s.bio || ''}</textarea>
+        <textarea id="sb" style="width:100%; height:120px; margin-bottom:15px; background:#222; color: #F6F4F0; border:1px solid #444; padding:10px;">${s.bio || ''}</textarea>
         
         <label>展示分类 Category</label>
-        <select id="scat" style="width:100%; margin-bottom:15px; background: #222; color: #fff; padding: 10px; border: 1px solid #444;">
+        <select id="scat" style="width:100%; margin-bottom:15px; background: #222; color: #F6F4F0; padding: 10px; border: 1px solid #444;">
           <option value="gospel" ${s.category === 'gospel' ? 'selected' : ''}>福音歌手 Gospel</option>
           <option value="worship" ${s.category === 'worship' ? 'selected' : ''}>敬拜歌手 Worship</option>
         </select>
@@ -1937,7 +1937,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <tr style="border-bottom:1px solid #222;">
               <td style="padding:15px; font-size:0.8rem; color:#888;">${new Date(r.created_at).toLocaleDateString()} ${new Date(r.created_at).toLocaleTimeString().substring(0,5)}</td>
               <td style="color:var(--gold); font-weight:bold;">《${r.eventTitle}》<br><small style="color:#666; font-weight:normal;">时间: ${r.eventDate}</small></td>
-              <td style="color:#fff;">${r.userEmail}</td>
+              <td style="color: #F6F4F0;">${r.userEmail}</td>
               <td><span style="color:${r.reminderSent?'#64D28A':'#e5b05a'}; background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:4px; font-size:0.75rem;">${r.reminderSent ? '✅ 已发邮件' : '⏳ 等待发送'}</span></td>
               <td>
                 <button class="btn-tiny danger" onclick="deleteItem('event_reminders', '${r.id}')">删除</button>
@@ -1980,15 +1980,15 @@ document.addEventListener('DOMContentLoaded', () => {
             <div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">银行名称 (Bank Name)</label>
-                <input type="text" id="in_support_bank" value="${c['cfg_support_bank'] || 'Maybank'}" placeholder="例如：Maybank" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                <input type="text" id="in_support_bank" value="${c['cfg_support_bank'] || 'Maybank'}" placeholder="例如：Maybank" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">账户户名 (Account Name)</label>
-                <input type="text" id="in_support_acc_name" value="${c['cfg_support_acc_name'] || 'HARVESTER MUSIC PRODUCTION'}" placeholder="例如：HARVESTER MUSIC PRODUCTION" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                <input type="text" id="in_support_acc_name" value="${c['cfg_support_acc_name'] || 'HARVESTER MUSIC PRODUCTION'}" placeholder="例如：HARVESTER MUSIC PRODUCTION" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">银行账号 (Account Number)</label>
-                <input type="text" id="in_support_acc_no" value="${c['cfg_support_acc_no'] || '5123 4567 8901'}" placeholder="例如：5123 4567 8901" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                <input type="text" id="in_support_acc_no" value="${c['cfg_support_acc_no'] || '5123 4567 8901'}" placeholder="例如：5123 4567 8901" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
             </div>
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
@@ -2010,7 +2010,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">奉献致谢与支持说明文案</label>
-                <textarea id="in_support_text" style="width:100%; height:120px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_support_text'] || '若这份音乐祝福了你，欢迎以自由奉献支持我们的创作与服事。您的每一份支持都将用于福音音乐的制作与推广。'}</textarea>
+                <textarea id="in_support_text" style="width:100%; height:120px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_support_text'] || '若这份音乐祝福了你，欢迎以自由奉献支持我们的创作与服事。您的每一份支持都将用于福音音乐的制作与推广。'}</textarea>
               </div>
             </div>
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
@@ -2109,7 +2109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   <td style="padding:15px; color:var(--gold); font-weight:600;">${s.user_name || '匿名创作者'}</td>
                   <td style="padding:15px; font-size:0.85rem; color:#aaa;">${s.user_contact || s.email || '未留'}</td>
                   <td style="padding:15px; color:#ccc; font-size:0.85rem;">
-                    <div style="font-weight:bold; color:#fff; margin-bottom:4px;">${s.song_title || '未命名作品'}</div>
+                    <div style="font-weight:bold; color: #F6F4F0; margin-bottom:4px;">${s.song_title || '未命名作品'}</div>
                     <div style="color:#777; font-size:0.75rem; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${s.message || s.lyrics || ''}</div>
                     ${s.audio_url ? `<audio src="${s.audio_url}" controls style="height:28px; margin-top:6px; max-width:240px;"></audio>` : ''}
                   </td>
@@ -2135,11 +2135,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">投稿征集规则文案 (支持 HTML 格式)</label>
-                <textarea id="in_submit_text" style="width:100%; height:180px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_submit_text'] || `所有经收割机制作与发行的作品，词曲版权由收割机拥有七年。七年后归还作者。\n✦ 发行形式：所有作品将以「收割机EP」或数位单曲形式全球发行。\n✦ 创作者尊荣：发行时将在 FB / IG / YouTube 及主流流媒体标注所有创作者，给予应有尊重。\n✦ 投稿方式：填写在线投稿表单。`}</textarea>
+                <textarea id="in_submit_text" style="width:100%; height:180px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_submit_text'] || `所有经收割机制作与发行的作品，词曲版权由收割机拥有七年。七年后归还作者。\n✦ 发行形式：所有作品将以「收割机EP」或数位单曲形式全球发行。\n✦ 创作者尊荣：发行时将在 FB / IG / YouTube 及主流流媒体标注所有创作者，给予应有尊重。\n✦ 投稿方式：填写在线投稿表单。`}</textarea>
               </div>
               <div>
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">提交作品按钮跳转链接 (表单 / WhatsApp)</label>
-                <input type="text" id="in_submit_btn_link" value="${c['cfg_submit_btn_link'] || 'https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20submit%20my%20song.'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                <input type="text" id="in_submit_btn_link" value="${c['cfg_submit_btn_link'] || 'https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20submit%20my%20song.'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
             </div>
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
@@ -2160,7 +2160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">收益分配机制与结算周期说明</label>
-                <textarea id="in_submit_profit_text" style="width:100%; height:150px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_submit_profit_text'] || `主要来自 YouTube、Spotify、Apple Music 及各大数字流媒体音乐平台的播放与版税收益。\n收入将在扣除平台必要成本后，按约定比例定期结算给词曲创作者与制作团队。`}</textarea>
+                <textarea id="in_submit_profit_text" style="width:100%; height:150px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_submit_profit_text'] || `主要来自 YouTube、Spotify、Apple Music 及各大数字流媒体音乐平台的播放与版税收益。\n收入将在扣除平台必要成本后，按约定比例定期结算给词曲创作者与制作团队。`}</textarea>
               </div>
             </div>
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
@@ -2179,7 +2179,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <h3 style="color:#1877F2; margin-top:0;">🤝 合作方案与事工对接设置</h3>
           <div style="margin-top:15px;">
             <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">合作方案与要求说明文案</label>
-            <textarea id="in_submit_coop_text" style="width:100%; height:160px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_submit_coop_text'] || `收割机欢迎教会、音乐人及敬拜团队展开深度合作，包括全案单曲制作、敬拜特会主领邀约、歌曲重新编曲与海外巡回宣教支持。`}</textarea>
+            <textarea id="in_submit_coop_text" style="width:100%; height:160px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_submit_coop_text'] || `收割机欢迎教会、音乐人及敬拜团队展开深度合作，包括全案单曲制作、敬拜特会主领邀约、歌曲重新编曲与海外巡回宣教支持。`}</textarea>
           </div>
           <button class="btn btn-submit" style="width:100%; padding:14px; margin-top:20px;" onclick="saveSubmitPageCMS()">💾 立即保存合作方案设置</button>
         </div>
@@ -2333,15 +2333,15 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-top:15px;">
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">官方联络 Email</label>
-              <input type="text" id="in_official_email" value="${c['cfg_official_email'] || 'harvestermusicproduction@gmail.com'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              <input type="text" id="in_official_email" value="${c['cfg_official_email'] || 'harvestermusicproduction@gmail.com'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">官方客服 WhatsApp 号码 / 链接</label>
-              <input type="text" id="in_official_wa" value="${c['cfg_nav_wa'] || 'https://wa.me/60187755581'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              <input type="text" id="in_official_wa" value="${c['cfg_nav_wa'] || 'https://wa.me/60187755581'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div style="grid-column: 1/-1;">
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">办公/事工联络地址 (可选)</label>
-              <input type="text" id="in_official_addr" value="${c['cfg_official_addr'] || 'Kuala Lumpur, Malaysia'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              <input type="text" id="in_official_addr" value="${c['cfg_official_addr'] || 'Kuala Lumpur, Malaysia'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
           </div>
           <button class="btn btn-submit" style="width:100%; padding:14px; margin-top:25px;" onclick="saveContactInfoCMS()">💾 立即保存官方联络信息</button>
@@ -2421,7 +2421,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div>
             <label style="font-size:0.75rem; color:#888; display:block;">联络邮箱</label>
-            <div style="color:#fff; margin-top:2px; font-size:0.95rem;">
+            <div style="color: #F6F4F0; margin-top:2px; font-size:0.95rem;">
               ${c.email ? `<a href="mailto:${c.email}?subject=【Harvester 收割机音乐】关于合作咨询回复" target="_blank" style="color:#70a1ff; text-decoration:none;"><i class="fas fa-paper-plane"></i> ${c.email}</a>` : '未填写'}
             </div>
           </div>
@@ -2519,33 +2519,33 @@ document.addEventListener('DOMContentLoaded', () => {
             <div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">主标题 (Main Title)</label>
-                <input type="text" id="in_about_origin_main_title" value="${d('about_origin_main_title', '收 割 机 的 故 事')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                <input type="text" id="in_about_origin_main_title" value="${d('about_origin_main_title', '收 割 机 的 故 事')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
 
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">启发经文 中文 (Scripture CN)</label>
-                <textarea id="in_about_origin_scripture" style="width:100%; height:65px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">${d('about_origin_scripture', '「那人撒种，这人收割，这话可见是真的。」')}</textarea>
+                <textarea id="in_about_origin_scripture" style="width:100%; height:65px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">${d('about_origin_scripture', '「那人撒种，这人收割，这话可见是真的。」')}</textarea>
               </div>
 
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
                 <div>
                   <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">经文出处 (Reference)</label>
-                  <input type="text" id="in_about_origin_ref" value="${d('about_origin_ref', '—— 约翰福音 4:37 · John 4:37')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                  <input type="text" id="in_about_origin_ref" value="${d('about_origin_ref', '—— 约翰福音 4:37 · John 4:37')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
                 </div>
                 <div>
                   <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">启发经文 英文 (Scripture EN)</label>
-                  <input type="text" id="in_about_origin_scripture_en" value="${d('about_origin_scripture_en', 'One sows and another reaps. This saying is true.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                  <input type="text" id="in_about_origin_scripture_en" value="${d('about_origin_scripture_en', 'One sows and another reaps. This saying is true.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
                 </div>
               </div>
 
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">名字意义 中文 (Meaning CN)</label>
-                <textarea id="in_about_origin_meaning" style="width:100%; height:75px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">${d('about_origin_meaning', '以“收割机”命名，象征着神国的丰收。\n音乐作品如同撒下的种子，触动人心，在神的时间里结出果实。')}</textarea>
+                <textarea id="in_about_origin_meaning" style="width:100%; height:75px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">${d('about_origin_meaning', '以“收割机”命名，象征着神国的丰收。\n音乐作品如同撒下的种子，触动人心，在神的时间里结出果实。')}</textarea>
               </div>
 
               <div>
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">名字意义 英文 (Meaning EN)</label>
-                <textarea id="in_about_origin_meaning_en" style="width:100%; height:65px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">${d('about_origin_meaning_en', 'The name \'Harvester\' symbolizes the abundant harvest in God\'s kingdom. Music is like a seed that touches hearts and bears fruit in God\'s timing.')}</textarea>
+                <textarea id="in_about_origin_meaning_en" style="width:100%; height:65px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">${d('about_origin_meaning_en', 'The name \'Harvester\' symbolizes the abundant harvest in God\'s kingdom. Music is like a seed that touches hearts and bears fruit in God\'s timing.')}</textarea>
               </div>
             </div>
 
@@ -2573,23 +2573,23 @@ document.addEventListener('DOMContentLoaded', () => {
               <h4 style="color:var(--gold); margin-top:0; margin-bottom:15px;">🌟 愿景 (Vision)</h4>
               <div style="margin-bottom:12px;">
                 <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">愿景标题</label>
-                <input type="text" id="in_about_vision_title" value="${d('about_vision_title', '愿 景')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_vision_title" value="${d('about_vision_title', '愿 景')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:12px;">
                 <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">愿景要点 1 (中文)</label>
-                <textarea id="in_about_vision_1" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_vision_1', '推动现代流行基督教音乐的推广与发展')}</textarea>
+                <textarea id="in_about_vision_1" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_vision_1', '推动现代流行基督教音乐的推广与发展')}</textarea>
               </div>
               <div style="margin-bottom:12px;">
                 <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">愿景要点 1 (英文)</label>
-                <input type="text" id="in_about_vision_1_en" value="${d('about_vision_1_en', 'To promote and develop modern contemporary Christian music')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_vision_1_en" value="${d('about_vision_1_en', 'To promote and develop modern contemporary Christian music')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:12px;">
                 <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">愿景要点 2 (中文)</label>
-                <textarea id="in_about_vision_2" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_vision_2', '同心合一，为神国度收割灵魂，透过音乐传扬福音')}</textarea>
+                <textarea id="in_about_vision_2" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_vision_2', '同心合一，为神国度收割灵魂，透过音乐传扬福音')}</textarea>
               </div>
               <div>
                 <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">愿景要点 2 (英文)</label>
-                <input type="text" id="in_about_vision_2_en" value="${d('about_vision_2_en', 'United as one, harvesting souls for God\'s kingdom through the power of music')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_vision_2_en" value="${d('about_vision_2_en', 'United as one, harvesting souls for God\'s kingdom through the power of music')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
             </div>
 
@@ -2598,23 +2598,23 @@ document.addEventListener('DOMContentLoaded', () => {
               <h4 style="color:#64D28A; margin-top:0; margin-bottom:15px;">🎯 使命 (Mission)</h4>
               <div style="margin-bottom:12px;">
                 <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">使命标题</label>
-                <input type="text" id="in_about_mission_title" value="${d('about_mission_title', '使 命')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_mission_title" value="${d('about_mission_title', '使 命')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:12px;">
                 <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">使命要点 1 (中文)</label>
-                <textarea id="in_about_mission_1" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_mission_1', '为主兴起这世代的中文诗歌词曲创作人和音乐人')}</textarea>
+                <textarea id="in_about_mission_1" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_mission_1', '为主兴起这世代的中文诗歌词曲创作人和音乐人')}</textarea>
               </div>
               <div style="margin-bottom:12px;">
                 <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">使命要点 1 (英文)</label>
-                <input type="text" id="in_about_mission_1_en" value="${d('about_mission_1_en', 'To raise up the songwriters and musicians of this generation for the Lord through Chinese poetry and song creation')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_mission_1_en" value="${d('about_mission_1_en', 'To raise up the songwriters and musicians of this generation for the Lord through Chinese poetry and song creation')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:12px;">
                 <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">使命要点 2 (中文)</label>
-                <textarea id="in_about_mission_2" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_mission_2', '通过创作歌曲引导人认识神，并传播真理、信望与爱')}</textarea>
+                <textarea id="in_about_mission_2" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_mission_2', '通过创作歌曲引导人认识神，并传播真理、信望与爱')}</textarea>
               </div>
               <div>
                 <label style="display:block; color:#aaa; font-size:0.75rem; margin-bottom:4px;">使命要点 2 (英文)</label>
-                <input type="text" id="in_about_mission_2_en" value="${d('about_mission_2_en', 'To guide people to know God through song creation and spread truth, faith, hope, and love')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_mission_2_en" value="${d('about_mission_2_en', 'To guide people to know God through song creation and spread truth, faith, hope, and love')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
             </div>
           </div>
@@ -2633,19 +2633,19 @@ document.addEventListener('DOMContentLoaded', () => {
               <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">支柱 01</span>
               <div style="margin:10px 0 8px;">
                 <label style="font-size:0.75rem; color:#aaa;">中文标题</label>
-                <input type="text" id="in_about_p1_t" value="${d('about_p1_t', '推动诗歌创作')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_p1_t" value="${d('about_p1_t', '推动诗歌创作')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">英文标题</label>
-                <input type="text" id="in_about_p1_te" value="${d('about_p1_te', 'Promoting Songwriting')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_p1_te" value="${d('about_p1_te', 'Promoting Songwriting')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">中文说明</label>
-                <textarea id="in_about_p1_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p1_d', '鼓励并支持创作能够传递信仰的诗歌与歌曲。')}</textarea>
+                <textarea id="in_about_p1_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_p1_d', '鼓励并支持创作能够传递信仰的诗歌与歌曲。')}</textarea>
               </div>
               <div>
                 <label style="font-size:0.75rem; color:#aaa;">英文说明</label>
-                <textarea id="in_about_p1_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p1_de', 'Encourage and support the creation of songs and hymns that communicate faith.')}</textarea>
+                <textarea id="in_about_p1_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_p1_de', 'Encourage and support the creation of songs and hymns that communicate faith.')}</textarea>
               </div>
             </div>
 
@@ -2654,19 +2654,19 @@ document.addEventListener('DOMContentLoaded', () => {
               <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">支柱 02</span>
               <div style="margin:10px 0 8px;">
                 <label style="font-size:0.75rem; color:#aaa;">中文标题</label>
-                <input type="text" id="in_about_p2_t" value="${d('about_p2_t', '提供服事平台')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_p2_t" value="${d('about_p2_t', '提供服事平台')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">英文标题</label>
-                <input type="text" id="in_about_p2_te" value="${d('about_p2_te', 'Providing a Service Platform')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_p2_te" value="${d('about_p2_te', 'Providing a Service Platform')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">中文说明</label>
-                <textarea id="in_about_p2_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p2_d', '创建一个平台，让音乐人能够分享、服事，达到共赢。')}</textarea>
+                <textarea id="in_about_p2_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_p2_d', '创建一个平台，让音乐人能够分享、服事，达到共赢。')}</textarea>
               </div>
               <div>
                 <label style="font-size:0.75rem; color:#aaa;">英文说明</label>
-                <textarea id="in_about_p2_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p2_de', 'Create a platform where musicians can share and serve, achieving a win-win situation.')}</textarea>
+                <textarea id="in_about_p2_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_p2_de', 'Create a platform where musicians can share and serve, achieving a win-win situation.')}</textarea>
               </div>
             </div>
 
@@ -2675,19 +2675,19 @@ document.addEventListener('DOMContentLoaded', () => {
               <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">支柱 03</span>
               <div style="margin:10px 0 8px;">
                 <label style="font-size:0.75rem; color:#aaa;">中文标题</label>
-                <input type="text" id="in_about_p3_t" value="${d('about_p3_t', '建立版权制度')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_p3_t" value="${d('about_p3_t', '建立版权制度')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">英文标题</label>
-                <input type="text" id="in_about_p3_te" value="${d('about_p3_te', 'Establishing a Copyright System')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_p3_te" value="${d('about_p3_te', 'Establishing a Copyright System')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">中文说明</label>
-                <textarea id="in_about_p3_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p3_d', '保护创作人的版权，确保每首歌曲在法律框架下得到保障。')}</textarea>
+                <textarea id="in_about_p3_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_p3_d', '保护创作人的版权，确保每首歌曲在法律框架下得到保障。')}</textarea>
               </div>
               <div>
                 <label style="font-size:0.75rem; color:#aaa;">英文说明</label>
-                <textarea id="in_about_p3_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p3_de', 'Protect creators\' copyrights and ensure that each song is legally protected.')}</textarea>
+                <textarea id="in_about_p3_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_p3_de', 'Protect creators\' copyrights and ensure that each song is legally protected.')}</textarea>
               </div>
             </div>
 
@@ -2696,19 +2696,19 @@ document.addEventListener('DOMContentLoaded', () => {
               <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">支柱 04</span>
               <div style="margin:10px 0 8px;">
                 <label style="font-size:0.75rem; color:#aaa;">中文标题</label>
-                <input type="text" id="in_about_p4_t" value="${d('about_p4_t', '传承培育下一代')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_p4_t" value="${d('about_p4_t', '传承培育下一代')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">英文标题</label>
-                <input type="text" id="in_about_p4_te" value="${d('about_p4_te', 'Passing on and Cultivating the Next Generation')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_p4_te" value="${d('about_p4_te', 'Passing on and Cultivating the Next Generation')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">中文说明</label>
-                <textarea id="in_about_p4_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p4_d', '培养下一代音乐人才，为神的事业贡献创意与才华。')}</textarea>
+                <textarea id="in_about_p4_d" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_p4_d', '培养下一代音乐人才，为神的事业贡献创意与才华。')}</textarea>
               </div>
               <div>
                 <label style="font-size:0.75rem; color:#aaa;">英文说明</label>
-                <textarea id="in_about_p4_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_p4_de', 'Cultivate the next generation of music talent, contributing creativity and skills to God\'s work.')}</textarea>
+                <textarea id="in_about_p4_de" style="width:100%; height:50px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_p4_de', 'Cultivate the next generation of music talent, contributing creativity and skills to God\'s work.')}</textarea>
               </div>
             </div>
           </div>
@@ -2728,19 +2728,19 @@ document.addEventListener('DOMContentLoaded', () => {
               <div style="margin-bottom:10px;">
                 <label style="font-size:0.75rem; color:#aaa;">标题 CN / EN</label>
                 <div style="display:flex; gap:10px;">
-                  <input type="text" id="in_about_aud_call_t" value="${d('about_aud_call_t', '主要的号召群体')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
-                  <input type="text" id="in_about_aud_call_te" value="${d('about_aud_call_te', 'Primary Calling Group')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                  <input type="text" id="in_about_aud_call_t" value="${d('about_aud_call_t', '主要的号召群体')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
+                  <input type="text" id="in_about_aud_call_te" value="${d('about_aud_call_te', 'Primary Calling Group')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
                 </div>
               </div>
               <div style="margin-bottom:10px;">
                 <label style="font-size:0.75rem; color:#aaa;">描述 1 CN / EN</label>
-                <textarea id="in_about_aud_call_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_call_d1', '号召一群已经在上帝给的恩赐中装备成熟的门徒。')}</textarea>
-                <input type="text" id="in_about_aud_call_d1e" value="${d('about_aud_call_d1e', 'Call upon disciples who are spiritually mature and equipped with God\'s gifts.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <textarea id="in_about_aud_call_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_call_d1', '号召一群已经在上帝给的恩赐中装备成熟的门徒。')}</textarea>
+                <input type="text" id="in_about_aud_call_d1e" value="${d('about_aud_call_d1e', 'Call upon disciples who are spiritually mature and equipped with God\'s gifts.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:15px;">
                 <label style="font-size:0.75rem; color:#aaa;">描述 2 CN / EN</label>
-                <textarea id="in_about_aud_call_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_call_d2', '通过他们的创作，帮助更多的人认识神、领受真理，并传递信望与爱的作品。')}</textarea>
-                <input type="text" id="in_about_aud_call_d2e" value="${d('about_aud_call_d2e', 'Through their creations, help others know God, receive the truth, and spread works of faith, hope, and love.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <textarea id="in_about_aud_call_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_call_d2', '通过他们的创作，帮助更多的人认识神、领受真理，并传递信望与爱的作品。')}</textarea>
+                <input type="text" id="in_about_aud_call_d2e" value="${d('about_aud_call_d2e', 'Through their creations, help others know God, receive the truth, and spread works of faith, hope, and love.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div>
                 <label style="font-size:0.75rem; color:var(--gold); display:block; margin-bottom:5px;">群体配图 (Photo)</label>
@@ -2757,19 +2757,19 @@ document.addEventListener('DOMContentLoaded', () => {
               <div style="margin-bottom:10px;">
                 <label style="font-size:0.75rem; color:#aaa;">标题 CN / EN</label>
                 <div style="display:flex; gap:10px;">
-                  <input type="text" id="in_about_aud_target_t" value="${d('about_aud_target_t', '目标受众')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
-                  <input type="text" id="in_about_aud_target_te" value="${d('about_aud_target_te', 'Target Audience')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                  <input type="text" id="in_about_aud_target_t" value="${d('about_aud_target_t', '目标受众')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
+                  <input type="text" id="in_about_aud_target_te" value="${d('about_aud_target_te', 'Target Audience')}" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
                 </div>
               </div>
               <div style="margin-bottom:10px;">
                 <label style="font-size:0.75rem; color:#aaa;">描述 1 CN / EN</label>
-                <textarea id="in_about_aud_target_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_target_d1', '主要是那些未认识神的年轻人，甚至是年长的未信者。')}</textarea>
-                <input type="text" id="in_about_aud_target_d1e" value="${d('about_aud_target_d1e', 'Mainly young people who have not yet known God, as well as older non-believers.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <textarea id="in_about_aud_target_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_target_d1', '主要是那些未认识神的年轻人，甚至是年长的未信者。')}</textarea>
+                <input type="text" id="in_about_aud_target_d1e" value="${d('about_aud_target_d1e', 'Mainly young people who have not yet known God, as well as older non-believers.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:15px;">
                 <label style="font-size:0.75rem; color:#aaa;">描述 2 CN / EN</label>
-                <textarea id="in_about_aud_target_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_target_d2', '让他们在这些歌曲中找到人生的盼望、希望与爱，这一切都在耶稣基督里。')}</textarea>
-                <input type="text" id="in_about_aud_target_d2e" value="${d('about_aud_target_d2e', 'Help them find hope, purpose, and love in these songs, all of which are found in Jesus Christ.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <textarea id="in_about_aud_target_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_aud_target_d2', '让他们在这些歌曲中找到人生的盼望、希望与爱，这一切都在耶稣基督里。')}</textarea>
+                <input type="text" id="in_about_aud_target_d2e" value="${d('about_aud_target_d2e', 'Help them find hope, purpose, and love in these songs, all of which are found in Jesus Christ.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div>
                 <label style="font-size:0.75rem; color:var(--gold); display:block; margin-bottom:5px;">受众配图 (Photo)</label>
@@ -2794,10 +2794,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
               <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">类别 01 · 布道型</span>
               <div style="display:flex; gap:10px; margin:10px 0 8px;">
-                <input type="text" id="in_about_cat1_t" value="${d('about_cat1_t', '布道型')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
-                <input type="text" id="in_about_cat1_te" value="${d('about_cat1_te', 'Evangelistic')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat1_t" value="${d('about_cat1_t', '布道型')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat1_te" value="${d('about_cat1_te', 'Evangelistic')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
-              <textarea id="in_about_cat1_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat1_d1', '适用于布道会或福音外展活动，结合流行音乐元素，使福音信息更具吸引力。')}</textarea>
+              <textarea id="in_about_cat1_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat1_d1', '适用于布道会或福音外展活动，结合流行音乐元素，使福音信息更具吸引力。')}</textarea>
               <textarea id="in_about_cat1_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat1_d2', '目的在于带动气氛，并整体传达基督信仰的核心价值观。')}</textarea>
               <div style="display:flex; align-items:center; gap:12px;">
                 <img id="prev_about_cat1_img" src="${d('about_cat1_img', 'https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
@@ -2813,10 +2813,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
               <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">类别 02 · 教会型</span>
               <div style="display:flex; gap:10px; margin:10px 0 8px;">
-                <input type="text" id="in_about_cat2_t" value="${d('about_cat2_t', '教会型')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
-                <input type="text" id="in_about_cat2_te" value="${d('about_cat2_te', 'Church Worship')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat2_t" value="${d('about_cat2_t', '教会型')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat2_te" value="${d('about_cat2_te', 'Church Worship')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
-              <textarea id="in_about_cat2_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat2_d1', '适用于教会敬拜、团契、主日崇拜等，歌词内容以赞美、敬拜、祷告为主，符合教会使用需求。')}</textarea>
+              <textarea id="in_about_cat2_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat2_d1', '适用于教会敬拜、团契、主日崇拜等，歌词内容以赞美、敬拜、祷告为主，符合教会使用需求。')}</textarea>
               <textarea id="in_about_cat2_d2" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat2_d2', '旨在帮助信徒更深入地进入敬拜神的氛围。')}</textarea>
               <div style="display:flex; align-items:center; gap:12px;">
                 <img id="prev_about_cat2_img" src="${d('about_cat2_img', 'https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
@@ -2832,11 +2832,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
               <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">类别 03 · 商业型</span>
               <div style="display:flex; gap:10px; margin:10px 0 8px;">
-                <input type="text" id="in_about_cat3_t" value="${d('about_cat3_t', '商业型')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
-                <input type="text" id="in_about_cat3_te" value="${d('about_cat3_te', 'Commercial / Contemporary')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat3_t" value="${d('about_cat3_t', '商业型')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat3_te" value="${d('about_cat3_te', 'Commercial / Contemporary')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
-              <textarea id="in_about_cat3_d1" style="width:100%; height:40px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat3_d1', '适用于日常生活，可在社交媒体、流行音乐平台上播放。')}</textarea>
-              <textarea id="in_about_cat3_d2" style="width:100%; height:40px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat3_d2', '歌词生活化、口语化，使非信徒也能接受和感动。')}</textarea>
+              <textarea id="in_about_cat3_d1" style="width:100%; height:40px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat3_d1', '适用于日常生活，可在社交媒体、流行音乐平台上播放。')}</textarea>
+              <textarea id="in_about_cat3_d2" style="width:100%; height:40px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat3_d2', '歌词生活化、口语化，使非信徒也能接受和感动。')}</textarea>
               <textarea id="in_about_cat3_d3" style="width:100%; height:40px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat3_d3', '通过触动人心的旋律和歌词，引导听众认识上帝的爱。')}</textarea>
               <div style="display:flex; align-items:center; gap:12px;">
                 <img id="prev_about_cat3_img" src="${d('about_cat3_img', 'https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
@@ -2852,10 +2852,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
               <span style="font-weight:bold; color:var(--gold); font-size:0.8rem;">类别 04 · 主题曲</span>
               <div style="display:flex; gap:10px; margin:10px 0 8px;">
-                <input type="text" id="in_about_cat4_t" value="${d('about_cat4_t', '主题曲')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
-                <input type="text" id="in_about_cat4_te" value="${d('about_cat4_te', 'Theme Songs')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat4_t" value="${d('about_cat4_t', '主题曲')}" placeholder="标题" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_cat4_te" value="${d('about_cat4_te', 'Theme Songs')}" placeholder="英文" style="flex:1; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
-              <textarea id="in_about_cat4_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat4_d1', '为特殊的基督教机构创作主题曲：')}</textarea>
+              <textarea id="in_about_cat4_d1" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:5px;">${d('about_cat4_d1', '为特殊的基督教机构创作主题曲：')}</textarea>
               <textarea id="in_about_cat4_d2" style="width:100%; height:60px; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px; margin-bottom:10px;">${d('about_cat4_d2', '• 孤儿院 (Orphanage)\n• 老人院 (Nursing Home)\n• 特殊儿童教育机构 (Special Needs Children)')}</textarea>
               <div style="display:flex; align-items:center; gap:12px;">
                 <img id="prev_about_cat4_img" src="${d('about_cat4_img', 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=600&q=80')}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333;">
@@ -2882,15 +2882,15 @@ document.addEventListener('DOMContentLoaded', () => {
               <h4 style="color:var(--gold); margin-top:0; margin-bottom:12px;">🎹 收入来源 (Revenue Sources)</h4>
               <div style="margin-bottom:10px;">
                 <label style="font-size:0.75rem; color:#aaa;">来源标题</label>
-                <input type="text" id="in_about_rev_title" value="${d('about_rev_title', 'REVENUE 收入来源')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_rev_title" value="${d('about_rev_title', 'REVENUE 收入来源')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:10px;">
                 <label style="font-size:0.75rem; color:#aaa;">中文说明</label>
-                <textarea id="in_about_rev_desc" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_rev_desc', '主要来自 YouTube 或其他数字音乐平台的收益。')}</textarea>
+                <textarea id="in_about_rev_desc" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_rev_desc', '主要来自 YouTube 或其他数字音乐平台的收益。')}</textarea>
               </div>
               <div style="margin-bottom:10px;">
                 <label style="font-size:0.75rem; color:#aaa;">英文说明</label>
-                <input type="text" id="in_about_rev_desc_en" value="${d('about_rev_desc_en', 'Mainly from YouTube or other digital streaming platforms.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_rev_desc_en" value="${d('about_rev_desc_en', 'Mainly from YouTube or other digital streaming platforms.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
             </div>
 
@@ -2909,7 +2909,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px dashed #333; padding-bottom:10px;">
               <h4 style="color:#a55eea; margin:0;">📊 盈利按比例分配设置 (Profit Sharing Breakdown)</h4>
               <div style="display:flex; gap:10px;">
-                <input type="text" id="in_about_cps_title" value="${d('about_cps_title', '盈利按比例分配')}" style="background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px 10px; border-radius:4px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_title" value="${d('about_cps_title', '盈利按比例分配')}" style="background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:6px 10px; border-radius:4px; font-size:0.8rem;">
                 <input type="text" id="in_about_cps_subtitle" value="${d('about_cps_subtitle', 'Profits will be distributed as follows')}" style="background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:6px 10px; border-radius:4px; font-size:0.8rem;">
               </div>
             </div>
@@ -2918,37 +2918,37 @@ document.addEventListener('DOMContentLoaded', () => {
               <!-- 1 -->
               <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
                 <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">01 词曲 (20%)</label>
-                <input type="text" id="in_about_cps_r1_t" value="${d('about_cps_r1_t', '词曲')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r1_t" value="${d('about_cps_r1_t', '词曲')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
                 <input type="text" id="in_about_cps_r1_d" value="${d('about_cps_r1_d', '创作部门 · Creation')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
               </div>
               <!-- 2 -->
               <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
                 <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">02 制作 (20%)</label>
-                <input type="text" id="in_about_cps_r2_t" value="${d('about_cps_r2_t', '制作')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r2_t" value="${d('about_cps_r2_t', '制作')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
                 <input type="text" id="in_about_cps_r2_d" value="${d('about_cps_r2_d', '制作部门 · Production')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
               </div>
               <!-- 3 -->
               <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
                 <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">03 影片 (20%)</label>
-                <input type="text" id="in_about_cps_r3_t" value="${d('about_cps_r3_t', '影片')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r3_t" value="${d('about_cps_r3_t', '影片')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
                 <input type="text" id="in_about_cps_r3_d" value="${d('about_cps_r3_d', '影片部门 · Film')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
               </div>
               <!-- 4 -->
               <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
                 <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">04 推广 (20%)</label>
-                <input type="text" id="in_about_cps_r4_t" value="${d('about_cps_r4_t', '推广')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r4_t" value="${d('about_cps_r4_t', '推广')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
                 <input type="text" id="in_about_cps_r4_d" value="${d('about_cps_r4_d', '宣传部门 · Promotion')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
               </div>
               <!-- 5 -->
               <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
                 <label style="font-size:0.7rem; color:#2ed573; font-weight:bold;">05 歌手 (10%)</label>
-                <input type="text" id="in_about_cps_r5_t" value="${d('about_cps_r5_t', '歌手')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r5_t" value="${d('about_cps_r5_t', '歌手')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
                 <input type="text" id="in_about_cps_r5_d" value="${d('about_cps_r5_d', '歌唱部门 · Singing')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
               </div>
               <!-- 6 -->
               <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
                 <label style="font-size:0.7rem; color:#2ed573; font-weight:bold;">06 行政 (10%)</label>
-                <input type="text" id="in_about_cps_r6_t" value="${d('about_cps_r6_t', '行政')}" style="width:100%; background:#111; border:1px solid #444; color:#fff; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_r6_t" value="${d('about_cps_r6_t', '行政')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
                 <input type="text" id="in_about_cps_r6_d" value="${d('about_cps_r6_d', '行政部门 · Admin')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
               </div>
             </div>
@@ -2967,11 +2967,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222;">
               <div style="margin-bottom:12px;">
                 <label style="font-size:0.75rem; color:#aaa;">主标题 (Main Title)</label>
-                <input type="text" id="in_about_coop_main_title" value="${d('about_coop_main_title', '收 割 机 和 独 立 创 作 人 的 合 作 方 案')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_coop_main_title" value="${d('about_coop_main_title', '收 割 机 和 独 立 创 作 人 的 合 作 方 案')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:12px;">
                 <label style="font-size:0.75rem; color:#aaa;">副标题 (Subtitle EN)</label>
-                <input type="text" id="in_about_coop_subtitle" value="${d('about_coop_subtitle', 'Harvester Music & Independent Songwriters Proposal')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_coop_subtitle" value="${d('about_coop_subtitle', 'Harvester Music & Independent Songwriters Proposal')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:12px;">
                 <label style="font-size:0.75rem; color:#aaa;">标语宣告 (Tagline)</label>
@@ -2979,7 +2979,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <div>
                 <label style="font-size:0.75rem; color:#aaa;">核心共赢理念阐述 (Core Concept)</label>
-                <textarea id="in_about_coop_core_concept" style="width:100%; height:90px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_coop_core_concept', '共分共享，意指共同『为作品贡献个人的恩赐』，后续共同『分享』所得的工价。\n共赢，意指在这个过程里，一同『赢得』未信之人、未得之民的灵魂，为复兴神的国度效力！')}</textarea>
+                <textarea id="in_about_coop_core_concept" style="width:100%; height:90px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_coop_core_concept', '共分共享，意指共同『为作品贡献个人的恩赐』，后续共同『分享』所得的工价。\n共赢，意指在这个过程里，一同『赢得』未信之人、未得之民的灵魂，为复兴神的国度效力！')}</textarea>
               </div>
             </div>
 
@@ -3000,15 +3000,15 @@ document.addEventListener('DOMContentLoaded', () => {
               <h4 style="color:var(--gold); margin-top:0; margin-bottom:12px;">🏢 合作模式 (Model)</h4>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">出品公司条款</label>
-                <input type="text" id="in_about_coop_model_p1" value="${d('about_coop_model_p1', 'Harvester Music Production')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_coop_model_p1" value="${d('about_coop_model_p1', 'Harvester Music Production')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">包含项目条款</label>
-                <input type="text" id="in_about_coop_model_p2" value="${d('about_coop_model_p2', '词曲、制作、拍摄、宣发、演唱')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_coop_model_p2" value="${d('about_coop_model_p2', '词曲、制作、拍摄、宣发、演唱')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div>
                 <label style="font-size:0.75rem; color:#aaa;">版权说明条款 (100%永久持有)</label>
-                <textarea id="in_about_coop_model_p3" style="width:100%; height:55px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_coop_model_p3', '所有版权（词曲OP 与 母带）100% 由 Harvester 永久持有')}</textarea>
+                <textarea id="in_about_coop_model_p3" style="width:100%; height:55px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_coop_model_p3', '所有版权（词曲OP 与 母带）100% 由 Harvester 永久持有')}</textarea>
               </div>
             </div>
 
@@ -3017,15 +3017,15 @@ document.addEventListener('DOMContentLoaded', () => {
               <h4 style="color:#ff9f43; margin-top:0; margin-bottom:12px;">⚖️ 参与要求 (Requirements)</h4>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">版权分成机制</label>
-                <input type="text" id="in_about_coop_req_p1" value="${d('about_coop_req_p1', '按既定比例分配，确保公平透明')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_coop_req_p1" value="${d('about_coop_req_p1', '按既定比例分配，确保公平透明')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#aaa;">加入平台要求</label>
-                <input type="text" id="in_about_coop_req_p2" value="${d('about_coop_req_p2', '加入者须同意版权分成方案')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_coop_req_p2" value="${d('about_coop_req_p2', '加入者须同意版权分成方案')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
               </div>
               <div>
                 <label style="font-size:0.75rem; color:#aaa;">自由选择声明</label>
-                <textarea id="in_about_coop_req_p3" style="width:100%; height:55px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">${d('about_coop_req_p3', '不同意者可选择不参与')}</textarea>
+                <textarea id="in_about_coop_req_p3" style="width:100%; height:55px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_coop_req_p3', '不同意者可选择不参与')}</textarea>
               </div>
             </div>
           </div>
@@ -3058,7 +3058,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span>🕊️</span> 牧师顾问团 / 属灵遮盖与监督 (Pastoral Advisory Team)
               </h4>
               <div style="display:flex; gap:8px;">
-                <input type="text" id="in_about_pastoral_title" value="${d('about_pastoral_title', '牧 师 团')}" style="background:#1a1a1a; border:1px solid #333; color:#fff; padding:4px 8px; border-radius:4px; font-size:0.8rem; width:100px;">
+                <input type="text" id="in_about_pastoral_title" value="${d('about_pastoral_title', '牧 师 团')}" style="background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:4px 8px; border-radius:4px; font-size:0.8rem; width:100px;">
                 <input type="text" id="in_about_pastoral_subtitle" value="${d('about_pastoral_subtitle', 'Pastoral Advisory Team')}" style="background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:4px 8px; border-radius:4px; font-size:0.8rem;">
               </div>
             </div>
@@ -3078,18 +3078,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 <!-- 1. Advisory Team -->
                 <div style="margin-bottom:12px; background:#111; padding:12px; border-radius:6px; border:1px solid #222;">
                   <label style="font-size:0.75rem; color:var(--gold); font-weight:bold; display:block; margin-bottom:4px;">📖 顾问团队 (Advisory Team)</label>
-                  <input type="text" id="in_about_pastoral_adv_title" value="${d('about_pastoral_adv_title', '顾问团队 / Advisory Team')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
-                  <textarea id="in_about_pastoral_adv_desc" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">${d('about_pastoral_adv_desc', '需要 4 位牧师成为顾问，提供属灵遮盖，并监督歌词的神学准确性。')}</textarea>
+                  <input type="text" id="in_about_pastoral_adv_title" value="${d('about_pastoral_adv_title', '顾问团队 / Advisory Team')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:6px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
+                  <textarea id="in_about_pastoral_adv_desc" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:6px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">${d('about_pastoral_adv_desc', '需要 4 位牧师成为顾问，提供属灵遮盖，并监督歌词的神学准确性。')}</textarea>
                   <input type="text" id="in_about_pastoral_adv_desc_en" value="${d('about_pastoral_adv_desc_en', 'Four pastors will serve as advisors, providing spiritual covering and ensuring theological accuracy in lyrics.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#aaa; padding:6px; border-radius:4px; font-size:0.75rem;">
                 </div>
 
                 <!-- 2. Supervisory Role -->
                 <div style="background:#111; padding:12px; border-radius:6px; border:1px solid #222;">
                   <label style="font-size:0.75rem; color:var(--gold); font-weight:bold; display:block; margin-bottom:4px;">🛡️ 监督职责 (Supervisory Role)</label>
-                  <input type="text" id="in_about_pastoral_sup_title" value="${d('about_pastoral_sup_title', '监督职责 / Supervisory Role')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
-                  <input type="text" id="in_about_pastoral_sup_r1" value="${d('about_pastoral_sup_r1', '检查歌词是否符合神学教导。')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">
-                  <input type="text" id="in_about_pastoral_sup_r2" value="${d('about_pastoral_sup_r2', '在非传统教会诗歌中提供指导，避免误导性用词。')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">
-                  <input type="text" id="in_about_pastoral_sup_r3" value="${d('about_pastoral_sup_r3', '作为创作坊的属灵掌舵人，确保财务透明，防止滥用资源。')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">
+                  <input type="text" id="in_about_pastoral_sup_title" value="${d('about_pastoral_sup_title', '监督职责 / Supervisory Role')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:6px; border-radius:4px; font-size:0.8rem; margin-bottom:6px;">
+                  <input type="text" id="in_about_pastoral_sup_r1" value="${d('about_pastoral_sup_r1', '检查歌词是否符合神学教导。')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">
+                  <input type="text" id="in_about_pastoral_sup_r2" value="${d('about_pastoral_sup_r2', '在非传统教会诗歌中提供指导，避免误导性用词。')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">
+                  <input type="text" id="in_about_pastoral_sup_r3" value="${d('about_pastoral_sup_r3', '作为创作坊的属灵掌舵人，确保财务透明，防止滥用资源。')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:5px; border-radius:4px; font-size:0.8rem; margin-bottom:4px;">
                   <input type="text" id="in_about_pastoral_sup_en" value="${d('about_pastoral_sup_en', 'Review lyrics for theological accuracy, provide guidance on non-traditional songs, and ensure financial transparency to prevent misuse of resources.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#aaa; padding:5px; border-radius:4px; font-size:0.75rem;">
                 </div>
               </div>
@@ -3107,31 +3107,31 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:15px;">
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">英文标语 (Tagline)</label>
-              <input type="text" id="in_about_pos_tagline" value="${d('about_pos_tagline', 'Promoting Contemporary Christian Music')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px;">
+              <input type="text" id="in_about_pos_tagline" value="${d('about_pos_tagline', 'Promoting Contemporary Christian Music')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:4px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">主标题 (Main Title)</label>
-              <input type="text" id="in_about_pos_title" value="${d('about_pos_title', '推 广 现 代 流 行 基 督 教 音 乐')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px;">
+              <input type="text" id="in_about_pos_title" value="${d('about_pos_title', '推 广 现 代 流 行 基 督 教 音 乐')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:4px;">
             </div>
           </div>
 
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
             <div style="background:#111; padding:15px; border-radius:8px; border:1px solid #222;">
               <label style="font-size:0.75rem; color:#aaa;">定位要点 1 标题</label>
-              <input type="text" id="in_about_pos_p1_t" value="${d('about_pos_p1_t', '为神创作的门徒培养平台')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:8px;">
+              <input type="text" id="in_about_pos_p1_t" value="${d('about_pos_p1_t', '为神创作的门徒培养平台')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:8px;">
               <label style="font-size:0.75rem; color:#aaa;">定位要点 1 中文描述</label>
-              <textarea id="in_about_pos_p1_d" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:8px;">${d('about_pos_p1_d', '专注于培养具备创作才能的门徒，让原创音符成为敬拜与传道的器皿。')}</textarea>
+              <textarea id="in_about_pos_p1_d" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:8px;">${d('about_pos_p1_d', '专注于培养具备创作才能的门徒，让原创音符成为敬拜与传道的器皿。')}</textarea>
               <label style="font-size:0.75rem; color:#aaa;">定位要点 1 英文描述</label>
-              <input type="text" id="in_about_pos_p1_de" value="${d('about_pos_p1_de', 'Positioned as a platform for music created for God, focusing on cultivating disciples with creative talents.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              <input type="text" id="in_about_pos_p1_de" value="${d('about_pos_p1_de', 'Positioned as a platform for music created for God, focusing on cultivating disciples with creative talents.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
             </div>
 
             <div style="background:#111; padding:15px; border-radius:8px; border:1px solid #222;">
               <label style="font-size:0.75rem; color:#aaa;">定位要点 2 标题</label>
-              <input type="text" id="in_about_pos_p2_t" value="${d('about_pos_p2_t', '触及年轻一代与福音禾场')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:8px;">
+              <input type="text" id="in_about_pos_p2_t" value="${d('about_pos_p2_t', '触及年轻一代与福音禾场')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:8px;">
               <label style="font-size:0.75rem; color:#aaa;">定位要点 2 中文描述</label>
-              <textarea id="in_about_pos_p2_d" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px; margin-bottom:8px;">${d('about_pos_p2_d', '通过现代音乐语言向世人传递信仰、希望与爱，尤其是年轻群体和未认识神的群体。')}</textarea>
+              <textarea id="in_about_pos_p2_d" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px; margin-bottom:8px;">${d('about_pos_p2_d', '通过现代音乐语言向世人传递信仰、希望与爱，尤其是年轻群体和未认识神的群体。')}</textarea>
               <label style="font-size:0.75rem; color:#aaa;">定位要点 2 英文描述</label>
-              <input type="text" id="in_about_pos_p2_de" value="${d('about_pos_p2_de', 'Use music to convey faith, hope, and love, especially to young people and those who have not yet known God.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+              <input type="text" id="in_about_pos_p2_de" value="${d('about_pos_p2_de', 'Use music to convey faith, hope, and love, especially to young people and those who have not yet known God.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
             </div>
           </div>
         </div>
@@ -3291,19 +3291,19 @@ document.addEventListener('DOMContentLoaded', () => {
           
           <div style="margin-bottom:15px;">
             <label>关于我们描述 (About Text)</label>
-            <textarea id="cfg_about_text" style="width:100%; height:80px; background:#222; border:1px solid #444; color:#fff; padding:10px; border-radius:4px;">${c['cfg_about_text']||''}</textarea>
+            <textarea id="cfg_about_text" style="width:100%; height:80px; background:#222; border:1px solid #444; color: #F6F4F0; padding:10px; border-radius:4px;">${c['cfg_about_text']||''}</textarea>
           </div>
 
           <div style="margin-bottom:15px;">
             <label>联系我们邮箱 (Contact Email)</label>
-            <input type="text" id="cfg_contact_email" value="${c['cfg_contact_email']||''}" style="width:100%; background:#222; border:1px solid #444; color:#fff; padding:8px; border-radius:4px;">
+            <input type="text" id="cfg_contact_email" value="${c['cfg_contact_email']||''}" style="width:100%; background:#222; border:1px solid #444; color: #F6F4F0; padding:8px; border-radius:4px;">
           </div>
 
           <div style="margin-bottom:15px; padding-top:15px; border-top:1px solid #222;">
             <h4 style="margin-bottom:10px;">社交媒体链接 (Social Links)</h4>
-            <label style="font-size:0.7rem; color:#666;">Facebook URL (Global)</label><input type="text" id="cfg_social_fb" value="${c['cfg_social_fb']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
-            <label style="font-size:0.7rem; color:#666;">Instagram URL</label><input type="text" id="cfg_social_ig" value="${c['cfg_social_ig']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
-            <label style="font-size:0.7rem; color:#666;">YouTube URL</label><input type="text" id="cfg_social_yt" value="${c['cfg_social_yt']||''}" style="width:100%; background:#222; border:1px solid #444; color:#fff;">
+            <label style="font-size:0.7rem; color:#666;">Facebook URL (Global)</label><input type="text" id="cfg_social_fb" value="${c['cfg_social_fb']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
+            <label style="font-size:0.7rem; color:#666;">Instagram URL</label><input type="text" id="cfg_social_ig" value="${c['cfg_social_ig']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
+            <label style="font-size:0.7rem; color:#666;">YouTube URL</label><input type="text" id="cfg_social_yt" value="${c['cfg_social_yt']||''}" style="width:100%; background:#222; border:1px solid #444; color: #F6F4F0;">
           </div>
 
           <button class="btn btn-submit" style="margin-top:15px; width:100%;" onclick="saveAllConfigs()">更新设置与文案</button>
@@ -3315,16 +3315,16 @@ document.addEventListener('DOMContentLoaded', () => {
           
           <div style="margin-bottom:15px;">
             <label>银行名称 (Bank Name)</label>
-            <input type="text" id="cfg_support_bank" value="${c['cfg_support_bank']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
+            <input type="text" id="cfg_support_bank" value="${c['cfg_support_bank']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
             <label>银行账号 (Account No.)</label>
-            <input type="text" id="cfg_support_acc_no" value="${c['cfg_support_acc_no']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
+            <input type="text" id="cfg_support_acc_no" value="${c['cfg_support_acc_no']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
             <label>户名 (Account Name)</label>
-            <input type="text" id="cfg_support_acc_name" value="${c['cfg_support_acc_name']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color:#fff;">
+            <input type="text" id="cfg_support_acc_name" value="${c['cfg_support_acc_name']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
           </div>
 
           <div style="margin-bottom:15px; padding-top:15px; border-top:1px solid #222;">
             <label>TNG / DuitNow 联络信息</label>
-            <input type="text" id="cfg_support_tng" value="${c['cfg_support_tng']||''}" style="width:100%; margin-bottom:15px; background:#222; border:1px solid #444; color:#fff;">
+            <input type="text" id="cfg_support_tng" value="${c['cfg_support_tng']||''}" style="width:100%; margin-bottom:15px; background:#222; border:1px solid #444; color: #F6F4F0;">
             
             <label>DuitNow QR Code</label>
             <img id="prev_qr" src="${c['cfg_support_qr']||''}" style="width:120px; height:120px; object-fit:contain; background:#fff; border-radius:4px; margin:5px 0; display:block;">
@@ -3388,19 +3388,19 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="banner-edit-item" style="grid-column: 1 / -1; border-top: 1px solid #222; padding-top: 15px;">
             <label style="color:var(--gold);"><i class="fas fa-id-card"></i> 搜索结果显示的网站简介 (Meta Description)</label>
             <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">这段话将出现在 Google 搜索结果的标题下方。</p>
-            <textarea id="cfg_site_description" style="width:100%; height:60px; background:#0a0a0a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px; font-size:0.85rem;">${c['cfg_site_description']||''}</textarea>
+            <textarea id="cfg_site_description" style="width:100%; height:60px; background:#0a0a0a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:4px; font-size:0.85rem;">${c['cfg_site_description']||''}</textarea>
           </div>
 
           <div class="banner-edit-item" style="margin-top:20px; border-top:1px solid #222; padding-top:15px; grid-column: 1 / -1;">
              <label style="color:var(--gold);"><i class="fas fa-edit"></i> 投稿页面说明文字 (Submit Terms Text)</label>
              <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">支持多行输入。换行将自动转换为 HTML &lt;br&gt;</p>
-             <textarea id="cfg_submit_text" style="width:100%; height:120px; background:#0a0a0a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px; font-size:0.85rem; line-height:1.6;">${c['cfg_submit_text']||''}</textarea>
+             <textarea id="cfg_submit_text" style="width:100%; height:120px; background:#0a0a0a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:4px; font-size:0.85rem; line-height:1.6;">${c['cfg_submit_text']||''}</textarea>
           </div>
 
           <div class="banner-edit-item" style="margin-top:20px; border-top:1px solid #222; padding-top:15px; grid-column: 1 / -1;">
             <label style="color:var(--gold);"><i class="fas fa-link"></i> 投稿按钮跳转链接 (Submit Button URL)</label>
             <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">点击“我要投稿”后跳转的页面地址</p>
-            <input type="text" id="cfg_submit_btn_link" value="${c['cfg_submit_btn_link']||''}" placeholder="https://..." style="width:100%; background:#0a0a0a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px;">
+            <input type="text" id="cfg_submit_btn_link" value="${c['cfg_submit_btn_link']||''}" placeholder="https://..." style="width:100%; background:#0a0a0a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:4px;">
           </div>
         </div>
         <button class="btn btn-submit" style="margin-top:25px;" onclick="saveBanners()">保存所有媒体配置</button>
@@ -3581,8 +3581,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <i class="fab fa-facebook"></i> 同步至 Facebook 相册 (Social Cross-post Link)
           </label>
           <div style="display:flex; gap:10px;">
-            <input type="text" id="da_fb_instant" value="${album?.fb_url || ''}" placeholder="粘贴 FB 相册链接..." style="flex:1; padding:10px; background:#000; border:1px solid #333; color:white; border-radius:4px;">
-            <button class="btn-tiny" onclick="saveDiaryAlbumMinimal('${id}')" style="background:#1877F2; color:white; border:none; padding:0 20px;">更新链接</button>
+            <input type="text" id="da_fb_instant" value="${album?.fb_url || ''}" placeholder="粘贴 FB 相册链接..." style="flex:1; padding:10px; background:#000; border:1px solid #333; color: #F6F4F0; border-radius:4px;">
+            <button class="btn-tiny" onclick="saveDiaryAlbumMinimal('${id}')" style="background:#1877F2; color: #F6F4F0; border:none; padding:0 20px;">更新链接</button>
           </div>
           <p style="font-size:0.65rem; color:#666; margin-top:8px;">此处修改后，官网详情页将立即显示 "View on Facebook" 按钮。</p>
         </div>
@@ -3599,7 +3599,7 @@ document.addEventListener('DOMContentLoaded', () => {
              return `
             <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #222;">
               <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
-              <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color:white; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
+              <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color: #F6F4F0; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
             </div>
           `}).join('') || '<p style="grid-column:1/-1; text-align:center; opacity:0.3;">暂无内容</p>'}
         </div>
@@ -3647,7 +3647,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return `
         <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #222;">
           <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
-          <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color:white; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
+          <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color: #F6F4F0; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
         </div>
       `}).join('');
       
@@ -3753,7 +3753,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
           <div style="font-size:0.9rem; color:#aaa;">
-            全部记录: <b style="color:#fff;">${echoes?.length || 0}</b> 条 ｜ 
+            全部记录: <b style="color: #F6F4F0;">${echoes?.length || 0}</b> 条 ｜ 
             已批准展示: <b style="color:#64D28A;">${totalApproved}</b> 条 
             <span style="font-size:0.75rem; color:#666; margin-left:10px;">(前台星空背景将自动漂浮最新的前 20 条已批准留言)</span>
           </div>
@@ -3778,7 +3778,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   <tr style="border-bottom:1px solid #1a1a1a; transition:0.3s;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
                     <td style="padding:15px; font-size:0.8rem; color:#666;">${new Date(e.created_at).toLocaleString()}</td>
                     <td style="padding:15px; color:var(--gold); font-weight:500;">${e.name || '匿名听众'}</td>
-                    <td style="padding:15px; font-style:italic; color:#fff; font-size:0.95rem; font-family:'ChenYuluoyan', sans-serif, system-ui;">
+                    <td style="padding:15px; font-style:italic; color: #F6F4F0; font-size:0.95rem; font-family:'ChenYuluoyan', sans-serif, system-ui;">
                       "${cleanMsg}"
                     </td>
                     <td style="padding:15px;">

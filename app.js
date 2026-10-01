@@ -743,12 +743,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if(!m){
       m=document.createElement('div'); m.id='reminderModal';
       m.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(15px); padding:20px;";
-      m.innerHTML=`<div style="background:#111; border:1px solid var(--gold); border-radius:24px; padding:2.5rem; text-align:center; max-width:420px; width:100%; color:#fff; box-shadow:0 20px 50px rgba(0,0,0,0.8);">
+      m.innerHTML=`<div style="background:#111; border:1px solid var(--gold); border-radius:24px; padding:2.5rem; text-align:center; max-width:420px; width:100%; color: #F6F4F0; box-shadow:0 20px 50px rgba(0,0,0,0.8);">
          <h2 style="margin-bottom:0.5rem; font-family:var(--font-display); color:var(--gold);">活动提醒</h2>
          <p style="font-size:0.9rem; margin-bottom:1.2rem; color:#aaa;">输入邮箱，我们会在活动前给您发送提醒。</p>
-         <h4 id="rem_t" style="margin-bottom:0.4rem; color:#fff; font-size:1.1rem;"></h4>
+         <h4 id="rem_t" style="margin-bottom:0.4rem; color: #F6F4F0; font-size:1.1rem;"></h4>
          <p id="rem_d" style="font-size:0.85rem; color:var(--gold); margin-bottom:1.5rem;"></p>
-         <input type="email" id="rem_email" placeholder="your@email.com" style="width:100%; padding:12px; border-radius:10px; border:1px solid #333; background:#222; color:#fff; margin-bottom:1.5rem; text-align:center; font-size:1rem; box-sizing:border-box;">
+         <input type="email" id="rem_email" placeholder="your@email.com" style="width:100%; padding:12px; border-radius:10px; border:1px solid #333; background:#222; color: #F6F4F0; margin-bottom:1.5rem; text-align:center; font-size:1rem; box-sizing:border-box;">
          <div style="display:flex; gap:10px;">
            <button id="rem_submit" class="btn-frosted-gold" style="flex:2; background:var(--gold); color:#000; border:none; border-radius:50px; padding:12px; font-weight:bold; cursor:pointer;">🔔 提交提醒</button>
            <button style="flex:1; border-radius:50px; padding:12px; background:#222; border:1px solid #444; color:#ccc; cursor:pointer;" onclick="document.getElementById('reminderModal').style.display='none'">取消</button>
