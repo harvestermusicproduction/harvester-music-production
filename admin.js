@@ -59,23 +59,23 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           
           <nav style="flex:1; display:flex; flex-direction:column; gap:5px; overflow-y:auto; padding-right:4px;">
-            <p class="nav-section-title">CONTROL CENTER</p>
-            <a href="javascript:void(0)" onclick="switchModule('dashboard')" class="nav-item ${currentModule==='dashboard'?'active':''}">📊 Overview</a>
+            <p class="nav-section-title">CONTROL CENTER / 概览</p>
+            <a href="javascript:void(0)" onclick="switchModule('dashboard')" class="nav-item ${currentModule==='dashboard'?'active':''}">📊 仪表盘概览 (Overview)</a>
 
-            <p class="nav-section-title" style="margin-top:18px;">SITE PAGES / 前台页面编辑</p>
-            <a href="javascript:void(0)" onclick="switchModule('home')" class="nav-item ${currentModule==='home'?'active':''}">🏠 主页</a>
-            <a href="javascript:void(0)" onclick="switchModule('music')" class="nav-item ${currentModule==='music'?'active':''}">🎵 音乐与歌谱集</a>
-            <a href="javascript:void(0)" onclick="switchModule('events')" class="nav-item ${currentModule==='events'?'active':''}">📅 活动</a>
-            <a href="javascript:void(0)" onclick="switchModule('diary')" class="nav-item ${currentModule==='diary'?'active':''}">📂 照片集</a>
-            <a href="javascript:void(0)" onclick="switchModule('submit')" class="nav-item ${currentModule==='submit' || currentModule==='submissions'?'active':''}">📮 我要投稿</a>
-            <a href="javascript:void(0)" onclick="switchModule('about')" class="nav-item ${currentModule==='about'?'active':''}">📖 关于我们</a>
-            <a href="javascript:void(0)" onclick="switchModule('singers')" class="nav-item ${currentModule==='singers'?'active':''}">👥 主要同工</a>
-            <a href="javascript:void(0)" onclick="switchModule('support')" class="nav-item ${currentModule==='support'?'active':''}">💖 支持我们</a>
-            <a href="javascript:void(0)" onclick="switchModule('contact')" class="nav-item ${currentModule==='contact' || currentModule==='echo'?'active':''}">🌌 联系我们与回声空间</a>
+            <p class="nav-section-title" style="margin-top:16px;">FRONTEND PAGES / 前台页面分类管理</p>
+            <a href="javascript:void(0)" onclick="switchModule('home')" class="nav-item ${currentModule==='home'?'active':''}">🏠 1. 主页 (Home)</a>
+            <a href="javascript:void(0)" onclick="switchModule('music')" class="nav-item ${currentModule==='music'?'active':''}">🎵 2. 音乐与歌谱集 (Music & Scores)</a>
+            <a href="javascript:void(0)" onclick="switchModule('events')" class="nav-item ${currentModule==='events'?'active':''}">📅 3. 活动 (Events)</a>
+            <a href="javascript:void(0)" onclick="switchModule('diary')" class="nav-item ${currentModule==='diary'?'active':''}">📂 4. 照片集 (Diary)</a>
+            <a href="javascript:void(0)" onclick="switchModule('submit')" class="nav-item ${currentModule==='submit' || currentModule==='submissions'?'active':''}">📮 5. 我要投稿 (Submit)</a>
+            <a href="javascript:void(0)" onclick="switchModule('about')" class="nav-item ${currentModule==='about'?'active':''}">📖 6. 关于我们 (About Us)</a>
+            <a href="javascript:void(0)" onclick="switchModule('singers')" class="nav-item ${currentModule==='singers'?'active':''}">👥 6.1 主要同工 (Singers)</a>
+            <a href="javascript:void(0)" onclick="switchModule('support')" class="nav-item ${currentModule==='support'?'active':''}">💖 7. 支持我们 (Support)</a>
+            <a href="javascript:void(0)" onclick="switchModule('contact')" class="nav-item ${currentModule==='contact' || currentModule==='echo'?'active':''}">✉️ 8. 联系我们 (Contact)</a>
 
-            <p class="nav-section-title" style="margin-top:18px;">MANAGEMENT / 系统与订阅</p>
-            <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ 订阅管理</a>
-            <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ 全站设置</a>
+            <p class="nav-section-title" style="margin-top:16px;">SYSTEM & SUBSCRIPTIONS / 系统设置</p>
+            <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ 活动订阅提醒 (Reminders)</a>
+            <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ 全站设置与 SEO (Config)</a>
           </nav>
           
           <button onclick="logoutAdmin()" style="background:none; border:none; color:#555; text-align:left; padding:10px; font-size:0.8rem; cursor:pointer; transition:0.3s; margin-top:15px; border-top:1px solid #111;">
