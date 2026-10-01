@@ -2902,7 +2902,7 @@ section[id], div[id^="section-"] {
 .coverflow-carousel {
   position: relative;
   width: 100%;
-  height: 470px;
+  height: 500px;
   perspective: 1300px;
   -webkit-perspective: 1300px;
   display: flex;
@@ -2917,14 +2917,14 @@ section[id], div[id^="section-"] {
 }
 
 /* =========================================================================
-   💿 MODERN 12" VINYL OUTER SLEEVE JACKET ENGINE (现代高定黑胶唱片外封套)
+   💿 SLIM-SPINE ELONGATED 3D ARTBOOK ALBUM ENGINE (修长纤细书脊现代画册专辑)
    ========================================================================= */
 
-/* 3D Modern Vinyl Outer Cardboard Sleeve */
+/* 3D Elongated Modern Art Album Box (248px x 355px, 16px Slim Spine) */
 .album-3d-box {
   position: absolute;
-  width: 275px;
-  height: 305px;
+  width: 248px;
+  height: 355px;
   transform-style: preserve-3d;
   cursor: pointer;
   will-change: transform, opacity;
@@ -2945,14 +2945,14 @@ section[id], div[id^="section-"] {
   -webkit-backface-visibility: visible;
 }
 
-/* 1. Front Outer Cardboard Sleeve (现代黑胶纸质封套) */
+/* 1. Front Outer Cover (现代高定加长画册封套) */
 .cube-face.cube-front.sleeve-outer-front {
   top: 0;
   left: 0;
-  width: 275px;
-  height: 305px;
-  transform: translateZ(12px);
-  border-radius: 4px;
+  width: 248px;
+  height: 355px;
+  transform: translateZ(8px);
+  border-radius: 6px;
   overflow: hidden;
   background: #151a21;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -2971,18 +2971,18 @@ section[id], div[id^="section-"] {
   display: block;
 }
 
-/* 📜 Left Spine Cardboard Fold Crease (书脊物理折痕) */
+/* 📜 Left Spine Cardboard Fold Crease (书脊物理微折痕) */
 .album-spine-crease {
   position: absolute;
   top: 0;
   left: 0;
-  width: 18px;
+  width: 12px;
   height: 100%;
   background: linear-gradient(90deg, 
-    rgba(0, 0, 0, 0.6) 0%, 
-    rgba(0, 0, 0, 0.18) 35%, 
-    rgba(255, 255, 255, 0.25) 50%, 
-    rgba(0, 0, 0, 0.25) 65%, 
+    rgba(0, 0, 0, 0.55) 0%, 
+    rgba(0, 0, 0, 0.15) 35%, 
+    rgba(255, 255, 255, 0.22) 50%, 
+    rgba(0, 0, 0, 0.2) 65%, 
     transparent 100%);
   pointer-events: none;
   z-index: 8;
@@ -2996,8 +2996,8 @@ section[id], div[id^="section-"] {
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.24) 0%, 
-    rgba(255, 255, 255, 0.06) 28%, 
+    rgba(255, 255, 255, 0.22) 0%, 
+    rgba(255, 255, 255, 0.05) 28%, 
     transparent 52%, 
     rgba(246, 210, 138, 0.08) 78%, 
     rgba(0, 0, 0, 0.25) 100%);
@@ -3005,32 +3005,7 @@ section[id], div[id^="section-"] {
   z-index: 7;
 }
 
-/* ✂️ Right Edge Open Sleeve Slot & Die-Cut Thumb Notch (黑胶套经典取盘圆弧凹口) */
-.sleeve-open-edge {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 18px;
-  height: 100%;
-  background: linear-gradient(to left, rgba(0, 0, 0, 0.65) 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 8;
-}
-
-.sleeve-thumb-cutout {
-  position: absolute;
-  top: 50%;
-  right: -1px;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 56px;
-  border-radius: 28px 0 0 28px;
-  background: rgba(8, 10, 14, 0.95);
-  border-left: 1.5px solid rgba(255, 255, 255, 0.28);
-  box-shadow: inset 4px 0 8px rgba(0, 0, 0, 0.95);
-}
-
-/* 🏷️ Modern Record Store Hype Sticker (现代黑胶封套特色角标贴纸) */
+/* 🏷️ Modern Editorial Hype Badge */
 .vinyl-hype-sticker {
   position: absolute;
   top: 12px;
@@ -3039,7 +3014,7 @@ section[id], div[id^="section-"] {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(246, 210, 138, 0.5);
-  padding: 5px 10px;
+  padding: 4px 9px;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -3050,7 +3025,7 @@ section[id], div[id^="section-"] {
 }
 
 .hype-badge-top {
-  font-size: 0.5rem;
+  font-size: 0.48rem;
   color: rgba(255, 255, 255, 0.65);
   letter-spacing: 1px;
   font-weight: 700;
@@ -3058,7 +3033,7 @@ section[id], div[id^="section-"] {
 }
 
 .hype-badge-main {
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   color: var(--gold);
   letter-spacing: 0.8px;
   font-weight: 800;
@@ -3066,7 +3041,7 @@ section[id], div[id^="section-"] {
 }
 
 .hype-badge-code {
-  font-size: 0.52rem;
+  font-size: 0.5rem;
   color: rgba(255, 255, 255, 0.75);
   font-family: monospace;
   letter-spacing: 0.5px;
@@ -3082,7 +3057,7 @@ section[id], div[id^="section-"] {
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.22);
   color: rgba(255, 255, 255, 0.88);
-  font-size: 0.58rem;
+  font-size: 0.55rem;
   font-family: var(--font-times-new-roman), serif;
   letter-spacing: 1px;
   padding: 3px 8px;
@@ -3090,135 +3065,12 @@ section[id], div[id^="section-"] {
   z-index: 9;
 }
 
-/* 💽 Heavyweight 180g Vinyl Disc Container */
-.vinyl-disc-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  pointer-events: none;
-}
-
-.album-vinyl-disc {
-  position: absolute;
-  top: 18px;
-  left: 12px;
-  width: 268px;
-  height: 268px;
-  border-radius: 50%;
-  background: #090a0d;
-  transform: translateZ(4px) translateX(0px) rotate(0deg);
-  transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.65s ease;
-  z-index: 3;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85);
-}
-
-/* High-Density Concentric Vinyl Grooves */
-.album-vinyl-disc .vinyl-groove-layer {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: repeating-radial-gradient(
-    circle at center,
-    #08090c 0px,
-    #13151b 1px,
-    #08090c 2px,
-    #181b22 3px
-  );
-  opacity: 0.96;
-}
-
-/* Rainbow Diffraction Dynamic Gloss Sheen */
-.album-vinyl-disc .vinyl-rainbow-sheen {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 45deg,
-    rgba(255, 255, 255, 0.18) 0deg,
-    transparent 35deg,
-    rgba(246, 210, 138, 0.2) 90deg,
-    transparent 125deg,
-    rgba(255, 255, 255, 0.18) 180deg,
-    transparent 215deg,
-    rgba(246, 210, 138, 0.2) 270deg,
-    transparent 305deg,
-    rgba(255, 255, 255, 0.18) 360deg
-  );
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-/* Center Album Label on Vinyl */
-.album-vinyl-disc .vinyl-center-label {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 86px;
-  height: 86px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border: 1.5px solid rgba(255, 255, 255, 0.28);
-  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.7), 0 3px 8px rgba(0, 0, 0, 0.5);
-  padding: 4px;
-}
-
-.vinyl-label-tag {
-  font-size: 0.45rem;
-  color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 0.5px;
-  font-family: var(--font-times-new-roman), serif;
-  font-weight: 700;
-}
-
-.vinyl-label-title {
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: #F6F4F0;
-  line-height: 1.15;
-  max-width: 74px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-  margin-top: 1px;
-}
-
-.vinyl-label-cat {
-  font-size: 0.48rem;
-  color: var(--gold);
-  letter-spacing: 0.5px;
-  margin-top: 1px;
-}
-
-.vinyl-spindle-hole {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: #040507;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  margin-top: 2px;
-}
-
-/* 🌟 Active Central Album: Vinyl Smoothly Glides Out from Sleeve */
-.album-3d-box.active .album-vinyl-disc {
-  transform: translateZ(4px) translateX(82px) rotate(52deg) scale(0.98);
-  box-shadow: 16px 22px 48px rgba(0, 0, 0, 0.9);
-}
-
-/* 2. Left Spine (LP Outer Jacket Spine) */
+/* 2. Left Spine (Slim 16px Refined Spine - 纤细修长优雅书脊) */
 .cube-face.cube-spine-left {
   top: 0;
-  left: -14px;
-  width: 28px;
-  height: 305px;
+  left: -8px;
+  width: 16px;
+  height: 355px;
   transform: rotateY(-90deg) translateZ(0);
   border: none !important;
   display: flex !important;
@@ -3227,19 +3079,19 @@ section[id], div[id^="section-"] {
   justify-content: space-between;
   overflow: hidden;
   box-shadow: 
-    inset 2px 0 3px rgba(255, 255, 255, 0.22),
-    inset -2px 0 5px rgba(0, 0, 0, 0.65) !important;
+    inset 1.5px 0 2px rgba(255, 255, 255, 0.22),
+    inset -1.5px 0 4px rgba(0, 0, 0, 0.65) !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: geometricPrecision;
   backface-visibility: visible !important;
   -webkit-backface-visibility: visible !important;
   z-index: 10;
-  padding: 10px 0;
+  padding: 12px 0;
 }
 
 .spine-top-stamp, .spine-bottom-stamp {
-  font-size: 0.45rem;
+  font-size: 0.42rem;
   font-family: var(--font-times-new-roman), serif;
   color: rgba(246, 210, 138, 0.85);
   letter-spacing: 1px;
@@ -3251,7 +3103,7 @@ section[id], div[id^="section-"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 210px;
+  width: 270px;
   transform: rotate(90deg) translateZ(0);
   transform-origin: center center;
   white-space: nowrap;
@@ -3261,10 +3113,10 @@ section[id], div[id^="section-"] {
 }
 
 .spine-title {
-  font-family: var(--font-times-new-roman), serif !important;
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
+  font-family: var(--font-wenkai), var(--font-times-new-roman), serif !important;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
   color: #F6F4F0;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.3);
 }
@@ -3276,10 +3128,10 @@ section[id], div[id^="section-"] {
 
 /* 4. Top Thickness Edge */
 .cube-face.cube-top {
-  top: -14px;
+  top: -8px;
   left: 0;
-  width: 275px;
-  height: 28px;
+  width: 248px;
+  height: 16px;
   transform: rotateX(90deg);
   border: none !important;
   box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2) !important;
@@ -3287,24 +3139,24 @@ section[id], div[id^="section-"] {
 
 /* 5. Bottom Thickness Edge */
 .cube-face.cube-bottom {
-  bottom: -14px;
+  bottom: -8px;
   left: 0;
-  width: 275px;
-  height: 28px;
+  width: 248px;
+  height: 16px;
   transform: rotateX(-90deg);
   background: #080a0c;
   border: none !important;
   box-shadow: inset 0 -2px 6px rgba(0, 0, 0, 0.8) !important;
 }
 
-/* 6. Back Outer Sleeve Face */
+/* 6. Back Outer Face */
 .cube-face.cube-back.sleeve-outer-back {
   top: 0;
   left: 0;
-  width: 275px;
-  height: 305px;
-  transform: rotateY(180deg) translateZ(12px);
-  border-radius: 4px;
+  width: 248px;
+  height: 355px;
+  transform: rotateY(180deg) translateZ(8px);
+  border-radius: 6px;
   overflow: hidden;
   background: #151a21;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -3323,16 +3175,16 @@ section[id], div[id^="section-"] {
 /* 🌟 Floor Contact Shadow & Ambient Diffusion */
 .album-shadow-3d {
   position: absolute;
-  bottom: -38px;
+  bottom: -32px;
   left: 0%;
   width: 100%;
-  height: 32px;
+  height: 28px;
   background: radial-gradient(ellipse at center, 
     rgba(0, 0, 0, 0.95) 0%, 
     rgba(0, 0, 0, 0.5) 45%, 
     transparent 75%);
-  transform: rotateX(90deg) translateZ(-16px);
-  filter: blur(9px);
+  transform: rotateX(90deg) translateZ(-12px);
+  filter: blur(8px);
   pointer-events: none;
   transition: all 0.4s ease;
 }
@@ -3352,13 +3204,13 @@ section[id], div[id^="section-"] {
 }
 
 .album-3d-box.active .album-shadow-3d {
-  width: 130%;
-  left: -15%;
+  width: 125%;
+  left: -12.5%;
   background: radial-gradient(ellipse at center, 
     rgba(0, 0, 0, 0.95) 0%, 
     var(--active-album-glow, rgba(104, 166, 189, 0.25)) 30%, 
     transparent 75%);
-  filter: blur(14px);
+  filter: blur(12px);
 }
 
 /* 3D Coverflow Meta Bar (随中心专辑自适应主题色) */

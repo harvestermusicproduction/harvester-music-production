@@ -663,21 +663,7 @@ You have set my feet upon the rock!`
       <div class="album-3d-box ${origIdx === currentIndex && vIdx === 0 ? 'active' : ''}" data-vindex="${vIdx}" data-real-index="${origIdx}">
         <div class="album-cube">
           
-          <!-- 💽 Heavyweight 180g Vinyl Disc (Glides out from inside the sleeve) -->
-          <div class="vinyl-disc-container">
-            <div class="album-vinyl-disc">
-              <div class="vinyl-groove-layer"></div>
-              <div class="vinyl-rainbow-sheen"></div>
-              <div class="vinyl-center-label" style="background: ${album.spine_bg || '#24464c'};">
-                <span class="vinyl-label-tag">STEREO 33⅓ RPM</span>
-                <span class="vinyl-label-title">${album.title}</span>
-                <span class="vinyl-label-cat">HARV-${album.year || '25'}</span>
-                <div class="vinyl-spindle-hole"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 1. Front Outer Cardboard Sleeve (现代黑胶纸质封套) -->
+          <!-- 1. Front Outer Cover (现代加长画册封套) -->
           <div class="cube-face cube-front sleeve-outer-front">
             <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
             
@@ -687,31 +673,26 @@ You have set my feet upon the rock!`
             <!-- Modern Satin Specular Reflection -->
             <div class="album-glass-sheen"></div>
 
-            <!-- Right Edge Open Sleeve Slot & Die-Cut Thumb Notch (黑胶套右侧开口与取盘凹口) -->
-            <div class="sleeve-open-edge">
-              <div class="sleeve-thumb-cutout"></div>
-            </div>
-
-            <!-- Modern Record Store Hype Sticker (现代黑胶封套特色角标贴纸) -->
+            <!-- Modern Editorial Hype Badge -->
             <div class="vinyl-hype-sticker">
-              <span class="hype-badge-top">HARVESTER RECORDS</span>
-              <span class="hype-badge-main">180G VINYL · HI-RES</span>
-              <span class="hype-badge-code">${album.year || '2025'} · CAT-${(origIdx + 1).toString().padStart(2, '0')}</span>
+              <span class="hype-badge-top">HARVESTER ORIGINALS</span>
+              <span class="hype-badge-main">${album.year || '2025'} EDITION</span>
+              <span class="hype-badge-code">CAT-${(origIdx + 1).toString().padStart(2, '0')}</span>
             </div>
 
-            <!-- Bottom Right Master Fidelity Badge -->
+            <!-- Bottom Right Audio Badge -->
             <div class="sleeve-barcode-badge">
-              <i class="fas fa-compact-disc" style="font-size:0.55rem; color:var(--gold); margin-right:3px;"></i> MASTER LP
+              <i class="fas fa-wave-square" style="font-size:0.55rem; color:var(--gold); margin-right:3px;"></i> HI-RES AUDIO
             </div>
           </div>
 
-          <!-- 2. Left Spine (LP Outer Jacket Spine - 现代平直书脊) -->
+          <!-- 2. Left Spine (Slim Refined 16px Spine - 纤细修长优雅书脊) -->
           <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#242f3a'};">
-            <span class="spine-top-stamp">LP · ${album.year || '2025'}</span>
+            <span class="spine-top-stamp">${album.year || '2025'}</span>
             <div class="spine-inner-text">
               <span class="spine-title">${album.title}</span>
             </div>
-            <span class="spine-bottom-stamp">HARV-${(origIdx + 1).toString().padStart(2, '0')}</span>
+            <span class="spine-bottom-stamp">VOL.${(origIdx + 1).toString().padStart(2, '0')}</span>
           </div>
 
           <!-- Top Sealed Edge -->
@@ -720,7 +701,7 @@ You have set my feet upon the rock!`
           <!-- Bottom Sealed Edge -->
           <div class="cube-face cube-bottom"></div>
 
-          <!-- Back Outer Sleeve Face -->
+          <!-- Back Outer Face -->
           <div class="cube-face cube-back sleeve-outer-back">
             <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
             <div class="album-glass-sheen"></div>
