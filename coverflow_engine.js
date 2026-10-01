@@ -474,7 +474,9 @@ You have set my feet upon the rock!`
       <div id="immersiveAlbumView" class="immersive-album-view" style="display:none;">
         <!-- Top Toolbar -->
         <div class="immersive-top-bar">
-          <button class="immersive-back-btn" onclick="closeSongDetailView()"><i class="fas fa-chevron-left"></i></button>
+          <button class="immersive-back-btn" onclick="closeSongDetailView()">
+            <i class="fas fa-arrow-left"></i> <span>返回 3D 展台</span>
+          </button>
           
           <div class="booklet-page-indicator">
             <span class="page-num-pill">HARVESTER ORIGINAL WORSHIP</span>
@@ -772,6 +774,12 @@ You have set my feet upon the rock!`
     const view = document.getElementById('immersiveAlbumView');
     if (!view) return;
 
+    // Break out of parent stacking contexts (e.g. .fade-in animation) by attaching directly to document.body
+    if (view.parentElement !== document.body) {
+      document.body.appendChild(view);
+    }
+    document.body.classList.add('immersive-modal-active');
+
     view.style.background = activeSong.theme_color || '#1c2b36';
     view.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -786,6 +794,7 @@ You have set my feet upon the rock!`
   window.closeSongDetailView = function() {
     const view = document.getElementById('immersiveAlbumView');
     if (!view) return;
+    document.body.classList.remove('immersive-modal-active');
     if (window.gsap) {
       gsap.to(view, { opacity: 0, scale: 0.96, duration: 0.3, onComplete: () => {
         view.style.display = 'none';
