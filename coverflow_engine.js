@@ -568,7 +568,7 @@ You have set my feet upon the rock!`
     requestAnimationFrame(tick);
   }
 
-  // Continuous 3D Transform Rendering for All Slabs (Symmetrical Cylinder Arc Curve · 弧形展台)
+  // Continuous 3D Transform Rendering for Spine-Facing Curved Bookshelf / Display Rack
   function render3DCoverflow() {
     const boxes = document.querySelectorAll('.album-3d-box');
     if (!boxes.length || !albums.length) return;
@@ -577,11 +577,8 @@ You have set my feet upon the rock!`
     const M = albums.length;
     const isMobile = window.innerWidth <= 768;
     
-    // Spacing: comfortable, breathable distance like the reference image (not overcrowded)
-    const stepX = isMobile ? 96 : 142;
-    const centerGap = isMobile ? 36 : 64;
-    const maxRotAngle = isMobile ? 48 : 54; // Max angle for outer albums along the curved arc
-
+    // Spacing: comfortable, breathable distance like a real physical display shelf
+    const stepX = isMobile ? 84 : 118;
     const activeRealIdx = ((Math.round(currentProgress) % M) + M) % M;
 
     boxes.forEach((box, i) => {
@@ -595,25 +592,20 @@ You have set my feet upon the rock!`
       const absOffset = Math.abs(offset);
       const pActive = Math.max(0, 1 - absOffset); // 1.0 at center, 0.0 when >= 1 unit away
 
-      // 🌊 Symmetrical Cylinder Arc (弧形) Rotation:
-      // Left side (offset < 0): Rotates positive (+28° ~ +54°), front face angles towards center, left spine faces camera.
-      // Center (offset = 0): Smoothly transitions to 0° facing front in hero spotlight.
-      // Right side (offset > 0): Rotates negative (-28° ~ -54°), front face angles towards center, right spine faces camera.
-      const rotY = -Math.tanh(offset * 0.72) * maxRotAngle;
+      // 📚 Spine-Facing Curved Display Rack Rotation:
+      // Center (offset = 0): Album faces edge-on with its spine forward (rotY ≈ +78° ~ +80°).
+      // Left wing (offset < 0): Angles open smoothly to +50° showing the front cover fanned towards the viewer.
+      // Right wing (offset > 0): Continues along the natural bookshelf arc (+92° ~ +104°).
+      const rotY = 78 + Math.tanh(offset * 0.55) * 28;
 
-      // 📏 Smooth X Spacing: generous spacing with soft hero opening around center
-      let x = offset * stepX;
-      if (offset > 0) {
-        x += centerGap * (1 - pActive * pActive);
-      } else if (offset < 0) {
-        x -= centerGap * (1 - pActive * pActive);
-      }
+      // 📏 Smooth X Spacing
+      const x = offset * stepX;
 
-      // 🌌 3D Arc Depth (Z): Symmetrical concave curve receding into depth on both wings
-      const z = (70 * pActive) - (absOffset * 52) - (offset * offset * 5);
+      // 🌌 3D Arc Depth (Z): Center elevated closest to the viewer, outer wings recede smoothly into depth
+      const z = (65 * pActive) - (absOffset * 38) - (offset * offset * 3.5);
 
-      // 🔍 Scale: Hero album in center is 1.14x, smoothly tapering to 0.90x along the arc
-      const scale = 0.88 + 0.26 * Math.exp(-absOffset * 0.85);
+      // 🔍 Scale: Hero album in center is 1.12x, smoothly tapering to 0.90x along the arc
+      const scale = 0.90 + 0.22 * Math.exp(-absOffset * 0.85);
 
       // 🌟 Opacity Falloff on the far edges of the arc
       let opacity = 1;
@@ -623,7 +615,7 @@ You have set my feet upon the rock!`
         opacity = Math.max(0, 1 - (absOffset - 2.8) / 1.8);
       }
 
-      // 📚 3D Stacking Order: Center is at the highest elevation (1000), outer items step down symmetrically
+      // 📚 3D Stacking Order: Items closer to center are at the highest elevation
       const zIndex = 1000 - Math.round(absOffset * 100);
 
       const realIdx = parseInt(box.dataset.realIndex, 10);

@@ -2548,8 +2548,8 @@ section[id], div[id^="section-"] {
 /* 2. Left Spine (High-End Tactile CD Jewel Case Spine) */
 .cube-face.cube-spine-left {
   top: 0;
-  left: -11px;
-  width: 22px;
+  left: -12px;
+  width: 24px;
   height: 320px;
   transform: rotateY(-90deg);
   border-left: 1px solid rgba(255, 255, 255, 0.45);
@@ -2565,8 +2565,8 @@ section[id], div[id^="section-"] {
 /* 3. Right Spine (Thickness Edge) */
 .cube-face.cube-spine-right {
   top: 0;
-  right: -11px;
-  width: 22px;
+  right: -12px;
+  width: 24px;
   height: 320px;
   transform: rotateY(90deg);
   border-right: 1px solid rgba(255, 255, 255, 0.3);
@@ -2576,50 +2576,53 @@ section[id], div[id^="section-"] {
   justify-content: center;
   overflow: hidden;
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
+  background-image: linear-gradient(to left, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 30%, rgba(0,0,0,0.35) 100%);
 }
 
 .spine-inner-text {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 280px;
+  width: 300px;
   transform: rotate(90deg);
   transform-origin: center center;
   white-space: nowrap;
   user-select: none;
   font-family: var(--font-songti), serif;
+  padding: 0 8px;
+  gap: 8px;
 }
 
 .spine-catalog {
   font-family: var(--font-eng-title);
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   letter-spacing: 2px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75);
   font-weight: 600;
 }
 
 .spine-title {
   font-family: var(--font-songti), serif;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 2px;
   color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.95);
 }
 
 .spine-artist {
   font-family: var(--font-eng-title);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   color: var(--gold);
   letter-spacing: 1px;
 }
 
 /* 4. Top Thickness Edge */
 .cube-face.cube-top {
-  top: -11px;
+  top: -12px;
   left: 0;
   width: 240px;
-  height: 22px;
+  height: 24px;
   transform: rotateX(90deg);
   border-top: 1px solid rgba(255, 255, 255, 0.45);
   border-bottom: 1px solid rgba(0, 0, 0, 0.65);
@@ -2628,10 +2631,10 @@ section[id], div[id^="section-"] {
 
 /* 5. Bottom Thickness Edge */
 .cube-face.cube-bottom {
-  bottom: -11px;
+  bottom: -12px;
   left: 0;
   width: 240px;
-  height: 22px;
+  height: 24px;
   transform: rotateX(-90deg);
   background: #0d0b09;
   border-bottom: 1px solid rgba(0, 0, 0, 0.9);
