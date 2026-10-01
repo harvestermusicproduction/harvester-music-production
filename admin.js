@@ -52,31 +52,34 @@ document.addEventListener('DOMContentLoaded', () => {
     adminDashboard.innerHTML = `
       <div class="cms-layout" style="display:flex; height:100vh; background:#050505; color:#fff; overflow:hidden; font-family: 'Inter', -apple-system, sans-serif;">
         <!-- Clean Professional Sidebar -->
-        <aside style="width:240px; background:#000; border-right:1px solid #1a1a1a; padding:2.5rem 1.2rem; display:flex; flex-direction:column;">
-          <div style="margin-bottom:3rem; padding-left:10px;">
-            <h2 style="color:var(--gold); font-size:1.4rem; letter-spacing:3px; margin:0; font-weight: 300;">HARVESTER</h2>
-            <p style="font-size:0.6rem; color:#1877F2; margin:5px 0 0; letter-spacing:2px; text-transform:uppercase; font-weight:bold;">DIAMOND EDGE V2.0 ACTIVE</p>
+        <aside style="width:250px; background:#000; border-right:1px solid #1a1a1a; padding:2rem 1.2rem; display:flex; flex-direction:column;">
+          <div style="margin-bottom:2rem; padding-left:10px;">
+            <h2 style="color:var(--gold); font-size:1.35rem; letter-spacing:3px; margin:0; font-weight: 300;">HARVESTER</h2>
+            <p style="font-size:0.6rem; color:#1877F2; margin:5px 0 0; letter-spacing:2px; text-transform:uppercase; font-weight:bold;">CMS CONTROL PANEL</p>
           </div>
           
-          <nav style="flex:1; display:flex; flex-direction:column; gap:6px;">
-            <p class="nav-section-title">CORE CONTENT</p>
+          <nav style="flex:1; display:flex; flex-direction:column; gap:5px; overflow-y:auto; padding-right:4px;">
+            <p class="nav-section-title">CONTROL CENTER</p>
             <a href="javascript:void(0)" onclick="switchModule('dashboard')" class="nav-item ${currentModule==='dashboard'?'active':''}">📊 Overview</a>
-            <a href="javascript:void(0)" onclick="switchModule('music')" class="nav-item ${currentModule==='music'?'active':''}">🎵 Music</a>
-            <a href="javascript:void(0)" onclick="switchModule('singers')" class="nav-item ${currentModule==='singers'?'active':''}">🎙️ Singers</a>
-            <a href="javascript:void(0)" onclick="switchModule('events')" class="nav-item ${currentModule==='events'?'active':''}">📅 Events</a>
-            <a href="javascript:void(0)" onclick="switchModule('diary')" class="nav-item ${currentModule==='diary'?'active':''}">📂 Field Diary</a>
-            <a href="javascript:void(0)" onclick="switchModule('about')" class="nav-item ${currentModule==='about'?'active':''}">📖 About Us / 关于我们</a>
 
-            <p class="nav-section-title" style="margin-top:25px;">INTERACT</p>
-            <a href="javascript:void(0)" onclick="switchModule('echo')" class="nav-item ${currentModule==='echo'?'active':''}">🌌 Echo Space</a>
-            <a href="javascript:void(0)" onclick="switchModule('submissions')" class="nav-item ${currentModule==='submissions'?'active':''}">📮 Inbox</a>
-            <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ Subscriptions</a>
-            <p class="nav-section-title" style="margin-top:25px;">ENGINE</p>
-            <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ Global Settings</a>
+            <p class="nav-section-title" style="margin-top:18px;">SITE PAGES / 前台页面编辑</p>
+            <a href="javascript:void(0)" onclick="switchModule('home')" class="nav-item ${currentModule==='home'?'active':''}">🏠 主页</a>
+            <a href="javascript:void(0)" onclick="switchModule('music')" class="nav-item ${currentModule==='music'?'active':''}">🎵 音乐与歌谱集</a>
+            <a href="javascript:void(0)" onclick="switchModule('events')" class="nav-item ${currentModule==='events'?'active':''}">📅 活动</a>
+            <a href="javascript:void(0)" onclick="switchModule('diary')" class="nav-item ${currentModule==='diary'?'active':''}">📂 田野日志</a>
+            <a href="javascript:void(0)" onclick="switchModule('submit')" class="nav-item ${currentModule==='submit' || currentModule==='submissions'?'active':''}">📮 我要投稿</a>
+            <a href="javascript:void(0)" onclick="switchModule('about')" class="nav-item ${currentModule==='about'?'active':''}">📖 关于我们</a>
+            <a href="javascript:void(0)" onclick="switchModule('singers')" class="nav-item ${currentModule==='singers'?'active':''}">👥 主要同工</a>
+            <a href="javascript:void(0)" onclick="switchModule('support')" class="nav-item ${currentModule==='support'?'active':''}">💖 支持我们</a>
+            <a href="javascript:void(0)" onclick="switchModule('contact')" class="nav-item ${currentModule==='contact' || currentModule==='echo'?'active':''}">🌌 联系我们与回声空间</a>
+
+            <p class="nav-section-title" style="margin-top:18px;">MANAGEMENT / 系统与订阅</p>
+            <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ 订阅管理</a>
+            <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ 全站设置</a>
           </nav>
           
-          <button onclick="logoutAdmin()" style="background:none; border:none; color:#444; text-align:left; padding:10px; font-size:0.8rem; cursor:pointer; transition:0.3s; margin-top:20px; border-top:1px solid #111;">
-            <i class="fas fa-sign-out-alt"></i> SIGN OUT
+          <button onclick="logoutAdmin()" style="background:none; border:none; color:#555; text-align:left; padding:10px; font-size:0.8rem; cursor:pointer; transition:0.3s; margin-top:15px; border-top:1px solid #111;">
+            <i class="fas fa-sign-out-alt"></i> SIGN OUT (登出)
           </button>
         </aside>
 
@@ -84,21 +87,21 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       <style>
-        .nav-section-title { font-size: 0.6rem; color: #2a2a2a; text-transform: uppercase; letter-spacing: 2.5px; margin: 10px 0 10px 10px; font-weight: bold; }
+        .nav-section-title { font-size: 0.6rem; color: #3a3a3a; text-transform: uppercase; letter-spacing: 2px; margin: 8px 0 6px 10px; font-weight: bold; }
         .nav-item {
-          color: #777;
+          color: #888;
           text-decoration: none;
-          padding: 10px 15px;
+          padding: 9px 14px;
           border-radius: 6px;
           font-size: 0.85rem;
           transition: all 0.25s ease;
           display: flex;
           align-items: center;
-          gap: 12px;
-          letter-spacing: 0.5px;
+          gap: 10px;
+          letter-spacing: 0.3px;
         }
-        .nav-item:hover { background: rgba(255,255,255,0.02); color: #bbb; }
-        .nav-item.active { background: rgba(246, 210, 138, 0.08); color: var(--gold); font-weight: 500; }
+        .nav-item:hover { background: rgba(255,255,255,0.04); color: #ccc; }
+        .nav-item.active { background: rgba(246, 210, 138, 0.1); color: var(--gold); font-weight: 600; border-left: 2px solid var(--gold); }
         
         .cms-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 12px; padding: 2rem; }
         .btn-tiny { background: #111; border: 1px solid #222; color: #888; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: 0.3s; }
@@ -108,16 +111,18 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     const body = document.getElementById('moduleBody');
     if (currentModule === 'dashboard') renderDashboard(body);
+    else if (currentModule === 'home') renderHomeCMS(body);
     else if (currentModule === 'music') renderMusic(body);
     else if (currentModule === 'events') renderEvents(body);
-    else if (currentModule === 'singers') renderSingers(body);
     else if (currentModule === 'diary') renderDiary(body);
+    else if (currentModule === 'submit' || currentModule === 'submissions') renderSubmitCMS(body);
     else if (currentModule === 'about') renderAboutCMS(body);
-    else if (currentModule === 'echo') renderEchoes(body);
+    else if (currentModule === 'singers') renderSingers(body);
+    else if (currentModule === 'support') renderSupportCMS(body);
+    else if (currentModule === 'contact' || currentModule === 'echo') renderContactCMS(body);
     else if (currentModule === 'reminders') renderReminders(body);
-    else if (currentModule === 'submissions') renderSubmissions(body);
     else if (currentModule === 'config') renderConfig(body);
-    else body.innerHTML = `<h2 style="color:#333;">${currentModule.toUpperCase()}</h2><p style="color:#222;">Migration in progress.</p>`;
+    else renderDashboard(body);
   }
 
   // --- Frontend Image Compression Helper ---
@@ -246,6 +251,132 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputEl = document.getElementById('m_url');
     if (imgEl) imgEl.src = rand;
     if (inputEl) inputEl.value = rand;
+  };
+
+  // --- 🏠 HOME PAGE CMS MODULE (主页) ---
+  async function renderHomeCMS(container) {
+    const { data: configs } = await db.from('site_config').select('*');
+    const c = (configs || []).reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
+    const { data: songs } = await db.from('music_works').select('id, title, artist').order('created_at', { ascending: false });
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:15px;">
+        <div>
+          <h1 style="color:var(--gold); margin:0;">🏠 主页内容管理 (Home Page CMS)</h1>
+          <p style="color:#888; font-size:0.9rem; margin-top:5px;">
+            编辑主页 Hero 视频/背景、最新主打推荐歌曲、愿景文案与社交平台链接。
+          </p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <a href="index.html" target="_blank" class="btn-tiny" style="padding:10px 16px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; color:var(--gold); border-color:var(--gold);">
+            <i class="fas fa-external-link-alt"></i> 预览前台主页
+          </a>
+          <button class="btn btn-submit" style="width:auto; padding:10px 24px;" onclick="saveHomeCMS()">💾 保存主页配置</button>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:2.5rem; max-width:1100px;">
+        <!-- 1. Hero 视频与标语 -->
+        <div class="cms-card" style="border-left: 4px solid var(--gold);">
+          <h3 style="color:var(--gold); margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>🎬</span> 主页 Hero 顶部背景与主视觉
+          </h3>
+          <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-top:15px;">
+            <div>
+              <div style="margin-bottom:15px;">
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">顶部主标题 (Hero Title)</label>
+                <input type="text" id="in_home_hero_title" value="${c['cfg_home_hero_title'] || '收割感动，播种福音'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              </div>
+              <div style="margin-bottom:15px;">
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">顶部英文副标 (Hero Subtitle)</label>
+                <input type="text" id="in_home_hero_subtitle" value="${c['cfg_home_hero_subtitle'] || 'HARVESTING EMOTIONS, SOWING GOSPEL'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              </div>
+              <div>
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">Hero 视频流或背景视频链接 (MP4 / WebM)</label>
+                <input type="text" id="in_hero_video_url" value="${c['cfg_hero_video_url'] || ''}" placeholder="https://... 或点击右侧上传" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              </div>
+            </div>
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
+              <label style="display:block; color:var(--gold); font-size:0.85rem; font-weight:bold; margin-bottom:10px;">上传 Hero 视频文件</label>
+              <input type="file" id="f_hero_vid" accept="video/mp4,video/webm" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:10px;">
+              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_hero_vid', 'in_hero_video_url', null)">📤 上传并填入视频链接</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 最新歌曲推荐设定 -->
+        <div class="cms-card" style="border-left: 4px solid #64D28A;">
+          <h3 style="color:#64D28A; margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>🎵</span> 主页推荐主打单曲 (Latest Harvest Music)
+          </h3>
+          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">选择一首在主页“最新歌曲”板块高亮展示的原创作品。</p>
+          <div style="margin-bottom:15px;">
+            <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">选择推荐单曲 (Featured Single)</label>
+            <select id="in_latest_music_id" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:12px; border-radius:6px;">
+              <option value="">-- 默认取最新发布的一首 --</option>
+              ${(songs || []).map(s => `
+                <option value="${s.id}" ${c['cfg_latest_music_id'] === s.id ? 'selected' : ''}>${s.title} (${s.artist || 'Harvester'})</option>
+              `).join('')}
+            </select>
+          </div>
+        </div>
+
+        <!-- 3. 全局社交网络链接 -->
+        <div class="cms-card" style="border-left: 4px solid #1877F2;">
+          <h3 style="color:#1877F2; margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>🌐</span> 官方社群媒体与联络链接 (Header Socials)
+          </h3>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:15px;">
+            <div>
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-whatsapp" style="color:#25D366;"></i> WhatsApp 咨询链接</label>
+              <input type="text" id="in_nav_wa" value="${c['cfg_nav_wa'] || 'https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry.'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+            </div>
+            <div>
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-spotify" style="color:#1DB954;"></i> Spotify 艺人主页</label>
+              <input type="text" id="in_nav_sp" value="${c['cfg_nav_sp'] || 'https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+            </div>
+            <div>
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-facebook" style="color:#1877F2;"></i> Facebook 专页</label>
+              <input type="text" id="in_nav_fb" value="${c['cfg_nav_fb'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+            </div>
+            <div>
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-instagram" style="color:#E1306C;"></i> Instagram 账号</label>
+              <input type="text" id="in_nav_ig" value="${c['cfg_nav_ig'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+            </div>
+            <div style="grid-column: 1/-1;">
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-youtube" style="color:#FF0000;"></i> YouTube 官方频道</label>
+              <input type="text" id="in_nav_yt" value="${c['cfg_nav_yt'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-submit" style="width:100%; padding:14px; font-size:1rem;" onclick="saveHomeCMS()">💾 立即保存主页配置</button>
+      </div>
+    `;
+  }
+
+  window.saveHomeCMS = async () => {
+    const payload = [
+      { key: 'cfg_home_hero_title', value: document.getElementById('in_home_hero_title').value.trim() },
+      { key: 'cfg_home_hero_subtitle', value: document.getElementById('in_home_hero_subtitle').value.trim() },
+      { key: 'cfg_hero_video_url', value: document.getElementById('in_hero_video_url').value.trim() },
+      { key: 'cfg_latest_music_id', value: document.getElementById('in_latest_music_id').value.trim() },
+      { key: 'cfg_nav_wa', value: document.getElementById('in_nav_wa').value.trim() },
+      { key: 'cfg_nav_sp', value: document.getElementById('in_nav_sp').value.trim() },
+      { key: 'cfg_nav_fb', value: document.getElementById('in_nav_fb').value.trim() },
+      { key: 'cfg_nav_ig', value: document.getElementById('in_nav_ig').value.trim() },
+      { key: 'cfg_nav_yt', value: document.getElementById('in_nav_yt').value.trim() }
+    ];
+
+    try {
+      for (const item of payload) {
+        await db.from('site_config').upsert(item, { onConflict: 'key' });
+      }
+      alert("🎉 主页配置已成功保存并实时生效！");
+      renderCMS();
+    } catch(err) {
+      alert("保存失败: " + err.message);
+    }
   };
 
   // --- 🎵 UNIFIED MUSIC & 3D ALBUM MANAGEMENT (1 Album = 1 Single Track) ---
@@ -1520,147 +1651,423 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  // --- 📮 SUBMISSIONS MODULE ---
-  async function renderSubmissions(container) {
-    const { data: subs } = await db.from('submissions').select('*').order('created_at', {ascending: false});
-    const { data: contacts } = await db.from('contact_messages').select('*').order('created_at', {ascending: false});
-    
-    // 🛡️ Fetch approved IDs for moderation UI
-    const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
-    const approvedIds = cfg?.value ? cfg.value.split(',') : [];
+  // --- 💖 SUPPORT US CMS MODULE (支持我们) ---
+  async function renderSupportCMS(container) {
+    const { data: configs } = await db.from('site_config').select('*');
+    const c = (configs || []).reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
 
     container.innerHTML = `
-      <h1 style="color:var(--gold); margin-bottom:2rem;">📮 全站收件箱 (Inboxes)</h1>
-
-      <!-- Part 0: Echo Space Moderation (回声空间审核) -->
-      <section style="margin-bottom:4rem;">
-        <h3 style="color:var(--gold); border-bottom:1px solid #222; padding-bottom:10px;">✨ 回声空间审核 (Echo Moderation)</h3>
-        <p style="color:#666; font-size:0.85rem; margin-top:5px;">此处审核通过的内容将以 X 轴漂浮方式呈现在“回声空间”页面。</p>
-        <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222; margin-top:15px;">
-          <table style="width:100%; text-align:left; border-collapse:collapse;">
-            <tr style="background:#151515; color:#666; font-size:0.8rem;">
-              <th style="padding:15px;">留言内容</th><th>状态</th><th>操作</th>
-            </tr>
-            ${contacts?.filter(c => c.message?.includes('[ECHO]')).map(c => {
-              const isApproved = approvedIds.includes(c.id.toString());
-              return `
-              <tr style="border-bottom:1px solid #222;">
-                <td style="padding:15px; color:#ccc;">
-                  <div style="color:var(--gold); font-size:0.75rem; margin-bottom:4px;">${new Date(c.created_at).toLocaleDateString()} ${c.name}</div>
-                  ${c.message.replace('[ECHO]', '')}
-                </td>
-                <td>
-                  <span style="padding:4px 8px; border-radius:4px; font-size:0.75rem; background:${isApproved ? 'rgba(100,210,138,0.1)' : 'rgba(255,255,255,0.05)'}; color:${isApproved ? '#64D28A' : '#444'}">
-                    ${isApproved ? '✅ 已在回声空间显示' : '🚫 隐藏中'}
-                  </span>
-                </td>
-                <td>
-                  <button class="btn-tiny" onclick="toggleEchoApproval('${c.id}', ${isApproved})">${isApproved ? '取消批准' : '批准显示'}</button>
-                  <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${c.id}')">删除</button>
-                </td>
-              </tr>
-              `;
-            }).join('') || '<tr><td colspan="3" style="padding:30px; text-align:center;">暂无回声留言</td></tr>'}
-          </table>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:15px;">
+        <div>
+          <h1 style="color:var(--gold); margin:0;">💖 支持我们 奉献管理 (Support Us CMS)</h1>
+          <p style="color:#888; font-size:0.9rem; margin-top:5px;">
+            管理前台「支持我们」页面的银行转账信息、DuitNow 收款二维码、顶部海报与奉献寄语。
+          </p>
         </div>
-      </section>
-      
-      <!-- Part 1: Creative Submissions (我要投稿) -->
-      <section style="margin-bottom:4rem;">
-        <h3 style="color:#64D28A; border-bottom:1px solid #222; padding-bottom:10px;">🎵 我要投稿 (Creative Submissions)</h3>
-        <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222; margin-top:15px;">
-          <table style="width:100%; text-align:left; border-collapse:collapse;">
-            <tr style="background:#151515; color:#666; font-size:0.8rem;">
-              <th style="padding:15px;">日期</th><th>投稿人</th><th>预览</th><th>状态</th><th>操作</th>
-            </tr>
-            ${subs?.map(s => `
-              <tr style="border-bottom:1px solid #222;">
-                <td style="padding:15px; font-size:0.8rem; color:#666;">${new Date(s.created_at).toLocaleDateString()}</td>
-                <td style="color:var(--gold);">${s.user_name}</td>
-                <td style="color:#888;">${s.message?.substring(0, 30)}...</td>
-                <td><span style="color:${s.status==='pending'?'#e5b05a':'#666'}">${s.status.toUpperCase()}</span></td>
-                <td>
-                  <button class="btn-tiny" onclick="viewSub('${s.id}')">详情</button>
-                  <button class="btn-tiny danger" onclick="deleteItem('submissions', '${s.id}')">删除</button>
-                </td>
-              </tr>
-            `).join('') || '<tr><td colspan="5" style="padding:30px; text-align:center;">尚无粉丝投稿</td></tr>'}
-          </table>
+        <div style="display:flex; gap:10px;">
+          <a href="support.html" target="_blank" class="btn-tiny" style="padding:10px 16px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; color:var(--gold); border-color:var(--gold);">
+            <i class="fas fa-external-link-alt"></i> 预览前台支持页
+          </a>
+          <button class="btn btn-submit" style="width:auto; padding:10px 24px;" onclick="saveSupportCMS()">💾 保存支持页面设置</button>
         </div>
-      </section>
+      </div>
 
-      <!-- Part 2: Contact Messages (联系我们 / 合作咨询) -->
-      <section>
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #222; padding-bottom:12px; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
-          <div>
-            <h3 style="color:var(--gold); margin:0; font-size:1.2rem; display:flex; align-items:center; gap:8px;">
-              <span>📬</span> 联系我们与合作咨询留言 (Contact Inquiries)
-            </h3>
-            <p style="color:#888; font-size:0.8rem; margin:4px 0 0 0;">
-              用户在“联系我们”页面提交的合作意向与咨询。可直接勾选是否已回复/已处理。
-            </p>
-          </div>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <span style="background:rgba(255,165,2,0.1); border:1px solid rgba(255,165,2,0.3); color:#ffa502; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:bold;">
-              ⏳ 待处理: ${contacts?.filter(c => !c.message?.includes('[ECHO]') && c.status !== 'replied' && c.status !== 'processed' && c.status !== 'reviewed' && c.status !== 'done').length || 0}
-            </span>
-            <span style="background:rgba(100,210,138,0.1); border:1px solid rgba(100,210,138,0.3); color:#64D28A; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:bold;">
-              ✅ 已回复: ${contacts?.filter(c => !c.message?.includes('[ECHO]') && (c.status === 'replied' || c.status === 'processed' || c.status === 'reviewed' || c.status === 'done')).length || 0}
-            </span>
+      <div style="display:flex; flex-direction:column; gap:2.5rem; max-width:1100px;">
+        <!-- 1. 银行账户与二维码 -->
+        <div class="cms-card" style="border-left: 4px solid var(--gold);">
+          <h3 style="color:var(--gold); margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>💳</span> 奉献账户与 DuitNow / QR Code
+          </h3>
+          <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-top:15px;">
+            <div>
+              <div style="margin-bottom:15px;">
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">银行名称 (Bank Name)</label>
+                <input type="text" id="in_support_bank" value="${c['cfg_support_bank'] || 'Maybank'}" placeholder="例如：Maybank" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              </div>
+              <div style="margin-bottom:15px;">
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">账户户名 (Account Name)</label>
+                <input type="text" id="in_support_acc_name" value="${c['cfg_support_acc_name'] || 'HARVESTER MUSIC PRODUCTION'}" placeholder="例如：HARVESTER MUSIC PRODUCTION" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              </div>
+              <div style="margin-bottom:15px;">
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">银行账号 (Account Number)</label>
+                <input type="text" id="in_support_acc_no" value="${c['cfg_support_acc_no'] || '5123 4567 8901'}" placeholder="例如：5123 4567 8901" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              </div>
+            </div>
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
+              <label style="display:block; color:var(--gold); font-size:0.85rem; font-weight:bold; margin-bottom:10px;">DuitNow / 收款二维码图片</label>
+              <img id="prev_support_qr" src="${c['cfg_support_qr'] || 'assets/logo.png'}" style="width:160px; height:160px; object-fit:contain; background:#fff; border-radius:8px; padding:6px; margin-bottom:10px; border:1px solid #444;">
+              <input type="file" id="f_support_qr" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:8px;">
+              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_support_qr', 'in_support_qr', 'prev_support_qr')">📤 上传新二维码图片</button>
+              <input type="hidden" id="in_support_qr" value="${c['cfg_support_qr'] || ''}">
+            </div>
           </div>
         </div>
 
-        <div style="background:#0a0a0a; border-radius:12px; overflow-x:auto; border:1px solid #222;">
-          <table style="width:100%; text-align:left; border-collapse:collapse; min-width:700px;">
+        <!-- 2. 海报与致谢说明 -->
+        <div class="cms-card" style="border-left: 4px solid #64D28A;">
+          <h3 style="color:#64D28A; margin-top:0; display:flex; align-items:center; gap:8px;">
+            <span>📖</span> 顶部海报与奉献寄语说明
+          </h3>
+          <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-top:15px;">
+            <div>
+              <div style="margin-bottom:15px;">
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">奉献致谢与支持说明文案</label>
+                <textarea id="in_support_text" style="width:100%; height:120px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_support_text'] || '若这份音乐祝福了你，欢迎以自由奉献支持我们的创作与服事。您的每一份支持都将用于福音音乐的制作与推广。'}</textarea>
+              </div>
+            </div>
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
+              <label style="display:block; color:#64D28A; font-size:0.85rem; font-weight:bold; margin-bottom:10px;">支持页面顶部横幅海报</label>
+              <img id="prev_support_banner" src="${c['cfg_support_banner'] || 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=1200&q=80'}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:10px; border:1px solid #222;">
+              <input type="file" id="f_support_banner" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:8px;">
+              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_support_banner', 'in_support_banner', 'prev_support_banner')">📤 上传海报图片</button>
+              <input type="hidden" id="in_support_banner" value="${c['cfg_support_banner'] || ''}">
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-submit" style="width:100%; padding:14px; font-size:1rem;" onclick="saveSupportCMS()">💾 立即保存支持页面设置</button>
+      </div>
+    `;
+  }
+
+  window.saveSupportCMS = async () => {
+    const payload = [
+      { key: 'cfg_support_bank', value: document.getElementById('in_support_bank').value.trim() },
+      { key: 'cfg_support_acc_name', value: document.getElementById('in_support_acc_name').value.trim() },
+      { key: 'cfg_support_acc_no', value: document.getElementById('in_support_acc_no').value.trim() },
+      { key: 'cfg_support_qr', value: document.getElementById('in_support_qr').value.trim() },
+      { key: 'cfg_support_text', value: document.getElementById('in_support_text').value.trim() },
+      { key: 'cfg_support_banner', value: document.getElementById('in_support_banner').value.trim() }
+    ];
+
+    try {
+      for (const item of payload) {
+        await db.from('site_config').upsert(item, { onConflict: 'key' });
+      }
+      alert("🎉 支持我们页面设置已成功保存并实时生效！");
+      renderCMS();
+    } catch(err) {
+      alert("保存失败: " + err.message);
+    }
+  };
+
+  // --- 📮 SUBMIT CMS MODULE (我要投稿与合作方案) ---
+  let currentSubmitSubTab = 'inbox';
+  window.switchSubmitTab = (tab) => { currentSubmitSubTab = tab; renderSubmitCMS(document.getElementById('moduleBody')); };
+
+  async function renderSubmitCMS(container) {
+    const { data: subs } = await db.from('submissions').select('*').order('created_at', {ascending: false});
+    const { data: configs } = await db.from('site_config').select('*');
+    const c = (configs || []).reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:15px;">
+        <div>
+          <h1 style="color:var(--gold); margin:0;">📮 我要投稿与合作管理 (Submissions & Cooperation)</h1>
+          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理粉丝与音乐人提交的原创作品投稿、投稿规则、版权分成及合作方案。</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <a href="submit.html" target="_blank" class="btn-tiny" style="padding:10px 16px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; color:var(--gold); border-color:var(--gold);">
+            <i class="fas fa-external-link-alt"></i> 预览投稿页面
+          </a>
+          ${currentSubmitSubTab !== 'inbox' ? `<button class="btn btn-submit" style="width:auto; padding:10px 24px;" onclick="saveSubmitPageCMS()">💾 保存投稿页面设置</button>` : ''}
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div style="display:flex; gap:10px; margin-bottom:25px; border-bottom:1px solid #222; padding-bottom:10px; flex-wrap:wrap;">
+        <button onclick="switchSubmitTab('inbox')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentSubmitSubTab==='inbox' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          📥 投稿作品收件箱 (${subs?.length || 0})
+        </button>
+        <button onclick="switchSubmitTab('guidelines')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentSubmitSubTab==='guidelines' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          📝 投稿须知与海报
+        </button>
+        <button onclick="switchSubmitTab('profit')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentSubmitSubTab==='profit' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          💽 版权分成方案
+        </button>
+        <button onclick="switchSubmitTab('coop')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentSubmitSubTab==='coop' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          🤝 合作方案与要求
+        </button>
+      </div>
+
+      ${currentSubmitSubTab === 'inbox' ? `
+        <!-- 📥 作品收件箱列表 -->
+        <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222;">
+          <table style="width:100%; text-align:left; border-collapse:collapse;">
             <thead>
-              <tr style="background:#151515; color:#777; font-size:0.8rem; border-bottom:1px solid #282828;">
-                <th style="padding:15px; width:110px;">日期时间</th>
-                <th style="padding:15px; width:130px;">咨询人</th>
-                <th style="padding:15px; width:180px;">联络邮箱</th>
-                <th style="padding:15px;">留言意向预览</th>
-                <th style="padding:15px; width:150px;">回复/处理状态</th>
-                <th style="padding:15px; width:120px; text-align:right;">管理操作</th>
+              <tr style="background:#151515; color:#888; font-size:0.8rem; border-bottom:1px solid #222;">
+                <th style="padding:15px;">日期</th>
+                <th style="padding:15px;">投稿人</th>
+                <th style="padding:15px;">联系方式</th>
+                <th style="padding:15px;">歌曲与作品预览</th>
+                <th style="padding:15px;">审核状态</th>
+                <th style="padding:15px; text-align:right;">操作</th>
               </tr>
             </thead>
             <tbody>
-              ${contacts?.filter(c => !c.message?.includes('[ECHO]')).map(c => {
-                const isProcessed = c.status === 'replied' || c.status === 'processed' || c.status === 'reviewed' || c.status === 'done';
-                return `
-                <tr style="border-bottom:1px solid #1a1a1a; transition:0.25s;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
-                  <td style="padding:15px; font-size:0.8rem; color:#666;">
-                    ${new Date(c.created_at).toLocaleDateString()}
-                    <div style="font-size:0.7rem; color:#444;">${new Date(c.created_at).toLocaleTimeString().substring(0,5)}</div>
-                  </td>
-                  <td style="padding:15px; color:var(--gold); font-weight:500;">
-                    ${c.name || '未填写'}
-                  </td>
-                  <td style="padding:15px;">
-                    ${c.email ? `<a href="mailto:${c.email}?subject=【Harvester 收割机音乐】关于合作咨询回复" target="_blank" style="color:#70a1ff; text-decoration:none; font-size:0.85rem;" title="点击直接发送邮件"><i class="fas fa-envelope"></i> ${c.email}</a>` : '<span style="color:#555;">无邮箱</span>'}
-                  </td>
-                  <td style="padding:15px; color:#ccc; font-size:0.88rem; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${(c.message || '').replace(/"/g, '&quot;')}">
-                    ${c.message || ''}
+              ${(subs || []).map(s => `
+                <tr style="border-bottom:1px solid #1a1a1a;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
+                  <td style="padding:15px; font-size:0.8rem; color:#666;">${new Date(s.created_at).toLocaleDateString()}</td>
+                  <td style="padding:15px; color:var(--gold); font-weight:600;">${s.user_name || '匿名创作者'}</td>
+                  <td style="padding:15px; font-size:0.85rem; color:#aaa;">${s.user_contact || s.email || '未留'}</td>
+                  <td style="padding:15px; color:#ccc; font-size:0.85rem;">
+                    <div style="font-weight:bold; color:#fff; margin-bottom:4px;">${s.song_title || '未命名作品'}</div>
+                    <div style="color:#777; font-size:0.75rem; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${s.message || s.lyrics || ''}</div>
+                    ${s.audio_url ? `<audio src="${s.audio_url}" controls style="height:28px; margin-top:6px; max-width:240px;"></audio>` : ''}
                   </td>
                   <td style="padding:15px;">
-                    <label style="display:inline-flex; align-items:center; gap:8px; cursor:pointer; background:${isProcessed ? 'rgba(100,210,138,0.08)' : 'rgba(255,165,2,0.08)'}; padding:6px 12px; border-radius:20px; border:1px solid ${isProcessed ? 'rgba(100,210,138,0.25)' : 'rgba(255,165,2,0.25)'};">
-                      <input type="checkbox" ${isProcessed ? 'checked' : ''} onchange="toggleContactStatus('${c.id}', this.checked)" style="width:16px; height:16px; cursor:pointer; accent-color:#64D28A;">
-                      <span style="font-size:0.78rem; font-weight:bold; color:${isProcessed ? '#64D28A' : '#ffa502'};">
-                        ${isProcessed ? '✅ 已回复' : '⏳ 待处理'}
-                      </span>
-                    </label>
+                    <span style="padding:3px 8px; border-radius:4px; font-size:0.75rem; font-weight:bold; background:${s.status==='accepted'?'rgba(100,210,138,0.15)':(s.status==='rejected'?'rgba(255,100,100,0.15)':'rgba(246,210,138,0.15)')}; color:${s.status==='accepted'?'#64D28A':(s.status==='rejected'?'#ff6b81':'var(--gold)')};">
+                      ${s.status ? s.status.toUpperCase() : 'PENDING'}
+                    </span>
                   </td>
                   <td style="padding:15px; text-align:right; white-space:nowrap;">
-                    <button class="btn-tiny" onclick="viewContact('${c.id}')" style="margin-right:5px; color:var(--gold); border-color:var(--gold);">查看</button>
-                    <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${c.id}')" title="删除">🗑️</button>
+                    <button class="btn-tiny" onclick="viewSub('${s.id}')" style="margin-right:6px; border-color:var(--gold); color:var(--gold);">👁️ 详情</button>
+                    <button class="btn-tiny danger" onclick="deleteItem('submissions', '${s.id}')">🗑️</button>
                   </td>
                 </tr>
-                `;
-              }).join('') || '<tr><td colspan="6" style="padding:40px; text-align:center; color:#555;">暂无联系留言记录</td></tr>'}
+              `).join('') || '<tr><td colspan="6" style="padding:50px; text-align:center; color:#555;">尚无粉丝投稿记录</td></tr>'}
             </tbody>
           </table>
         </div>
-      </section>
+      ` : currentSubmitSubTab === 'guidelines' ? `
+        <!-- 📝 投稿须知与海报 -->
+        <div class="cms-card" style="border-left:4px solid var(--gold);">
+          <h3 style="color:var(--gold); margin-top:0;">📝 投稿须知海报与征集规则设置</h3>
+          <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-top:15px;">
+            <div>
+              <div style="margin-bottom:15px;">
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">投稿征集规则文案 (支持 HTML 格式)</label>
+                <textarea id="in_submit_text" style="width:100%; height:180px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_submit_text'] || `所有经收割机制作与发行的作品，词曲版权由收割机拥有七年。七年后归还作者。\n✦ 发行形式：所有作品将以「收割机EP」或数位单曲形式全球发行。\n✦ 创作者尊荣：发行时将在 FB / IG / YouTube 及主流流媒体标注所有创作者，给予应有尊重。\n✦ 投稿方式：填写在线投稿表单。`}</textarea>
+              </div>
+              <div>
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">提交作品按钮跳转链接 (表单 / WhatsApp)</label>
+                <input type="text" id="in_submit_btn_link" value="${c['cfg_submit_btn_link'] || 'https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20submit%20my%20song.'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+              </div>
+            </div>
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
+              <label style="display:block; color:var(--gold); font-size:0.85rem; font-weight:bold; margin-bottom:10px;">投稿须知宣传海报 (Poster)</label>
+              <img id="prev_submit_poster" src="${c['cfg_submit_poster'] || 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80'}" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:10px; border:1px solid #222;">
+              <input type="file" id="f_submit_poster" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:8px;">
+              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_submit_poster', 'in_submit_poster', 'prev_submit_poster')">📤 上传海报图片</button>
+              <input type="hidden" id="in_submit_poster" value="${c['cfg_submit_poster'] || ''}">
+            </div>
+          </div>
+          <button class="btn btn-submit" style="width:100%; padding:14px; margin-top:20px;" onclick="saveSubmitPageCMS()">💾 立即保存投稿须知设置</button>
+        </div>
+      ` : currentSubmitSubTab === 'profit' ? `
+        <!-- 💽 版权分成方案 -->
+        <div class="cms-card" style="border-left:4px solid #64D28A;">
+          <h3 style="color:#64D28A; margin-top:0;">💽 版权分成结构与流媒体收益说明</h3>
+          <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-top:15px;">
+            <div>
+              <div style="margin-bottom:15px;">
+                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">收益分配机制与结算周期说明</label>
+                <textarea id="in_submit_profit_text" style="width:100%; height:150px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_submit_profit_text'] || `主要来自 YouTube、Spotify、Apple Music 及各大数字流媒体音乐平台的播放与版税收益。\n收入将在扣除平台必要成本后，按约定比例定期结算给词曲创作者与制作团队。`}</textarea>
+              </div>
+            </div>
+            <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
+              <label style="display:block; color:#64D28A; font-size:0.85rem; font-weight:bold; margin-bottom:10px;">分成板块配图 (Revenue Image)</label>
+              <img id="prev_about_rev_img" src="${c['cfg_about_rev_img'] || 'https://images.unsplash.com/photo-1520523839898-50712509e37b?auto=format&fit=crop&w=800&q=80'}" style="width:100%; height:140px; object-fit:cover; border-radius:6px; margin-bottom:10px; border:1px solid #222;">
+              <input type="file" id="f_about_rev_img" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:8px;">
+              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_rev_img', 'in_about_rev_img', 'prev_about_rev_img')">📤 更换展示配图</button>
+              <input type="hidden" id="in_about_rev_img" value="${c['cfg_about_rev_img'] || ''}">
+            </div>
+          </div>
+          <button class="btn btn-submit" style="width:100%; padding:14px; margin-top:20px;" onclick="saveSubmitPageCMS()">💾 立即保存分成设置</button>
+        </div>
+      ` : `
+        <!-- 🤝 合作方案与要求 -->
+        <div class="cms-card" style="border-left:4px solid #1877F2;">
+          <h3 style="color:#1877F2; margin-top:0;">🤝 合作方案与事工对接设置</h3>
+          <div style="margin-top:15px;">
+            <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">合作方案与要求说明文案</label>
+            <textarea id="in_submit_coop_text" style="width:100%; height:160px; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px; line-height:1.6;">${c['cfg_submit_coop_text'] || `收割机欢迎教会、音乐人及敬拜团队展开深度合作，包括全案单曲制作、敬拜特会主领邀约、歌曲重新编曲与海外巡回宣教支持。`}</textarea>
+          </div>
+          <button class="btn btn-submit" style="width:100%; padding:14px; margin-top:20px;" onclick="saveSubmitPageCMS()">💾 立即保存合作方案设置</button>
+        </div>
+      `}
     `;
   }
+
+  window.saveSubmitPageCMS = async () => {
+    const payload = [];
+    const tEl = document.getElementById('in_submit_text');
+    const pEl = document.getElementById('in_submit_poster');
+    const lEl = document.getElementById('in_submit_btn_link');
+    const prEl = document.getElementById('in_submit_profit_text');
+    const revImgEl = document.getElementById('in_about_rev_img');
+    const coopEl = document.getElementById('in_submit_coop_text');
+
+    if (tEl) payload.push({ key: 'cfg_submit_text', value: tEl.value.trim() });
+    if (pEl) payload.push({ key: 'cfg_submit_poster', value: pEl.value.trim() });
+    if (lEl) payload.push({ key: 'cfg_submit_btn_link', value: lEl.value.trim() });
+    if (prEl) payload.push({ key: 'cfg_submit_profit_text', value: prEl.value.trim() });
+    if (revImgEl) payload.push({ key: 'cfg_about_rev_img', value: revImgEl.value.trim() });
+    if (coopEl) payload.push({ key: 'cfg_submit_coop_text', value: coopEl.value.trim() });
+
+    try {
+      for (const item of payload) {
+        await db.from('site_config').upsert(item, { onConflict: 'key' });
+      }
+      alert("🎉 我要投稿页面设置已成功保存！");
+      renderCMS();
+    } catch(err) {
+      alert("保存失败: " + err.message);
+    }
+  };
+
+  // --- 🌌 CONTACT & ECHO SPACE CMS MODULE (联系我们与回声空间) ---
+  let currentContactSubTab = 'inbox';
+  window.switchContactTab = (tab) => { currentContactSubTab = tab; renderContactCMS(document.getElementById('moduleBody')); };
+
+  async function renderContactCMS(container) {
+    const { data: contacts } = await db.from('contact_messages').select('*').order('created_at', {ascending: false});
+    const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
+    const approvedIds = cfg?.value ? cfg.value.split(',').filter(Boolean) : [];
+
+    const { data: configs } = await db.from('site_config').select('*');
+    const c = (configs || []).reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
+
+    const echoMessages = (contacts || []).filter(c => c.message?.includes('[ECHO]'));
+    const regularInquiries = (contacts || []).filter(c => !c.message?.includes('[ECHO]'));
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:15px;">
+        <div>
+          <h1 style="color:var(--gold); margin:0;">🌌 联系我们与回声空间管理 (Contact & Echo Space)</h1>
+          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理来自官方联系表单的合作留言、3D 回声空间星空留言审核与官方联系方式。</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <a href="contact.html" target="_blank" class="btn-tiny" style="padding:10px 16px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; color:var(--gold); border-color:var(--gold);">
+            <i class="fas fa-external-link-alt"></i> 预览联系与回声页
+          </a>
+          ${currentContactSubTab === 'info' ? `<button class="btn btn-submit" style="width:auto; padding:10px 24px;" onclick="saveContactInfoCMS()">💾 保存官方联络信息</button>` : ''}
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div style="display:flex; gap:10px; margin-bottom:25px; border-bottom:1px solid #222; padding-bottom:10px; flex-wrap:wrap;">
+        <button onclick="switchContactTab('inbox')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentContactSubTab==='inbox' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          📬 官方咨询信箱 (${regularInquiries.length})
+        </button>
+        <button onclick="switchContactTab('echo')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentContactSubTab==='echo' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          ✨ 3D 回声空间星空审核 (${echoMessages.length})
+        </button>
+        <button onclick="switchContactTab('info')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentContactSubTab==='info' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          📞 官方联系方式配置
+        </button>
+      </div>
+
+      ${currentContactSubTab === 'inbox' ? `
+        <!-- 📬 官方咨询信箱 -->
+        <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222;">
+          <table style="width:100%; text-align:left; border-collapse:collapse;">
+            <thead>
+              <tr style="background:#151515; color:#888; font-size:0.8rem; border-bottom:1px solid #222;">
+                <th style="padding:15px;">日期</th>
+                <th style="padding:15px;">发信人</th>
+                <th style="padding:15px;">邮箱 / 联系方式</th>
+                <th style="padding:15px;">咨询内容</th>
+                <th style="padding:15px; text-align:right;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${regularInquiries.map(c => `
+                <tr style="border-bottom:1px solid #1a1a1a;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
+                  <td style="padding:15px; font-size:0.8rem; color:#666;">${new Date(c.created_at).toLocaleDateString()}</td>
+                  <td style="padding:15px; color:var(--gold); font-weight:600;">${c.name || '访客'}</td>
+                  <td style="padding:15px;">
+                    ${c.email ? `<a href="mailto:${c.email}?subject=【Harvester 收割机音乐】关于合作咨询回复" target="_blank" style="color:#70a1ff; text-decoration:none; font-size:0.85rem;"><i class="fas fa-envelope"></i> ${c.email}</a>` : '<span style="color:#555;">无邮箱</span>'}
+                  </td>
+                  <td style="padding:15px; color:#ccc; font-size:0.85rem; max-width:400px; line-height:1.5;">${c.message || ''}</td>
+                  <td style="padding:15px; text-align:right; white-space:nowrap;">
+                    <button class="btn-tiny" onclick="viewContact('${c.id}')" style="margin-right:5px; color:var(--gold); border-color:var(--gold);">查看</button>
+                    <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${c.id}')">🗑️ 删除</button>
+                  </td>
+                </tr>
+              `).join('') || '<tr><td colspan="5" style="padding:50px; text-align:center; color:#555;">暂无官方咨询信件</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      ` : currentContactSubTab === 'echo' ? `
+        <!-- ✨ 3D 回声空间星空审核 -->
+        <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222;">
+          <table style="width:100%; text-align:left; border-collapse:collapse;">
+            <thead>
+              <tr style="background:#151515; color:#888; font-size:0.8rem; border-bottom:1px solid #222;">
+                <th style="padding:15px;">提交日期</th>
+                <th style="padding:15px;">听众昵称</th>
+                <th style="padding:15px;">回声寄语内容</th>
+                <th style="padding:15px;">星空展示状态</th>
+                <th style="padding:15px; text-align:right;">审核操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${echoMessages.map(c => {
+                const isApproved = approvedIds.includes(String(c.id));
+                const cleanMsg = c.message.replace('[ECHO]', '').trim();
+                return `
+                  <tr style="border-bottom:1px solid #1a1a1a;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
+                    <td style="padding:15px; font-size:0.8rem; color:#666;">${new Date(c.created_at).toLocaleDateString()}</td>
+                    <td style="padding:15px; color:var(--gold); font-weight:600;">${c.name || '匿名听众'}</td>
+                    <td style="padding:15px; color:#eee; font-size:0.9rem; max-width:450px; line-height:1.6;">${cleanMsg}</td>
+                    <td style="padding:15px;">
+                      <span style="padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:bold; background:${isApproved ? 'rgba(100,210,138,0.15)' : 'rgba(255,255,255,0.05)'}; color:${isApproved ? '#64D28A' : '#666'}; border:1px solid ${isApproved ? 'rgba(100,210,138,0.3)' : 'rgba(255,255,255,0.1)'};">
+                        ${isApproved ? '✨ 星空漂浮展示中' : '🚫 审核隐藏中'}
+                      </span>
+                    </td>
+                    <td style="padding:15px; text-align:right; white-space:nowrap;">
+                      <button class="btn-tiny" style="margin-right:6px; border-color:${isApproved ? '#888' : 'var(--gold)'}; color:${isApproved ? '#aaa' : 'var(--gold)'};" onclick="toggleEchoApproval('${c.id}', ${isApproved})">
+                        ${isApproved ? '取消展示' : '🌟 批准在星空显示'}
+                      </button>
+                      <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${c.id}')">🗑️</button>
+                    </td>
+                  </tr>
+                `;
+              }).join('') || '<tr><td colspan="5" style="padding:50px; text-align:center; color:#555;">暂无回声空间留言</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      ` : `
+        <!-- 📞 官方联系方式配置 -->
+        <div class="cms-card" style="border-left:4px solid var(--gold);">
+          <h3 style="color:var(--gold); margin-top:0;">📞 官方联络与客服配置</h3>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-top:15px;">
+            <div>
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">官方联络 Email</label>
+              <input type="text" id="in_official_email" value="${c['cfg_official_email'] || 'harvestermusicproduction@gmail.com'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+            </div>
+            <div>
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">官方客服 WhatsApp 号码 / 链接</label>
+              <input type="text" id="in_official_wa" value="${c['cfg_nav_wa'] || 'https://wa.me/60187755581'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+            </div>
+            <div style="grid-column: 1/-1;">
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">办公/事工联络地址 (可选)</label>
+              <input type="text" id="in_official_addr" value="${c['cfg_official_addr'] || 'Kuala Lumpur, Malaysia'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+            </div>
+          </div>
+          <button class="btn btn-submit" style="width:100%; padding:14px; margin-top:25px;" onclick="saveContactInfoCMS()">💾 立即保存官方联络信息</button>
+        </div>
+      `}
+    `;
+  }
+
+  window.saveContactInfoCMS = async () => {
+    const payload = [
+      { key: 'cfg_official_email', value: document.getElementById('in_official_email').value.trim() },
+      { key: 'cfg_nav_wa', value: document.getElementById('in_official_wa').value.trim() },
+      { key: 'cfg_official_addr', value: document.getElementById('in_official_addr').value.trim() }
+    ];
+    try {
+      for (const item of payload) {
+        await db.from('site_config').upsert(item, { onConflict: 'key' });
+      }
+      alert("🎉 官方联络信息已成功保存！");
+      renderCMS();
+    } catch(err) {
+      alert("保存失败: " + err.message);
+    }
+  };
 
   window.toggleContactStatus = async (id, isReplied) => {
     try {
