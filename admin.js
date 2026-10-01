@@ -382,9 +382,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // --- 🎵 UNIFIED MUSIC & 3D ALBUM MANAGEMENT (1 Album = 1 Single Track) ---
+  // --- 🎵 音乐与歌谱集 (Music & Scores Management Organized by Year) ---
+  let adminMusicYearFilter = 'ALL';
+  window.setAdminMusicYearFilter = (yr) => {
+    adminMusicYearFilter = yr;
+    const body = document.getElementById('moduleBody');
+    if (body) renderMusic(body);
+  };
+
   async function renderMusic(container) {
-    const { data: songs } = await db.from('music_works').select('*').order('created_at', {ascending: false});
+    const { data: rawSongs } = await db.from('music_works').select('*').order('created_at', {ascending: false});
     const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_latest_music_id').maybeSingle();
     const latestId = cfg?.value;
 
@@ -394,62 +401,109 @@ document.addEventListener('DOMContentLoaded', () => {
       try { albumsCustom = JSON.parse(albumCfg.value); } catch(e){}
     }
 
+    const songs = (rawSongs || []).map((s, idx) => {
+      const customMatch = albumsCustom.find(c => c.id === s.id || c.title === s.title);
+      const year = String(customMatch?.year || s.year || '2025');
+      const spineBg = customMatch?.spine_bg || ["#1877F2", "#00b894", "#f39c12", "#ea8676", "#0984e3", "#2d3436"][idx % 6];
+      const spineClr = customMatch?.spine_color || "#ffffff";
+      const spineTxt = customMatch?.spine_text || `${s.title}`;
+      const coverUrl = s.cover_url || customMatch?.cover_url || childlikeDoodles[idx % childlikeDoodles.length];
+      return { ...s, customMatch, year, spineBg, spineClr, spineTxt, coverUrl };
+    });
+
+    // Extract unique available years sorted descending
+    const availableYears = Array.from(new Set(songs.map(s => s.year).filter(Boolean)));
+    availableYears.sort((a, b) => b.localeCompare(a));
+
+    // Filter by selected year
+    const displayYears = adminMusicYearFilter === 'ALL' 
+      ? availableYears 
+      : availableYears.filter(y => y === adminMusicYearFilter);
+
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; flex-wrap:wrap; gap:15px;">
         <div>
-          <h1 style="color:var(--gold); margin:0;">🎵 音乐与 3D 唱片管理 (Music & 3D Album Slabs)</h1>
-          <p style="color:#888; font-size:0.85rem; margin-top:5px;">每首诗歌即为一张专属 3D 唱片盒（包含封面图片、3D 书脊文字底色、音频、歌谱 PDF、歌词与外链）。</p>
+          <h1 style="color:var(--gold); margin:0; font-size:1.8rem;">🎵 音乐与歌谱集 (Music & Scores)</h1>
+          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理原创诗歌单曲、3D 展架唱片、PDF 歌谱、音频与风琴折档案（按年份归类管理）。</p>
         </div>
-        <button class="btn btn-submit" style="width:auto; padding:12px 28px; font-weight:700;" onclick="openMusicModal()">+ 发布新单曲 / 3D 唱片</button>
+        <button class="btn btn-submit" style="width:auto; padding:12px 28px; font-weight:700;" onclick="openMusicModal()">+ 发布新单曲 / 歌谱</button>
       </div>
 
-      <!-- Unified Songs & 3D Album List -->
-      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap:20px;">
-        ${songs?.map((s, idx) => {
-          const customMatch = albumsCustom.find(c => c.id === s.id || c.title === s.title);
-          const spineBg = customMatch?.spine_bg || ["#1877F2", "#00b894", "#f39c12", "#ea8676", "#0984e3", "#2d3436"][idx % 6];
-          const spineClr = customMatch?.spine_color || "#ffffff";
-          const spineTxt = customMatch?.spine_text || `${s.title}`;
-          const coverUrl = s.cover_url || customMatch?.cover_url || childlikeDoodles[idx % childlikeDoodles.length];
-
+      <!-- Year Filter Tabs -->
+      <div style="display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; align-items:center; background:#0e0e0e; padding:10px 16px; border-radius:10px; border:1px solid #1a1a1a;">
+        <span style="font-size:0.78rem; color:#888; font-weight:bold; letter-spacing:1px; margin-right:6px;">📅 年份筛选：</span>
+        <button class="btn-tiny" style="${adminMusicYearFilter==='ALL'?'background:var(--gold); color:#000; font-weight:bold; border-color:var(--gold);':''}" onclick="setAdminMusicYearFilter('ALL')">
+          全部 (${songs.length})
+        </button>
+        ${availableYears.map(y => {
+          const count = songs.filter(s => s.year === y).length;
+          const isAct = adminMusicYearFilter === y;
           return `
-            <div style="background:#0e0e0e; border:1px solid #1f1f1f; border-radius:14px; padding:20px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
-              <div>
-                <!-- Top Cover & Meta Row -->
-                <div style="display:flex; gap:16px; align-items:center; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #1a1a1a;">
-                  <img src="${coverUrl}" 
-                       style="width:75px; height:75px; object-fit:cover; border-radius:10px; border:1px solid #333; background:#181818;"
-                       onerror="this.src='${childlikeDoodles[0]}'">
-                  <div style="flex:1; overflow:hidden;">
-                    <h3 style="margin:0; color:#fff; font-size:1.1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:8px;">
-                      ${s.title}
-                      <span style="color:var(--gold); font-size:0.7rem; background:rgba(246,210,138,0.15); border:1px solid rgba(246,210,138,0.35); padding:2px 8px; border-radius:4px; font-family:monospace; font-weight:bold;">${customMatch?.year || s.year || '2025'}</span>
-                      ${s.id === latestId || s.is_latest ? '<span style="color:var(--gold); font-size:0.65rem; background:rgba(246,210,138,0.12); padding:2px 8px; border-radius:50px; border:1px solid rgba(246,210,138,0.3);">首推</span>' : ''}
-                    </h3>
-                    <p style="margin:4px 0 0; color:#888; font-size:0.8rem;">${customMatch?.artist || s.artist || 'Harvester Worship'}</p>
-                    <div style="display:flex; gap:10px; margin-top:6px;">
-                      <span style="font-size:0.75rem; color:${s.score_url ? '#2ed573' : '#555'};"><i class="fas fa-file-pdf"></i> ${s.score_url ? '歌谱就绪' : '无歌谱'}</span>
-                      <span style="font-size:0.75rem; color:${s.audio_url ? '#70a1ff' : '#555'};"><i class="fab fa-youtube"></i> ${s.audio_url ? 'YouTube' : '无链接'}</span>
-                      <span style="font-size:0.75rem; color:${customMatch?.spotify_url || s.spotify_url ? '#1db954' : '#555'};"><i class="fab fa-spotify"></i> ${customMatch?.spotify_url || s.spotify_url ? 'Spotify' : '无链接'}</span>
+            <button class="btn-tiny" style="${isAct?'background:var(--gold); color:#000; font-weight:bold; border-color:var(--gold);':''}" onclick="setAdminMusicYearFilter('${y}')">
+              ${y} 年 (${count})
+            </button>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- Songs Grouped by Year -->
+      ${displayYears.length === 0 ? `
+        <div style="text-align:center; color:#555; padding:60px; background:#0a0a0a; border-radius:12px; border:1px solid #1a1a1a;">
+          暂无单曲数据，点击右上角发布新单曲
+        </div>
+      ` : displayYears.map(y => {
+        const groupSongs = songs.filter(s => s.year === y);
+        return `
+          <div style="margin-bottom:38px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #1f1f1f; padding-bottom:10px; margin-bottom:18px;">
+              <h2 style="font-size:1.25rem; color:#e0d2be; margin:0; display:flex; align-items:center; gap:10px;">
+                <span style="background:rgba(246,210,138,0.15); color:var(--gold); border:1px solid rgba(246,210,138,0.3); padding:3px 10px; border-radius:6px; font-size:0.85rem; font-family:monospace; font-weight:bold;">${y}</span>
+                ${y} 年度单曲集
+                <span style="font-size:0.8rem; color:#666; font-weight:normal;">(共 ${groupSongs.length} 首)</span>
+              </h2>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap:20px;">
+              ${groupSongs.map(s => `
+                <div style="background:#0e0e0e; border:1px solid #1f1f1f; border-radius:14px; padding:20px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
+                  <div>
+                    <!-- Top Cover & Meta Row -->
+                    <div style="display:flex; gap:16px; align-items:center; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #1a1a1a;">
+                      <img src="${s.coverUrl}" 
+                           style="width:75px; height:75px; object-fit:cover; border-radius:10px; border:1px solid #333; background:#181818;"
+                           onerror="this.src='${childlikeDoodles[0]}'">
+                      <div style="flex:1; overflow:hidden;">
+                        <h3 style="margin:0; color:#fff; font-size:1.1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:8px;">
+                          ${s.title}
+                          <span style="color:var(--gold); font-size:0.7rem; background:rgba(246,210,138,0.15); border:1px solid rgba(246,210,138,0.35); padding:2px 8px; border-radius:4px; font-family:monospace; font-weight:bold;">${s.year}</span>
+                          ${s.id === latestId || s.is_latest ? '<span style="color:var(--gold); font-size:0.65rem; background:rgba(246,210,138,0.12); padding:2px 8px; border-radius:50px; border:1px solid rgba(246,210,138,0.3);">首推</span>' : ''}
+                        </h3>
+                        <p style="margin:4px 0 0; color:#888; font-size:0.8rem;">${s.customMatch?.artist || s.artist || 'Harvester Worship'}</p>
+                        <div style="display:flex; gap:10px; margin-top:6px;">
+                          <span style="font-size:0.75rem; color:${s.score_url ? '#2ed573' : '#555'};"><i class="fas fa-file-pdf"></i> ${s.score_url ? '歌谱就绪' : '无歌谱'}</span>
+                          <span style="font-size:0.75rem; color:${s.audio_url ? '#70a1ff' : '#555'};"><i class="fab fa-youtube"></i> ${s.audio_url ? 'YouTube' : '无链接'}</span>
+                          <span style="font-size:0.75rem; color:${s.customMatch?.spotify_url || s.spotify_url ? '#1db954' : '#555'};"><i class="fab fa-spotify"></i> ${s.customMatch?.spotify_url || s.spotify_url ? 'Spotify' : '无链接'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 3D Spine Preview Bar -->
+                    <div style="background:${s.spineBg}; color:${s.spineClr}; padding:6px 12px; border-radius:6px; font-size:0.75rem; font-weight:bold; letter-spacing:1px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 2px rgba(0,0,0,0.8);">
+                      🧱 书脊: ${s.spineTxt}
                     </div>
                   </div>
-                </div>
 
-                <!-- 3D Spine Preview Bar -->
-                <div style="background:${spineBg}; color:${spineClr}; padding:6px 12px; border-radius:6px; font-size:0.75rem; font-weight:bold; letter-spacing:1px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 2px rgba(0,0,0,0.8);">
-                  🧱 书脊: ${spineTxt}
+                  <!-- Action Buttons -->
+                  <div style="display:flex; gap:8px; margin-top:8px;">
+                    <button class="btn-tiny" style="flex:1; padding:8px; color:var(--gold); border-color:var(--gold);" onclick="openMusicModal('${s.id}')">⚙️ 编辑单曲与歌谱</button>
+                    <button class="btn-tiny danger" style="padding:8px 12px;" onclick="deleteItem('music_works', '${s.id}')">🗑️</button>
+                  </div>
                 </div>
-              </div>
-
-              <!-- Action Buttons -->
-              <div style="display:flex; gap:8px; margin-top:8px;">
-                <button class="btn-tiny" style="flex:1; padding:8px; color:var(--gold); border-color:var(--gold);" onclick="openMusicModal('${s.id}')">⚙️ 编辑图文/书脊/歌谱</button>
-                <button class="btn-tiny danger" style="padding:8px 12px;" onclick="deleteItem('music_works', '${s.id}')">🗑️</button>
-              </div>
+              `).join('')}
             </div>
-          `;
-        }).join('') || '<div style="grid-column:1/-1; text-align:center; color:#555; padding:60px;">暂无单曲数据，点击右上角发布新单曲</div>'}
-      </div>
+          </div>
+        `;
+      }).join('')}
     `;
   }
 
@@ -504,8 +558,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <div style="background:#111; border:1.5px solid var(--gold); border-radius:18px; padding:2.2rem; width:100%; max-width:760px; max-height:92vh; overflow-y:auto; box-shadow:0 25px 70px rgba(0,0,0,1);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid #222; padding-bottom:10px;">
             <div>
-              <h2 style="color:var(--gold); margin:0; font-size:1.4rem;">${isEdit ? '编辑单曲与风琴折档案' : '发布新单曲 / 3D 唱片'}</h2>
-              <p style="color:#888; font-size:0.8rem; margin:4px 0 0;">可完整自定义前台 3D 展台、立体书脊与莫兰迪风琴折内页所有内容</p>
+              <h2 style="color:var(--gold); margin:0; font-size:1.4rem;">${isEdit ? '编辑单曲与歌谱档案' : '发布新单曲与歌谱'}</h2>
+              <p style="color:#888; font-size:0.8rem; margin:4px 0 0;">可完整自定义前台 3D 展台、立体书脊、PDF 歌谱与莫兰迪风琴折内页所有内容</p>
             </div>
             <button class="btn-tiny" onclick="this.closest('#musicEditModal').remove()">✕ 关闭</button>
           </div>
@@ -687,7 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
-            <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveMusic('${s?.id || ''}')">💾 保存单曲与 3D 唱片档案</button>
+            <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveMusic('${s?.id || ''}')">💾 保存单曲与歌谱档案</button>
             <button class="btn-tiny" style="flex:1;" onclick="this.closest('#musicEditModal').remove()">取消</button>
           </div>
         </div>
