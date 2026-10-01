@@ -17,39 +17,227 @@
   <link rel="stylesheet" href="styles.css?v=37.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* --- 🌟 Featured Poster Banner --- */
-    .events-poster-section {
-      display: flex;
-      justify-content: center;
-      margin: 1rem auto 2.5rem;
-      padding: 0 1.5rem;
-      width: 100%;
-    }
-    .events-poster-container {
-      max-width: 720px;
-      width: auto;
-      margin: 0 auto;
-      border-radius: 16px;
+    /* --- 🌟 Full-Width Panoramic Multi-Photo Running Gallery (横向尽头多照片轮播画廊) --- */
+    .events-panoramic-section {
+      position: relative;
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      margin-top: 1rem;
+      margin-bottom: 3.5rem;
       overflow: hidden;
-      border: 1px solid rgba(246, 210, 138, 0.3);
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(246, 210, 138, 0.06);
-      background: #0a0a0a;
-      transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.4s ease;
+      padding: 1.2rem 0;
+    }
+
+    .events-gallery-viewport {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      user-select: none;
+      cursor: grab;
+      padding: 0 4vw;
       position: relative;
     }
-    .events-poster-container:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.9), 0 0 30px rgba(246, 210, 138, 0.12);
-      border-color: rgba(246, 210, 138, 0.5);
+    .events-gallery-viewport:active {
+      cursor: grabbing;
     }
-    .events-featured-img {
+    .events-gallery-viewport::-webkit-scrollbar {
+      display: none;
+    }
+
+    .events-gallery-track {
+      display: flex;
+      gap: 1.5rem;
+      width: max-content;
+      align-items: stretch;
+      padding: 10px 0;
+    }
+
+    /* Individual Event Photo Card */
+    .event-photo-card {
+      position: relative;
+      width: 400px;
+      height: 275px;
+      flex-shrink: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #181312;
+      border: 1.5px solid rgba(246, 210, 138, 0.28);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), 0 0 15px rgba(246, 210, 138, 0.06);
+      transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+      text-decoration: none;
       display: block;
+    }
+
+    .event-photo-card:hover {
+      transform: translateY(-8px) scale(1.025);
+      border-color: var(--gold);
+      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.9), 0 0 30px rgba(246, 210, 138, 0.35);
+      z-index: 10;
+    }
+
+    .event-photo-card img {
       width: 100%;
-      max-width: 100%;
-      max-height: 380px;
-      height: auto;
-      object-fit: contain;
-      margin: 0 auto;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), filter 0.4s ease;
+    }
+
+    .event-photo-card:hover img {
+      transform: scale(1.08);
+      filter: brightness(1.06);
+    }
+
+    /* Photo Card Overlays */
+    .event-card-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(14, 11, 10, 0.95) 0%, rgba(14, 11, 10, 0.45) 45%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .event-card-top-tag {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(18, 14, 13, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(246, 210, 138, 0.45);
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-family: var(--font-times-new-roman), serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 4px 11px;
+      border-radius: 20px;
+      z-index: 5;
+    }
+
+    .event-card-status-pill {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(246, 210, 138, 0.95);
+      color: #1a1410;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      z-index: 5;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+
+    .event-card-bottom-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 20px;
+      z-index: 5;
+    }
+
+    .event-card-title {
+      font-family: var(--font-puploop), -apple-system, BlinkMacSystemFont, sans-serif !important;
+      font-size: 1.22rem;
+      color: #fffaf0;
+      margin: 0 0 6px;
+      line-height: 1.25;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .event-card-meta {
+      font-size: 0.8rem;
+      color: rgba(250, 246, 240, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-times-new-roman), serif;
+    }
+
+    .event-card-meta i {
+      color: var(--gold);
+      margin-right: 4px;
+    }
+
+    /* 🏹 Floating Navigation Arrows on Left & Right Edges */
+    .events-gallery-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: rgba(22, 17, 16, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(246, 210, 138, 0.45);
+      color: var(--gold);
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 20;
+      transition: all 0.35s cubic-bezier(0.19, 1, 0.22, 1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75);
+    }
+
+    .events-gallery-arrow:hover {
+      background: var(--gold);
+      color: #1a1410;
+      transform: translateY(-50%) scale(1.12);
+      box-shadow: 0 0 25px rgba(246, 210, 138, 0.6), 0 10px 30px rgba(0, 0, 0, 0.85);
+      border-color: #fff;
+    }
+
+    .events-gallery-arrow.prev {
+      left: 20px;
+    }
+
+    .events-gallery-arrow.next {
+      right: 20px;
+    }
+
+    /* Edge Fade Masks for Smooth Edge Transition */
+    .events-gallery-mask {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 70px;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .events-gallery-mask.left {
+      left: 0;
+      background: linear-gradient(to right, rgba(30, 25, 24, 0.98), transparent);
+    }
+    .events-gallery-mask.right {
+      right: 0;
+      background: linear-gradient(to left, rgba(30, 25, 24, 0.98), transparent);
+    }
+
+    @media (max-width: 768px) {
+      .event-photo-card {
+        width: 290px;
+        height: 220px;
+      }
+      .events-gallery-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+      .events-gallery-arrow.prev { left: 8px; }
+      .events-gallery-arrow.next { right: 8px; }
+      .events-gallery-mask { width: 35px; }
     }
 
     /* --- 🌟 Section Divider --- */
@@ -414,11 +602,29 @@
     <p style="text-align: center; font-size: 0.85rem; opacity: 0.7; margin-top: 10px; font-family: 'Noto Sans SC', sans-serif; letter-spacing: 1px;">收割的脚步不停歇 敬请期待我们的下一个同行时刻</p>
   </div>
 
-  <!-- 🌟 精彩活动主海报展区 (Featured Event Poster Area) -->
-  <section class="events-poster-section fade-in" id="eventsHeroSection">
-    <div class="events-poster-container" id="eventsPosterWrapper" style="display:none;">
-      <img id="cfg_events_banner" src="" alt="精彩活动主海报" class="events-featured-img" style="display:none;" onerror="this.style.display='none'">
+  <!-- 🌟 精彩活动全宽横向多照片轮播走廊 (Full-Width Edge-to-Edge Panoramic Event Photo Gallery) -->
+  <section class="events-panoramic-section fade-in" id="eventsHeroSection">
+    
+    <!-- 🏹 Left Navigation Arrow -->
+    <button class="events-gallery-arrow prev" onclick="window.scrollEventsGallery(-1)" title="向左滚动照片" type="button">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+
+    <!-- 🌟 Cinematic Left / Right Edge Fade Masks -->
+    <div class="events-gallery-mask left"></div>
+    <div class="events-gallery-mask right"></div>
+
+    <!-- 🎞️ Multi-Photo Horizontal Running Viewport & Track -->
+    <div class="events-gallery-viewport" id="eventsGalleryViewport">
+      <div class="events-gallery-track" id="eventsGalleryTrack">
+        <!-- Injected dynamically by app.js -->
+      </div>
     </div>
+
+    <!-- 🏹 Right Navigation Arrow -->
+    <button class="events-gallery-arrow next" onclick="window.scrollEventsGallery(1)" title="向右滚动照片" type="button">
+      <i class="fas fa-chevron-right"></i>
+    </button>
   </section>
 
   <!-- 🌟 活动列表标题分隔栏 -->
@@ -445,7 +651,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=16.1.0"></script>
-  <script src="app.js?v=16.1.0"></script>
+  <script src="app.js?v=22.0.0"></script>
 
 
 </body>

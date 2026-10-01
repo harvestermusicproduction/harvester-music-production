@@ -483,19 +483,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return (b.created_at || '').localeCompare(a.created_at || '');
       });
 
-      // 🌟 顶部主海报加载逻辑：优先读取后台配置的海报，其次读取排第一位的活动海报
-      if (posterImg && posterWrapper) {
-        const customBanner = siteConfigs['cfg_events_banner'];
-        const topEventImg = events.find(e => e.image_url)?.image_url;
-        const bannerSrc = customBanner || topEventImg;
-        if (bannerSrc) {
-          posterImg.src = bannerSrc;
-          posterImg.style.display = 'block';
-          posterWrapper.style.display = 'block';
-        } else {
-          posterWrapper.style.display = 'none';
-        }
-      }
+      // 🌟 顶部全宽多照片跑马灯画廊渲染 (Full-Width Edge-to-Edge Panoramic Running Gallery)
+      renderEventsPanoramicGallery(events);
 
       // 🌟 各活动横向条状列表渲染 (Horizontal Tour Strips)
       container.innerHTML = events.map(e => {
@@ -561,6 +550,189 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch(e) {
       console.error("fetchEvents fail:", e);
     }
+  }
+
+  // 🌟 Full-Width Panoramic Multi-Photo Running Gallery (横向尽头多照片跑马灯画廊)
+  function renderEventsPanoramicGallery(events) {
+    const track = document.getElementById('eventsGalleryTrack');
+    const viewport = document.getElementById('eventsGalleryViewport');
+    const heroSec = document.getElementById('eventsHeroSection');
+    if (!track || !viewport) return;
+
+    // Default curated rich concert / worship / event photos
+    const fallbackPhotos = [
+      {
+        id: "curated_1",
+        title: "收割敬拜之夜 · 吉隆坡特别专场",
+        image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1000&q=80",
+        date: "2025.11.15",
+        venue: "吉隆坡 · 全福敬拜大厅",
+        statusTag: "OPEN 报名中"
+      },
+      {
+        id: "curated_2",
+        title: "原创赞美诗创作营 & 制作工作坊",
+        image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1000&q=80",
+        date: "2025.08.20",
+        venue: "新山 · 音乐创作空间",
+        statusTag: "HOT 热门"
+      },
+      {
+        id: "curated_3",
+        title: "灵火青年敬拜节 · 赞美特会",
+        image_url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1000&q=80",
+        date: "2025.07.12",
+        venue: "槟城 · 圣爱大礼堂",
+        statusTag: "RECAP 精彩回顾"
+      },
+      {
+        id: "curated_4",
+        title: "收割者福音巡回音乐分享会",
+        image_url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1000&q=80",
+        date: "2025.06.05",
+        venue: "怡保 · 基督徒交流中心",
+        statusTag: "UPCOMING 即将开启"
+      },
+      {
+        id: "curated_5",
+        title: "赞美诗合唱与管弦乐室内交响夜",
+        image_url: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1000&q=80",
+        date: "2025.05.01",
+        venue: "吉隆坡 · 艺术文化中心",
+        statusTag: "RECAP 精彩回顾"
+      },
+      {
+        id: "curated_6",
+        title: "收割机敬拜团同工灵修培灵会",
+        image_url: "https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1000&q=80",
+        date: "2025.03.18",
+        venue: "马六甲 · 恩典营地",
+        statusTag: "ANNUAL 年度特会"
+      }
+    ];
+
+    // Combine DB events with images + custom banner + fallback items to ensure a rich multi-card strip
+    let galleryItems = [];
+    
+    // 1. Add database events that have images
+    if (events && events.length > 0) {
+      events.forEach(e => {
+        if (e.image_url) {
+          galleryItems.push({
+            id: e.id,
+            title: e.title,
+            image_url: e.image_url,
+            date: e.fullDateTime || `${e.year || '2025'}.${e.month || ''}.${e.day || ''}`,
+            venue: e.location || '线下敬拜现场',
+            statusTag: e.statusTag || 'UPCOMING',
+            link: `event.html?id=${e.id}`
+          });
+        }
+      });
+    }
+
+    // 2. Add custom banner if present
+    const customBanner = siteConfigs['cfg_events_banner'];
+    if (customBanner && !galleryItems.some(item => item.image_url === customBanner)) {
+      galleryItems.unshift({
+        id: 'banner_custom',
+        title: 'Harvester 精彩活动与巡回特会',
+        image_url: customBanner,
+        date: 'FEATURED 精彩主推',
+        venue: '各城各乡 · 福音巡回',
+        statusTag: 'FEATURED 推荐',
+        link: 'javascript:void(0)'
+      });
+    }
+
+    // 3. If gallery has fewer than 6 items, append fallback items
+    if (galleryItems.length < 6) {
+      fallbackPhotos.forEach(fb => {
+        if (galleryItems.length < 8 && !galleryItems.some(item => item.title === fb.title)) {
+          galleryItems.push({
+            ...fb,
+            link: 'javascript:void(0)'
+          });
+        }
+      });
+    }
+
+    // Render cards
+    const renderCard = (item) => `
+      <a href="${item.link || 'javascript:void(0)'}" class="event-photo-card" ${item.link && item.link.startsWith('http') ? 'target="_blank"' : ''}>
+        <img src="${item.image_url}" alt="${item.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
+        <div class="event-card-gradient"></div>
+        <span class="event-card-top-tag">${item.date}</span>
+        <span class="event-card-status-pill">${item.statusTag}</span>
+        <div class="event-card-bottom-info">
+          <h3 class="event-card-title">${item.title}</h3>
+          <div class="event-card-meta">
+            <span><i class="fas fa-map-marker-alt"></i> ${item.venue}</span>
+            <span><i class="fas fa-arrow-right"></i> 查看详情</span>
+          </div>
+        </div>
+      </a>
+    `;
+
+    // Repeat items to make an infinite seamless running ribbon
+    track.innerHTML = galleryItems.map(renderCard).join('') + galleryItems.map(renderCard).join('');
+    if (heroSec) heroSec.style.display = 'block';
+
+    // 🏹 Setup Arrow Navigation
+    window.scrollEventsGallery = function(direction) {
+      const cardWidth = window.innerWidth <= 768 ? 310 : 424;
+      viewport.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
+    };
+
+    // 🏃 Continuous Auto-Running Ticker Loop (Pauses on Hover & Drag)
+    let isAutoScrolling = true;
+    let autoScrollInterval = null;
+
+    function startAutoScroll() {
+      if (autoScrollInterval) clearInterval(autoScrollInterval);
+      autoScrollInterval = setInterval(() => {
+        if (!isAutoScrolling) return;
+        viewport.scrollLeft += 1;
+        // Loop back when reaching half of the duplicated track
+        if (viewport.scrollLeft >= (track.scrollWidth / 2)) {
+          viewport.scrollLeft = 0;
+        }
+      }, 25);
+    }
+
+    viewport.addEventListener('mouseenter', () => { isAutoScrolling = false; });
+    viewport.addEventListener('mouseleave', () => { isAutoScrolling = true; });
+    viewport.addEventListener('touchstart', () => { isAutoScrolling = false; }, { passive: true });
+    viewport.addEventListener('touchend', () => { setTimeout(() => { isAutoScrolling = true; }, 2000); });
+
+    // Drag to scroll
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    viewport.addEventListener('mousedown', (e) => {
+      isDown = true;
+      isAutoScrolling = false;
+      startX = e.pageX - viewport.offsetLeft;
+      scrollLeft = viewport.scrollLeft;
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDown) {
+        isDown = false;
+        setTimeout(() => { isAutoScrolling = true; }, 1500);
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - viewport.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      viewport.scrollLeft = scrollLeft - walk;
+    });
+
+    startAutoScroll();
   }
 
   window.openReminderModal = (id, title, date) => {
