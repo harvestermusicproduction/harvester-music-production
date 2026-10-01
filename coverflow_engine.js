@@ -9,20 +9,20 @@
  */
 
 (function() {
-  // Curated Collection of Modern Morandi Aesthetic Music Photography & Art
+  // Curated Collection of Modern Morandi Aesthetic Graphic & Abstract Art (No Portraits)
   const morandiPhotos = [
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=900&auto=format&fit=crop&q=80", // Modern aesthetic portrait in muted studio lighting
-    "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=900&auto=format&fit=crop&q=80", // Modern architectural geometry in soft Morandi light
-    "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=900&auto=format&fit=crop&q=80", // Minimalist botanical in muted sage & clay
-    "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=900&auto=format&fit=crop&q=80", // Minimalist misty landscape in slate blue
-    "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=900&auto=format&fit=crop&q=80", // Acoustic studio guitar in warm Morandi tones
-    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=900&auto=format&fit=crop&q=80", // Live music stage in soft muted teal
-    "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=900&auto=format&fit=crop&q=80", // Atmospheric singer portrait in warm amber dusk
-    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=900&auto=format&fit=crop&q=80", // Audio mastering console in deep slate
-    "https://images.unsplash.com/photo-1520523839898-50712509e37b?w=900&auto=format&fit=crop&q=80", // Minimalist grand piano in Morandi kraft
-    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&auto=format&fit=crop&q=80", // Modern vocalist with microphone in soft monochrome
-    "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=900&auto=format&fit=crop&q=80", // Modern violin and sheet music in muted tones
-    "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=900&auto=format&fit=crop&q=80"  // Modern vinyl record in dusty rose & sand
+    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=900&auto=format&fit=crop&q=80", // Modern Morandi 3D fluid sculpture & gradient geometry
+    "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=900&auto=format&fit=crop&q=80", // Modern architectural arches & shadows in Morandi light
+    "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=900&auto=format&fit=crop&q=80", // Minimalist botanical in muted sage & terracotta clay
+    "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=900&auto=format&fit=crop&q=80", // Minimalist misty landscape & quiet slate blue horizon
+    "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=900&auto=format&fit=crop&q=80", // Acoustic studio guitar woodwork in warm Morandi tones
+    "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=900&auto=format&fit=crop&q=80", // Modern abstract Bauhaus color field & graphic lines
+    "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=900&auto=format&fit=crop&q=80", // Contemporary oil brushstrokes in dusty rose & sand
+    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=900&auto=format&fit=crop&q=80", // Audio mixing console & dials in sleek dark slate
+    "https://images.unsplash.com/photo-1520523839898-50712509e37b?w=900&auto=format&fit=crop&q=80", // Minimalist grand piano keys in Morandi kraft & ivory
+    "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=900&auto=format&fit=crop&q=80", // Museum abstract textural sculpture painting
+    "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=900&auto=format&fit=crop&q=80", // Modern violin & vintage sheet music still life
+    "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=900&auto=format&fit=crop&q=80"  // Modern vinyl record in dusty rose & cream
   ];
   const childlikeDoodles = morandiPhotos;
 
@@ -525,18 +525,17 @@ You have set my feet upon the rock!`
     carousel.innerHTML = virtualList.map(({ album, origIdx, vIdx }) => `
       <div class="album-3d-box ${origIdx === currentIndex && vIdx === 0 ? 'active' : ''}" data-vindex="${vIdx}" data-real-index="${origIdx}">
         <div class="album-cube">
-          <!-- Front Cover Face (Childlike Doodle Art) -->
+          <!-- Front Cover Face (Modern Aesthetic Art) -->
           <div class="cube-face cube-front">
             <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
             <div class="album-glass-sheen"></div>
-            <div class="album-inner-border"></div>
             <!-- Top Left Year Badge -->
-            <div style="position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.65); backdrop-filter:blur(6px); border:1px solid rgba(246,210,138,0.3); color:var(--gold); font-size:0.65rem; font-family:var(--font-eng-title); padding:2px 8px; border-radius:50px; z-index:5;">
+            <div style="position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); color:#e8dcc4; font-size:0.65rem; font-family:var(--font-eng-title); padding:2px 8px; border-radius:3px; z-index:5; font-weight:600; letter-spacing:0.5px;">
               ${album.year || '2025'}
             </div>
           </div>
 
-          <!-- Left Spine (Tactile CD Jewel Case Spine with 3D Depth - Title Only) -->
+          <!-- Left Spine (Seamless Flat Tactile CD Spine - Title Only) -->
           <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#242f3a'};">
             <div class="spine-inner-text">
               <span class="spine-title">${album.title}</span>
@@ -544,7 +543,7 @@ You have set my feet upon the rock!`
           </div>
 
           <!-- Top Thickness Edge -->
-          <div class="cube-face cube-top" style="background: ${album.spine_bg || '#242f3a'}; filter: brightness(1.2);"></div>
+          <div class="cube-face cube-top" style="background: ${album.spine_bg || '#242f3a'}; filter: brightness(1.15);"></div>
 
           <!-- Bottom Thickness Edge -->
           <div class="cube-face cube-bottom"></div>
@@ -553,9 +552,8 @@ You have set my feet upon the rock!`
           <div class="cube-face cube-back">
             <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
             <div class="album-glass-sheen"></div>
-            <div class="album-inner-border"></div>
             <!-- Top Right Year Badge -->
-            <div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.65); backdrop-filter:blur(6px); border:1px solid rgba(246,210,138,0.3); color:var(--gold); font-size:0.65rem; font-family:var(--font-eng-title); padding:2px 8px; border-radius:50px; z-index:5;">
+            <div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); color:#e8dcc4; font-size:0.65rem; font-family:var(--font-eng-title); padding:2px 8px; border-radius:3px; z-index:5; font-weight:600; letter-spacing:0.5px;">
               ${album.year || '2025'}
             </div>
           </div>
