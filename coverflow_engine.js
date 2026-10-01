@@ -412,22 +412,22 @@ You have set my feet upon the rock!`
                   <div class="album-inner-border"></div>
                 </div>
 
-                <!-- Left Spine (Thick Colored Side Facing Viewer) -->
+                <!-- Left Spine (Tactile CD Jewel Case Spine with 3D Depth) -->
                 <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#1c1815'};">
-                  <span class="spine-inner-text" style="color: ${album.spine_color || '#ffffff'};">
-                    ${album.spine_text || (album.title + ' · ' + album.artist)}
-                  </span>
+                  <div class="spine-cap-top"></div>
+                  <div class="spine-inner-layout">
+                    <span class="spine-catalog">HMP-${String(idx + 1).padStart(3, '0')}</span>
+                    <span class="spine-title">${album.title}</span>
+                    <span class="spine-artist">${album.artist}</span>
+                  </div>
+                  <div class="spine-cap-bottom"></div>
                 </div>
 
-                <!-- Right Spine -->
-                <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1c1815'};">
-                  <span class="spine-inner-text" style="color: ${album.spine_color || '#ffffff'};">
-                    ${album.spine_text || (album.title + ' · ' + album.artist)}
-                  </span>
-                </div>
+                <!-- Right Spine (Thickness Edge) -->
+                <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1c1815'};"></div>
 
                 <!-- Top Thickness Edge -->
-                <div class="cube-face cube-top" style="background: ${album.spine_bg || '#1c1815'}; filter: brightness(1.25);"></div>
+                <div class="cube-face cube-top" style="background: ${album.spine_bg || '#1c1815'}; filter: brightness(1.2);"></div>
 
                 <!-- Bottom Thickness Edge -->
                 <div class="cube-face cube-bottom"></div>
@@ -462,7 +462,7 @@ You have set my feet upon the rock!`
             <span class="cf-tag font-eng-title" id="cfAlbumYear">${albums[currentIndex]?.year || '2025'} RELEASE</span>
             <h2 class="cf-album-title" id="cfAlbumTitle">${albums[currentIndex]?.title}</h2>
             <p class="cf-album-artist" id="cfAlbumArtist">${albums[currentIndex]?.artist}</p>
-            <button class="btn-open-booklet" onclick="openSongDetailView(Math.round(currentProgress))">
+            <button class="btn-open-booklet" onclick="openActiveSongDetail()" type="button">
               <i class="fas fa-music"></i> 翻开单曲与歌谱 (View Song & Scores)
             </button>
           </div>
@@ -491,24 +491,21 @@ You have set my feet upon the rock!`
         </div>
       </div>
 
-      <!-- 4. Floating Mini-Player Pill -->
-      <div class="floating-mini-player" id="floatingMiniPlayer" onclick="handleMiniPlayerClick()">
-        <div class="mini-left">
+      <!-- 4. Floating Mini-Player Pill (Playback Only, No Modal Jump) -->
+      <div class="floating-mini-player" id="floatingMiniPlayer">
+        <div class="mini-left" onclick="toggleAudioPlay()">
           <div class="mini-eq-bars" id="miniEqBars">
             <span></span><span></span><span></span>
           </div>
           <img id="miniCover" src="${albums[0]?.cover_url}" alt="Cover">
           <div class="mini-meta">
             <span id="miniTrackTitle" class="mini-track-name">${albums[0]?.title}</span>
-            <span id="miniTrackArtist" class="mini-track-artist">${albums[0]?.artist}</span>
+            <span id="miniTrackArtist" class="mini-track-artist">${albums[0]?.artist} · 试听片段</span>
           </div>
         </div>
         <div class="mini-right">
-          <button class="mini-play-btn" onclick="event.stopPropagation(); toggleAudioPlay();">
+          <button class="mini-play-btn" onclick="event.stopPropagation(); toggleAudioPlay();" title="播放 / 暂停试听">
             <i id="miniPlayIcon" class="fas fa-play"></i>
-          </button>
-          <button class="mini-queue-btn" onclick="event.stopPropagation(); openSongDetailView(Math.round(currentProgress));" title="查看歌谱与歌词">
-            <i class="fas fa-file-alt"></i>
           </button>
         </div>
       </div>
@@ -547,14 +544,14 @@ You have set my feet upon the rock!`
     requestAnimationFrame(tick);
   }
 
-  // Continuous 3D Transform Rendering for All Slabs
+  // Continuous 3D Transform Rendering for All Slabs (Unified 3D Shelf with Visible Spines)
   function render3DCoverflow() {
     const boxes = document.querySelectorAll('.album-3d-box');
     if (!boxes.length) return;
 
     const isMobile = window.innerWidth <= 768;
-    const stepX = isMobile ? 52 : 72;
-    const centerGap = isMobile ? 38 : 58;
+    const stepX = isMobile ? 65 : 95;
+    const centerGap = isMobile ? 40 : 65;
 
     const activeIntIdx = Math.round(currentProgress);
 
@@ -567,28 +564,31 @@ You have set my feet upon the rock!`
       let rotY = 0;
       let scale = 1;
       let opacity = 1;
-      let zIndex = Math.round(120 - absOffset * 10);
-
+      
+      // All albums angle uniformly towards the right shelf orientation so their left spine is always visible
       if (offset <= 0) {
-        // Center to Left side slabs
+        // Active album and albums stacked to the left
         const pLeft = Math.min(1, Math.max(0, -offset));
-        rotY = 62 + (75 - 62) * pLeft;
+        rotY = 56 + 10 * pLeft; // 56deg at center, 66deg when stacked
         x = offset * stepX - centerGap * pLeft;
-        z = 90 - (90 - (-absOffset * 44)) * pLeft;
-        scale = 1.12 - (1.12 - Math.max(0.68, 1 - absOffset * 0.038)) * pLeft;
-        opacity = 1 - (1 - Math.max(0.25, 1 - absOffset * 0.09)) * pLeft;
+        z = 100 - absOffset * 48;
+        scale = 1.15 - pLeft * 0.22 - Math.max(0, absOffset - 1) * 0.04;
+        opacity = Math.max(0.15, 1 - absOffset * 0.12);
       } else {
-        // Center to Right side slabs
+        // Albums stacked to the right
         const pRight = Math.min(1, Math.max(0, offset));
-        rotY = 62 + (-75 - 62) * pRight;
+        rotY = 56 + 4 * pRight; // 56deg to 60deg, left spine remains beautifully visible
         x = offset * stepX + centerGap * pRight;
-        z = 90 - (90 - (-absOffset * 44)) * pRight;
-        scale = 1.12 - (1.12 - Math.max(0.68, 1 - absOffset * 0.038)) * pRight;
-        opacity = 1 - (1 - Math.max(0.25, 1 - absOffset * 0.09)) * pRight;
+        z = 100 - absOffset * 48;
+        scale = 1.15 - pRight * 0.22 - Math.max(0, absOffset - 1) * 0.04;
+        opacity = Math.max(0.15, 1 - absOffset * 0.12);
       }
 
+      // Stacking order: active album highest, farther albums lower
+      let zIndex = 1000 - Math.round(absOffset * 30);
+
       box.classList.toggle('active', i === activeIntIdx);
-      box.style.transform = `translateX(${x.toFixed(2)}px) translateZ(${z.toFixed(2)}px) rotateY(${rotY.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+      box.style.transform = `translateX(${x.toFixed(2)}px) translateZ(${z.toFixed(2)}px) rotateY(${rotY.toFixed(2)}deg) scale(${Math.max(0.5, scale).toFixed(3)})`;
       box.style.zIndex = zIndex;
       box.style.opacity = Math.max(0, Math.min(1, opacity)).toFixed(3);
     });
@@ -760,12 +760,30 @@ You have set my feet upon the rock!`
         if (e.key === 'ArrowRight') navigateCoverFlow(1);
       }
     });
+
+    // Global resilience handler for booklet opening
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-open-booklet');
+      if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.openActiveSongDetail();
+      }
+    });
   }
 
   // =================================================================
   // 🌟 IMMERSIVE SINGLE SONG DETAIL VIEW (1 Album = 1 Single Track)
   // =================================================================
+  window.openActiveSongDetail = function() {
+    const activeIdx = Math.max(0, Math.min(albums.length - 1, Math.round(currentProgress)));
+    window.openSongDetailView(activeIdx);
+  };
+
   window.openSongDetailView = function(idx) {
+    if (typeof idx !== 'number' || isNaN(idx)) {
+      idx = Math.max(0, Math.min(albums.length - 1, Math.round(currentProgress)));
+    }
     activeSong = albums[idx] || albums[0];
     currentIndex = idx;
     targetProgress = idx;

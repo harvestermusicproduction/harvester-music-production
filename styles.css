@@ -2482,10 +2482,9 @@ section[id], div[id^="section-"] {
 /* 3D Realistic Album Slabs */
 .album-3d-box {
   position: absolute;
-  width: 230px;
-  height: 310px;
+  width: 240px;
+  height: 320px;
   transform-style: preserve-3d;
-  transition: opacity 0.3s ease;
   cursor: pointer;
   will-change: transform, opacity;
 }
@@ -2500,22 +2499,22 @@ section[id], div[id^="section-"] {
 .cube-face {
   position: absolute;
   box-sizing: border-box;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
 }
 
 /* 1. Front Cover Face */
 .cube-face.cube-front {
   top: 0;
   left: 0;
-  width: 230px;
-  height: 310px;
-  transform: translateZ(9px);
+  width: 240px;
+  height: 320px;
+  transform: translateZ(11px);
   border-radius: 4px;
   overflow: hidden;
   background: #181411;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.9);
 }
 
 .cube-face.cube-front img {
@@ -2531,7 +2530,7 @@ section[id], div[id^="section-"] {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.03) 40%, transparent 60%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.04) 40%, transparent 60%);
   pointer-events: none;
 }
 
@@ -2541,66 +2540,104 @@ section[id], div[id^="section-"] {
   left: 0;
   right: 0;
   bottom: 0;
-  border: 1px solid rgba(246, 210, 138, 0.25);
+  border: 1px solid rgba(246, 210, 138, 0.3);
   pointer-events: none;
   border-radius: 3px;
 }
 
-/* 2. Left Spine */
+/* 2. Left Spine (High-End Tactile CD Jewel Case Spine) */
 .cube-face.cube-spine-left {
   top: 0;
-  left: 0;
-  width: 18px;
-  height: 310px;
-  transform-origin: 0% 50%;
-  transform: rotateY(-90deg) translateX(-9px);
-  border-left: 1px solid rgba(255, 255, 255, 0.35);
-  border-right: 1px solid rgba(0, 0, 0, 0.8);
+  left: -11px;
+  width: 22px;
+  height: 320px;
+  transform: rotateY(-90deg);
+  border-left: 1px solid rgba(255, 255, 255, 0.45);
+  border-right: 1px solid rgba(0, 0, 0, 0.85);
   display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  overflow: hidden;
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.35), inset -2px 0 6px rgba(0, 0, 0, 0.75);
+  background-image: linear-gradient(to right, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 30%, rgba(0,0,0,0.35) 100%);
+}
+
+.spine-cap-top, .spine-cap-bottom {
+  width: 12px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 1px;
+}
+
+.spine-inner-layout {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7);
+  gap: 12px;
+  height: 100%;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  user-select: none;
+}
+
+.spine-catalog {
+  font-family: var(--font-eng-title);
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.spine-title {
+  font-family: var(--font-songti), serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.spine-artist {
+  font-family: var(--font-eng-title);
+  font-size: 0.68rem;
+  color: var(--gold);
+  letter-spacing: 1px;
 }
 
 /* 3. Right Spine */
 .cube-face.cube-spine-right {
   top: 0;
-  right: 0;
-  width: 18px;
-  height: 310px;
-  transform-origin: 100% 50%;
-  transform: rotateY(90deg) translateX(9px);
-  border-right: 1px solid rgba(255, 255, 255, 0.35);
-  border-left: 1px solid rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.7);
+  right: -11px;
+  width: 22px;
+  height: 320px;
+  transform: rotateY(90deg);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 1px solid rgba(0, 0, 0, 0.85);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
 }
 
 /* 4. Top Thickness Edge */
 .cube-face.cube-top {
-  top: 0;
+  top: -11px;
   left: 0;
-  width: 230px;
-  height: 18px;
-  transform-origin: 50% 0%;
-  transform: rotateX(90deg) translateY(-9px);
-  border-top: 1px solid rgba(255, 255, 255, 0.4);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+  width: 240px;
+  height: 22px;
+  transform: rotateX(90deg);
+  border-top: 1px solid rgba(255, 255, 255, 0.45);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.65);
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
 /* 5. Bottom Thickness Edge */
 .cube-face.cube-bottom {
-  bottom: 0;
+  bottom: -11px;
   left: 0;
-  width: 230px;
-  height: 18px;
-  transform-origin: 50% 100%;
-  transform: rotateX(-90deg) translateY(9px);
+  width: 240px;
+  height: 22px;
+  transform: rotateX(-90deg);
   background: #0d0b09;
   border-bottom: 1px solid rgba(0, 0, 0, 0.9);
 }
@@ -2609,9 +2646,9 @@ section[id], div[id^="section-"] {
 .cube-face.cube-back {
   top: 0;
   left: 0;
-  width: 230px;
-  height: 310px;
-  transform: rotateY(180deg) translateZ(9px);
+  width: 240px;
+  height: 320px;
+  transform: rotateY(180deg) translateZ(11px);
   background: #14110e;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 3px;
@@ -2657,22 +2694,6 @@ section[id], div[id^="section-"] {
   opacity: 0.5;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 6px;
-}
-
-/* Spine Text */
-.spine-inner-text {
-  display: block;
-  white-space: nowrap;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 1px;
-  transform: rotate(90deg);
-  transform-origin: center center;
-  width: 290px;
-  text-align: center;
-  user-select: none;
-  font-family: var(--font-songti), serif;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 /* Floor Shadow */
