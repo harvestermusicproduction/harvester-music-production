@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=32.0.0">
+  <link rel="stylesheet" href="styles.css?v=33.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* --- 📏 Compact Header Explicit (超精致小巧导航栏) --- */
@@ -90,33 +90,22 @@
       display: block;
     }
 
-    /* 🏷️ Tilted Pop Art Sticker */
-    .paper-pop-sticker {
+    /* 🏷️ Attached Brand Logo Sticker (替代原红色方块) */
+    .paper-pop-sticker, .paper-logo-sticker {
       position: absolute;
-      top: 18px;
+      top: 14px;
       right: 80px;
-      background: #ff334b;
-      color: #fff;
+      background: rgba(255, 255, 255, 0.98);
       padding: 6px 14px;
-      border-radius: 4px;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 900;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      box-shadow: 2px 4px 10px rgba(0,0,0,0.3);
-      transform: rotate(6deg);
-      border: 2px solid #fff;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      transform: rotate(5deg);
+      border: 1.5px dashed rgba(204, 160, 82, 0.8);
       z-index: 10;
       pointer-events: none;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      line-height: 1.1;
-    }
-    .paper-pop-sticker span:first-child {
-      font-size: 0.85rem;
-      color: #ffe600;
+      justify-content: center;
     }
 
     /* Top Paper Header */
@@ -577,10 +566,9 @@
             </svg>
           </div>
 
-          <!-- 🏷️ Tilted Pop Art Sticker -->
-          <div class="paper-pop-sticker">
-            <span>HARVESTER</span>
-            <span>MUSIC FILE</span>
+          <!-- 🏷️ Attached Brand Logo Sticker (替代原红色方块) -->
+          <div class="paper-pop-sticker paper-logo-sticker">
+            <img src="assets/logo.png" alt="Harvester Logo" style="height: 26px; width: auto; object-fit: contain;">
           </div>
 
           <!-- 📄 White / Cream Stationery Paper Card -->
@@ -591,8 +579,8 @@
               <span class="paper-top-tag">IDEAS IN WORSHIP ♫</span>
               <h2 class="paper-title-main">HARVESTER</h2>
               <div class="paper-title-sub">
-                <h3>创作者同工档案</h3>
-                <span>COLLABORATION FILE</span>
+                <h3>联络我们</h3>
+                <span>Contact Us</span>
               </div>
               <div class="paper-meta-rule">DESIGN · WORSHIP · MUSIC ARCHIVE</div>
             </div>
@@ -611,29 +599,18 @@
                 </div>
               </div>
 
-              <!-- Row 2: 邮箱 -->
+              <!-- Row 2: 联络号码/邮箱 -->
               <div class="paper-row">
                 <div class="paper-row-label">
-                  联络邮箱
-                  <small>EMAIL</small>
+                  联络号码/邮箱
+                  <small>PHONE NO. / EMAIL</small>
                 </div>
                 <div class="paper-row-input">
-                  <input type="email" id="contactEmail" class="paper-input" placeholder="example@email.com" required>
+                  <input type="text" id="contactEmail" class="paper-input" placeholder="您的联络电话或电子邮箱..." required>
                 </div>
               </div>
 
-              <!-- Row 3: 机构/所在地 -->
-              <div class="paper-row">
-                <div class="paper-row-label">
-                  所在地点
-                  <small>LOCATION</small>
-                </div>
-                <div class="paper-row-input">
-                  <input type="text" id="contactLocation" class="paper-input" placeholder="城市 / 教会 / 机构 (选填)">
-                </div>
-              </div>
-
-              <!-- Row 4: 合作方向 (Checkboxes) -->
+              <!-- Row 3: 合作意向 (Checkboxes + 自定义填写) -->
               <div class="paper-row" style="align-items: flex-start; padding: 12px 0;">
                 <div class="paper-row-label" style="margin-top: 2px;">
                   合作意向
@@ -641,25 +618,26 @@
                 </div>
                 <div class="paper-checkbox-grid">
                   <label class="paper-check-item">
-                    <input type="checkbox" name="purpose" value="词曲创作" checked>
+                    <input type="checkbox" name="purpose" value="词曲创作/投稿" checked>
                     <span>词曲创作/投稿</span>
                   </label>
                   <label class="paper-check-item">
-                    <input type="checkbox" name="purpose" value="编曲制作">
+                    <input type="checkbox" name="purpose" value="音乐制作/编曲">
                     <span>音乐制作/编曲</span>
                   </label>
                   <label class="paper-check-item">
-                    <input type="checkbox" name="purpose" value="敬拜交流">
-                    <span>敬拜赞美交流</span>
-                  </label>
-                  <label class="paper-check-item">
-                    <input type="checkbox" name="purpose" value="视觉其他">
+                    <input type="checkbox" name="purpose" value="视觉/版权合作">
                     <span>视觉/版权合作</span>
+                  </label>
+                  <label class="paper-check-item" style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                    <input type="checkbox" name="purpose" value="其他" id="checkOtherPurpose" onchange="document.getElementById('contactPurposeOther').focus();">
+                    <span>其他：</span>
+                    <input type="text" id="contactPurposeOther" placeholder="可在此自行填写合作意向..." oninput="document.getElementById('checkOtherPurpose').checked = true;" style="flex:1; border:none; border-bottom:1.5px dashed #999; background:transparent; font-family:'Caveat', 'Times New Roman', serif; font-size:1.15rem; color:#111; outline:none; padding:2px 6px;">
                   </label>
                 </div>
               </div>
 
-              <!-- Row 5: 留言详情 -->
+              <!-- Row 4: 详细留言 -->
               <div class="paper-row" style="align-items: flex-start; border-bottom: none; padding-top: 12px;">
                 <div class="paper-row-label" style="margin-top: 4px;">
                   详细留言
@@ -677,8 +655,8 @@
                   <span>HARVESTER MUSIC &bull; SEED &amp; HARVEST</span>
                 </div>
                 <button type="submit" class="btn-rubber-stamp" id="btnContactSubmit">
-                  <i class="fas fa-stamp"></i>
-                  <span>📮 盖章提交 / SUBMIT FILE</span>
+                  <i class="fas fa-paper-plane"></i>
+                  <span>📮 发送 / SUBMIT</span>
                 </button>
               </div>
 
@@ -755,10 +733,15 @@
       const db = window.supabase;
       if(!db) return alert("系统连接超时");
 
-      const checkedPurposes = Array.from(document.querySelectorAll('input[name="purpose"]:checked')).map(cb => cb.value).join(', ');
-      const locationVal = document.getElementById('contactLocation')?.value || '';
-      const fullMsg = (locationVal ? `[地点/机构]: ${locationVal}\n` : '') + 
-                      (checkedPurposes ? `[合作方向]: ${checkedPurposes}\n\n` : '') + 
+      const selectedPurposes = Array.from(document.querySelectorAll('input[name="purpose"]:checked')).map(cb => {
+        if(cb.value === '其他') {
+          const customVal = document.getElementById('contactPurposeOther')?.value.trim();
+          return customVal ? `其他: ${customVal}` : '其他';
+        }
+        return cb.value;
+      }).join(', ');
+
+      const fullMsg = (selectedPurposes ? `[合作意向]: ${selectedPurposes}\n\n` : '') + 
                       document.getElementById('contactMsg').value;
 
       const data = {
@@ -768,18 +751,18 @@
         status: 'pending'
       };
 
-      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>盖章处理中...</span>`;
+      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>发送处理中...</span>`;
       btn.disabled = true;
 
       try {
         const { error } = await db.from('contact_messages').insert([data]);
         if (error) throw error;
-        alert("✅ 档案已成功提交！我们会尽快与您联络。");
+        alert("✅ 消息已成功发送！我们会尽快与您联络。");
         e.target.reset();
       } catch(err) {
-        alert("❌ 提交失败：" + err.message);
+        alert("❌ 发送失败：" + err.message);
       } finally {
-        btn.innerHTML = `<i class="fas fa-stamp"></i> <span>📮 盖章提交 / SUBMIT FILE</span>`;
+        btn.innerHTML = `<i class="fas fa-paper-plane"></i> <span>📮 发送 / SUBMIT</span>`;
         btn.disabled = false;
       }
     });
