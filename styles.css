@@ -2425,33 +2425,51 @@ section[id], div[id^="section-"] {
 }
 
 .pill-segmented-control {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(246, 210, 138, 0.25);
+  background: rgba(28, 36, 45, 0.75);
+  border: 1.5px solid rgba(246, 210, 138, 0.3);
   border-radius: 50px;
   padding: 4px;
   display: inline-flex;
+  align-items: center;
   gap: 4px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  max-width: 100%;
+  overflow-x: auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.pill-segmented-control::-webkit-scrollbar {
+  display: none;
 }
 
 .pill-btn {
   background: transparent;
   color: var(--text-muted);
   border: none;
-  padding: 7px 20px;
+  padding: 6px 16px;
   border-radius: 50px;
-  font-size: 0.82rem;
-  font-family: var(--font-eng-title);
+  font-size: 0.8rem;
+  font-family: var(--font-songti), serif;
   letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pill-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .pill-btn.active {
-  background: var(--gold);
-  color: #12100e;
+  background: linear-gradient(135deg, #f6d28a 0%, #e8a848 100%);
+  color: #161c24;
   font-weight: 700;
-  box-shadow: 0 4px 12px rgba(246, 210, 138, 0.3);
+  box-shadow: 0 4px 12px rgba(246, 210, 138, 0.35);
 }
 
 .header-right .icon-btn {

@@ -423,6 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   <div style="flex:1; overflow:hidden;">
                     <h3 style="margin:0; color:#fff; font-size:1.1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:8px;">
                       ${s.title}
+                      <span style="color:var(--gold); font-size:0.7rem; background:rgba(246,210,138,0.15); border:1px solid rgba(246,210,138,0.35); padding:2px 8px; border-radius:4px; font-family:monospace; font-weight:bold;">${customMatch?.year || s.year || '2025'}</span>
                       ${s.id === latestId || s.is_latest ? '<span style="color:var(--gold); font-size:0.65rem; background:rgba(246,210,138,0.12); padding:2px 8px; border-radius:50px; border:1px solid rgba(246,210,138,0.3);">首推</span>' : ''}
                     </h3>
                     <p style="margin:4px 0 0; color:#888; font-size:0.8rem;">${s.artist || 'Harvester Worship'}</p>
@@ -754,7 +755,8 @@ document.addEventListener('DOMContentLoaded', () => {
         audio_url,
         spotify_url,
         score_url,
-        description
+        description,
+        year
       };
 
       let result;

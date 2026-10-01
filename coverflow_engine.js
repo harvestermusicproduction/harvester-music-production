@@ -282,7 +282,9 @@ You have set my feet upon the rock!`
     }
   ];
 
-  let albums = [...defaultAlbums];
+  let allAlbums = [...defaultAlbums];
+  let currentYearFilter = 'ALL';
+  let albums = [...allAlbums];
   let currentIndex = 0;
   let activeSong = null;
   let isPlaying = false;
@@ -306,9 +308,28 @@ You have set my feet upon the rock!`
     updatePlayerUI();
   });
 
+  // Extract unique available years sorted descending
+  function getAvailableYears() {
+    const years = Array.from(new Set(allAlbums.map(a => String(a.year || '2025')).filter(Boolean)));
+    years.sort((a, b) => b.localeCompare(a));
+    return years;
+  }
+
+  // Sort albums so songs of the same year are grouped together
+  function sortAlbumsByYear(list) {
+    return [...list].sort((a, b) => {
+      const yA = parseInt(a.year || '2025', 10);
+      const yB = parseInt(b.year || '2025', 10);
+      if (yB !== yA) return yB - yA;
+      return (a.title || '').localeCompare(b.title || '');
+    });
+  }
+
   // Initialize Engine
   async function init() {
     await fetchSupabaseSongs();
+    allAlbums = sortAlbumsByYear(allAlbums);
+    albums = [...allAlbums];
     renderAppLayout();
     setupEventListeners();
     setupInteractiveDrag();
@@ -338,14 +359,15 @@ You have set my feet upon the rock!`
           const mappedFromDb = songs.map((s, idx) => {
             const doodleFallback = childlikeDoodles[idx % childlikeDoodles.length];
             const customMatch = customAlbums?.find(c => c.id === s.id || c.title === s.title);
+            const songYear = s.year || customMatch?.year || "2025";
             
             return {
               id: s.id,
               title: s.title,
               title_en: customMatch?.title_en || "Harvester Single",
               artist: s.artist || customMatch?.artist || "Harvester Worship",
-              genre: customMatch?.genre || "Worship / CCM · 2025",
-              year: customMatch?.year || "2025",
+              genre: customMatch?.genre || `Worship / CCM · ${songYear}`,
+              year: songYear,
               theme_color: customMatch?.theme_color || ["#1c2b36", "#169b9b", "#3a2d10", "#b06d60", "#182736", "#255977", "#271b16", "#0f1c24", "#1f1d36"][idx % 9],
               spine_bg: customMatch?.spine_bg || ["#1877F2", "#00b894", "#f39c12", "#ea8676", "#0984e3", "#2d3436", "#e77f67", "#1b2a4a", "#6c5ce7"][idx % 9],
               spine_color: customMatch?.spine_color || "#ffffff",
@@ -370,9 +392,9 @@ You have set my feet upon the rock!`
             };
           });
 
-          albums = mappedFromDb;
+          allAlbums = sortAlbumsByYear(mappedFromDb);
         } else if (customAlbums) {
-          albums = customAlbums;
+          allAlbums = sortAlbumsByYear(customAlbums);
         }
       }
     } catch(e) {
@@ -385,8 +407,10 @@ You have set my feet upon the rock!`
     const stage = document.getElementById('coverflowStage');
     if (!stage) return;
 
+    const years = getAvailableYears();
+
     stage.innerHTML = `
-      <!-- 1. Top App Navigation Bar -->
+      <!-- 1. Top App Navigation Bar with Year Filters -->
       <div class="video-app-header">
         <div class="header-left">
           <div class="sound-bars">
@@ -399,8 +423,15 @@ You have set my feet upon the rock!`
         </div>
 
         <div class="header-center">
-          <div class="pill-segmented-control">
-            <button class="pill-btn active">🎵 单曲 (Singles)</button>
+          <div class="pill-segmented-control" id="yearFilterControl">
+            <button class="pill-btn ${currentYearFilter === 'ALL' ? 'active' : ''}" onclick="window.filterByYear('ALL')">
+              <span>🎵 全部 (All)</span>
+            </button>
+            ${years.map(yr => `
+              <button class="pill-btn ${currentYearFilter === yr ? 'active' : ''}" onclick="window.filterByYear('${yr}')">
+                <span>${yr} 年</span>
+              </button>
+            `).join('')}
           </div>
         </div>
 
@@ -412,71 +443,7 @@ You have set my feet upon the rock!`
       <!-- 2. 3D Coverflow Stage (1 Album = 1 Single Track · Arc Cylinder with Infinite Seamless Loop) -->
       <div class="shelf-wrapper" id="shelfWrapper">
         <div class="coverflow-carousel" id="coverflowCarousel" style="touch-action: pan-y; cursor: grab; user-select: none;">
-          ${(() => {
-            const M = albums.length || 1;
-            const repeatCount = Math.max(1, Math.ceil(12 / M));
-            const virtualList = [];
-            for (let r = 0; r < repeatCount; r++) {
-              albums.forEach((album, origIdx) => {
-                virtualList.push({ album, origIdx, vIdx: virtualList.length });
-              });
-            }
-            return virtualList.map(({ album, origIdx, vIdx }) => `
-              <div class="album-3d-box ${origIdx === currentIndex && vIdx === 0 ? 'active' : ''}" data-vindex="${vIdx}" data-real-index="${origIdx}">
-                <div class="album-cube">
-                  <!-- Front Cover Face (Childlike Doodle Art) -->
-                  <div class="cube-face cube-front">
-                    <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
-                    <div class="album-glass-sheen"></div>
-                    <div class="album-inner-border"></div>
-                  </div>
-
-                  <!-- Left Spine (Tactile CD Jewel Case Spine with 3D Depth) -->
-                  <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#1c1815'};">
-                    <div class="spine-inner-text">
-                      <span class="spine-catalog">HMP-${String(origIdx + 1).padStart(3, '0')}</span>
-                      <span class="spine-title">${album.title}</span>
-                      <span class="spine-artist">${album.artist}</span>
-                    </div>
-                  </div>
-
-                  <!-- Right Spine (Thickness Edge with Title) -->
-                  <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1c1815'};">
-                    <div class="spine-inner-text">
-                      <span class="spine-catalog">HMP-${String(origIdx + 1).padStart(3, '0')}</span>
-                      <span class="spine-title">${album.title}</span>
-                      <span class="spine-artist">${album.artist}</span>
-                    </div>
-                  </div>
-
-                  <!-- Top Thickness Edge -->
-                  <div class="cube-face cube-top" style="background: ${album.spine_bg || '#1c1815'}; filter: brightness(1.2);"></div>
-
-                  <!-- Bottom Thickness Edge -->
-                  <div class="cube-face cube-bottom"></div>
-
-                  <!-- Back Cover Face -->
-                  <div class="cube-face cube-back">
-                    <div class="cube-back-header">
-                      <span class="cube-back-title">${album.title}</span>
-                      <span class="cube-back-logo">HARVESTER</span>
-                    </div>
-                    <div class="cube-back-tracks">
-                      <div style="color:var(--gold); font-weight:bold; margin-bottom:6px;">01. ${album.title}</div>
-                      <div style="font-size:0.75rem; color:#aaa; line-height:1.4;">${album.artist} · ${album.year || '2025'}</div>
-                    </div>
-                    <div class="cube-back-footer">
-                      <span>© ${album.year || '2025'} HARVESTER</span>
-                      <span><i class="fas fa-barcode"></i></span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 3D Ground Shadow -->
-                <div class="album-shadow-3d"></div>
-              </div>
-            `).join('');
-          })()}
+          <!-- Populated by renderCarouselBoxes() -->
         </div>
 
         <!-- Shelf Meta Caption -->
@@ -484,8 +451,8 @@ You have set my feet upon the rock!`
           <button class="cf-nav-btn prev" onclick="navigateCoverFlow(-1)" title="上一首"><i class="fas fa-chevron-left"></i></button>
           <div class="active-album-info" id="activeAlbumInfo">
             <span class="cf-tag font-eng-title" id="cfAlbumYear">${albums[currentIndex]?.year || '2025'} RELEASE</span>
-            <h2 class="cf-album-title" id="cfAlbumTitle">${albums[currentIndex]?.title}</h2>
-            <p class="cf-album-artist" id="cfAlbumArtist">${albums[currentIndex]?.artist}</p>
+            <h2 class="cf-album-title" id="cfAlbumTitle">${albums[currentIndex]?.title || ''}</h2>
+            <p class="cf-album-artist" id="cfAlbumArtist">${albums[currentIndex]?.artist || ''}</p>
             <button class="btn-open-booklet" onclick="openActiveSongDetail()" type="button">
               <i class="fas fa-music"></i> 翻开单曲与歌谱 (View Song & Scores)
             </button>
@@ -521,10 +488,10 @@ You have set my feet upon the rock!`
           <div class="mini-eq-bars" id="miniEqBars">
             <span></span><span></span><span></span>
           </div>
-          <img id="miniCover" src="${albums[0]?.cover_url}" alt="Cover">
+          <img id="miniCover" src="${albums[0]?.cover_url || childlikeDoodles[0]}" alt="Cover">
           <div class="mini-meta">
-            <span id="miniTrackTitle" class="mini-track-name">${albums[0]?.title}</span>
-            <span id="miniTrackArtist" class="mini-track-artist">${albums[0]?.artist} · 试听片段</span>
+            <span id="miniTrackTitle" class="mini-track-name">${albums[0]?.title || ''}</span>
+            <span id="miniTrackArtist" class="mini-track-artist">${albums[0]?.artist || ''} · 试听片段</span>
           </div>
         </div>
         <div class="mini-right">
@@ -535,8 +502,120 @@ You have set my feet upon the rock!`
       </div>
     `;
 
+    renderCarouselBoxes();
     render3DCoverflow();
+    updateMetaBar();
   }
+
+  // Render the virtual 3D boxes for the currently active album list
+  function renderCarouselBoxes() {
+    const carousel = document.getElementById('coverflowCarousel');
+    if (!carousel) return;
+
+    const M = albums.length || 1;
+    const repeatCount = Math.max(1, Math.ceil(12 / M));
+    const virtualList = [];
+    for (let r = 0; r < repeatCount; r++) {
+      albums.forEach((album, origIdx) => {
+        virtualList.push({ album, origIdx, vIdx: virtualList.length });
+      });
+    }
+
+    carousel.innerHTML = virtualList.map(({ album, origIdx, vIdx }) => `
+      <div class="album-3d-box ${origIdx === currentIndex && vIdx === 0 ? 'active' : ''}" data-vindex="${vIdx}" data-real-index="${origIdx}">
+        <div class="album-cube">
+          <!-- Front Cover Face (Childlike Doodle Art) -->
+          <div class="cube-face cube-front">
+            <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
+            <div class="album-glass-sheen"></div>
+            <div class="album-inner-border"></div>
+            <!-- Top Left Year Badge -->
+            <div style="position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.65); backdrop-filter:blur(6px); border:1px solid rgba(246,210,138,0.3); color:var(--gold); font-size:0.65rem; font-family:var(--font-eng-title); padding:2px 8px; border-radius:50px; z-index:5;">
+              ${album.year || '2025'}
+            </div>
+          </div>
+
+          <!-- Left Spine (Tactile CD Jewel Case Spine with 3D Depth) -->
+          <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#1c1815'};">
+            <div class="spine-inner-text">
+              <span class="spine-catalog">${album.year || '2025'} · HMP-${String(origIdx + 1).padStart(3, '0')}</span>
+              <span class="spine-title">${album.title}</span>
+              <span class="spine-artist">${album.artist}</span>
+            </div>
+          </div>
+
+          <!-- Right Spine (Thickness Edge with Title) -->
+          <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1c1815'};">
+            <div class="spine-inner-text">
+              <span class="spine-catalog">${album.year || '2025'} · HMP-${String(origIdx + 1).padStart(3, '0')}</span>
+              <span class="spine-title">${album.title}</span>
+              <span class="spine-artist">${album.artist}</span>
+            </div>
+          </div>
+
+          <!-- Top Thickness Edge -->
+          <div class="cube-face cube-top" style="background: ${album.spine_bg || '#1c1815'}; filter: brightness(1.2);"></div>
+
+          <!-- Bottom Thickness Edge -->
+          <div class="cube-face cube-bottom"></div>
+
+          <!-- Back Cover Face -->
+          <div class="cube-face cube-back">
+            <div class="cube-back-header">
+              <span class="cube-back-title">${album.title}</span>
+              <span class="cube-back-logo">HARVESTER</span>
+            </div>
+            <div class="cube-back-tracks">
+              <div style="color:var(--gold); font-weight:bold; margin-bottom:6px;">01. ${album.title}</div>
+              <div style="font-size:0.75rem; color:#aaa; line-height:1.4;">${album.artist} · ${album.year || '2025'}</div>
+            </div>
+            <div class="cube-back-footer">
+              <span>© ${album.year || '2025'} HARVESTER</span>
+              <span><i class="fas fa-barcode"></i></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D Ground Shadow -->
+        <div class="album-shadow-3d"></div>
+      </div>
+    `).join('');
+  }
+
+  // Filter 3D Albums by Year
+  window.filterByYear = function(year) {
+    currentYearFilter = year;
+    if (year === 'ALL') {
+      albums = [...allAlbums];
+    } else {
+      albums = allAlbums.filter(a => String(a.year || '2025') === String(year));
+    }
+
+    if (!albums.length) {
+      albums = [...allAlbums];
+    }
+
+    currentProgress = 0;
+    targetProgress = 0;
+    currentIndex = 0;
+
+    // Update pill buttons active state
+    const pillBtns = document.querySelectorAll('#yearFilterControl .pill-btn');
+    pillBtns.forEach(btn => {
+      const isMatch = (year === 'ALL' && btn.innerText.includes('全部')) || btn.innerText.includes(year);
+      btn.classList.toggle('active', isMatch);
+    });
+
+    renderCarouselBoxes();
+    render3DCoverflow();
+    updateMetaBar();
+
+    if (year === 'ALL') {
+      window.showMorandiToast(`🎵 已展示全部单曲 (共 ${albums.length} 首)`);
+    } else {
+      window.showMorandiToast(`📅 已筛选：${year} 年度单曲 (共 ${albums.length} 首)`);
+    }
+  };
 
   // =================================================================
   // 🚀 HIGH PERFORMANCE 60FPS/120FPS PHYSICS LOOP (BUTTERY SMOOTH)
