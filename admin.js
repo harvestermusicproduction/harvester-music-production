@@ -813,8 +813,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }, { onConflict: 'key' });
 
       // Handle "Latest" featured single logic
-      if (isLatest && savedId) {
-        await db.from('site_config').upsert({ key: 'cfg_latest_music_id', value: savedId });
+      if (savedId) {
+        if (isLatest) {
+          await db.from('site_config').upsert({ key: 'cfg_latest_music_id', value: savedId }, { onConflict: 'key' });
+        } else {
+          const { data: currentLatest } = await db.from('site_config').select('value').eq('key', 'cfg_latest_music_id').maybeSingle();
+          if (currentLatest?.value === savedId) {
+            await db.from('site_config').delete().eq('key', 'cfg_latest_music_id');
+          }
+        }
       }
 
       alert("✅ 单曲与 3D 唱片档案已成功保存并实时同步全站！");

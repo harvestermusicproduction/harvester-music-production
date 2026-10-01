@@ -163,14 +163,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchLatestMusicForHome() {
     try {
-      const { data: s } = await db.from('music_works').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
-      if (s) {
-        const titleEl = document.getElementById('latest_title') || document.getElementById('cfg_homeSongTitle');
-        if (titleEl) titleEl.innerText = s.title;
-        const coverEl = document.getElementById('latest_cover') || document.getElementById('cfg_homeSongCover');
-        if (coverEl) coverEl.src = s.cover_url || 'assets/placeholder.jpg';
+      let featuredSong = null;
+      const featuredId = siteConfigs['cfg_latest_music_id'];
+      
+      // Parse custom albums JSON if available
+      let customAlbums = [];
+      if (siteConfigs['cfg_albums_custom_json']) {
+        try { customAlbums = JSON.parse(siteConfigs['cfg_albums_custom_json']); } catch(e){}
       }
-    } catch(e) {}
+
+      // 1. Try fetching by configured latest_music_id (首推单曲)
+      if (featuredId) {
+        const { data: byId } = await db.from('music_works').select('*').eq('id', featuredId).maybeSingle();
+        if (byId) {
+          featuredSong = byId;
+        } else if (Array.isArray(customAlbums)) {
+          featuredSong = customAlbums.find(a => a.id === featuredId);
+        }
+      }
+
+      // 2. Fallback to latest created in database if not set
+      if (!featuredSong) {
+        const { data: latest } = await db.from('music_works').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle();
+        if (latest) {
+          featuredSong = latest;
+        } else if (Array.isArray(customAlbums) && customAlbums.length > 0) {
+          featuredSong = customAlbums[0];
+        }
+      }
+
+      // 3. Render into Home Page
+      if (featuredSong) {
+        const customMatch = Array.isArray(customAlbums) ? customAlbums.find(a => a.id === featuredSong.id || a.title === featuredSong.title) : null;
+        const songTitle = featuredSong.title;
+        const songArtist = customMatch?.artist || featuredSong.artist || 'Harvester Worship';
+        const songCover = customMatch?.cover_url || featuredSong.cover_url || 'assets/logo.png';
+        const songAudio = featuredSong.audio_url || customMatch?.youtube_url || customMatch?.audio_url || '';
+
+        const titleEl = document.getElementById('cfg_homeSongTitle') || document.getElementById('latest_title');
+        if (titleEl) {
+          titleEl.innerHTML = `${songTitle} <span style="display:block; font-size:0.95rem; color:var(--gold); font-family:var(--font-serif); margin-top:6px; font-weight:normal; letter-spacing:1px;">${songArtist}</span>`;
+        }
+
+        const coverEl = document.getElementById('cfg_homeSongCover') || document.getElementById('latest_cover');
+        if (coverEl) coverEl.src = songCover;
+
+        const ytEl = document.getElementById('cfg_homeSongYT');
+        if (ytEl) {
+          if (songAudio && songAudio.startsWith('http')) {
+            ytEl.href = songAudio;
+            ytEl.innerHTML = '<i class="fab fa-youtube"></i> WATCH ON YOUTUBE';
+            ytEl.style.display = 'inline-flex';
+          } else {
+            ytEl.href = 'music.html';
+            ytEl.innerHTML = '<i class="fas fa-compact-disc"></i> 聆听 3D 唱片';
+            ytEl.style.display = 'inline-flex';
+          }
+        }
+      }
+    } catch(e) {
+      console.warn("fetchLatestMusicForHome note:", e);
+    }
   }
 
   // --- 3. Dynamic Modules ---
