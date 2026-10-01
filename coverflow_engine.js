@@ -1001,12 +1001,12 @@ You have set my feet upon the rock!`
           <div class="accordion-booklet-stage">
             
             <!-- FOLD 1: 沙色莫兰迪 (WARM KRAFT SAND CREAM) -->
-            <div class="accordion-panel unfold-panel-1" style="background:#dfd5c4; color:#2c241c; border-radius:12px 0 0 12px; padding:20px; border-right:1px solid #c9bda8;">
+            <div class="accordion-panel unfold-panel-1" style="background:#dfd5c4; color:#2c241c; border-radius:0; padding:22px; border-right:1px solid #c9bda8;">
               <div>
                 <!-- Top Polaroid Photo (01 badge) -->
-                <div style="width:100%; height:130px; border-radius:8px; overflow:hidden; border:2px solid #c9bda8; position:relative; margin-bottom:12px;">
+                <div style="width:100%; height:130px; border-radius:0; overflow:hidden; border:1px solid #c9bda8; position:relative; margin-bottom:12px;">
                   <img src="${activeSong.photo_1 || activeSong.cover_url}" alt="Art 01" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='assets/logo.png'">
-                  <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:4px; font-weight:700;">01</div>
+                  <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">01</div>
                 </div>
 
                 <div style="border-bottom:1px solid rgba(44,36,28,0.15); padding-bottom:8px; margin-bottom:12px;">
@@ -1026,7 +1026,7 @@ ${activeSong.lyrics}
             </div>
 
             <!-- FOLD 2: 勃艮第红莫兰迪 (MUTED BURGUNDY / WINE) -->
-            <div class="accordion-panel unfold-panel-2" style="background:#5c2734; color:#fae8ec; padding:24px; border-right:1px solid #451c27;">
+            <div class="accordion-panel unfold-panel-2" style="background:#5c2734; color:#fae8ec; border-radius:0; padding:24px; border-right:1px solid #451c27;">
               <div>
                 <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:8px; margin-bottom:14px;">
                   <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:var(--gold);">FOLD 02 · WORSHIP INSPIRATION</span>
@@ -1035,7 +1035,7 @@ ${activeSong.lyrics}
 
                 <div style="font-family:var(--font-songti), serif; font-size:0.95rem; line-height:1.8; color:#f3d7df; space-y:10px;">
                   ${activeSong.scripture ? `
-                    <div style="background:rgba(0,0,0,0.25); border-left:3px solid var(--gold); padding:10px 12px; border-radius:4px; font-size:0.85rem; color:var(--gold); margin-bottom:12px;">
+                    <div style="background:rgba(0,0,0,0.25); border-left:3px solid var(--gold); padding:10px 12px; border-radius:0; font-size:0.85rem; color:var(--gold); margin-bottom:12px;">
                       ${activeSong.scripture}
                     </div>
                   ` : ''}
@@ -1046,20 +1046,20 @@ ${activeSong.lyrics}
               </div>
 
               <!-- Bottom Polaroid photo -->
-              <div style="width:100%; height:130px; border-radius:8px; overflow:hidden; border:2px solid rgba(255,255,255,0.2); position:relative; margin-top:16px;">
+              <div style="width:100%; height:130px; border-radius:0; overflow:hidden; border:1px solid rgba(255,255,255,0.2); position:relative; margin-top:16px;">
                 <img src="${activeSong.photo_2 || activeSong.cover_url}" alt="Art 02" style="width:100%; height:100%; object-fit:cover; opacity:0.9;" onerror="this.src='${activeSong.cover_url}'">
-                <div style="position:absolute; bottom:6px; left:6px; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); color:var(--gold); font-family:var(--font-times); font-size:0.7rem; padding:2px 8px; border-radius:4px;">
+                <div style="position:absolute; bottom:6px; left:6px; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); color:var(--gold); font-family:var(--font-times); font-size:0.7rem; padding:2px 8px; border-radius:0;">
                   WORSHIP HEART · 02
                 </div>
               </div>
             </div>
 
             <!-- FOLD 3: 浅灰麻布莫兰迪 (MUTED LINEN / STONE GREY) -->
-            <div class="accordion-panel unfold-panel-3" style="background:#dedad4; color:#26221f; border-radius:0 12px 12px 0; padding:24px;">
+            <div class="accordion-panel unfold-panel-3" style="background:#dedad4; color:#26221f; border-radius:0; padding:24px;">
               <div>
-                <div style="width:100%; height:150px; border-radius:8px; overflow:hidden; border:2px solid #c6c0b6; position:relative; margin-bottom:16px;">
+                <div style="width:100%; height:150px; border-radius:0; overflow:hidden; border:1px solid #c6c0b6; position:relative; margin-bottom:16px;">
                   <img src="${activeSong.photo_3 || activeSong.cover_url}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='${activeSong.cover_url}'">
-                  <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:4px; font-weight:700;">03</div>
+                  <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">03</div>
                 </div>
 
                 <div style="border-bottom:1px solid rgba(38,34,31,0.15); padding-bottom:8px; margin-bottom:12px;">

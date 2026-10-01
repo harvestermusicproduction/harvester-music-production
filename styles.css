@@ -3045,7 +3045,8 @@ body.immersive-modal-active header {
   max-width: 295px;
   min-height: 520px;
   box-sizing: border-box;
-  box-shadow: -8px 0 25px rgba(0, 0, 0, 0.35), inset 1px 0 0 rgba(255, 255, 255, 0.15);
+  border-radius: 0 !important;
+  box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35), inset 1px 0 0 rgba(255, 255, 255, 0.12);
   transform-origin: left center;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
   display: flex;
@@ -3054,15 +3055,15 @@ body.immersive-modal-active header {
   will-change: transform, opacity;
 }
 
-/* Crease Line & Inset Shadow between folds */
+/* Sharp Paper Crease Hinge Line between folds */
 .accordion-panel::before {
   content: '';
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  width: 10px;
-  background: linear-gradient(to right, rgba(0,0,0,0.22), transparent);
+  width: 8px;
+  background: linear-gradient(to right, rgba(0,0,0,0.32), rgba(0,0,0,0.06) 70%, transparent);
   pointer-events: none;
   z-index: 10;
 }
@@ -3072,82 +3073,85 @@ body.immersive-modal-active header {
   top: 0;
   bottom: 0;
   right: 0;
-  width: 10px;
-  background: linear-gradient(to left, rgba(0,0,0,0.18), transparent);
+  width: 8px;
+  background: linear-gradient(to left, rgba(0,0,0,0.22), transparent);
   pointer-events: none;
   z-index: 10;
 }
 
-/* Authentic physical accordion unfolding sequentially from Right to Left (Fold 3 -> Fold 2 -> Fold 1) */
-@keyframes accordionUnfoldRight3 {
+/* 📜 Authentic 3D Paper Accordion Unfold (Z-Fold Leaflet) */
+@keyframes accordionPaperUnfold1 {
   0% { 
     opacity: 0; 
-    transform: perspective(1600px) rotateY(85deg) scaleX(0.05); 
-    box-shadow: -15px 0 35px rgba(0, 0, 0, 0.6);
+    transform: perspective(2200px) rotateY(-88deg) scaleX(0.04); 
+    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.7);
   }
-  35% {
-    opacity: 0.9;
+  30% {
+    opacity: 0.95;
   }
   100% { 
     opacity: 1; 
-    transform: perspective(1600px) rotateY(0deg) scaleX(1); 
-    box-shadow: -8px 0 25px rgba(0, 0, 0, 0.35);
+    transform: perspective(2200px) rotateY(0deg) scaleX(1); 
+    box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35);
   }
 }
 
-@keyframes accordionUnfoldMiddle2 {
+@keyframes accordionPaperUnfold2 {
   0% { 
     opacity: 0; 
-    transform: perspective(1600px) rotateY(-85deg) scaleX(0.05); 
-    box-shadow: -15px 0 35px rgba(0, 0, 0, 0.6);
+    transform: perspective(2200px) rotateY(88deg) scaleX(0.04); 
+    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.7);
   }
-  35% {
-    opacity: 0.9;
+  30% {
+    opacity: 0.95;
   }
   100% { 
     opacity: 1; 
-    transform: perspective(1600px) rotateY(0deg) scaleX(1); 
-    box-shadow: -8px 0 25px rgba(0, 0, 0, 0.35);
+    transform: perspective(2200px) rotateY(0deg) scaleX(1); 
+    box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35);
   }
 }
 
-@keyframes accordionUnfoldLeft1 {
+@keyframes accordionPaperUnfold3 {
   0% { 
     opacity: 0; 
-    transform: perspective(1600px) rotateY(85deg) scaleX(0.05); 
-    box-shadow: -15px 0 35px rgba(0, 0, 0, 0.6);
+    transform: perspective(2200px) rotateY(-88deg) scaleX(0.04); 
+    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.7);
   }
-  35% {
-    opacity: 0.9;
+  30% {
+    opacity: 0.95;
   }
   100% { 
     opacity: 1; 
-    transform: perspective(1600px) rotateY(0deg) scaleX(1); 
-    box-shadow: -8px 0 25px rgba(0, 0, 0, 0.35);
+    transform: perspective(2200px) rotateY(0deg) scaleX(1); 
+    box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35);
   }
 }
 
-/* Staggered Right-to-Left Unfold Timing (一页一页从右到左展开) */
-.unfold-panel-3 {
+/* Staggered Sequential Paper Unfolding (Page by Page: Fold 1 -> Fold 2 -> Fold 3) */
+.unfold-panel-1 {
   opacity: 0;
   transform-origin: left center;
-  animation: accordionUnfoldRight3 0.72s cubic-bezier(0.2, 0.9, 0.3, 1) 0.08s forwards;
+  border-radius: 0 !important;
+  animation: accordionPaperUnfold1 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
 }
 .unfold-panel-2 {
   opacity: 0;
   transform-origin: left center;
-  animation: accordionUnfoldMiddle2 0.75s cubic-bezier(0.2, 0.9, 0.3, 1) 0.28s forwards;
+  border-radius: 0 !important;
+  animation: accordionPaperUnfold2 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.24s forwards;
 }
-.unfold-panel-1 {
+.unfold-panel-3 {
   opacity: 0;
   transform-origin: left center;
-  animation: accordionUnfoldLeft1 0.78s cubic-bezier(0.2, 0.9, 0.3, 1) 0.48s forwards;
+  border-radius: 0 !important;
+  animation: accordionPaperUnfold3 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.44s forwards;
 }
 
 .cutout-sticker {
   filter: drop-shadow(0 10px 20px rgba(0,0,0,0.45));
   border: 4px solid #ffffff;
-  border-radius: 12px;
+  border-radius: 0 !important;
   box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
 }
 
