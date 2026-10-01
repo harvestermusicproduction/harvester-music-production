@@ -14,46 +14,139 @@
   <meta property="og:image" content="https://www.harvestermusic.my/assets/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=17.0.0">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Special+Elite&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=29.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* --- 💎 Contact Form Light White Frosted Standard --- */
-    .contact-form {
-      background: rgba(255, 255, 255, 0.15) !important;
-      backdrop-filter: blur(35px) !important;
-      -webkit-backdrop-filter: blur(35px) !important;
-      border: 1px solid rgba(255, 255, 255, 0.25) !important;
-      padding: 3.5rem !important;
-      border-radius: 40px !important;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.5) !important;
-      margin-top: 2rem;
+    /* --- 📏 Compact Header Explicit (超精致小巧导航栏) --- */
+    header, #mainHeader {
+      padding: 0.35rem 1.4rem !important;
+      min-height: 46px !important;
+      height: 46px !important;
     }
-    .contact-form input, .contact-form textarea {
-      background: rgba(255, 255, 255, 0.08) !important;
-      border: 1px solid rgba(255, 255, 255, 0.15) !important;
-      color: #fff !important;
-      border-radius: 50px !important;
-      padding: 16px 25px !important;
-      margin-bottom: 1.8rem !important;
+    .logo {
+      font-size: 0.85rem !important;
+      letter-spacing: 1.2px !important;
+    }
+    .nav-logo {
+      height: 19px !important;
+      max-height: 19px !important;
+    }
+    .nav-links {
+      font-size: 0.74rem !important;
+      gap: 0.3rem !important;
+    }
+    .nav-links a {
+      font-size: 0.74rem !important;
+      padding: 2px 7px !important;
+      letter-spacing: 0.2px !important;
+    }
+    .header-socials {
+      font-size: 0.75rem !important;
+      gap: 0.6rem !important;
+    }
+    .header-socials a {
+      font-size: 0.75rem !important;
+    }
+
+    /* --- 🎨 100% Authentic Hand-Drawn Sketch Contact Form (手绘手作风填写框) --- */
+    .contact-form.sketch-form {
+      background: #171f28 !important;
+      border: 3px dashed #f6d28a !important;
+      padding: 2.8rem 2.2rem !important;
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+      box-shadow: 4px 5px 0px rgba(0, 0, 0, 0.7), 8px 10px 0px rgba(246, 210, 138, 0.18) !important;
+      margin-top: 1.5rem !important;
+      position: relative;
+      transform: rotate(-0.3deg);
+    }
+    .contact-form.sketch-form::before {
+      content: '✏️ GUESTBOOK & COOPERATION';
+      position: absolute;
+      top: -14px;
+      left: 28px;
+      background: #171f28;
+      padding: 2px 14px;
+      font-family: 'Courier Prime', 'Special Elite', 'American Typewriter', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      color: #f6d28a;
+      border: 1.5px dashed rgba(246, 210, 138, 0.6);
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    }
+    .sketch-input {
+      background: #10161e !important;
+      border: 2px solid rgba(246, 210, 138, 0.65) !important;
+      color: #fffaf0 !important;
+      padding: 13px 18px !important;
+      margin-bottom: 1.5rem !important;
       width: 100% !important;
-      outline: none;
-      font-size: 1.15rem !important;
-      font-family: var(--font-hand-cn), var(--font-hand-en) !important;
+      outline: none !important;
+      font-size: 1.05rem !important;
+      font-family: 'Courier Prime', 'Special Elite', 'American Typewriter', monospace, serif !important;
+      box-shadow: 2px 3px 0px rgba(0, 0, 0, 0.5) !important;
+      box-sizing: border-box !important;
+      transition: all 0.25s ease !important;
     }
-    .contact-form input::placeholder, .contact-form textarea::placeholder {
-      font-family: var(--font-hand-cn), var(--font-hand-en) !important;
+    .input-name {
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+    }
+    .input-email {
+      border-radius: 18px 240px 16px 250px / 235px 20px 245px 18px !important;
+    }
+    .input-msg {
+      border-radius: 255px 22px 225px 20px / 20px 225px 22px 255px !important;
+      line-height: 1.6 !important;
+      resize: vertical !important;
+    }
+    .sketch-input:focus {
+      border-color: #f6d28a !important;
+      background: #19222c !important;
+      box-shadow: 3px 4px 0px rgba(246, 210, 138, 0.4) !important;
+      transform: scale(1.008) rotate(-0.4deg);
+    }
+    .sketch-input::placeholder {
+      font-family: 'Caveat', 'Courier Prime', 'American Typewriter', cursive, serif !important;
       font-size: 1.15rem !important;
-      color: rgba(255, 255, 255, 0.45) !important;
+      color: rgba(246, 210, 138, 0.5) !important;
+      font-style: italic;
     }
     .contact-form label { 
-      color: var(--gold); 
-      font-size: 1.25rem !important; 
-      letter-spacing: 2px; 
-      display: block; 
-      margin-bottom: 0.6rem; 
-      margin-left: 10px; 
-      font-family: var(--font-hand-cn), var(--font-hand-en) !important;
+      color: #f6d28a !important; 
+      font-size: 1.05rem !important; 
+      font-weight: 700 !important;
+      letter-spacing: 1px !important; 
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      margin-bottom: 0.4rem !important; 
+      margin-left: 4px !important; 
+      font-family: 'Caveat', 'Courier Prime', 'American Typewriter', cursive, serif !important;
+    }
+    .btn-sketch-submit {
+      width: 100% !important;
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+      padding: 13px 24px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: rgba(246, 210, 138, 0.18) !important;
+      border: 2px solid #f6d28a !important;
+      color: #f6d28a !important;
+      font-family: 'Caveat', 'Courier Prime', 'American Typewriter', cursive, serif !important;
+      font-size: 1.35rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 2px !important;
+      cursor: pointer !important;
+      box-shadow: 3px 4px 0px rgba(0,0,0,0.6), 5px 6px 0px rgba(246, 210, 138, 0.25) !important;
+      transition: all 0.25s ease !important;
+      margin-top: 0.5rem !important;
+    }
+    .btn-sketch-submit:hover {
+      background: #f6d28a !important;
+      color: #161d24 !important;
+      transform: translateY(-2px) rotate(0.6deg) !important;
+      box-shadow: 4px 6px 0px rgba(0,0,0,0.7), 6px 8px 0px rgba(246, 210, 138, 0.4) !important;
     }
     /* --- 🌌 3D Echo Universe & Interactive Styles --- */
     .echo-universe-section {
@@ -92,71 +185,75 @@
     .interactive-card {
       position: relative;
       z-index: 10;
-      background: rgba(25, 20, 16, 0.82) !important;
+      background: rgba(25, 20, 16, 0.88) !important;
       backdrop-filter: blur(25px) !important;
       -webkit-backdrop-filter: blur(25px) !important;
-      border: 1.5px solid rgba(246, 210, 138, 0.35) !important;
-      border-radius: 36px;
+      border: 2px dashed rgba(246, 210, 138, 0.45) !important;
+      border-radius: 255px 25px 225px 25px / 25px 225px 25px 255px;
       padding: 2.8rem 2.5rem;
       width: 90%;
       max-width: 540px;
       text-align: center;
       pointer-events: auto;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 25px rgba(246, 210, 138, 0.1);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 25px rgba(246, 210, 138, 0.15);
       transition: 0.4s ease;
     }
     .interactive-card:hover { 
       border-color: var(--gold) !important;
-      box-shadow: 0 35px 90px rgba(0,0,0,0.8), 0 0 35px rgba(246, 210, 138, 0.2);
+      box-shadow: 0 35px 90px rgba(0,0,0,0.8), 0 0 35px rgba(246, 210, 138, 0.25);
     }
     .btn-echo {
-      background: rgba(35, 29, 23, 0.8) !important;
-      border: 1.5px solid rgba(246, 210, 138, 0.3) !important;
+      background: rgba(35, 29, 23, 0.85) !important;
+      border: 1.8px solid rgba(246, 210, 138, 0.45) !important;
       color: #faf6f0 !important;
-      padding: 10px 18px;
-      border-radius: 50px;
+      padding: 10px 20px;
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
       cursor: pointer;
       transition: all 0.35s ease;
       font-size: 1.05rem;
-      font-family: var(--font-hand-cn), var(--font-hand-en) !important;
+      font-family: var(--font-handwriting), 'American Typewriter', cursive, serif !important;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
     .btn-echo:hover {
-      background: rgba(246, 210, 138, 0.2) !important;
-      transform: translateY(-3px);
+      background: rgba(246, 210, 138, 0.3) !important;
+      transform: translateY(-3px) rotate(0.5deg);
       border-color: var(--gold) !important;
-      color: var(--gold) !important;
-      box-shadow: 0 0 15px rgba(246, 210, 138, 0.3);
+      color: #fff !important;
+      box-shadow: 0 0 18px rgba(246, 210, 138, 0.4);
     }
     .input-box {
       width: 100%;
-      background: rgba(255,255,255,0.06);
-      border: 1.5px solid rgba(246, 210, 138, 0.25);
-      border-radius: 20px;
-      padding: 16px 20px;
-      color: #fff;
+      background: rgba(20, 26, 33, 0.88);
+      border: 2px solid rgba(246, 210, 138, 0.45);
+      border-radius: 255px 18px 225px 15px / 15px 225px 18px 255px;
+      padding: 16px 22px;
+      color: #fffaf0;
       margin-top: 1.2rem;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       outline: none;
       box-sizing: border-box;
-      font-family: var(--font-hand-cn), var(--font-hand-en) !important;
+      font-family: var(--font-handwriting), 'American Typewriter', cursive, serif !important;
+      box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
     }
     .input-box:focus {
       border-color: var(--gold);
-      background: rgba(255,255,255,0.09);
+      background: rgba(26, 34, 42, 0.96);
+      box-shadow: 0 0 18px rgba(246, 210, 138, 0.35), inset 0 0 8px rgba(246, 210, 138, 0.15);
+      transform: scale(1.008) rotate(-0.3deg);
     }
   </style>
 </head>
 <body style="position: relative;">
   <canvas id="bgParticles"></canvas>
     <header style="z-index:100;">
-    <div class="logo-group" style="display: flex; align-items: center; gap: 1.5rem;">
+    <div class="logo-group" style="display: flex; align-items: center; gap: 1rem;">
       <a href="index.html" class="logo" style="text-decoration:none;">
         <img src="assets/logo.png" alt="Harvester" class="nav-logo">
       </a>
-      <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 1.2rem;">
+      <div class="header-socials" style="display: flex; gap: 0.8rem; font-size: 0.78rem;">
         <a id="cfg_nav_wa" href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry." target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a id="cfg_nav_sp" href="https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;" title="Spotify"><i class="fab fa-spotify"></i></a>
         <a id="cfg_nav_fb" href="#" target="_blank" style="color: #fff; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
@@ -234,7 +331,7 @@
   <!-- 1. 联系我们板块 (原有内容完整保留) -->
   <div class="ppt-header fade-in">
     <div class="ppt-line"></div>
-    <h1 class="ppt-title font-hand-cn" style="font-size: 3.2rem;">与我们同工共建</h1>
+    <h1 class="ppt-title font-hand-cn">与我们同工共建</h1>
     <p class="ppt-subtitle font-hand-en">TELL US YOUR STORY OR PARTNER WITH US</p>
   </div>
 
@@ -254,28 +351,31 @@
              style="width: 100%; max-height: 400px; object-fit: cover; margin-top: 2.5rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.5);">
       </div>
 
-      <!-- 站内表单 -->
+      <!-- 站内表单 (手绘手作风) -->
       <div class="contact">
-        <form class="contact-form" id="contactForm">
-           <label>您的称呼 (Name)</label>
-           <input type="text" id="contactName" placeholder="怎么称呼您？" required>
+        <form class="contact-form sketch-form" id="contactForm">
+           <label><i class="fas fa-pencil-alt" style="font-size: 0.9em; opacity: 0.85;"></i> 您的称呼 (Name)</label>
+           <input type="text" id="contactName" class="sketch-input input-name" placeholder="怎么称呼您？" required>
            
-           <label>您的联络邮箱 (Email)</label>
-           <input type="email" id="contactEmail" placeholder="example@email.com" required>
+           <label><i class="fas fa-envelope-open-text" style="font-size: 0.9em; opacity: 0.85;"></i> 您的联络邮箱 (Email)</label>
+           <input type="email" id="contactEmail" class="sketch-input input-email" placeholder="example@email.com" required>
            
-           <label>合作意向或留言建议 (Message)</label>
-           <textarea id="contactMsg" placeholder="请详细描述您的想法..." rows="6" required></textarea>
+           <label><i class="fas fa-feather-alt" style="font-size: 0.9em; opacity: 0.85;"></i> 合作意向或留言建议 (Message)</label>
+           <textarea id="contactMsg" class="sketch-input input-msg" placeholder="请详细描述您的想法与建议..." rows="6" required></textarea>
            
-           <button type="submit" class="btn btn-submit btn-frosted-white" id="btnContactSubmit" style="width:100%; border-radius: 60px; padding: 15px; display: flex; align-items: center; justify-content: center;">发 送 请 求 (Send Message)</button>
+           <button type="submit" class="btn btn-submit btn-sketch-submit" id="btnContactSubmit">
+             <i class="fas fa-paper-plane" style="font-size: 0.95em; margin-right: 8px;"></i>
+             <span>发 送 请 求 (Send Message)</span>
+           </button>
         </form>
       </div>
     </div>
   </section>
 
   <!-- 2. 回声空间板块 (合并于联系我们下方) -->
-  <div class="ppt-header fade-in" id="echo" style="margin-top: 6rem;">
+  <div class="ppt-header fade-in" id="echo" style="margin-top: 5rem;">
     <div class="ppt-line"></div>
-    <h2 class="ppt-title font-hand-cn" style="font-size: 3.2rem;">回 声 空 间</h2>
+    <h2 class="ppt-title font-hand-cn">回 声 空 间</h2>
     <p class="ppt-subtitle font-hand-en">~ ECHO SPACE · 写下你的感悟，留下属于你的回声 ~</p>
   </div>
 
