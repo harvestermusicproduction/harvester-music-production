@@ -2469,11 +2469,11 @@ document.addEventListener('DOMContentLoaded', () => {
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
                 <div>
                   <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">经文出处 (Reference)</label>
-                  <input type="text" id="in_about_origin_ref" value="${d('about_origin_ref', '—— 约翰福音 4:37 · JOHN 4:37')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                  <input type="text" id="in_about_origin_ref" value="${d('about_origin_ref', '—— 约翰福音 4:37 · John 4:37')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
                 </div>
                 <div>
                   <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">启发经文 英文 (Scripture EN)</label>
-                  <input type="text" id="in_about_origin_scripture_en" value="${d('about_origin_scripture_en', 'ONE SOWS AND ANOTHER REAPS. THIS SAYING IS TRUE.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
+                  <input type="text" id="in_about_origin_scripture_en" value="${d('about_origin_scripture_en', 'One sows and another reaps. This saying is true.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:6px;">
                 </div>
               </div>
 
@@ -2849,7 +2849,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <h4 style="color:#a55eea; margin:0;">📊 盈利按比例分配设置 (Profit Sharing Breakdown)</h4>
               <div style="display:flex; gap:10px;">
                 <input type="text" id="in_about_cps_title" value="${d('about_cps_title', '盈利按比例分配')}" style="background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px 10px; border-radius:4px; font-size:0.8rem;">
-                <input type="text" id="in_about_cps_subtitle" value="${d('about_cps_subtitle', 'PROFITS WILL BE DISTRIBUTED AS FOLLOWS')}" style="background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:6px 10px; border-radius:4px; font-size:0.8rem;">
+                <input type="text" id="in_about_cps_subtitle" value="${d('about_cps_subtitle', 'Profits will be distributed as follows')}" style="background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:6px 10px; border-radius:4px; font-size:0.8rem;">
               </div>
             </div>
 
@@ -2910,11 +2910,11 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <div style="margin-bottom:12px;">
                 <label style="font-size:0.75rem; color:#aaa;">副标题 (Subtitle EN)</label>
-                <input type="text" id="in_about_coop_subtitle" value="${d('about_coop_subtitle', 'HARVESTER MUSIC & INDEPENDENT SONGWRITERS PROPOSAL')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_coop_subtitle" value="${d('about_coop_subtitle', 'Harvester Music & Independent Songwriters Proposal')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px; border-radius:4px;">
               </div>
               <div style="margin-bottom:12px;">
                 <label style="font-size:0.75rem; color:#aaa;">标语宣告 (Tagline)</label>
-                <input type="text" id="in_about_coop_tagline" value="${d('about_coop_tagline', 'support a fair and transparent model of shared rights and shared profits')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px;">
+                <input type="text" id="in_about_coop_tagline" value="${d('about_coop_tagline', 'Support a fair and transparent model of shared rights and shared profits')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px;">
               </div>
               <div>
                 <label style="font-size:0.75rem; color:#aaa;">核心共赢理念阐述 (Core Concept)</label>
@@ -2998,7 +2998,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </h4>
               <div style="display:flex; gap:8px;">
                 <input type="text" id="in_about_pastoral_title" value="${d('about_pastoral_title', '牧 师 团')}" style="background:#1a1a1a; border:1px solid #333; color:#fff; padding:4px 8px; border-radius:4px; font-size:0.8rem; width:100px;">
-                <input type="text" id="in_about_pastoral_subtitle" value="${d('about_pastoral_subtitle', 'PASTORAL ADVISORY TEAM')}" style="background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:4px 8px; border-radius:4px; font-size:0.8rem;">
+                <input type="text" id="in_about_pastoral_subtitle" value="${d('about_pastoral_subtitle', 'Pastoral Advisory Team')}" style="background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:4px 8px; border-radius:4px; font-size:0.8rem;">
               </div>
             </div>
 
@@ -3046,7 +3046,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:15px;">
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">英文标语 (Tagline)</label>
-              <input type="text" id="in_about_pos_tagline" value="${d('about_pos_tagline', 'PROMOTING CONTEMPORARY CHRISTIAN MUSIC')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px;">
+              <input type="text" id="in_about_pos_tagline" value="${d('about_pos_tagline', 'Promoting Contemporary Christian Music')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:4px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">主标题 (Main Title)</label>
