@@ -508,6 +508,143 @@ You have set my feet upon the rock!`
     updateMetaBar();
   }
 
+  // =========================================================================
+  // 🌈 DYNAMIC MORANDI COLOR PALETTE & AMBIENT BACKGROUND SYSTEM
+  // =========================================================================
+  const albumPalettes = {
+    "更新敬拜": {
+      bg_center: "#2c4858",
+      bg_mid: "#1b2f3b",
+      bg_outer: "#101e26",
+      accent: "#68a6bd",
+      glow: "rgba(104, 166, 189, 0.45)"
+    },
+    "灵火 Awakening": {
+      bg_center: "#284d46",
+      bg_mid: "#1a342f",
+      bg_outer: "#10221f",
+      accent: "#60ab9a",
+      glow: "rgba(96, 171, 154, 0.45)"
+    },
+    "因为祢 上帝": {
+      bg_center: "#563832",
+      bg_mid: "#3a2420",
+      bg_outer: "#241412",
+      accent: "#d68d7d",
+      glow: "rgba(214, 141, 125, 0.45)"
+    },
+    "Im Alive": {
+      bg_center: "#2e4157",
+      bg_mid: "#1e2c3c",
+      bg_outer: "#131b25",
+      accent: "#7da8d9",
+      glow: "rgba(125, 168, 217, 0.45)"
+    },
+    "收割的呼召": {
+      bg_center: "#4e3d30",
+      bg_mid: "#35291f",
+      bg_outer: "#211812",
+      accent: "#cca078",
+      glow: "rgba(204, 160, 120, 0.45)"
+    },
+    "祢是唯一": {
+      bg_center: "#42354c",
+      bg_mid: "#2b2234",
+      bg_outer: "#1a1421",
+      accent: "#aa94c7",
+      glow: "rgba(170, 148, 199, 0.45)"
+    },
+    "我心所愿": {
+      bg_center: "#463d35",
+      bg_mid: "#302a24",
+      bg_outer: "#1f1b17",
+      accent: "#bfa48e",
+      glow: "rgba(191, 164, 142, 0.45)"
+    },
+    "在祢圣所中": {
+      bg_center: "#2a4356",
+      bg_mid: "#1c2e3c",
+      bg_outer: "#111d26",
+      accent: "#6fa6c9",
+      glow: "rgba(111, 166, 201, 0.45)"
+    },
+    "晨光破晓": {
+      bg_center: "#3d473b",
+      bg_mid: "#293128",
+      bg_outer: "#191e18",
+      accent: "#9cb696",
+      glow: "rgba(156, 182, 150, 0.45)"
+    }
+  };
+
+  function getAlbumPalette(album, idx) {
+    if (album && albumPalettes[album.title]) {
+      return albumPalettes[album.title];
+    }
+    // Fallback rotation through harmonious Morandi palettes
+    const fallbacks = [
+      { bg_center: "#2c4858", bg_mid: "#1b2f3b", bg_outer: "#101e26", accent: "#68a6bd", glow: "rgba(104, 166, 189, 0.45)" },
+      { bg_center: "#284d46", bg_mid: "#1a342f", bg_outer: "#10221f", accent: "#60ab9a", glow: "rgba(96, 171, 154, 0.45)" },
+      { bg_center: "#563832", bg_mid: "#3a2420", bg_outer: "#241412", accent: "#d68d7d", glow: "rgba(214, 141, 125, 0.45)" },
+      { bg_center: "#2e4157", bg_mid: "#1e2c3c", bg_outer: "#131b25", accent: "#7da8d9", glow: "rgba(125, 168, 217, 0.45)" },
+      { bg_center: "#4e3d30", bg_mid: "#35291f", bg_outer: "#211812", accent: "#cca078", glow: "rgba(204, 160, 120, 0.45)" },
+      { bg_center: "#42354c", bg_mid: "#2b2234", bg_outer: "#1a1421", accent: "#aa94c7", glow: "rgba(170, 148, 199, 0.45)" },
+      { bg_center: "#4e303e", bg_mid: "#351f2a", bg_outer: "#22131b", accent: "#cc7c9b", glow: "rgba(204, 124, 155, 0.45)" },
+      { bg_center: "#3d473b", bg_mid: "#293128", bg_outer: "#191e18", accent: "#9cb696", glow: "rgba(156, 182, 150, 0.45)" }
+    ];
+    return fallbacks[idx % fallbacks.length];
+  }
+
+  let activeAmbientLayer = 'A';
+  let lastActiveSongId = null;
+
+  function updateDynamicAmbientBackground(album, idx) {
+    if (!album) return;
+    const albumKey = album.id || album.title;
+    if (albumKey === lastActiveSongId) return;
+    lastActiveSongId = albumKey;
+
+    const pal = getAlbumPalette(album, idx);
+    const grad = `radial-gradient(ellipse at 50% 32%, ${pal.bg_center} 0%, ${pal.bg_mid} 50%, ${pal.bg_outer} 100%)`;
+
+    // Ensure ambient container exists in DOM
+    let ambientEl = document.getElementById('coverflowDynamicAmbient');
+    if (!ambientEl) {
+      ambientEl = document.createElement('div');
+      ambientEl.id = 'coverflowDynamicAmbient';
+      ambientEl.className = 'coverflow-dynamic-ambient';
+      ambientEl.innerHTML = `
+        <div id="ambientLayerA" class="ambient-layer active" style="background: ${grad};"></div>
+        <div id="ambientLayerB" class="ambient-layer"></div>
+        <div class="ambient-vignette"></div>
+      `;
+      document.body.prepend(ambientEl);
+    }
+
+    const layerA = document.getElementById('ambientLayerA');
+    const layerB = document.getElementById('ambientLayerB');
+
+    if (layerA && layerB) {
+      if (activeAmbientLayer === 'A') {
+        layerB.style.background = grad;
+        layerB.classList.add('active');
+        layerA.classList.remove('active');
+        activeAmbientLayer = 'B';
+      } else {
+        layerA.style.background = grad;
+        layerA.classList.add('active');
+        layerB.classList.remove('active');
+        activeAmbientLayer = 'A';
+      }
+    }
+
+    // Set CSS custom variables on root / body for synchronized accents
+    document.documentElement.style.setProperty('--active-album-accent', pal.accent);
+    document.documentElement.style.setProperty('--active-album-glow', pal.glow);
+    document.body.style.setProperty('--active-album-accent', pal.accent);
+    document.body.style.setProperty('--active-album-glow', pal.glow);
+  }
+
   // Render the virtual 3D boxes for the currently active album list
   function renderCarouselBoxes() {
     const carousel = document.getElementById('coverflowCarousel');
@@ -525,41 +662,58 @@ You have set my feet upon the rock!`
     carousel.innerHTML = virtualList.map(({ album, origIdx, vIdx }) => `
       <div class="album-3d-box ${origIdx === currentIndex && vIdx === 0 ? 'active' : ''}" data-vindex="${vIdx}" data-real-index="${origIdx}">
         <div class="album-cube">
-          <!-- Front Cover Face (Modern Aesthetic Art) -->
+          <!-- 1. Front Cover Face (Heavyweight Textured Gatefold Cardboard) -->
           <div class="cube-face cube-front">
             <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
+            <div class="album-spine-crease"></div>
             <div class="album-glass-sheen"></div>
-            <!-- Top Left Year Badge -->
-            <div style="position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); color:#e8dcc4; font-size:0.65rem; font-family:var(--font-eng-title); padding:2px 8px; border-radius:3px; z-index:5; font-weight:600; letter-spacing:0.5px;">
-              ${album.year || '2025'}
+            <!-- Top Left Gold Foil Collector Seal -->
+            <div class="album-collector-seal">
+              ${album.year || '2025'} · HARV-${(origIdx + 1).toString().padStart(2, '0')}
+            </div>
+            <!-- Bottom Right Hi-Res Master Stamp -->
+            <div class="album-hi-res-badge">
+              <i class="fas fa-certificate" style="font-size:0.5rem; color:var(--gold); margin-right:3px;"></i> MASTER
             </div>
           </div>
 
-          <!-- Left Spine (Seamless Flat Tactile CD Spine - Title Only) -->
+          <!-- 💽 High-End Realistic Physical Vinyl Record (Glides out on Active) -->
+          <div class="album-vinyl-disc">
+            <div class="vinyl-groove-layer"></div>
+            <div class="vinyl-rainbow-sheen"></div>
+            <div class="vinyl-center-label" style="background: ${album.spine_bg || '#24464c'};">
+              <span class="vinyl-label-title">${album.title}</span>
+              <span class="vinyl-label-cat">HARV-${album.year || '25'}</span>
+              <div class="vinyl-spindle-hole"></div>
+            </div>
+          </div>
+
+          <!-- 2. Left Spine (Luxury Gold-Stamped Tactile Spine) -->
           <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#242f3a'};">
+            <span class="spine-top-stamp">CCM · ${album.year || '2025'}</span>
             <div class="spine-inner-text">
               <span class="spine-title">${album.title}</span>
             </div>
+            <span class="spine-bottom-stamp">HARV-${(origIdx + 1).toString().padStart(2, '0')}</span>
           </div>
 
           <!-- Top Thickness Edge -->
-          <div class="cube-face cube-top" style="background: ${album.spine_bg || '#242f3a'}; filter: brightness(1.15);"></div>
+          <div class="cube-face cube-top" style="background: ${album.spine_bg || '#242f3a'}; filter: brightness(1.2);"></div>
 
           <!-- Bottom Thickness Edge -->
           <div class="cube-face cube-bottom"></div>
 
-          <!-- Back Cover Face (Unified with Front Cover Artwork) -->
+          <!-- Back Cover Face -->
           <div class="cube-face cube-back">
             <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
             <div class="album-glass-sheen"></div>
-            <!-- Top Right Year Badge -->
-            <div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); color:#e8dcc4; font-size:0.65rem; font-family:var(--font-eng-title); padding:2px 8px; border-radius:3px; z-index:5; font-weight:600; letter-spacing:0.5px;">
+            <div class="album-collector-seal" style="left:auto; right:10px;">
               ${album.year || '2025'}
             </div>
           </div>
         </div>
 
-        <!-- 3D Ground Shadow -->
+        <!-- 🌟 Multi-Stage Physical Floor Shadow -->
         <div class="album-shadow-3d"></div>
       </div>
     `).join('');
@@ -630,6 +784,8 @@ You have set my feet upon the rock!`
     requestAnimationFrame(tick);
   }
 
+  let lastReportedActiveIdx = -1;
+
   // Continuous 3D Transform Rendering for Spine-Facing Curved Bookshelf / Display Rack
   function render3DCoverflow() {
     const boxes = document.querySelectorAll('.album-3d-box');
@@ -643,6 +799,11 @@ You have set my feet upon the rock!`
     const stepX = isMobile ? 84 : 118;
     const activeRealIdx = ((Math.round(currentProgress) % M) + M) % M;
 
+    if (activeRealIdx !== lastReportedActiveIdx) {
+      lastReportedActiveIdx = activeRealIdx;
+      updateMetaBar();
+    }
+
     boxes.forEach((box, i) => {
       // Modulo wrap circular distance to [-N/2, N/2]
       let rawDiff = i - currentProgress;
@@ -654,16 +815,13 @@ You have set my feet upon the rock!`
       const absOffset = Math.abs(offset);
       const pActive = Math.max(0, 1 - absOffset); // 1.0 at center, 0.0 when >= 1 unit away
 
-      // 📚 Spine-Facing Curved Display Rack Rotation:
-      // Center (offset = 0): Album faces edge-on with its spine forward (rotY ≈ +78° ~ +80°).
-      // Left wing (offset < 0): Angles open smoothly to +50° showing the front cover fanned towards the viewer.
-      // Right wing (offset > 0): Continues along the natural bookshelf arc (+92° ~ +104°).
+      // 📚 Spine-Facing Curved Display Rack Rotation
       const rotY = 78 + Math.tanh(offset * 0.55) * 28;
 
       // 📏 Smooth X Spacing
       const x = offset * stepX;
 
-      // 🌌 3D Arc Depth (Z): Center elevated closest to the viewer, outer wings recede smoothly into depth
+      // 🌌 3D Arc Depth (Z): Center elevated closest to the viewer
       const z = (65 * pActive) - (absOffset * 38) - (offset * offset * 3.5);
 
       // 🔍 Scale: Hero album in center is 1.12x, smoothly tapering to 0.90x along the arc
@@ -691,7 +849,7 @@ You have set my feet upon the rock!`
     });
   }
 
-  // Update Meta Caption for Active Album
+  // Update Meta Caption & Dynamic Ambient Background for Active Album
   function updateMetaBar() {
     if (!albums.length) return;
     const M = albums.length;
@@ -705,6 +863,9 @@ You have set my feet upon the rock!`
       if (titleEl && titleEl.innerText !== cur.title) titleEl.innerText = cur.title;
       if (artistEl && artistEl.innerText !== cur.artist) artistEl.innerText = cur.artist;
       if (yearEl) yearEl.innerText = `${cur.year || '2025'} RELEASE`;
+
+      // 🌈 Dynamically transition ambient background color and glowing accents to match central album
+      updateDynamicAmbientBackground(cur, activeIdx);
     }
   }
 

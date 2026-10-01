@@ -2837,20 +2837,63 @@ section[id], div[id^="section-"] {
   color: #111;
 }
 
+/* =========================================================================
+   💿 HIGH-END TACTILE 3D VINYL & DIGIPAK ENGINE (沉浸式高定黑胶唱片与动态色系)
+   ========================================================================= */
+
+/* 🌈 Dynamic Ambient Background Stage Layer (随中心专辑平滑变色) */
+.coverflow-dynamic-ambient {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  transition: opacity 0.8s ease;
+}
+
+.coverflow-dynamic-ambient .ambient-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity;
+}
+
+.coverflow-dynamic-ambient .ambient-layer.active {
+  opacity: 1;
+}
+
+.coverflow-dynamic-ambient .ambient-vignette {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(10, 14, 18, 0.65) 100%);
+  pointer-events: none;
+}
+
 /* Shelf & 3D Carousel Stage */
 .shelf-wrapper {
   position: relative;
   width: 100%;
-  max-width: 1280px;
+  max-width: 1320px;
   margin: 0 auto;
+  z-index: 4;
 }
 
 .coverflow-carousel {
   position: relative;
   width: 100%;
-  height: 440px;
-  perspective: 1200px;
-  -webkit-perspective: 1200px;
+  height: 470px;
+  perspective: 1300px;
+  -webkit-perspective: 1300px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -2862,14 +2905,15 @@ section[id], div[id^="section-"] {
   cursor: grabbing;
 }
 
-/* 3D Realistic Album Slabs */
+/* 3D Realistic High-End Album Slabs */
 .album-3d-box {
   position: absolute;
-  width: 240px;
-  height: 320px;
+  width: 250px;
+  height: 330px;
   transform-style: preserve-3d;
   cursor: pointer;
   will-change: transform, opacity;
+  transition: filter 0.4s ease;
 }
 
 .album-cube {
@@ -2886,18 +2930,23 @@ section[id], div[id^="section-"] {
   -webkit-backface-visibility: visible;
 }
 
-/* 1. Front Cover Face */
+/* 1. Front Cover Face (Heavyweight Textured Gatefold Cardboard) */
 .cube-face.cube-front {
   top: 0;
   left: 0;
-  width: 240px;
-  height: 320px;
-  transform: translateZ(11px);
-  border-radius: 2px;
+  width: 250px;
+  height: 330px;
+  transform: translateZ(12px);
+  border-radius: 4px;
   overflow: hidden;
-  background: #1c242d;
-  border: none;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.75);
+  background: #192027;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 20px 45px rgba(0, 0, 0, 0.8),
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.5);
+  transition: box-shadow 0.4s ease;
 }
 
 .cube-face.cube-front img {
@@ -2907,108 +2956,279 @@ section[id], div[id^="section-"] {
   display: block;
 }
 
+/* 📜 Tactile Spine Crease (仿真左侧压痕折痕) */
+.album-spine-crease {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    rgba(0, 0, 0, 0.5) 0%, 
+    rgba(0, 0, 0, 0.15) 35%, 
+    rgba(255, 255, 255, 0.22) 50%, 
+    rgba(0, 0, 0, 0.2) 65%, 
+    transparent 100%);
+  pointer-events: none;
+  z-index: 8;
+}
+
+/* 🪞 Dual Specular Anisotropic Light Reflection (双层物理反光) */
 .album-glass-sheen {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.02) 40%, transparent 60%);
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.26) 0%, 
+    rgba(255, 255, 255, 0.08) 25%, 
+    transparent 50%, 
+    rgba(246, 210, 138, 0.08) 75%, 
+    rgba(0, 0, 0, 0.2) 100%);
+  pointer-events: none;
+  z-index: 7;
+}
+
+/* 🏷️ Gold Foil Collector Seal (烫金典藏标签) */
+.album-collector-seal {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(14, 19, 24, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(246, 210, 138, 0.4);
+  color: var(--gold);
+  font-size: 0.62rem;
+  font-family: var(--font-times-new-roman), serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  z-index: 9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* 🎙️ Hi-Res Master Foil Seal (母带音质烫金徽章) */
+.album-hi-res-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(14, 19, 24, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.58rem;
+  font-family: var(--font-times-new-roman), serif;
+  letter-spacing: 0.8px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  z-index: 9;
+}
+
+/* 💽 High-End Physical Vinyl Disc (真实黑胶唱片微露出) */
+.album-vinyl-disc {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 226px;
+  height: 226px;
+  border-radius: 50%;
+  background: #0d0e11;
+  transform: translateZ(2px) translateX(0px) rotate(0deg);
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.6s ease;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
+}
+
+/* Authentic Concentric Grooves */
+.album-vinyl-disc .vinyl-groove-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle at center,
+    #0c0d10 0px,
+    #14161b 1px,
+    #0c0d10 2px,
+    #181a20 3px
+  );
+  opacity: 0.95;
+}
+
+/* Rainbow Diffraction Sheen */
+.album-vinyl-disc .vinyl-rainbow-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 45deg,
+    rgba(255, 255, 255, 0.16) 0deg,
+    transparent 35deg,
+    rgba(246, 210, 138, 0.18) 90deg,
+    transparent 125deg,
+    rgba(255, 255, 255, 0.16) 180deg,
+    transparent 215deg,
+    rgba(246, 210, 138, 0.18) 270deg,
+    transparent 305deg,
+    rgba(255, 255, 255, 0.16) 360deg
+  );
+  mix-blend-mode: screen;
   pointer-events: none;
 }
 
-.album-inner-border {
-  display: none !important;
+/* Center Album Label on Vinyl */
+.album-vinyl-disc .vinyl-center-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 78px;
+  height: 78px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4);
+  padding: 4px;
 }
 
-/* 2. Left Spine (Seamless Flat Tactile CD Jewel Case Spine - No Borders) */
+.vinyl-label-title {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  max-width: 65px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.vinyl-label-cat {
+  font-size: 0.48rem;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+  margin-top: 1px;
+}
+
+.vinyl-spindle-hole {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #050608;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin-top: 2px;
+}
+
+/* 🌟 Active Central Album: Vinyl Smoothly Glides Out */
+.album-3d-box.active .album-vinyl-disc {
+  transform: translateZ(2px) translateX(65px) rotate(42deg) scale(0.98);
+  box-shadow: 12px 18px 40px rgba(0, 0, 0, 0.85);
+}
+
+/* 2. Left Spine (Luxury Gold-Stamped Tactile Spine) */
 .cube-face.cube-spine-left {
   top: 0;
-  left: -13px;
-  width: 26px;
-  height: 320px;
+  left: -14px;
+  width: 28px;
+  height: 330px;
   transform: rotateY(-90deg) translateZ(0);
   border: none !important;
   display: flex !important;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   overflow: hidden;
-  box-shadow: none !important;
-  background-image: none !important;
+  box-shadow: 
+    inset 2px 0 3px rgba(255, 255, 255, 0.22),
+    inset -2px 0 5px rgba(0, 0, 0, 0.65) !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: geometricPrecision;
   backface-visibility: visible !important;
   -webkit-backface-visibility: visible !important;
   z-index: 10;
+  padding: 10px 0;
 }
 
-/* 3. Right Spine (Opposite Edge - Hidden as requested) */
-.cube-face.cube-spine-right {
-  display: none !important;
+.spine-top-stamp, .spine-bottom-stamp {
+  font-size: 0.45rem;
+  font-family: var(--font-times-new-roman), serif;
+  color: rgba(246, 210, 138, 0.85);
+  letter-spacing: 1px;
+  transform: rotate(90deg);
+  white-space: nowrap;
 }
 
 .spine-inner-text {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 310px;
+  width: 230px;
   transform: rotate(90deg) translateZ(0);
   transform-origin: center center;
   white-space: nowrap;
   user-select: none;
-  font-family: var(--font-handwriting), cursive !important;
-  padding: 0 8px;
+  padding: 0 4px;
   text-align: center;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: geometricPrecision;
 }
 
 .spine-title {
-  font-family: var(--font-handwriting), cursive !important;
-  font-size: 1.25rem;
+  font-family: var(--font-times-new-roman), serif !important;
+  font-size: 1.05rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+/* 3. Right Spine (Opposite Edge) */
+.cube-face.cube-spine-right {
+  display: none !important;
 }
 
 /* 4. Top Thickness Edge */
 .cube-face.cube-top {
-  top: -12px;
+  top: -14px;
   left: 0;
-  width: 240px;
-  height: 24px;
+  width: 250px;
+  height: 28px;
   transform: rotateX(90deg);
   border: none !important;
-  box-shadow: none !important;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2) !important;
 }
 
 /* 5. Bottom Thickness Edge */
 .cube-face.cube-bottom {
-  bottom: -12px;
+  bottom: -14px;
   left: 0;
-  width: 240px;
-  height: 24px;
+  width: 250px;
+  height: 28px;
   transform: rotateX(-90deg);
-  background: #0d0b09;
+  background: #080a0c;
   border: none !important;
-  box-shadow: none !important;
+  box-shadow: inset 0 -2px 6px rgba(0, 0, 0, 0.8) !important;
 }
 
-/* 6. Back Cover Face (Unified with Front Cover Artwork) */
+/* 6. Back Cover Face */
 .cube-face.cube-back {
   top: 0;
   left: 0;
-  width: 240px;
-  height: 320px;
-  transform: rotateY(180deg) translateZ(11px);
-  border-radius: 2px;
+  width: 250px;
+  height: 330px;
+  transform: rotateY(180deg) translateZ(12px);
+  border-radius: 4px;
   overflow: hidden;
-  background: #1c242d;
-  border: none !important;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.75);
+  background: #192027;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8);
   backface-visibility: hidden !important;
   -webkit-backface-visibility: hidden !important;
 }
@@ -3020,34 +3240,48 @@ section[id], div[id^="section-"] {
   display: block;
 }
 
-/* Floor Shadow */
+/* 🌟 Floor Contact Shadow & Ambient Diffusion */
 .album-shadow-3d {
   position: absolute;
-  bottom: -35px;
-  left: 2%;
-  width: 96%;
-  height: 28px;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.85) 0%, rgba(246, 210, 138, 0.05) 35%, transparent 72%);
-  transform: rotateX(90deg) translateZ(-14px);
-  filter: blur(8px);
+  bottom: -38px;
+  left: 0%;
+  width: 100%;
+  height: 32px;
+  background: radial-gradient(ellipse at center, 
+    rgba(0, 0, 0, 0.95) 0%, 
+    rgba(0, 0, 0, 0.5) 45%, 
+    transparent 75%);
+  transform: rotateX(90deg) translateZ(-16px);
+  filter: blur(9px);
   pointer-events: none;
+  transition: all 0.4s ease;
 }
 
 .album-3d-box:not(.active):hover .cube-face.cube-front img {
-  filter: brightness(1.1);
+  filter: brightness(1.08) contrast(1.02);
 }
 .album-3d-box:not(.active):hover .cube-face.cube-front {
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.9);
-}
-.album-3d-box:not(.active):hover .cube-face.cube-spine-left {
-  filter: brightness(1.1);
+  box-shadow: 0 24px 55px rgba(0, 0, 0, 0.9);
 }
 
 .album-3d-box.active .cube-face.cube-front {
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95);
+  box-shadow: 
+    0 28px 65px rgba(0, 0, 0, 0.95),
+    0 0 35px var(--active-album-glow, rgba(104, 166, 189, 0.35)),
+    inset 0 1px 1px rgba(255, 255, 255, 0.45);
 }
 
-/* 3D Coverflow Meta Bar */
+.album-3d-box.active .album-shadow-3d {
+  width: 125%;
+  left: -12.5%;
+  background: radial-gradient(ellipse at center, 
+    rgba(0, 0, 0, 0.95) 0%, 
+    var(--active-album-glow, rgba(104, 166, 189, 0.2)) 30%, 
+    transparent 75%);
+  filter: blur(12px);
+}
+
+/* 3D Coverflow Meta Bar (随中心专辑自适应主题色) */
 .coverflow-meta-bar {
   display: flex;
   align-items: center;
@@ -3056,12 +3290,14 @@ section[id], div[id^="section-"] {
   max-width: 800px;
   margin: 3rem auto 1rem;
   text-align: center;
+  position: relative;
+  z-index: 5;
 }
 
 .cf-nav-btn {
-  background: rgba(246, 210, 138, 0.08);
-  border: 1.5px solid rgba(246, 210, 138, 0.3);
-  color: var(--gold);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid var(--active-album-accent, var(--gold));
+  color: var(--active-album-accent, var(--gold));
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -3070,15 +3306,16 @@ section[id], div[id^="section-"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
   flex-shrink: 0;
+  backdrop-filter: blur(6px);
 }
 
 .cf-nav-btn:hover {
-  background: rgba(246, 210, 138, 0.25);
-  border-color: var(--gold);
+  background: var(--active-album-accent, var(--gold));
+  color: #111;
   transform: scale(1.1);
-  box-shadow: 0 0 20px rgba(246, 210, 138, 0.4);
+  box-shadow: 0 0 24px var(--active-album-glow, rgba(246, 210, 138, 0.5));
 }
 
 .active-album-info {
@@ -3087,14 +3324,15 @@ section[id], div[id^="section-"] {
 
 .cf-tag {
   font-size: 0.85rem;
-  color: var(--gold);
+  color: var(--active-album-accent, var(--gold));
   letter-spacing: 3px;
   display: inline-block;
   margin-bottom: 6px;
+  transition: color 0.5s ease;
 }
 
 .cf-album-title {
-  font-family: var(--font-songti), serif;
+  font-family: var(--font-puploop), -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 2.2rem;
   color: #fffaf0;
   margin: 0 0 6px;
