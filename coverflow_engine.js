@@ -901,33 +901,79 @@ You have set my feet upon the rock!`
     if (window.gsap) {
       gsap.fromTo(view, { opacity: 0, scale: 0.98 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power2.out" });
       
-      const p1 = document.getElementById('accordionPanel1');
-      const h2 = document.getElementById('accordionHinge2');
-      const h3 = document.getElementById('accordionHinge3');
+      const panel1 = view.querySelector('.unfold-panel-1');
+      const panel2 = view.querySelector('.unfold-panel-2');
+      const panel3 = view.querySelector('.unfold-panel-3');
 
-      if (h2 && h3) {
-        gsap.killTweensOf([p1, h2, h3]);
+      if (panel1 && panel2 && panel3) {
+        gsap.killTweensOf([panel1, panel2, panel3]);
 
-        // Start in completely closed physical origami paper fold stack (Z-fold)
-        gsap.set(p1, { opacity: 1 });
-        gsap.set(h2, { transformOrigin: 'left center', rotateY: -179, opacity: 0.15 });
-        gsap.set(h3, { transformOrigin: 'left center', rotateY: 179, opacity: 0.1 });
+        // Phase 0: Start with ONLY Page 1 visible! Pages 2 & 3 are folded shut
+        gsap.set(panel1, { 
+          opacity: 1, 
+          width: 280, 
+          flexBasis: "280px", 
+          flexGrow: 0, 
+          flexShrink: 0, 
+          rotateY: 0, 
+          paddingLeft: 22, 
+          paddingRight: 22, 
+          transformOrigin: 'left center', 
+          boxShadow: '-6px 0 20px rgba(0,0,0,0.35)' 
+        });
 
-        const tl = gsap.timeline({ delay: 0.12 });
-        // Fold 2 smoothly unfolds outward to the right from Fold 1
-        tl.to(h2, {
-          rotateY: 0,
-          opacity: 1,
-          duration: 0.85,
-          ease: "power2.out"
+        gsap.set(panel2, { 
+          opacity: 0, 
+          width: 0, 
+          flexBasis: "0px", 
+          flexGrow: 0, 
+          flexShrink: 0, 
+          paddingLeft: 0, 
+          paddingRight: 0, 
+          rotateY: -88, 
+          transformOrigin: 'left center', 
+          boxShadow: '-20px 0 35px rgba(0,0,0,0.7)' 
+        });
+
+        gsap.set(panel3, { 
+          opacity: 0, 
+          width: 0, 
+          flexBasis: "0px", 
+          flexGrow: 0, 
+          flexShrink: 0, 
+          paddingLeft: 0, 
+          paddingRight: 0, 
+          rotateY: -88, 
+          transformOrigin: 'left center', 
+          boxShadow: '-20px 0 35px rgba(0,0,0,0.7)' 
+        });
+
+        const tl = gsap.timeline({ delay: 0.28 });
+
+        // Step 1: Fold 2 smoothly unfolds towards the right from Fold 1
+        tl.to(panel2, { 
+          width: 280, 
+          flexBasis: "280px", 
+          paddingLeft: 24, 
+          paddingRight: 24, 
+          opacity: 1, 
+          rotateY: 0, 
+          boxShadow: '-6px 0 20px rgba(0,0,0,0.35)', 
+          duration: 0.85, 
+          ease: "power2.out" 
         })
-        // Fold 3 unfolds smoothly outward to the right from Fold 2 in an elegant paper cascade
-        .to(h3, {
-          rotateY: 0,
-          opacity: 1,
-          duration: 0.9,
-          ease: "power2.out"
-        }, "-=0.55");
+        // Step 2: Fold 3 smoothly unfolds towards the right from Fold 2
+        .to(panel3, { 
+          width: 280, 
+          flexBasis: "280px", 
+          paddingLeft: 24, 
+          paddingRight: 24, 
+          opacity: 1, 
+          rotateY: 0, 
+          boxShadow: '-6px 0 20px rgba(0,0,0,0.35)', 
+          duration: 0.85, 
+          ease: "power2.out" 
+        }, "-=0.25");
       }
     }
   };
@@ -1016,33 +1062,35 @@ You have set my feet upon the rock!`
           <div class="accordion-booklet-stage">
             
             <!-- FOLD 1: 沙色莫兰迪 (WARM KRAFT SAND CREAM) -->
-            <div class="accordion-panel unfold-panel-1" id="accordionPanel1" style="background:#dfd5c4; color:#2c241c; border-radius:0; padding:22px; border-right:1px solid #c9bda8;">
-              <div>
-                <!-- Top Polaroid Photo (01 badge) -->
-                <div style="width:100%; height:130px; border-radius:0; overflow:hidden; border:1px solid #c9bda8; position:relative; margin-bottom:12px;">
-                  <img src="${activeSong.photo_1 || activeSong.cover_url}" alt="Art 01" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='assets/logo.png'">
-                  <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">01</div>
-                </div>
+            <div class="accordion-panel unfold-panel-1" style="background:#dfd5c4; color:#2c241c; border-radius:0; padding:22px; border-right:1px solid #c9bda8;">
+              <div style="width:236px; min-width:236px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                  <!-- Top Polaroid Photo (01 badge) -->
+                  <div style="width:100%; height:130px; border-radius:0; overflow:hidden; border:1px solid #c9bda8; position:relative; margin-bottom:12px;">
+                    <img src="${activeSong.photo_1 || activeSong.cover_url}" alt="Art 01" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='assets/logo.png'">
+                    <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">01</div>
+                  </div>
 
-                <div style="border-bottom:1px solid rgba(44,36,28,0.15); padding-bottom:8px; margin-bottom:12px;">
-                  <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:#7c664d;">FOLD 01 · LYRICS</span>
-                  <h3 style="margin:2px 0 0; color:#2c241c; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">完整歌词 (LYRICS)</h3>
-                </div>
+                  <div style="border-bottom:1px solid rgba(44,36,28,0.15); padding-bottom:8px; margin-bottom:12px;">
+                    <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:#7c664d;">FOLD 01 · LYRICS</span>
+                    <h3 style="margin:2px 0 0; color:#2c241c; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">完整歌词 (LYRICS)</h3>
+                  </div>
 
-                <div style="font-family:var(--font-songti), serif; font-size:0.98rem; line-height:1.9; color:#3a3025; white-space:pre-wrap; max-height:260px; overflow-y:auto; padding-right:6px;">
+                  <div style="font-family:var(--font-songti), serif; font-size:0.98rem; line-height:1.9; color:#3a3025; white-space:pre-wrap; max-height:260px; overflow-y:auto; padding-right:6px;">
 ${activeSong.lyrics}
+                  </div>
                 </div>
-              </div>
 
-              <div style="border-top:1px solid rgba(44,36,28,0.15); padding-top:12px; display:flex; justify-content:space-between; font-family:var(--font-times); font-size:0.75rem; color:#6e5d48;">
-                <span>${activeSong.key_bpm || 'KEY: C · 72 BPM'}</span>
-                <span style="color:#2c241c; font-weight:700;">ORIGINAL MASTER</span>
+                <div style="border-top:1px solid rgba(44,36,28,0.15); padding-top:12px; display:flex; justify-content:space-between; font-family:var(--font-times); font-size:0.75rem; color:#6e5d48;">
+                  <span>${activeSong.key_bpm || 'KEY: C · 72 BPM'}</span>
+                  <span style="color:#2c241c; font-weight:700;">ORIGINAL MASTER</span>
+                </div>
               </div>
             </div>
 
-            <!-- HINGE 2 (Attached to right edge of Fold 1): 勃艮第红莫兰迪 (MUTED BURGUNDY / WINE) -->
-            <div class="accordion-hinge-wrapper hinge-2" id="accordionHinge2">
-              <div class="accordion-panel unfold-panel-2" id="accordionPanel2" style="background:#5c2734; color:#fae8ec; border-radius:0; padding:24px; border-right:1px solid #451c27;">
+            <!-- FOLD 2: 勃艮第红莫兰迪 (MUTED BURGUNDY / WINE) -->
+            <div class="accordion-panel unfold-panel-2" style="background:#5c2734; color:#fae8ec; border-radius:0; padding:24px; border-right:1px solid #451c27;">
+              <div style="width:232px; min-width:232px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:8px; margin-bottom:14px;">
                     <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:var(--gold);">FOLD 02 · WORSHIP INSPIRATION</span>
@@ -1069,49 +1117,49 @@ ${activeSong.lyrics}
                   </div>
                 </div>
               </div>
+            </div>
 
-              <!-- HINGE 3 (Attached to right edge of Fold 2): 浅灰麻布莫兰迪 (MUTED LINEN / STONE GREY) -->
-              <div class="accordion-hinge-wrapper hinge-3" id="accordionHinge3">
-                <div class="accordion-panel unfold-panel-3" id="accordionPanel3" style="background:#dedad4; color:#26221f; border-radius:0; padding:24px;">
-                  <div>
-                    <div style="width:100%; height:150px; border-radius:0; overflow:hidden; border:1px solid #c6c0b6; position:relative; margin-bottom:16px;">
-                      <img src="${activeSong.photo_3 || activeSong.cover_url}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='${activeSong.cover_url}'">
-                      <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">03</div>
-                    </div>
-
-                    <div style="border-bottom:1px solid rgba(38,34,31,0.15); padding-bottom:8px; margin-bottom:12px;">
-                      <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:#665e56;">FOLD 03 · PRODUCTION CREDITS</span>
-                      <h3 style="margin:2px 0 0; color:#26221f; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">同工团队 (CREDITS)</h3>
-                    </div>
-
-                    <div style="font-size:0.85rem; space-y:8px; color:#423b35; font-family:var(--font-body);">
-                      <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
-                        <span style="color:#756a60;">词曲创作：</span>
-                        <span style="font-weight:600; color:#1c1815;">${activeSong.composer || activeSong.artist}</span>
-                      </div>
-                      <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
-                        <span style="color:#756a60;">编曲制作：</span>
-                        <span style="font-weight:600; color:#1c1815;">${activeSong.arrangement || 'Harvester Music Production'}</span>
-                      </div>
-                      ${activeSong.vocals ? `
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
-                          <span style="color:#756a60;">人声主唱：</span>
-                          <span style="font-weight:600; color:#1c1815;">${activeSong.vocals}</span>
-                        </div>
-                      ` : ''}
-                      <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
-                        <span style="color:#756a60;">录音母带：</span>
-                        <span style="font-weight:600; color:#1c1815;">${activeSong.mixing || 'Harvester Studio HQ'}</span>
-                      </div>
-                    </div>
+            <!-- FOLD 3: 浅灰麻布莫兰迪 (MUTED LINEN / STONE GREY) -->
+            <div class="accordion-panel unfold-panel-3" style="background:#dedad4; color:#26221f; border-radius:0; padding:24px;">
+              <div style="width:232px; min-width:232px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                  <div style="width:100%; height:150px; border-radius:0; overflow:hidden; border:1px solid #c6c0b6; position:relative; margin-bottom:16px;">
+                    <img src="${activeSong.photo_3 || activeSong.cover_url}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='${activeSong.cover_url}'">
+                    <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">03</div>
                   </div>
 
-                  <div style="border-top:1px solid rgba(38,34,31,0.15); padding-top:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-family:var(--font-times); font-size:0.75rem; color:#665e56;">PDF SCORES</span>
-                    <button onclick="toggleAudioPlay()" class="imm-pill-btn" style="background:#26221f; color:#dedad4; border:none; font-size:0.8rem; padding:6px 14px; font-family:var(--font-times);">
-                      <i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '试听'}
-                    </button>
+                  <div style="border-bottom:1px solid rgba(38,34,31,0.15); padding-bottom:8px; margin-bottom:12px;">
+                    <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:#665e56;">FOLD 03 · PRODUCTION CREDITS</span>
+                    <h3 style="margin:2px 0 0; color:#26221f; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">同工团队 (CREDITS)</h3>
                   </div>
+
+                  <div style="font-size:0.85rem; space-y:8px; color:#423b35; font-family:var(--font-body);">
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
+                      <span style="color:#756a60;">词曲创作：</span>
+                      <span style="font-weight:600; color:#1c1815;">${activeSong.composer || activeSong.artist}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
+                      <span style="color:#756a60;">编曲制作：</span>
+                      <span style="font-weight:600; color:#1c1815;">${activeSong.arrangement || 'Harvester Music Production'}</span>
+                    </div>
+                    ${activeSong.vocals ? `
+                      <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
+                        <span style="color:#756a60;">人声主唱：</span>
+                        <span style="font-weight:600; color:#1c1815;">${activeSong.vocals}</span>
+                      </div>
+                    ` : ''}
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
+                      <span style="color:#756a60;">录音母带：</span>
+                      <span style="font-weight:600; color:#1c1815;">${activeSong.mixing || 'Harvester Studio HQ'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="border-top:1px solid rgba(38,34,31,0.15); padding-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-family:var(--font-times); font-size:0.75rem; color:#665e56;">PDF SCORES</span>
+                  <button onclick="toggleAudioPlay()" class="imm-pill-btn" style="background:#26221f; color:#dedad4; border:none; font-size:0.8rem; padding:6px 14px; font-family:var(--font-times);">
+                    <i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '试听'}
+                  </button>
                 </div>
               </div>
             </div>
