@@ -169,52 +169,60 @@ body {
 /* =========================================================================
    🎨 MORANDI COLOR PALETTE PAGE BACKGROUND SYSTEM (莫兰迪治愈柔和全站背景)
    ========================================================================= */
-/* 1. 主页 (Home) - 莫兰迪·深灰湖蓝 (Slate Teal & Amber Oat) */
+/* 1. 主页 (Home) - 莫兰迪·深灰湖蓝 (Slate Teal & Lake Mist) */
 body.page-home, .page-home {
-  background: radial-gradient(circle at 50% 15%, #242f3a 0%, #1b232c 45%, #141a20 100%) !important;
-  background-color: #1b232c !important;
+  background: radial-gradient(ellipse at 50% 25%, #2d3e4e 0%, #1f2a36 55%, #151d26 100%) !important;
+  background-color: #1f2a36 !important;
+  background-attachment: fixed !important;
 }
 
-/* 2. 音乐与歌谱集 (Music & Scores) - 莫兰迪·雾霭松石黛蓝 (Dusty Sage Teal & Slate) */
+/* 2. 音乐与歌谱集 (Music & Scores) - 莫兰迪·雾霭松石黛蓝 (Dusty Sage Teal & Cold Spruce) */
 body.page-music, body.page-scores, .page-music, .page-scores {
-  background: radial-gradient(circle at 50% 15%, #1f2d32 0%, #172327 50%, #111a1d 100%) !important;
-  background-color: #172327 !important;
+  background: radial-gradient(ellipse at 50% 25%, #24464c 0%, #193136 55%, #102124 100%) !important;
+  background-color: #193136 !important;
+  background-attachment: fixed !important;
 }
 
-/* 3. 活动与日历 (Events) - 莫兰迪·暖褐陶土 (Muted Terracotta Clay & Charcoal Espresso) */
+/* 3. 活动与日历 (Events) - 莫兰迪·暖褐陶土 (Muted Terracotta Clay & Roasted Espresso) */
 body.page-events, body.page-event, .page-events, .page-event {
-  background: radial-gradient(circle at 50% 15%, #272120 0%, #1e1918 50%, #151211 100%) !important;
-  background-color: #1e1918 !important;
+  background: radial-gradient(ellipse at 50% 25%, #4b3630 0%, #342420 55%, #201513 100%) !important;
+  background-color: #342420 !important;
+  background-attachment: fixed !important;
 }
 
 /* 4. 照片集 (Diary / Footprints) - 莫兰迪·复古亚麻卡其 (Muted Kraft Linen & Warm Earth) */
 body.page-diary, .page-diary {
-  background: radial-gradient(circle at 50% 15%, #272825 0%, #1f201d 50%, #161715 100%) !important;
-  background-color: #1f201d !important;
+  background: radial-gradient(ellipse at 50% 25%, #434136 0%, #2f2d24 55%, #1e1d17 100%) !important;
+  background-color: #2f2d24 !important;
+  background-attachment: fixed !important;
 }
 
-/* 5. 我要投稿 (Submit) - 莫兰迪·灰绿鼠尾草 (Dusty Sage Green & Forest Slate) */
+/* 5. 我要投稿 (Submit) - 莫兰迪·灰绿鼠尾草 (Dusty Sage Green & Forest Moss) */
 body.page-submit, .page-submit {
-  background: radial-gradient(circle at 50% 15%, #1f2b25 0%, #17211c 50%, #121915 100%) !important;
-  background-color: #17211c !important;
+  background: radial-gradient(ellipse at 50% 25%, #2b4737 0%, #1d3226 55%, #132119 100%) !important;
+  background-color: #1d3226 !important;
+  background-attachment: fixed !important;
 }
 
-/* 6. 关于我们 (About & Singers) - 莫兰迪·暖砂胡桃木 (Warm Sand & Walnut Slate) */
+/* 6. 关于我们 (About & Singers) - 莫兰迪·暖砂胡桃木 (Warm Sand & Walnut Earth) */
 body.page-about, body.page-singers, .page-about, .page-singers {
-  background: radial-gradient(circle at 50% 15%, #28241e 0%, #1f1b16 50%, #161310 100%) !important;
-  background-color: #1f1b16 !important;
+  background: radial-gradient(ellipse at 50% 25%, #48392c 0%, #32261d 55%, #201811 100%) !important;
+  background-color: #32261d !important;
+  background-attachment: fixed !important;
 }
 
-/* 7. 支持我们 (Support) - 莫兰迪·干枯玫瑰粉黛 (Dusty Rose & Vintage Burgundy Slate) */
+/* 7. 支持我们 (Support) - 莫兰迪·干枯玫瑰粉黛 (Dusty Rose & Vintage Berry Slate) */
 body.page-support, .page-support {
-  background: radial-gradient(circle at 50% 15%, #2a2024 0%, #20171b 50%, #171114 100%) !important;
-  background-color: #20171b !important;
+  background: radial-gradient(ellipse at 50% 25%, #4d2f3d 0%, #351f2a 55%, #22131b 100%) !important;
+  background-color: #351f2a !important;
+  background-attachment: fixed !important;
 }
 
-/* 8. 联系我们 (Contact) - 莫兰迪·燕麦炭灰 (Oatmeal Sand & Charcoal Kraft) */
+/* 8. 联系我们 (Contact) - 莫兰迪·燕麦冷炭灰 (Oatmeal Cold Charcoal & Mineral Slate) */
 body.page-contact, .page-contact {
-  background: radial-gradient(circle at 50% 15%, #22272c 0%, #191e23 50%, #121619 100%) !important;
-  background-color: #191e23 !important;
+  background: radial-gradient(ellipse at 50% 25%, #3a4450 0%, #272f38 55%, #181d23 100%) !important;
+  background-color: #272f38 !important;
+  background-attachment: fixed !important;
 }
 
 /* 🎵 Ambient Floating Music Notes Background */
