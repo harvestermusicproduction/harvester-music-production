@@ -81,7 +81,7 @@
   font-display: swap;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap');
 
 :root {
   --gold: #f6d28a;
@@ -114,13 +114,14 @@
   --morandi-border-subtle: rgba(255, 255, 255, 0.12);
   
   /* 🏛️ Typography Stack: 
-     - 大标题与中标题 (Titles & Headings): Apple Chancery / Cinzel (保持优雅艺术品牌调性)
+     - 大标题 "Harvester Music Production" (PUPLOOP Style): Syne 900 / Montserrat Black / Archivo Black (超重粗体设计风)
      - 3D 唱片盒书脊 & 手绘互动: 漓雨手书 / 乐米秋叙手书体 / Caveat / Dancing Script (手写体)
      - 全局所有其他英文内容与正文 (Content & Body): Times New Roman ('Times New Roman', Times, Baskerville, serif)
   */
   --font-times-new-roman: 'Times New Roman', Times, 'Baskerville', 'Noto Serif SC', serif;
   --font-handwriting: '漓雨手书', '乐米秋叙手书体', 'Caveat', 'Dancing Script', 'Kalam', 'Snell Roundhand', 'Brush Script MT', cursive;
-  --font-brand: 'Apple Chancery', 'Cinzel', 'URW Chancery L', serif;
+  --font-brand: 'Syne', 'Montserrat', 'Archivo Black', 'Anton', 'Arial Black', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  --font-puploop: 'Syne', 'Montserrat', 'Archivo Black', 'Anton', 'Arial Black', sans-serif;
 
   --font-chancery: var(--font-brand);
   --font-times: var(--font-times-new-roman);
@@ -202,13 +203,14 @@ body {
 }
 
 .hero-hand-title {
-  font-family: var(--font-display-en) !important;
-  font-size: clamp(1.4rem, 3.2vw, 2.3rem) !important;
-  font-weight: 700 !important;
+  font-family: var(--font-brand) !important;
+  font-size: clamp(1.4rem, 3.4vw, 2.5rem) !important;
+  font-weight: 950 !important;
+  text-transform: uppercase !important;
+  letter-spacing: -0.5px !important;
   color: #fffaf0 !important;
-  letter-spacing: 2px !important;
   text-shadow: 0 8px 30px rgba(0,0,0,0.85), 0 0 35px rgba(246, 210, 138, 0.3) !important;
-  line-height: 1.25 !important;
+  line-height: 1.15 !important;
   display: inline-block !important;
   width: auto !important;
   margin: 0 auto 0.5rem auto !important;
@@ -221,7 +223,7 @@ body {
 }
 
 .hero-hand-title:hover {
-  letter-spacing: 5.5px !important;
+  letter-spacing: 2px !important;
   text-shadow: 0 12px 40px rgba(0,0,0,0.9), 0 0 45px rgba(246, 210, 138, 0.75), 0 0 70px rgba(232, 168, 72, 0.4) !important;
 }
 
