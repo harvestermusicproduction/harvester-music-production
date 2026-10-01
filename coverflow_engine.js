@@ -954,8 +954,8 @@ You have set my feet upon the rock!`
         <div class="imm-left-col" style="background:transparent; border:none; box-shadow:none; padding:6px 10px; justify-content:space-between; position:relative;">
           <div style="position:relative; z-index:2;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-family:var(--font-eng-title); font-size:0.72rem; letter-spacing:2px; background:rgba(0,0,0,0.3); padding:3px 8px; border-radius:4px; color:#4ecdc4;">AUDIO ARCHIVE</span>
-              <span style="font-family:var(--font-eng-title); font-size:0.75rem; color:var(--gold);">VOL. 01</span>
+              <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; background:rgba(0,0,0,0.3); padding:3px 8px; border-radius:4px; color:#4ecdc4;">AUDIO ARCHIVE</span>
+              <span style="font-family:var(--font-times); font-size:0.78rem; color:var(--gold);">VOL. 01</span>
             </div>
 
             <div style="margin-top:6px;">
@@ -972,7 +972,7 @@ You have set my feet upon the rock!`
               <img src="${activeSong.cover_url}" alt="${activeSong.title}" style="width:100%; height:100%; object-fit:cover;">
               <div style="position:absolute; bottom:6px; left:6px; right:6px; background:rgba(0,0,0,0.65); backdrop-filter:blur(8px); padding:4px 10px; border-radius:6px; font-size:0.7rem; color:#fff; display:flex; justify-content:space-between;">
                 <span>${activeSong.artist}</span>
-                <span style="color:var(--gold); font-family:var(--font-eng-title);">${activeSong.year || '2025'}</span>
+                <span style="color:var(--gold); font-family:var(--font-times);">${activeSong.year || '2025'}</span>
               </div>
             </div>
 
@@ -980,7 +980,7 @@ You have set my feet upon the rock!`
               <h2 style="font-family:var(--font-songti), serif; font-size:1.45rem; font-weight:700; color:#fff; margin:0 0 3px; text-shadow:0 2px 8px rgba(0,0,0,0.6);">
                 ${activeSong.title}
               </h2>
-              <p style="font-size:0.82rem; color:rgba(255,255,255,0.8); margin:0;">
+              <p style="font-size:0.82rem; color:rgba(255,255,255,0.8); margin:0; font-family:var(--font-body);">
                 ${activeSong.artist} · ${activeSong.genre || '敬拜单曲'}
               </p>
             </div>
@@ -989,18 +989,18 @@ You have set my feet upon the rock!`
           <!-- Bottom Action Buttons -->
           <div style="position:relative; z-index:2; display:flex; flex-direction:column; gap:8px; border-top:1px solid rgba(255,255,255,0.15); padding-top:10px;">
             ${activeSong.score_url ? `
-              <a href="${activeSong.score_url}" target="_blank" class="imm-pill-btn" style="background:var(--gold); color:#111; font-weight:700; border:none; padding:9px 14px; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
+              <a href="${activeSong.score_url}" target="_blank" class="imm-pill-btn" style="background:var(--gold); color:#111; font-weight:700; border:none; padding:9px 14px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:var(--font-body);">
                 <i class="fas fa-file-pdf"></i> 下载歌谱 (PDF)
               </a>
             ` : ''}
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
               ${activeSong.youtube_url ? `
-                <a href="${activeSong.youtube_url}" target="_blank" class="imm-pill-btn" style="background:rgba(0,0,0,0.4); border-color:rgba(255,255,255,0.25); font-size:0.78rem; padding:8px 6px;">
+                <a href="${activeSong.youtube_url}" target="_blank" class="imm-pill-btn" style="background:rgba(0,0,0,0.4); border-color:rgba(255,255,255,0.25); font-size:0.78rem; padding:8px 6px; font-family:var(--font-times);">
                   <i class="fab fa-youtube" style="color:#ff4d4d;"></i> YouTube
                 </a>
               ` : ''}
               ${activeSong.spotify_url ? `
-                <a href="${activeSong.spotify_url}" target="_blank" class="imm-pill-btn" style="background:rgba(0,0,0,0.4); border-color:rgba(255,255,255,0.25); font-size:0.78rem; padding:8px 6px;">
+                <a href="${activeSong.spotify_url}" target="_blank" class="imm-pill-btn" style="background:rgba(0,0,0,0.4); border-color:rgba(255,255,255,0.25); font-size:0.78rem; padding:8px 6px; font-family:var(--font-times);">
                   <i class="fab fa-spotify" style="color:#1db954;"></i> Spotify
                 </a>
               ` : ''}
@@ -1018,11 +1018,11 @@ You have set my feet upon the rock!`
                 <!-- Top Polaroid Photo (01 badge) -->
                 <div style="width:100%; height:130px; border-radius:8px; overflow:hidden; border:2px solid #c9bda8; position:relative; margin-bottom:12px;">
                   <img src="${activeSong.photo_1 || activeSong.cover_url}" alt="Art 01" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='assets/logo.png'">
-                  <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-eng-title); font-size:0.75rem; padding:2px 8px; border-radius:4px; font-weight:700;">01</div>
+                  <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:4px; font-weight:700;">01</div>
                 </div>
 
                 <div style="border-bottom:1px solid rgba(44,36,28,0.15); padding-bottom:8px; margin-bottom:12px;">
-                  <span style="font-family:var(--font-eng-title); font-size:0.75rem; letter-spacing:2px; color:#7c664d;">FOLD 01 · LYRICS</span>
+                  <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:#7c664d;">FOLD 01 · LYRICS</span>
                   <h3 style="margin:2px 0 0; color:#2c241c; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">完整歌词 (LYRICS)</h3>
                 </div>
 
@@ -1031,7 +1031,7 @@ ${activeSong.lyrics}
                 </div>
               </div>
 
-              <div style="border-top:1px solid rgba(44,36,28,0.15); padding-top:12px; display:flex; justify-content:space-between; font-family:var(--font-eng-title); font-size:0.75rem; color:#6e5d48;">
+              <div style="border-top:1px solid rgba(44,36,28,0.15); padding-top:12px; display:flex; justify-content:space-between; font-family:var(--font-times); font-size:0.75rem; color:#6e5d48;">
                 <span>${activeSong.key_bpm || 'KEY: C · 72 BPM'}</span>
                 <span style="color:#2c241c; font-weight:700;">ORIGINAL MASTER</span>
               </div>
@@ -1041,7 +1041,7 @@ ${activeSong.lyrics}
             <div class="accordion-panel unfold-panel-2" style="background:#5c2734; color:#fae8ec; padding:24px; border-right:1px solid #451c27;">
               <div>
                 <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:8px; margin-bottom:14px;">
-                  <span style="font-family:var(--font-eng-title); font-size:0.75rem; letter-spacing:2px; color:var(--gold);">FOLD 02 · WORSHIP INSPIRATION</span>
+                  <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:var(--gold);">FOLD 02 · WORSHIP INSPIRATION</span>
                   <h3 style="margin:2px 0 0; color:#fff; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">创作心得与经文 (NOTES)</h3>
                 </div>
 
@@ -1060,7 +1060,7 @@ ${activeSong.lyrics}
               <!-- Bottom Polaroid photo -->
               <div style="width:100%; height:130px; border-radius:8px; overflow:hidden; border:2px solid rgba(255,255,255,0.2); position:relative; margin-top:16px;">
                 <img src="${activeSong.photo_2 || activeSong.cover_url}" alt="Art 02" style="width:100%; height:100%; object-fit:cover; opacity:0.9;" onerror="this.src='${activeSong.cover_url}'">
-                <div style="position:absolute; bottom:6px; left:6px; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); color:var(--gold); font-family:var(--font-eng-title); font-size:0.7rem; padding:2px 8px; border-radius:4px;">
+                <div style="position:absolute; bottom:6px; left:6px; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); color:var(--gold); font-family:var(--font-times); font-size:0.7rem; padding:2px 8px; border-radius:4px;">
                   WORSHIP HEART · 02
                 </div>
               </div>
@@ -1071,11 +1071,11 @@ ${activeSong.lyrics}
               <div>
                 <div style="width:100%; height:150px; border-radius:8px; overflow:hidden; border:2px solid #c6c0b6; position:relative; margin-bottom:16px;">
                   <img src="${activeSong.photo_3 || activeSong.cover_url}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='${activeSong.cover_url}'">
-                  <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-eng-title); font-size:0.75rem; padding:2px 8px; border-radius:4px; font-weight:700;">03</div>
+                  <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:4px; font-weight:700;">03</div>
                 </div>
 
                 <div style="border-bottom:1px solid rgba(38,34,31,0.15); padding-bottom:8px; margin-bottom:12px;">
-                  <span style="font-family:var(--font-eng-title); font-size:0.75rem; letter-spacing:2px; color:#665e56;">FOLD 03 · PRODUCTION CREDITS</span>
+                  <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:#665e56;">FOLD 03 · PRODUCTION CREDITS</span>
                   <h3 style="margin:2px 0 0; color:#26221f; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">同工团队 (CREDITS)</h3>
                 </div>
 
@@ -1102,8 +1102,8 @@ ${activeSong.lyrics}
               </div>
 
               <div style="border-top:1px solid rgba(38,34,31,0.15); padding-top:12px; display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-family:var(--font-eng-title); font-size:0.75rem; color:#665e56;">PDF SCORES</span>
-                <button onclick="toggleAudioPlay()" class="imm-pill-btn" style="background:#26221f; color:#dedad4; border:none; font-size:0.8rem; padding:6px 14px;">
+                <span style="font-family:var(--font-times); font-size:0.75rem; color:#665e56;">PDF SCORES</span>
+                <button onclick="toggleAudioPlay()" class="imm-pill-btn" style="background:#26221f; color:#dedad4; border:none; font-size:0.8rem; padding:6px 14px; font-family:var(--font-times);">
                   <i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '试听'}
                 </button>
               </div>

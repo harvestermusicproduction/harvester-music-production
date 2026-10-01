@@ -113,27 +113,32 @@
   --morandi-border: rgba(246, 210, 138, 0.28);
   --morandi-border-subtle: rgba(255, 255, 255, 0.12);
   
-  /* 🏛️ Typography Stack: 英文 Apple Chancery / 中文 思源宋体 */
-  --font-chancery: 'Apple Chancery', 'Cinzel', 'URW Chancery L', 'Baskerville', 'Times New Roman', serif;
+  /* 🏛️ Typography Stack: 
+     - 大标题与中标题: Apple Chancery / Cinzel
+     - 其他所有英文内容、正文、小字、说明、按钮: Times New Roman
+     - 中文: 思源宋体 (Noto Serif SC)
+  */
+  --font-chancery: 'Apple Chancery', 'Cinzel', 'URW Chancery L', serif;
+  --font-times: 'Times New Roman', Times, Baskerville, serif;
   --font-songti: 'Noto Serif SC', 'Source Han Serif SC', '思源宋体', 'Songti SC', 'STSong', 'SimSun', serif;
   
   --font-eng-title: var(--font-chancery);
-  --font-eng-body:  var(--font-chancery);
+  --font-eng-body:  var(--font-times);
   --font-chn-title: var(--font-songti);
   --font-chn-body:  var(--font-songti);
   --font-hand-title: var(--font-chancery);
-  --font-hand-en:    var(--font-chancery);
+  --font-hand-en:    var(--font-times);
   --font-hand-cn:    var(--font-songti);
   --font-serif-cn:   var(--font-songti);
   --font-kaiti:      var(--font-songti);
   --font-kai:        var(--font-songti);
-  --font-sans:       var(--font-songti);
-  --font-serif:      var(--font-songti);
+  --font-sans:       var(--font-times), var(--font-songti), serif;
+  --font-serif:      var(--font-times), var(--font-songti), serif;
   
   /* Helper Assignments */
   --font-display-en: var(--font-chancery);
   --font-display: var(--font-chancery), var(--font-songti);
-  --font-body:    var(--font-songti), var(--font-chancery), serif;
+  --font-body:    'Times New Roman', Times, var(--font-songti), serif;
   
   --transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   --hand-radius: 14px;
@@ -2639,7 +2644,7 @@ section[id], div[id^="section-"] {
 }
 
 .spine-catalog {
-  font-family: var(--font-eng-title);
+  font-family: var(--font-times);
   font-size: 0.72rem;
   letter-spacing: 2px;
   color: rgba(255, 255, 255, 0.95);
@@ -2657,7 +2662,7 @@ section[id], div[id^="section-"] {
 }
 
 .spine-artist {
-  font-family: var(--font-eng-title);
+  font-family: var(--font-times);
   font-size: 0.76rem;
   font-weight: 700;
   color: var(--gold);
