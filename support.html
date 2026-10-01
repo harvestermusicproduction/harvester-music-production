@@ -17,69 +17,192 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=43.0.0">
+  <link rel="stylesheet" href="styles.css?v=44.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .support-container {
-      max-width: 800px;
-      margin: 8rem auto 5rem;
-      padding: 0 2rem;
-      text-align: center;
+    .support-page-wrapper {
+      max-width: 1180px;
+      margin: 0 auto 5rem;
+      padding: 0 1.5rem;
     }
-    .support-card {
-      background: rgba(255, 255, 255, 0.08) !important;
-      backdrop-filter: blur(25px) !important;
-      -webkit-backdrop-filter: blur(25px) !important;
-      border: 1px solid rgba(255, 255, 255, 0.15) !important;
-      padding: 3.5rem;
-      border-radius: 30px;
-      margin-top: 3rem;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    }
-    .support-text {
-      font-size: 1.1rem;
-      line-height: 1.8;
-      color: #ccc;
-      margin-bottom: 3rem;
-    }
-    .payment-grid {
+
+    .support-grid-layout {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 2rem;
-      margin-top: 2rem;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 2.8rem;
+      align-items: stretch;
     }
-    .payment-item {
-      padding: 1.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    @media (max-width: 960px) {
+      .support-grid-layout {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
     }
-    .payment-label {
-      font-family: var(--font-hand-en), var(--font-hand-cn), serif;
+
+    /* 🎨 Left Column: Hand-drawn Illustration & Devotion Card */
+    .support-left-card {
+      background: rgba(22, 18, 15, 0.88);
+      border: 1.5px solid rgba(246, 210, 138, 0.3);
+      border-radius: var(--hand-radius-soft, 24px);
+      padding: 2.4rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.35s ease;
+    }
+    .support-left-card:hover {
+      border-color: rgba(246, 210, 138, 0.55);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.75), 0 0 30px rgba(246, 210, 138, 0.08);
+    }
+
+    .illustration-frame {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1.5px solid rgba(246, 210, 138, 0.35);
+      background: #000;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+      margin-bottom: 1.8rem;
+      position: relative;
+    }
+    .illustration-frame img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .support-left-card:hover .illustration-frame img {
+      transform: scale(1.04);
+    }
+
+    .scripture-box {
+      border-left: 3px solid var(--gold);
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 0 12px 12px 0;
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1.5rem;
+    }
+    .scripture-text {
+      font-family: var(--font-hand-cn);
+      font-size: 1.25rem;
+      color: #F6F4F0;
+      line-height: 1.8;
+      letter-spacing: 1.5px;
+      margin: 0 0 0.4rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .scripture-ref {
+      font-family: var(--font-hand-en);
       font-size: 0.95rem;
       color: var(--gold);
       letter-spacing: 2px;
-      margin-bottom: 0.6rem;
+      margin: 0;
+    }
+
+    .support-intro-text {
+      font-family: var(--font-hand-cn);
+      font-size: 1.18rem;
+      line-height: 1.85;
+      color: #ded6c8;
+      letter-spacing: 1.2px;
+      margin: 0;
+      background: rgba(246, 210, 138, 0.04);
+      padding: 1.2rem 1.4rem;
+      border-radius: 12px;
+      border: 1px dashed rgba(246, 210, 138, 0.2);
+    }
+
+    /* 💳 Right Column: Bank & Offering Details Card */
+    .support-right-card {
+      background: rgba(26, 34, 42, 0.9);
+      border: 1.5px dashed rgba(246, 210, 138, 0.35);
+      border-radius: var(--hand-radius-soft, 24px);
+      padding: 2.6rem 2.4rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.35s ease;
+    }
+    .support-right-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.75), 0 0 30px rgba(246, 210, 138, 0.08);
+    }
+
+    .bank-card-header {
+      border-bottom: 1px dashed rgba(246, 210, 138, 0.25);
+      padding-bottom: 1.2rem;
+      margin-bottom: 1.8rem;
+    }
+    .bank-card-header h2 {
+      font-family: var(--font-hand-cn);
+      font-size: 2.1rem;
+      color: #F6F4F0;
+      letter-spacing: 3px;
+      margin: 0.5rem 0 0.2rem;
+    }
+    .bank-card-header p {
+      font-family: var(--font-hand-en);
+      font-size: 0.95rem;
+      color: var(--gold);
+      letter-spacing: 2px;
+      margin: 0;
+    }
+
+    .payment-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      margin-bottom: 1.8rem;
+    }
+    .payment-item-box {
+      background: rgba(0, 0, 0, 0.38);
+      border: 1px solid rgba(246, 210, 138, 0.18);
+      border-radius: 14px;
+      padding: 1.1rem 1.3rem;
+      transition: all 0.3s ease;
+    }
+    .payment-item-box:hover {
+      border-color: var(--gold);
+      background: rgba(246, 210, 138, 0.06);
+      transform: translateY(-2px);
+    }
+    .payment-label {
+      font-family: var(--font-hand-cn);
+      font-size: 1.05rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .payment-val-container {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
     }
     .payment-value {
+      font-family: var(--font-times), 'Times New Roman', Times, serif;
       font-size: 1.35rem;
       color: #F6F4F0;
-      font-weight: 400;
-      letter-spacing: 1px;
-      font-family: var(--font-times), 'Times New Roman', Times, serif;
+      letter-spacing: 1.5px;
+      font-weight: 500;
     }
+
     /* 🏷️ Hand-drawn Organic Copy Button */
     .sketch-copy-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 5px 14px;
+      padding: 6px 16px;
       background: rgba(246, 210, 138, 0.08);
       border: 1.5px dashed rgba(246, 210, 138, 0.55);
       border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
@@ -93,7 +216,7 @@
       box-shadow: 0 3px 10px rgba(0,0,0,0.25);
     }
     .sketch-copy-btn:hover {
-      transform: scale(1.08) rotate(-2deg);
+      transform: scale(1.06) rotate(-2deg);
       background: rgba(246, 210, 138, 0.2);
       border-color: var(--gold);
       color: #F6F4F0;
@@ -119,17 +242,46 @@
     .sketch-copy-btn:hover .sketch-copy-icon {
       transform: rotate(6deg) scale(1.1);
     }
-    .qr-section {
-      margin-top: 4rem;
+
+    /* 📱 QR Code Section */
+    .qr-container-box {
+      background: rgba(0, 0, 0, 0.38);
+      border: 1.5px dashed rgba(246, 210, 138, 0.3);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+      flex-wrap: wrap;
     }
-    .qr-code {
-      width: 200px;
-      height: 200px;
-      margin: 0 auto;
-      border: 2px solid var(--gold);
-      padding: 10px;
+    .qr-img-wrap {
       background: #fff;
-      border-radius: 8px;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .qr-code-img {
+      width: 130px;
+      height: 130px;
+      object-fit: contain;
+      display: block;
+      border: none;
+    }
+    .qr-guide-title {
+      font-family: var(--font-hand-cn);
+      font-size: 1.25rem;
+      color: #F6F4F0;
+      margin: 0 0 0.3rem;
+      letter-spacing: 1px;
+    }
+    .qr-guide-desc {
+      font-family: var(--font-hand-en), var(--font-hand-cn);
+      font-size: 0.95rem;
+      color: #9c9083;
+      line-height: 1.5;
+      margin: 0;
     }
   </style>
 </head>
@@ -217,68 +369,132 @@
 
   <div class="ppt-header fade-in">
     <div class="ppt-line"></div>
-    
     <h1 class="ppt-title">支持我们 / 自由奉献</h1>
-    <p class="ppt-subtitle">Become a Harvester Partner</p>
+    <p class="ppt-subtitle">Become a Harvester Partner · Support Our Ministry</p>
   </div>
 
-  <section class="support-container fade-in" style="margin-top: 0; padding-top: 0;">
-    <img id="cfg_support_banner" src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=1200&q=80" alt="支持我们背景图" style="width: 100%; max-height: 400px; object-fit: cover; border-radius:12px; margin-bottom: 2rem; border: 1px solid rgba(246,210,138,0.1);">
-    
-    <div class="support-card">
-      <p id="cfg_support_text" class="support-text">
-        若这份音乐祝福了你，欢迎以自由奉献支持我们的创作与服事。您的每一份支持都将用于福音音乐的制作与推广。
-      </p>
+  <main class="support-page-wrapper fade-in">
+    <div class="support-grid-layout">
 
-      <div class="payment-grid">
-        <div class="payment-item">
-          <div class="payment-label">Bank Name (银行名称)</div>
-          <div id="cfg_support_bank" class="payment-value">...</div>
-        </div>
-        <div class="payment-item">
-          <div class="payment-label">Account Number (银行账号)</div>
-          <div class="payment-val-container">
-            <div id="cfg_support_acc_no" class="payment-value">...</div>
-            <button type="button" class="sketch-copy-btn" onclick="copyTextFromElement('cfg_support_acc_no', this)" title="点击自动复制银行账号 / Click to copy Bank Account">
-              <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-              <span>Copy 复制</span>
-            </button>
+      <!-- ==========================================
+           🎨 LEFT COLUMN: 插画图与事工感言 (ILLUSTRATION & INSPIRATION)
+           ========================================== -->
+      <div class="support-left-card">
+        <div>
+          <!-- 插画图框架 -->
+          <div class="illustration-frame">
+            <img id="cfg_support_banner" src="assets/wheat-field.png" alt="支持我们插画图">
+          </div>
+
+          <!-- 经文鼓励 -->
+          <div class="scripture-box">
+            <p class="scripture-text">
+              「各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。」
+            </p>
+            <p class="scripture-ref">—— 哥林多后书 9:7 · 2 Corinthians 9:7</p>
           </div>
         </div>
-        <div class="payment-item">
-          <div class="payment-label">Account Name (户名)</div>
-          <div id="cfg_support_acc_name" class="payment-value">...</div>
-        </div>
-        <div class="payment-item">
-          <div class="payment-label">TNG / DuitNow Contact (联系方式)</div>
-          <div class="payment-val-container">
-            <div id="cfg_support_tng" class="payment-value">...</div>
-            <button type="button" class="sketch-copy-btn" onclick="copyTextFromElement('cfg_support_tng', this)" title="点击自动复制联系方式 / Click to copy Contact">
-              <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-              <span>Copy 复制</span>
-            </button>
-          </div>
+
+        <!-- 动态寄语说明 -->
+        <div>
+          <p id="cfg_support_text" class="support-intro-text">
+            若这份音乐祝福了你，欢迎以自由奉献支持我们的创作与服事。您的每一份支持都将用于福音音乐的制作与推广。
+          </p>
         </div>
       </div>
 
-      <div class="qr-section">
-        <p class="payment-label">Scan to Support (DuitNow QR)</p>
-        <div style="background: #fff; padding: 15px; display: inline-block; border-radius: 12px; margin-top: 10px;">
-           <img id="cfg_support_qr" src="https://via.placeholder.com/200x200?text=DuitNow+QR" class="qr-code" alt="QR Code" style="display: block; border: none;">
+      <!-- ==========================================
+           💳 RIGHT COLUMN: 银行资料与扫码奉献 (BANKING & QR)
+           ========================================== -->
+      <div class="support-right-card">
+        <div>
+          <div class="bank-card-header">
+            <span class="sketch-pill">🌾 Offering · 自由奉献</span>
+            <h2>奉 献 账 户 资 料</h2>
+            <p>Direct Bank Transfer & DuitNow QR</p>
+          </div>
+
+          <!-- 银行资料列表 -->
+          <div class="payment-grid">
+            <!-- 1. 银行名称 -->
+            <div class="payment-item-box">
+              <div class="payment-label">
+                <i class="fas fa-university"></i> Bank Name (银行名称)
+              </div>
+              <div id="cfg_support_bank" class="payment-value">Maybank</div>
+            </div>
+
+            <!-- 2. 银行账号 + 一键复制 -->
+            <div class="payment-item-box">
+              <div class="payment-label">
+                <i class="fas fa-credit-card"></i> Account Number (银行账号)
+              </div>
+              <div class="payment-val-container">
+                <div id="cfg_support_acc_no" class="payment-value">5123 4567 8901</div>
+                <button type="button" class="sketch-copy-btn" onclick="copyTextFromElement('cfg_support_acc_no', this)" title="点击自动复制银行账号 / Click to copy Bank Account">
+                  <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy 复制</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3. 账户户名 -->
+            <div class="payment-item-box">
+              <div class="payment-label">
+                <i class="fas fa-user-shield"></i> Account Name (账户户名)
+              </div>
+              <div id="cfg_support_acc_name" class="payment-value">HARVESTER MUSIC PRODUCTION</div>
+            </div>
+
+            <!-- 4. TNG / DuitNow 联系方式 + 一键复制 -->
+            <div class="payment-item-box">
+              <div class="payment-label">
+                <i class="fas fa-mobile-alt"></i> TNG / DuitNow Contact (联系方式)
+              </div>
+              <div class="payment-val-container">
+                <div id="cfg_support_tng" class="payment-value">+60 18-775 5581</div>
+                <button type="button" class="sketch-copy-btn" onclick="copyTextFromElement('cfg_support_tng', this)" title="点击自动复制联系方式 / Click to copy Contact">
+                  <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy 复制</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. DuitNow QR 扫码区域 -->
+          <div class="qr-container-box">
+            <div class="qr-img-wrap">
+              <img id="cfg_support_qr" src="https://via.placeholder.com/200x200?text=DuitNow+QR" class="qr-code-img" alt="DuitNow QR Code">
+            </div>
+            <div style="flex: 1; min-width: 180px;">
+              <h4 class="qr-guide-title">
+                <i class="fas fa-qrcode" style="color:var(--gold); margin-right:6px;"></i> Scan & Pay 扫码支持
+              </h4>
+              <p class="qr-guide-desc">
+                支持马来西亚各大银行 App 与 Touch 'n Go eWallet 直接扫码奉献。
+              </p>
+              <div style="margin-top: 10px;">
+                <a href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20have%20made%20a%20support%20offering." target="_blank" class="sketch-copy-btn" style="text-decoration:none;">
+                  <i class="fab fa-whatsapp"></i> 奉献后发送收据
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <p style="margin-top: 1.8rem; margin-bottom: 0; font-style: italic; color: #8c8276; font-size: 0.95rem; font-family: var(--font-hand-cn); text-align: center;">
+          每一份支持，都是我们继续前行的动力。愿神充充足足祝福您的慷慨与爱心。
+        </p>
       </div>
+
     </div>
-
-    <p style="margin-top: 4rem; font-style: italic; color: #666; font-size: 0.9rem;">
-      每一份支持，都是我们继续前行的动力。愿神祝福您的慷慨。
-    </p>
-  </section>
+  </main>
 
     <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="index.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
@@ -289,8 +505,8 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js?v=2.6.0"></script>
-  <script src="app.js?v=25.0.0"></script>
+  <script src="config.js?v=22.0.0"></script>
+  <script src="app.js?v=26.0.0"></script>
   <script>
     function copyTextFromElement(targetId, btnEl) {
       const el = document.getElementById(targetId);

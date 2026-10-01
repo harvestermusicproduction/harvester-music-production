@@ -2001,10 +2001,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- 2. 海报与致谢说明 -->
+        <!-- 2. 插画图与致谢说明 -->
         <div class="cms-card" style="border-left: 4px solid #64D28A;">
           <h3 style="color:#64D28A; margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>📖</span> 顶部海报与奉献寄语说明
+            <span>🎨</span> 左侧插画图与奉献寄语说明
           </h3>
           <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-top:15px;">
             <div>
@@ -2014,10 +2014,10 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </div>
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
-              <label style="display:block; color:#64D28A; font-size:0.85rem; font-weight:bold; margin-bottom:10px;">支持页面顶部横幅海报</label>
-              <img id="prev_support_banner" src="${c['cfg_support_banner'] || 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=1200&q=80'}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:10px; border:1px solid #222;">
+              <label style="display:block; color:#64D28A; font-size:0.85rem; font-weight:bold; margin-bottom:10px;">支持页面左侧插画/展示图 (Illustration Image)</label>
+              <img id="prev_support_banner" src="${c['cfg_support_banner'] || 'assets/wheat-field.png'}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin-bottom:10px; border:1px solid #222;">
               <input type="file" id="f_support_banner" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:8px;">
-              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_support_banner', 'in_support_banner', 'prev_support_banner')">📤 上传海报图片</button>
+              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_support_banner', 'in_support_banner', 'prev_support_banner')">📤 上传插画图片</button>
               <input type="hidden" id="in_support_banner" value="${c['cfg_support_banner'] || ''}">
             </div>
           </div>
