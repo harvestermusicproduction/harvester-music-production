@@ -2900,13 +2900,13 @@ body.immersive-modal-active header {
 
 .immersive-page {
   width: 100%;
-  max-width: 1220px;
+  max-width: 1440px;
   margin: 0 auto;
   min-height: 100%;
   display: flex;
   justify-content: center;
   align-items: stretch;
-  gap: 22px;
+  gap: 24px;
 }
 
 @media (max-width: 992px) {
@@ -2935,7 +2935,7 @@ body.immersive-modal-active header {
     padding-bottom: 15px;
   }
   .accordion-booklet-stage {
-    min-width: 780px !important;
+    min-width: 960px !important;
   }
 }
 
@@ -3015,7 +3015,7 @@ body.immersive-modal-active header {
 .imm-right-col {
   flex: 1;
   min-width: 0;
-  max-width: 900px;
+  max-width: 1140px;
   display: flex;
   align-items: stretch;
   padding-right: 0;
@@ -3043,10 +3043,10 @@ body.immersive-modal-active header {
 
 .accordion-panel {
   position: relative;
-  flex: 0 0 280px;
-  width: 280px;
-  max-width: 280px;
-  min-height: 520px;
+  flex: 0 0 340px;
+  width: 340px;
+  max-width: 340px;
+  min-height: 560px;
   box-sizing: border-box;
   border-radius: 0 !important;
   box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35), inset 1px 0 0 rgba(255, 255, 255, 0.12);
@@ -3056,7 +3056,7 @@ body.immersive-modal-active header {
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
-  will-change: transform, opacity, width, flex-basis;
+  will-change: transform, width, flex-basis;
 }
 
 /* Sharp Paper Crease Hinge Line between folds */

@@ -265,10 +265,10 @@
 
     .accordion-panel {
       position: relative;
-      flex: 0 0 280px;
-      width: 280px;
-      max-width: 280px;
-      min-height: 520px;
+      flex: 0 0 340px;
+      width: 340px;
+      max-width: 340px;
+      min-height: 560px;
       box-sizing: border-box;
       box-shadow: -8px 0 25px rgba(0, 0, 0, 0.35), inset 1px 0 0 rgba(255, 255, 255, 0.15);
       transform-origin: left center;
@@ -276,7 +276,7 @@
       flex-direction: column;
       justify-content: space-between;
       overflow: hidden;
-      will-change: transform, opacity, width, flex-basis;
+      will-change: transform, width, flex-basis;
     }
 
     /* Vertical Fold Lines & Inset Shadows */
@@ -306,7 +306,7 @@
     /* 📜 Authentic 3D Paper Accordion Unfold (Page 1 -> Page 2 -> Page 3) */
     @keyframes accordionPaperUnfold1 {
       0% { 
-        opacity: 0; 
+        opacity: 1; 
         transform: translateX(-15px) scale(0.98); 
       }
       100% { 
@@ -323,19 +323,16 @@
         max-width: 0;
         padding-left: 0;
         padding-right: 0;
-        opacity: 0; 
-        transform: rotateY(-88deg); 
+        opacity: 1; 
+        transform: rotateY(-90deg); 
         box-shadow: -20px 0 40px rgba(0, 0, 0, 0.7);
       }
-      30% {
-        opacity: 1;
-      }
       100% { 
-        flex: 0 0 280px;
-        width: 280px;
-        max-width: 280px;
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
+        flex: 0 0 340px;
+        width: 340px;
+        max-width: 340px;
+        padding-left: 1.75rem;
+        padding-right: 1.75rem;
         opacity: 1; 
         transform: rotateY(0deg); 
         box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35);
@@ -349,19 +346,16 @@
         max-width: 0;
         padding-left: 0;
         padding-right: 0;
-        opacity: 0; 
-        transform: rotateY(-88deg); 
+        opacity: 1; 
+        transform: rotateY(-90deg); 
         box-shadow: -20px 0 40px rgba(0, 0, 0, 0.7);
       }
-      30% {
-        opacity: 1;
-      }
       100% { 
-        flex: 0 0 280px;
-        width: 280px;
-        max-width: 280px;
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
+        flex: 0 0 340px;
+        width: 340px;
+        max-width: 340px;
+        padding-left: 1.75rem;
+        padding-right: 1.75rem;
         opacity: 1; 
         transform: rotateY(0deg); 
         box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35);

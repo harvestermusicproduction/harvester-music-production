@@ -899,7 +899,7 @@ You have set my feet upon the rock!`
     renderSingleSongDetail();
 
     if (window.gsap) {
-      gsap.fromTo(view, { opacity: 0, scale: 0.98 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power2.out" });
+      gsap.set(view, { opacity: 1, scale: 1 });
       
       const panel1 = view.querySelector('.unfold-panel-1');
       const panel2 = view.querySelector('.unfold-panel-2');
@@ -908,72 +908,70 @@ You have set my feet upon the rock!`
       if (panel1 && panel2 && panel3) {
         gsap.killTweensOf([panel1, panel2, panel3]);
 
-        // Phase 0: Start with ONLY Page 1 visible! Pages 2 & 3 are folded shut
+        // Phase 0: Start with ONLY Page 1 visible! Pages 2 & 3 start folded shut (No whole-paper fade-in)
         gsap.set(panel1, { 
           opacity: 1, 
-          width: 280, 
-          flexBasis: "280px", 
+          width: 340, 
+          flexBasis: "340px", 
           flexGrow: 0, 
           flexShrink: 0, 
           rotateY: 0, 
-          paddingLeft: 22, 
-          paddingRight: 22, 
+          paddingLeft: 26, 
+          paddingRight: 26, 
           transformOrigin: 'left center', 
           boxShadow: '-6px 0 20px rgba(0,0,0,0.35)' 
         });
 
         gsap.set(panel2, { 
-          opacity: 0, 
+          opacity: 1, 
           width: 0, 
           flexBasis: "0px", 
           flexGrow: 0, 
           flexShrink: 0, 
           paddingLeft: 0, 
           paddingRight: 0, 
-          rotateY: -88, 
+          rotateY: -90, 
           transformOrigin: 'left center', 
           boxShadow: '-20px 0 35px rgba(0,0,0,0.7)' 
         });
 
         gsap.set(panel3, { 
-          opacity: 0, 
+          opacity: 1, 
           width: 0, 
           flexBasis: "0px", 
           flexGrow: 0, 
           flexShrink: 0, 
           paddingLeft: 0, 
           paddingRight: 0, 
-          rotateY: -88, 
+          rotateY: -90, 
           transformOrigin: 'left center', 
           boxShadow: '-20px 0 35px rgba(0,0,0,0.7)' 
         });
 
-        const tl = gsap.timeline({ delay: 0.28 });
+        const tl = gsap.timeline({ delay: 0.32 });
 
-        // Step 1: Fold 2 smoothly unfolds towards the right from Fold 1
+        // Step 1: Fold 2 smoothly unfolds towards the right from Fold 1 (physical swing & unroll, NO fade-in)
         tl.to(panel2, { 
-          width: 280, 
-          flexBasis: "280px", 
-          paddingLeft: 24, 
-          paddingRight: 24, 
-          opacity: 1, 
+          width: 340, 
+          flexBasis: "340px", 
+          paddingLeft: 26, 
+          paddingRight: 26, 
           rotateY: 0, 
           boxShadow: '-6px 0 20px rgba(0,0,0,0.35)', 
           duration: 0.85, 
           ease: "power2.out" 
         })
-        // Step 2: Fold 3 smoothly unfolds towards the right from Fold 2
+        // Step 2: Fold 3 smoothly unfolds from Fold 2 towards the right (physical swing & unroll, NO fade-in)
         .to(panel3, { 
-          width: 280, 
-          flexBasis: "280px", 
-          paddingLeft: 24, 
-          paddingRight: 24, 
-          opacity: 1, 
+          width: 340, 
+          flexBasis: "340px", 
+          paddingLeft: 26, 
+          paddingRight: 26, 
           rotateY: 0, 
           boxShadow: '-6px 0 20px rgba(0,0,0,0.35)', 
           duration: 0.85, 
           ease: "power2.out" 
-        }, "-=0.25");
+        }, "-=0.20");
       }
     }
   };
@@ -997,8 +995,12 @@ You have set my feet upon the rock!`
     const stage = document.getElementById('immersiveStage');
     if (!stage || !activeSong) return;
 
+    const photo1 = activeSong.photo_1 || activeSong.cover_url || childlikeDoodles[0];
+    const photo2 = activeSong.photo_2 || activeSong.cover_url || childlikeDoodles[1];
+    const photo3 = activeSong.photo_3 || activeSong.cover_url || childlikeDoodles[2];
+
     stage.innerHTML = `
-      <div class="immersive-page page-1 fade-in" style="align-items:stretch; gap:20px;">
+      <div class="immersive-page page-1" style="align-items:stretch; gap:24px;">
         <!-- Left Column: Frameless Poster & Actions (Seamless with Background) -->
         <div class="imm-left-col" style="background:transparent; border:none; box-shadow:none; padding:6px 10px; justify-content:space-between; position:relative;">
           <div style="position:relative; z-index:2;">
@@ -1018,7 +1020,7 @@ You have set my feet upon the rock!`
           <!-- Center Band Member Cut-out Sticker -->
           <div style="position:relative; z-index:2; margin:10px 0; text-align:center;">
             <div class="cutout-sticker" style="width:190px; height:190px; margin:0 auto; overflow:hidden; position:relative;">
-              <img src="${activeSong.cover_url}" alt="${activeSong.title}" style="width:100%; height:100%; object-fit:cover;">
+              <img src="${activeSong.cover_url}" alt="${activeSong.title}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='${childlikeDoodles[0]}'">
               <div style="position:absolute; bottom:6px; left:6px; right:6px; background:rgba(0,0,0,0.65); backdrop-filter:blur(8px); padding:4px 10px; border-radius:6px; font-size:0.7rem; color:#fff; display:flex; justify-content:space-between;">
                 <span>${activeSong.artist}</span>
                 <span style="color:var(--gold); font-family:var(--font-times);">${activeSong.year || '2025'}</span>
@@ -1062,26 +1064,26 @@ You have set my feet upon the rock!`
           <div class="accordion-booklet-stage">
             
             <!-- FOLD 1: 沙色莫兰迪 (WARM KRAFT SAND CREAM) -->
-            <div class="accordion-panel unfold-panel-1" style="background:#dfd5c4; color:#2c241c; border-radius:0; padding:22px; border-right:1px solid #c9bda8;">
-              <div style="width:236px; min-width:236px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+            <div class="accordion-panel unfold-panel-1" style="background:#dfd5c4; color:#2c241c; border-radius:0; padding:24px 26px; border-right:1px solid #c9bda8;">
+              <div style="width:288px; min-width:288px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <!-- Top Polaroid Photo (01 badge) -->
-                  <div style="width:100%; height:130px; border-radius:0; overflow:hidden; border:1px solid #c9bda8; position:relative; margin-bottom:12px;">
-                    <img src="${activeSong.photo_1 || activeSong.cover_url}" alt="Art 01" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='assets/logo.png'">
+                  <div style="width:100%; height:140px; border-radius:0; overflow:hidden; border:1px solid #c9bda8; position:relative; margin-bottom:14px; background:#c9bda8;">
+                    <img src="${photo1}" alt="Art 01" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.onerror=null; this.src='${childlikeDoodles[0]}'">
                     <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">01</div>
                   </div>
 
                   <div style="border-bottom:1px solid rgba(44,36,28,0.15); padding-bottom:8px; margin-bottom:12px;">
                     <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:#7c664d;">FOLD 01 · LYRICS</span>
-                    <h3 style="margin:2px 0 0; color:#2c241c; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">完整歌词 (LYRICS)</h3>
+                    <h3 style="margin:2px 0 0; color:#2c241c; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">完整歌词 (LYRICS)</h3>
                   </div>
 
-                  <div style="font-family:var(--font-songti), serif; font-size:0.98rem; line-height:1.9; color:#3a3025; white-space:pre-wrap; max-height:260px; overflow-y:auto; padding-right:6px;">
+                  <div style="font-family:var(--font-songti), serif; font-size:1rem; line-height:1.9; color:#3a3025; white-space:pre-wrap; max-height:270px; overflow-y:auto; padding-right:6px;">
 ${activeSong.lyrics}
                   </div>
                 </div>
 
-                <div style="border-top:1px solid rgba(44,36,28,0.15); padding-top:12px; display:flex; justify-content:space-between; font-family:var(--font-times); font-size:0.75rem; color:#6e5d48;">
+                <div style="border-top:1px solid rgba(44,36,28,0.15); padding-top:14px; display:flex; justify-content:space-between; font-family:var(--font-times); font-size:0.75rem; color:#6e5d48;">
                   <span>${activeSong.key_bpm || 'KEY: C · 72 BPM'}</span>
                   <span style="color:#2c241c; font-weight:700;">ORIGINAL MASTER</span>
                 </div>
@@ -1089,17 +1091,17 @@ ${activeSong.lyrics}
             </div>
 
             <!-- FOLD 2: 勃艮第红莫兰迪 (MUTED BURGUNDY / WINE) -->
-            <div class="accordion-panel unfold-panel-2" style="background:#5c2734; color:#fae8ec; border-radius:0; padding:24px; border-right:1px solid #451c27;">
-              <div style="width:232px; min-width:232px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+            <div class="accordion-panel unfold-panel-2" style="background:#5c2734; color:#fae8ec; border-radius:0; padding:24px 26px; border-right:1px solid #451c27;">
+              <div style="width:288px; min-width:288px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:8px; margin-bottom:14px;">
                     <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:var(--gold);">FOLD 02 · WORSHIP INSPIRATION</span>
-                    <h3 style="margin:2px 0 0; color:#fff; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">创作心得与经文 (NOTES)</h3>
+                    <h3 style="margin:2px 0 0; color:#fff; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">创作心得与经文 (NOTES)</h3>
                   </div>
 
-                  <div style="font-family:var(--font-songti), serif; font-size:0.95rem; line-height:1.8; color:#f3d7df; space-y:10px;">
+                  <div style="font-family:var(--font-songti), serif; font-size:0.98rem; line-height:1.85; color:#f3d7df; space-y:10px;">
                     ${activeSong.scripture ? `
-                      <div style="background:rgba(0,0,0,0.25); border-left:3px solid var(--gold); padding:10px 12px; border-radius:0; font-size:0.85rem; color:var(--gold); margin-bottom:12px;">
+                      <div style="background:rgba(0,0,0,0.25); border-left:3px solid var(--gold); padding:10px 12px; border-radius:0; font-size:0.88rem; color:var(--gold); margin-bottom:12px;">
                         ${activeSong.scripture}
                       </div>
                     ` : ''}
@@ -1110,8 +1112,8 @@ ${activeSong.lyrics}
                 </div>
 
                 <!-- Bottom Polaroid photo -->
-                <div style="width:100%; height:130px; border-radius:0; overflow:hidden; border:1px solid rgba(255,255,255,0.2); position:relative; margin-top:16px;">
-                  <img src="${activeSong.photo_2 || activeSong.cover_url}" alt="Art 02" style="width:100%; height:100%; object-fit:cover; opacity:0.9;" onerror="this.src='${activeSong.cover_url}'">
+                <div style="width:100%; height:140px; border-radius:0; overflow:hidden; border:1px solid rgba(255,255,255,0.2); position:relative; margin-top:16px; background:#451c27;">
+                  <img src="${photo2}" alt="Art 02" style="width:100%; height:100%; object-fit:cover; opacity:0.9;" onerror="this.onerror=null; this.src='${childlikeDoodles[1]}'">
                   <div style="position:absolute; bottom:6px; left:6px; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); color:var(--gold); font-family:var(--font-times); font-size:0.7rem; padding:2px 8px; border-radius:0;">
                     WORSHIP HEART · 02
                   </div>
@@ -1120,20 +1122,20 @@ ${activeSong.lyrics}
             </div>
 
             <!-- FOLD 3: 浅灰麻布莫兰迪 (MUTED LINEN / STONE GREY) -->
-            <div class="accordion-panel unfold-panel-3" style="background:#dedad4; color:#26221f; border-radius:0; padding:24px;">
-              <div style="width:232px; min-width:232px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+            <div class="accordion-panel unfold-panel-3" style="background:#dedad4; color:#26221f; border-radius:0; padding:24px 26px;">
+              <div style="width:288px; min-width:288px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
-                  <div style="width:100%; height:150px; border-radius:0; overflow:hidden; border:1px solid #c6c0b6; position:relative; margin-bottom:16px;">
-                    <img src="${activeSong.photo_3 || activeSong.cover_url}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.src='${activeSong.cover_url}'">
+                  <div style="width:100%; height:150px; border-radius:0; overflow:hidden; border:1px solid #c6c0b6; position:relative; margin-bottom:16px; background:#c6c0b6;">
+                    <img src="${photo3}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.onerror=null; this.src='${childlikeDoodles[2]}'">
                     <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-times); font-size:0.75rem; padding:2px 8px; border-radius:0; font-weight:700;">03</div>
                   </div>
 
                   <div style="border-bottom:1px solid rgba(38,34,31,0.15); padding-bottom:8px; margin-bottom:12px;">
                     <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:#665e56;">FOLD 03 · PRODUCTION CREDITS</span>
-                    <h3 style="margin:2px 0 0; color:#26221f; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">同工团队 (CREDITS)</h3>
+                    <h3 style="margin:2px 0 0; color:#26221f; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">同工团队 (CREDITS)</h3>
                   </div>
 
-                  <div style="font-size:0.85rem; space-y:8px; color:#423b35; font-family:var(--font-body);">
+                  <div style="font-size:0.88rem; space-y:8px; color:#423b35; font-family:var(--font-body);">
                     <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
                       <span style="color:#756a60;">词曲创作：</span>
                       <span style="font-weight:600; color:#1c1815;">${activeSong.composer || activeSong.artist}</span>
@@ -1155,9 +1157,9 @@ ${activeSong.lyrics}
                   </div>
                 </div>
 
-                <div style="border-top:1px solid rgba(38,34,31,0.15); padding-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="border-top:1px solid rgba(38,34,31,0.15); padding-top:14px; display:flex; justify-content:space-between; align-items:center;">
                   <span style="font-family:var(--font-times); font-size:0.75rem; color:#665e56;">PDF SCORES</span>
-                  <button onclick="toggleAudioPlay()" class="imm-pill-btn" style="background:#26221f; color:#dedad4; border:none; font-size:0.8rem; padding:6px 14px; font-family:var(--font-times);">
+                  <button onclick="toggleAudioPlay()" class="imm-pill-btn" style="background:#26221f; color:#dedad4; border:none; font-size:0.82rem; padding:7px 16px; font-family:var(--font-times);">
                     <i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '试听'}
                   </button>
                 </div>
