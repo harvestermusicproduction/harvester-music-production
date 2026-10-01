@@ -897,85 +897,292 @@ header.scrolled {
 .diary-img { width: 100%; max-height: 400px; object-fit: cover; }
 .diary-text { font-size: 1rem; color: #ddd; }
 
-/* Forms & Inputs - 🎨 Hand-Drawn Sketch Aesthetic (手绘风填写框) */
-.contact-form, .sketch-form { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 1.5rem; 
-  text-align: left; 
-  max-width: 600px; 
-  margin: 0 auto;
-  background: rgba(22, 29, 36, 0.92) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 2px dashed rgba(246, 210, 138, 0.65) !important;
-  padding: 2.8rem 2.4rem !important;
-  border-radius: 255px 25px 225px 25px / 25px 225px 25px 255px !important;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(246, 210, 138, 0.2), 0 0 25px rgba(246, 210, 138, 0.12) !important;
+/* Forms & Inputs - 📎 Paper Dossier Card Pinned with Paperclip (回形针档案纸风格) */
+.paper-dossier-wrap {
   position: relative;
+  max-width: 580px;
+  margin: 1.5rem auto 0;
+  perspective: 1000px;
 }
-.contact-form::after, .sketch-form::after {
-  content: '';
+.paper-dossier-card {
+  background: #fcfaf5 !important;
+  color: #1a1816 !important;
+  padding: 3rem 2.5rem 2.2rem !important;
+  border-radius: 4px 6px 8px 4px !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 8px 20px rgba(0, 0, 0, 0.35), inset 0 0 50px rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid #e2ddd3 !important;
+  position: relative;
+  transform: rotate(-1.2deg);
+  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.4s ease;
+  font-family: 'Times New Roman', Times, 'Noto Serif SC', serif;
+}
+.paper-dossier-card:hover {
+  transform: rotate(0deg) translateY(-4px);
+  box-shadow: 0 32px 75px rgba(0, 0, 0, 0.85), 0 12px 25px rgba(0, 0, 0, 0.4) !important;
+}
+.paperclip-holder {
   position: absolute;
-  inset: -5px;
-  border: 1px solid rgba(246, 210, 138, 0.25);
-  border-radius: 25px 255px 25px 225px / 225px 25px 255px 25px;
+  top: -24px;
+  right: 32px;
+  width: 44px;
+  height: 90px;
+  z-index: 20;
   pointer-events: none;
+  filter: drop-shadow(3px 6px 5px rgba(0, 0, 0, 0.5));
 }
-.contact-form input, .contact-form textarea, .sketch-input { 
-  width: 100%; 
-  background: rgba(18, 24, 31, 0.95) !important; 
-  border: 2px solid rgba(246, 210, 138, 0.5) !important; 
-  padding: 13px 18px !important; 
-  color: #fffaf0 !important; 
-  font-family: var(--font-handwriting), 'American Typewriter', cursive, serif !important; 
-  font-size: 1.05rem !important; 
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.45) !important;
-  box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+.paperclip-holder svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
-.contact-form input:focus, .contact-form textarea:focus, .sketch-input:focus { 
-  outline: none !important; 
-  border-color: var(--gold) !important; 
-  background: rgba(26, 34, 42, 0.98) !important;
-  box-shadow: 0 0 15px rgba(246, 210, 138, 0.4), inset 0 0 8px rgba(246, 210, 138, 0.2) !important;
-  transform: scale(1.008) rotate(-0.3deg);
-}
-.contact-form label {
-  color: var(--gold) !important;
-  font-family: var(--font-handwriting), 'American Typewriter', cursive, serif !important;
-  font-size: 1.15rem !important;
-  font-weight: 700;
+.paper-pop-sticker {
+  position: absolute;
+  top: 18px;
+  right: 80px;
+  background: #ff334b;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 900;
   letter-spacing: 1px;
-  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  box-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+  transform: rotate(6deg);
+  border: 2px solid #fff;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+.paper-pop-sticker span:first-child {
+  font-size: 0.85rem;
+  color: #ffe600;
+}
+.paper-header-block {
+  border-bottom: 2.5px solid #1a1816;
+  padding-bottom: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+.paper-top-tag {
+  display: inline-block;
+  background: #1a1816;
+  color: #fff;
+  font-family: monospace;
+  font-size: 0.68rem;
+  padding: 2px 8px;
+  letter-spacing: 1.5px;
+  font-weight: bold;
+  border-radius: 2px;
+  margin-bottom: 4px;
+}
+.paper-title-main {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', 'Inter', sans-serif !important;
+  font-size: 2.3rem !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.5px !important;
+  color: #111 !important;
+  line-height: 1.05 !important;
+  margin: 0 !important;
+  text-transform: uppercase;
+}
+.paper-title-sub {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 3px;
+}
+.paper-title-sub h3 {
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  color: #111 !important;
+  margin: 0 !important;
+  letter-spacing: 1px;
+  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif !important;
+}
+.paper-title-sub span {
+  font-family: 'Times New Roman', serif;
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  color: #666;
+  font-weight: bold;
+}
+.paper-meta-rule {
+  font-family: monospace;
+  font-size: 0.7rem;
+  color: #777;
+  letter-spacing: 1.5px;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+.paper-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1.5px solid #d8d2c5;
+  padding: 10px 0;
+  gap: 16px;
+}
+.paper-row-label {
+  width: 80px;
+  shrink: 0;
+  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1a1816;
+  line-height: 1.2;
+}
+.paper-row-label small {
+  display: block;
+  font-size: 0.65rem;
+  font-family: 'Times New Roman', serif;
+  color: #777;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+.paper-row-input {
+  flex: 1;
+}
+.paper-input {
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  color: #111 !important;
+  font-family: 'Caveat', 'Courier Prime', 'American Typewriter', cursive, serif !important;
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  padding: 4px 6px !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+.paper-input::placeholder {
+  color: #9c9386 !important;
+  font-size: 1.15rem !important;
+  font-style: italic;
+  font-weight: normal;
+}
+.paper-input:focus {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border-radius: 3px;
+}
+.paper-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 12px;
+  flex: 1;
+}
+.paper-check-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #222;
+  user-select: none;
+}
+.paper-check-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px !important;
+  height: 16px !important;
+  border: 1.8px solid #111 !important;
+  border-radius: 2px !important;
+  background: #fff !important;
+  cursor: pointer;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid;
+  place-content: center;
+  transition: 0.2s;
+}
+.paper-check-item input[type="checkbox"]:checked {
+  background: #111 !important;
+}
+.paper-check-item input[type="checkbox"]:checked::before {
+  content: '✓';
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+}
+.paper-textarea {
+  width: 100% !important;
+  background: repeating-linear-gradient(transparent, transparent 27px, #e4ddd2 28px) !important;
+  line-height: 28px !important;
+  border: none !important;
+  outline: none !important;
+  color: #111 !important;
+  font-family: 'Caveat', 'Courier Prime', 'American Typewriter', cursive, serif !important;
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  padding: 4px 6px !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  resize: vertical !important;
+  min-height: 112px !important;
+  border-radius: 0 !important;
+}
+.paper-textarea::placeholder {
+  color: #9c9386 !important;
+  font-size: 1.15rem !important;
+  font-style: italic;
+  font-weight: normal;
+  line-height: 28px;
+}
+.paper-footer-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid #1a1816;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.paper-footer-brand {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-family: monospace;
+  font-size: 0.68rem;
+  color: #555;
+  letter-spacing: 1px;
+  font-weight: bold;
 }
-.btn-sketch-submit, .btn-submit { 
-  background: linear-gradient(135deg, rgba(246, 210, 138, 0.3), rgba(232, 168, 72, 0.2)) !important; 
-  color: var(--gold) !important; 
-  border: 2px solid var(--gold) !important; 
-  padding: 14px 28px !important; 
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-  text-transform: uppercase; 
-  cursor: pointer; 
-  transition: var(--transition); 
-  align-self: stretch;
-  text-align: center;
-  font-family: var(--font-handwriting), 'American Typewriter', cursive, serif !important;
-  font-size: 1.15rem !important;
-  font-weight: 700;
-  letter-spacing: 2px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(246, 210, 138, 0.25);
+.btn-rubber-stamp {
+  background: transparent !important;
+  border: 2.5px solid #d13438 !important;
+  color: #d13438 !important;
+  padding: 8px 18px !important;
+  border-radius: 6px !important;
+  font-family: 'Noto Sans SC', -apple-system, sans-serif !important;
+  font-size: 0.92rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.5px !important;
+  cursor: pointer !important;
+  transform: rotate(-2deg);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  box-shadow: 2px 3px 0px rgba(209, 52, 56, 0.25) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  outline: 1.5px dashed #d13438 !important;
+  outline-offset: 3px !important;
 }
-.btn-sketch-submit:hover, .btn-submit:hover { 
-  background: rgba(246, 210, 138, 0.45) !important; 
-  color: #fff !important; 
-  border-color: var(--gold) !important; 
-  transform: translateY(-3px) rotate(0.6deg) !important; 
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 25px rgba(246, 210, 138, 0.5) !important; 
+.btn-rubber-stamp:hover {
+  background: #d13438 !important;
+  color: #ffffff !important;
+  transform: scale(1.05) rotate(0deg) !important;
+  box-shadow: 4px 6px 15px rgba(209, 52, 56, 0.35) !important;
+}
+.btn-rubber-stamp:active {
+  transform: scale(0.96) rotate(-1deg) !important;
 }
 
 /* Premium & Social Buttons Redesign (Warm & Handcrafted) */

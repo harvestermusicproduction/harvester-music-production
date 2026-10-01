@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Special+Elite&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=29.0.0">
+  <link rel="stylesheet" href="styles.css?v=30.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* --- 📏 Compact Header Explicit (超精致小巧导航栏) --- */
@@ -49,104 +49,306 @@
       font-size: 0.75rem !important;
     }
 
-    /* --- 🎨 100% Authentic Hand-Drawn Sketch Contact Form (手绘手作风填写框) --- */
-    .contact-form.sketch-form {
-      background: #171f28 !important;
-      border: 3px dashed #f6d28a !important;
-      padding: 2.8rem 2.2rem !important;
-      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-      box-shadow: 4px 5px 0px rgba(0, 0, 0, 0.7), 8px 10px 0px rgba(246, 210, 138, 0.18) !important;
-      margin-top: 1.5rem !important;
+    /* --- 📎 Paper Dossier Form Pinned with Paperclip (回形针档案纸填写框) --- */
+    .paper-dossier-wrap {
       position: relative;
-      transform: rotate(-0.3deg);
+      max-width: 580px;
+      margin: 1.5rem auto 0;
+      perspective: 1000px;
     }
-    .contact-form.sketch-form::before {
-      content: '✏️ GUESTBOOK & COOPERATION';
+    .paper-dossier-card {
+      background: #fcfaf5 !important;
+      color: #1a1816 !important;
+      padding: 3rem 2.5rem 2.2rem !important;
+      border-radius: 4px 6px 8px 4px !important;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 8px 20px rgba(0, 0, 0, 0.35), inset 0 0 50px rgba(0, 0, 0, 0.02) !important;
+      border: 1px solid #e2ddd3 !important;
+      position: relative;
+      transform: rotate(-1.2deg);
+      transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.4s ease;
+      font-family: 'Times New Roman', Times, 'Noto Serif SC', serif;
+    }
+    .paper-dossier-card:hover {
+      transform: rotate(0deg) translateY(-4px);
+      box-shadow: 0 32px 75px rgba(0, 0, 0, 0.85), 0 12px 25px rgba(0, 0, 0, 0.4) !important;
+    }
+    
+    /* 📎 Metallic Silver 3D Paperclip */
+    .paperclip-holder {
       position: absolute;
-      top: -14px;
-      left: 28px;
-      background: #171f28;
-      padding: 2px 14px;
-      font-family: 'Courier Prime', 'Special Elite', 'American Typewriter', monospace;
+      top: -24px;
+      right: 32px;
+      width: 44px;
+      height: 90px;
+      z-index: 20;
+      pointer-events: none;
+      filter: drop-shadow(3px 6px 5px rgba(0, 0, 0, 0.5));
+    }
+    .paperclip-holder svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* 🏷️ Tilted Pop Art Sticker */
+    .paper-pop-sticker {
+      position: absolute;
+      top: 18px;
+      right: 80px;
+      background: #ff334b;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+      transform: rotate(6deg);
+      border: 2px solid #fff;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.1;
+    }
+    .paper-pop-sticker span:first-child {
+      font-size: 0.85rem;
+      color: #ffe600;
+    }
+
+    /* Top Paper Header */
+    .paper-header-block {
+      border-bottom: 2.5px solid #1a1816;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .paper-top-tag {
+      display: inline-block;
+      background: #1a1816;
+      color: #fff;
+      font-family: monospace;
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      letter-spacing: 1.5px;
+      font-weight: bold;
+      border-radius: 2px;
+      margin-bottom: 4px;
+    }
+    .paper-title-main {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', 'Inter', sans-serif !important;
+      font-size: 2.3rem !important;
+      font-weight: 950 !important;
+      letter-spacing: -0.5px !important;
+      color: #111 !important;
+      line-height: 1.05 !important;
+      margin: 0 !important;
+      text-transform: uppercase;
+    }
+    .paper-title-sub {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-top: 3px;
+    }
+    .paper-title-sub h3 {
+      font-size: 1.35rem !important;
+      font-weight: 900 !important;
+      color: #111 !important;
+      margin: 0 !important;
+      letter-spacing: 1px;
+      font-family: 'Noto Sans SC', 'PingFang SC', sans-serif !important;
+    }
+    .paper-title-sub span {
+      font-family: 'Times New Roman', serif;
       font-size: 0.78rem;
       letter-spacing: 2px;
-      color: #f6d28a;
-      border: 1.5px dashed rgba(246, 210, 138, 0.6);
-      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+      color: #666;
+      font-weight: bold;
     }
-    .sketch-input {
-      background: #10161e !important;
-      border: 2px solid rgba(246, 210, 138, 0.65) !important;
-      color: #fffaf0 !important;
-      padding: 13px 18px !important;
-      margin-bottom: 1.5rem !important;
+    .paper-meta-rule {
+      font-family: monospace;
+      font-size: 0.7rem;
+      color: #777;
+      letter-spacing: 1.5px;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    /* Paper Form Ruled Rows */
+    .paper-row {
+      display: flex;
+      align-items: center;
+      border-bottom: 1.5px solid #d8d2c5;
+      padding: 10px 0;
+      gap: 16px;
+    }
+    .paper-row-label {
+      width: 80px;
+      shrink: 0;
+      font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #1a1816;
+      line-height: 1.2;
+    }
+    .paper-row-label small {
+      display: block;
+      font-size: 0.65rem;
+      font-family: 'Times New Roman', serif;
+      color: #777;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: normal;
+    }
+    .paper-row-input {
+      flex: 1;
+    }
+    .paper-input {
       width: 100% !important;
+      background: transparent !important;
+      border: none !important;
       outline: none !important;
-      font-size: 1.05rem !important;
-      font-family: 'Courier Prime', 'Special Elite', 'American Typewriter', monospace, serif !important;
-      box-shadow: 2px 3px 0px rgba(0, 0, 0, 0.5) !important;
-      box-sizing: border-box !important;
-      transition: all 0.25s ease !important;
-    }
-    .input-name {
-      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-    }
-    .input-email {
-      border-radius: 18px 240px 16px 250px / 235px 20px 245px 18px !important;
-    }
-    .input-msg {
-      border-radius: 255px 22px 225px 20px / 20px 225px 22px 255px !important;
-      line-height: 1.6 !important;
-      resize: vertical !important;
-    }
-    .sketch-input:focus {
-      border-color: #f6d28a !important;
-      background: #19222c !important;
-      box-shadow: 3px 4px 0px rgba(246, 210, 138, 0.4) !important;
-      transform: scale(1.008) rotate(-0.4deg);
-    }
-    .sketch-input::placeholder {
-      font-family: 'Caveat', 'Courier Prime', 'American Typewriter', cursive, serif !important;
-      font-size: 1.15rem !important;
-      color: rgba(246, 210, 138, 0.5) !important;
-      font-style: italic;
-    }
-    .contact-form label { 
-      color: #f6d28a !important; 
-      font-size: 1.05rem !important; 
-      font-weight: 700 !important;
-      letter-spacing: 1px !important; 
-      display: flex !important;
-      align-items: center !important;
-      gap: 8px !important;
-      margin-bottom: 0.4rem !important; 
-      margin-left: 4px !important; 
-      font-family: 'Caveat', 'Courier Prime', 'American Typewriter', cursive, serif !important;
-    }
-    .btn-sketch-submit {
-      width: 100% !important;
-      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
-      padding: 13px 24px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      background: rgba(246, 210, 138, 0.18) !important;
-      border: 2px solid #f6d28a !important;
-      color: #f6d28a !important;
+      color: #111 !important;
       font-family: 'Caveat', 'Courier Prime', 'American Typewriter', cursive, serif !important;
       font-size: 1.35rem !important;
       font-weight: 700 !important;
-      letter-spacing: 2px !important;
-      cursor: pointer !important;
-      box-shadow: 3px 4px 0px rgba(0,0,0,0.6), 5px 6px 0px rgba(246, 210, 138, 0.25) !important;
-      transition: all 0.25s ease !important;
-      margin-top: 0.5rem !important;
+      padding: 4px 6px !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
     }
-    .btn-sketch-submit:hover {
-      background: #f6d28a !important;
-      color: #161d24 !important;
-      transform: translateY(-2px) rotate(0.6deg) !important;
-      box-shadow: 4px 6px 0px rgba(0,0,0,0.7), 6px 8px 0px rgba(246, 210, 138, 0.4) !important;
+    .paper-input::placeholder {
+      color: #9c9386 !important;
+      font-size: 1.15rem !important;
+      font-style: italic;
+      font-weight: normal;
+    }
+    .paper-input:focus {
+      background: rgba(255, 255, 255, 0.6) !important;
+      border-radius: 3px;
+    }
+
+    /* Paper Checkbox Group */
+    .paper-checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px 12px;
+      flex: 1;
+    }
+    .paper-check-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: 'Noto Sans SC', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #222;
+      user-select: none;
+    }
+    .paper-check-item input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px !important;
+      height: 16px !important;
+      border: 1.8px solid #111 !important;
+      border-radius: 2px !important;
+      background: #fff !important;
+      cursor: pointer;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: grid;
+      place-content: center;
+      transition: 0.2s;
+    }
+    .paper-check-item input[type="checkbox"]:checked {
+      background: #111 !important;
+    }
+    .paper-check-item input[type="checkbox"]:checked::before {
+      content: '✓';
+      color: #fff;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    /* Paper Ruled Textarea */
+    .paper-textarea {
+      width: 100% !important;
+      background: repeating-linear-gradient(transparent, transparent 27px, #e4ddd2 28px) !important;
+      line-height: 28px !important;
+      border: none !important;
+      outline: none !important;
+      color: #111 !important;
+      font-family: 'Caveat', 'Courier Prime', 'American Typewriter', cursive, serif !important;
+      font-size: 1.35rem !important;
+      font-weight: 700 !important;
+      padding: 4px 6px !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      resize: vertical !important;
+      min-height: 112px !important;
+      border-radius: 0 !important;
+    }
+    .paper-textarea::placeholder {
+      color: #9c9386 !important;
+      font-size: 1.15rem !important;
+      font-style: italic;
+      font-weight: normal;
+      line-height: 28px;
+    }
+
+    /* Paper Footer & Red Rubber Stamp Button */
+    .paper-footer-block {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 2px solid #1a1816;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .paper-footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: monospace;
+      font-size: 0.68rem;
+      color: #555;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+    .btn-rubber-stamp {
+      background: transparent !important;
+      border: 2.5px solid #d13438 !important;
+      color: #d13438 !important;
+      padding: 8px 18px !important;
+      border-radius: 6px !important;
+      font-family: 'Noto Sans SC', -apple-system, sans-serif !important;
+      font-size: 0.92rem !important;
+      font-weight: 900 !important;
+      letter-spacing: 1.5px !important;
+      cursor: pointer !important;
+      transform: rotate(-2deg);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      box-shadow: 2px 3px 0px rgba(209, 52, 56, 0.25) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      outline: 1.5px dashed #d13438 !important;
+      outline-offset: 3px !important;
+    }
+    .btn-rubber-stamp:hover {
+      background: #d13438 !important;
+      color: #ffffff !important;
+      transform: scale(1.05) rotate(0deg) !important;
+      box-shadow: 4px 6px 15px rgba(209, 52, 56, 0.35) !important;
+    }
+    .btn-rubber-stamp:active {
+      transform: scale(0.96) rotate(-1deg) !important;
     }
     /* --- 🌌 3D Echo Universe & Interactive Styles --- */
     .echo-universe-section {
@@ -351,23 +553,138 @@
              style="width: 100%; max-height: 400px; object-fit: cover; margin-top: 2.5rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.5);">
       </div>
 
-      <!-- 站内表单 (手绘手作风) -->
+      <!-- 站内表单 (回形针档案纸风格 Paperclip Dossier Card) -->
       <div class="contact">
-        <form class="contact-form sketch-form" id="contactForm">
-           <label><i class="fas fa-pencil-alt" style="font-size: 0.9em; opacity: 0.85;"></i> 您的称呼 (Name)</label>
-           <input type="text" id="contactName" class="sketch-input input-name" placeholder="怎么称呼您？" required>
-           
-           <label><i class="fas fa-envelope-open-text" style="font-size: 0.9em; opacity: 0.85;"></i> 您的联络邮箱 (Email)</label>
-           <input type="email" id="contactEmail" class="sketch-input input-email" placeholder="example@email.com" required>
-           
-           <label><i class="fas fa-feather-alt" style="font-size: 0.9em; opacity: 0.85;"></i> 合作意向或留言建议 (Message)</label>
-           <textarea id="contactMsg" class="sketch-input input-msg" placeholder="请详细描述您的想法与建议..." rows="6" required></textarea>
-           
-           <button type="submit" class="btn btn-submit btn-sketch-submit" id="btnContactSubmit">
-             <i class="fas fa-paper-plane" style="font-size: 0.95em; margin-right: 8px;"></i>
-             <span>发 送 请 求 (Send Message)</span>
-           </button>
-        </form>
+        <div class="paper-dossier-wrap">
+          
+          <!-- 📎 Metallic 3D Paperclip pinned over top edge -->
+          <div class="paperclip-holder">
+            <svg viewBox="0 0 64 120" fill="none">
+              <defs>
+                <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffffff" />
+                  <stop offset="25%" stop-color="#cfd3db" />
+                  <stop offset="50%" stop-color="#f8f9fa" />
+                  <stop offset="75%" stop-color="#8a9099" />
+                  <stop offset="100%" stop-color="#555a62" />
+                </linearGradient>
+              </defs>
+              <!-- Paperclip path with outer and inner loop -->
+              <path d="M 20 110 L 20 32 A 16 16 0 0 1 52 32 L 52 88 A 12 12 0 0 1 28 88 L 28 44 A 6 6 0 0 1 40 44 L 40 80" 
+                    stroke="url(#metalGrad)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M 20 110 L 20 32 A 16 16 0 0 1 52 32 L 52 88 A 12 12 0 0 1 28 88 L 28 44 A 6 6 0 0 1 40 44 L 40 80" 
+                    stroke="rgba(255,255,255,0.7)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+
+          <!-- 🏷️ Tilted Pop Art Sticker -->
+          <div class="paper-pop-sticker">
+            <span>HARVESTER</span>
+            <span>MUSIC FILE</span>
+          </div>
+
+          <!-- 📄 White / Cream Stationery Paper Card -->
+          <div class="paper-dossier-card">
+            
+            <!-- Top Paper Header Block -->
+            <div class="paper-header-block">
+              <span class="paper-top-tag">IDEAS IN WORSHIP ♫</span>
+              <h2 class="paper-title-main">HARVESTER</h2>
+              <div class="paper-title-sub">
+                <h3>创作者同工档案</h3>
+                <span>COLLABORATION FILE</span>
+              </div>
+              <div class="paper-meta-rule">DESIGN · WORSHIP · MUSIC ARCHIVE</div>
+            </div>
+
+            <!-- Form Fields -->
+            <form id="contactForm">
+              
+              <!-- Row 1: 姓名 -->
+              <div class="paper-row">
+                <div class="paper-row-label">
+                  姓名
+                  <small>NAME</small>
+                </div>
+                <div class="paper-row-input">
+                  <input type="text" id="contactName" class="paper-input" placeholder="怎么称呼您？" required>
+                </div>
+              </div>
+
+              <!-- Row 2: 邮箱 -->
+              <div class="paper-row">
+                <div class="paper-row-label">
+                  联络邮箱
+                  <small>EMAIL</small>
+                </div>
+                <div class="paper-row-input">
+                  <input type="email" id="contactEmail" class="paper-input" placeholder="example@email.com" required>
+                </div>
+              </div>
+
+              <!-- Row 3: 机构/所在地 -->
+              <div class="paper-row">
+                <div class="paper-row-label">
+                  所在地点
+                  <small>LOCATION</small>
+                </div>
+                <div class="paper-row-input">
+                  <input type="text" id="contactLocation" class="paper-input" placeholder="城市 / 教会 / 机构 (选填)">
+                </div>
+              </div>
+
+              <!-- Row 4: 合作方向 (Checkboxes) -->
+              <div class="paper-row" style="align-items: flex-start; padding: 12px 0;">
+                <div class="paper-row-label" style="margin-top: 2px;">
+                  合作意向
+                  <small>PURPOSE</small>
+                </div>
+                <div class="paper-checkbox-grid">
+                  <label class="paper-check-item">
+                    <input type="checkbox" name="purpose" value="词曲创作" checked>
+                    <span>词曲创作/投稿</span>
+                  </label>
+                  <label class="paper-check-item">
+                    <input type="checkbox" name="purpose" value="编曲制作">
+                    <span>音乐制作/编曲</span>
+                  </label>
+                  <label class="paper-check-item">
+                    <input type="checkbox" name="purpose" value="敬拜交流">
+                    <span>敬拜赞美交流</span>
+                  </label>
+                  <label class="paper-check-item">
+                    <input type="checkbox" name="purpose" value="视觉其他">
+                    <span>视觉/版权合作</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Row 5: 留言详情 -->
+              <div class="paper-row" style="align-items: flex-start; border-bottom: none; padding-top: 12px;">
+                <div class="paper-row-label" style="margin-top: 4px;">
+                  详细留言
+                  <small>ABOUT / MSG</small>
+                </div>
+                <div class="paper-row-input">
+                  <textarea id="contactMsg" class="paper-textarea" rows="4" placeholder="请在此写下您的想法、合作企划或建议..." required></textarea>
+                </div>
+              </div>
+
+              <!-- Bottom Footer Block & Stamp Button -->
+              <div class="paper-footer-block">
+                <div class="paper-footer-brand">
+                  <i class="fas fa-globe" style="font-size: 1.1rem; color: #333;"></i>
+                  <span>HARVESTER MUSIC &bull; SEED &amp; HARVEST</span>
+                </div>
+                <button type="submit" class="btn-rubber-stamp" id="btnContactSubmit">
+                  <i class="fas fa-stamp"></i>
+                  <span>📮 盖章提交 / SUBMIT FILE</span>
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -438,25 +755,31 @@
       const db = window.supabase;
       if(!db) return alert("系统连接超时");
 
+      const checkedPurposes = Array.from(document.querySelectorAll('input[name="purpose"]:checked')).map(cb => cb.value).join(', ');
+      const locationVal = document.getElementById('contactLocation')?.value || '';
+      const fullMsg = (locationVal ? `[地点/机构]: ${locationVal}\n` : '') + 
+                      (checkedPurposes ? `[合作方向]: ${checkedPurposes}\n\n` : '') + 
+                      document.getElementById('contactMsg').value;
+
       const data = {
         name: document.getElementById('contactName').value,
         email: document.getElementById('contactEmail').value,
-        message: document.getElementById('contactMsg').value,
+        message: fullMsg,
         status: 'pending'
       };
 
-      btn.innerText = "发送中...";
+      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>盖章处理中...</span>`;
       btn.disabled = true;
 
       try {
         const { error } = await db.from('contact_messages').insert([data]);
         if (error) throw error;
-        alert("✅ 已成功发送申请！我们会尽快与您联络。");
+        alert("✅ 档案已成功提交！我们会尽快与您联络。");
         e.target.reset();
       } catch(err) {
-        alert("❌ 发送失败：" + err.message);
+        alert("❌ 提交失败：" + err.message);
       } finally {
-        btn.innerText = "发 送 请 求 (Send Message)";
+        btn.innerHTML = `<i class="fas fa-stamp"></i> <span>📮 盖章提交 / SUBMIT FILE</span>`;
         btn.disabled = false;
       }
     });
