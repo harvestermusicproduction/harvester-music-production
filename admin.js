@@ -227,121 +227,94 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   let currentMusicSubTab = 'tracks';
-  window.switchMusicTab = (tab) => { currentMusicSubTab = tab; renderMusic(document.getElementById('moduleBody')); };
+  // Whimsical Childlike Hand-Drawn Doodle Illustrations Collection
+  const childlikeDoodles = [
+    "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=800&auto=format&fit=crop&q=80"
+  ];
 
+  window.setRandomChildlikeCover = () => {
+    const rand = childlikeDoodles[Math.floor(Math.random() * childlikeDoodles.length)];
+    const imgEl = document.getElementById('m_prev');
+    const inputEl = document.getElementById('m_url');
+    if (imgEl) imgEl.src = rand;
+    if (inputEl) inputEl.value = rand;
+  };
+
+  // --- 🎵 UNIFIED MUSIC & 3D ALBUM MANAGEMENT (1 Album = 1 Single Track) ---
   async function renderMusic(container) {
     const { data: songs } = await db.from('music_works').select('*').order('created_at', {ascending: false});
     const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_latest_music_id').maybeSingle();
     const latestId = cfg?.value;
 
     const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
-    let albumsData = [];
+    let albumsCustom = [];
     if (albumCfg?.value) {
-      try { albumsData = JSON.parse(albumCfg.value); } catch(e){}
+      try { albumsCustom = JSON.parse(albumCfg.value); } catch(e){}
     }
 
     container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:15px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; flex-wrap:wrap; gap:15px;">
         <div>
-          <h1 style="color:var(--gold); margin:0;">🎵 音乐与歌谱集管理 (Music & Albums CMS)</h1>
-          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理单曲库（音频、歌谱PDF、歌词、Spotify）及 3D 立体唱片架专辑展台。</p>
+          <h1 style="color:var(--gold); margin:0;">🎵 音乐与 3D 唱片管理 (Music & 3D Album Slabs)</h1>
+          <p style="color:#888; font-size:0.85rem; margin-top:5px;">每首诗歌即为一张专属 3D 唱片盒（包含封面图片、3D 书脊文字底色、音频、歌谱 PDF、歌词与外链）。</p>
         </div>
-        <div style="display:flex; gap:10px;">
-          ${currentMusicSubTab === 'tracks' 
-            ? `<button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openMusicModal()">+ 发布新单曲</button>`
-            : `<button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openAlbumEditModal()">+ 创建 3D 专辑</button>`}
-        </div>
+        <button class="btn btn-submit" style="width:auto; padding:12px 28px; font-weight:700;" onclick="openMusicModal()">+ 发布新单曲 / 3D 唱片</button>
       </div>
 
-      <!-- Tab Switcher -->
-      <div style="display:flex; gap:10px; margin-bottom:25px; border-bottom:1px solid #222; padding-bottom:10px;">
-        <button onclick="switchMusicTab('tracks')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentMusicSubTab==='tracks' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
-          🎵 单曲作品与歌谱库 (${songs?.length || 0})
-        </button>
-        <button onclick="switchMusicTab('albums')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentMusicSubTab==='albums' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
-          💿 3D 唱片架专辑展台 (${albumsData.length || '默认 11'})
-        </button>
-      </div>
+      <!-- Unified Songs & 3D Album List -->
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap:20px;">
+        ${songs?.map((s, idx) => {
+          const customMatch = albumsCustom.find(c => c.id === s.id || c.title === s.title);
+          const spineBg = customMatch?.spine_bg || ["#1877F2", "#00b894", "#f39c12", "#ea8676", "#0984e3", "#2d3436"][idx % 6];
+          const spineClr = customMatch?.spine_color || "#ffffff";
+          const spineTxt = customMatch?.spine_text || `${s.title} · ${s.artist || 'Harvester'}`;
+          const coverUrl = s.cover_url || customMatch?.cover_url || childlikeDoodles[idx % childlikeDoodles.length];
 
-      ${currentMusicSubTab === 'tracks' ? `
-        <!-- 单曲列表 -->
-        <div style="display:flex; flex-direction:column; gap:16px;">
-          ${songs?.map(s => `
-            <div style="background:#0e0e0e; border:1px solid #1f1f1f; border-radius:12px; padding:20px; transition:0.3s; position:relative;">
-              <div style="display:flex; gap:20px; align-items:center; margin-bottom:12px; padding-bottom:14px; border-bottom:1px solid #1a1a1a;">
-                <img src="${(s.cover_url && s.cover_url.startsWith('http')) ? s.cover_url : 'assets/logo.png'}" 
-                     style="width:85px; height:85px; object-fit:cover; border-radius:8px; border:1px solid #333;"
-                     onerror="this.src='assets/logo.png'">
-                <div style="flex:1;">
-                  <h3 style="margin:0; color:#fff; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
-                    ${s.title} 
-                    ${s.id === latestId || s.is_latest ? '<span style="color:var(--gold); font-size:0.7rem; background:rgba(246,210,138,0.12); padding:2px 10px; border-radius:50px; border:1px solid rgba(246,210,138,0.3);">首屏主打 (FEATURED)</span>' : ''}
-                  </h3>
-                  <p style="margin:6px 0 0 0; color:#888; font-size:0.85rem; line-height:1.4; max-height:40px; overflow:hidden; text-overflow:ellipsis;">
-                    ${s.description || '暂无作品简介/歌词...'}
-                  </p>
-                  <div style="display:flex; gap:15px; margin-top:10px; flex-wrap:wrap;">
-                     <span style="font-size:0.75rem; color:${s.audio_url ? '#70a1ff' : '#555'};"><i class="fab fa-youtube"></i> YouTube: ${s.audio_url ? '已链接' : '未设置'}</span>
-                     <span style="font-size:0.75rem; color:${s.score_url ? '#2ed573' : '#555'};"><i class="fas fa-file-pdf"></i> 歌谱: ${s.score_url ? '已就绪' : '未设置'}</span>
-                     <span style="font-size:0.75rem; color:${s.spotify_url ? '#1db954' : '#555'};"><i class="fab fa-spotify"></i> Spotify: ${s.spotify_url ? '已链接' : '未设置'}</span>
-                  </div>
-                </div>
-              </div>
-              <div style="display:flex; gap:10px; justify-content: flex-end;">
-                <button class="btn-tiny" style="padding:8px 22px; color:var(--gold); border-color:var(--gold);" onclick="openMusicModal('${s.id}')">⚙️ 编辑详细图文与歌谱</button>
-                <button class="btn-tiny danger" style="padding:8px 15px;" onclick="deleteItem('music_works', '${s.id}')">🗑️ 删除</button>
-              </div>
-            </div>
-          `).join('') || '<p style="text-align:center; color:#555; padding:50px;">暂无单曲数据，点击右上角发布新单曲</p>'}
-        </div>
-      ` : `
-        <!-- 3D 唱片架专辑管理 -->
-        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:12px; padding:25px; margin-bottom:20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #222; padding-bottom:12px;">
-            <div>
-              <h3 style="color:var(--gold); margin:0;">3D 立体书脊唱片架展示目录</h3>
-              <p style="color:#777; font-size:0.8rem; margin:4px 0 0 0;">可在此直接编辑每张 3D 专辑的书脊颜色、厚度标题、封面图片及内含歌曲清单。</p>
-            </div>
-            <button class="btn-tiny" onclick="resetDefaultAlbums()" style="border-color:#555; color:#aaa;">↺ 恢复默认 11 张专辑</button>
-          </div>
-
-          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
-            ${(albumsData.length > 0 ? albumsData : [
-              { id: "album_renew", title: "更新敬拜", title_en: "Renewed Worship", artist: "Harvester Worship", spine_text: "更新敬拜 · Harvester Worship", spine_bg: "#1c1815", spine_color: "#f6d28a", year: "2025", cover_url: "assets/logo.png", tracks_count: 4 },
-              { id: "album_fire", title: "灵火 Awakening", title_en: "Spiritual Fire", artist: "Harvester Team", spine_text: "灵火 Awakening · Harvester Creative", spine_bg: "#00b894", spine_color: "#ffffff", year: "2024", cover_url: "assets/placeholder.jpg", tracks_count: 2 },
-              { id: "album_harvest", title: "田野收割精选", title_en: "Harvest Field", artist: "Gospel Collective", spine_text: "田野收割精选 · Gospel Collective", spine_bg: "#0984e3", spine_color: "#ffffff", year: "2024", cover_url: "assets/logo.png", tracks_count: 1 },
-              { id: "album_alive", title: "生命涌流 CCM", title_en: "Living Stream Praise", artist: "Praise Band", spine_text: "生命涌流 CCM · Harvester Band", spine_bg: "#3d271d", spine_color: "#f6d28a", year: "2025", cover_url: "assets/placeholder.jpg", tracks_count: 1 },
-              { id: "album_you_are_all", title: "祢是唯一", title_en: "You Are My All", artist: "Harvester Acoustic", spine_text: "祢是唯一 · You Are My All", spine_bg: "#2d3436", spine_color: "#ffffff", year: "2025", cover_url: "assets/logo.png", tracks_count: 1 },
-              { id: "album_heart_desire", title: "心愿诗歌", title_en: "Heart's Desire", artist: "Strings Ensemble", spine_text: "心愿诗歌 · Heart's Desire", spine_bg: "#e77f67", spine_color: "#111111", year: "2025", cover_url: "assets/placeholder.jpg", tracks_count: 1 },
-              { id: "album_sanctuary", title: "圣所之中", title_en: "In The Sanctuary", artist: "Chamber Choir", spine_text: "圣所之中 · In The Sanctuary", spine_bg: "#1b2a4a", spine_color: "#ffffff", year: "2024", cover_url: "assets/logo.png", tracks_count: 1 },
-              { id: "album_disciple", title: "十字架的传人", title_en: "Disciple of The Cross", artist: "Mission Team", spine_text: "十字架的传人 · Mission Team", spine_bg: "#d38b5d", spine_color: "#111111", year: "2025", cover_url: "assets/placeholder.jpg", tracks_count: 1 },
-              { id: "album_grace", title: "恩典洋溢", title_en: "Abundant Grace", artist: "Worship Collective", spine_text: "恩典洋溢 · Abundant Grace", spine_bg: "#801323", spine_color: "#ffffff", year: "2025", cover_url: "assets/logo.png", tracks_count: 1 },
-              { id: "album_everlasting", title: "万古磐石", title_en: "Everlasting Rock", artist: "Praise Collective", spine_text: "万古磐石 · Everlasting Rock", spine_bg: "#134e4a", spine_color: "#ffffff", year: "2025", cover_url: "assets/placeholder.jpg", tracks_count: 1 },
-              { id: "album_amethyst", title: "晨光破晓", title_en: "Daybreak Glory", artist: "Ensemble", spine_text: "晨光破晓 · Daybreak Glory", spine_bg: "#6c5ce7", spine_color: "#ffffff", year: "2025", cover_url: "assets/logo.png", tracks_count: 1 }
-            ]).map((alb, i) => `
-              <div style="background:#141414; border:1px solid #222; border-radius:10px; padding:15px; display:flex; flex-direction:column; justify-content:space-between;">
-                <div>
-                  <div style="display:flex; gap:12px; align-items:center; margin-bottom:10px;">
-                    <img src="${alb.cover_url || 'assets/logo.png'}" style="width:55px; height:55px; object-fit:cover; border-radius:6px; border:1px solid #333;">
-                    <div style="flex:1; overflow:hidden;">
-                      <h4 style="margin:0; color:#fff; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${alb.title}</h4>
-                      <p style="margin:2px 0 0; color:#777; font-size:0.75rem;">${alb.artist} · ${alb.year || '2025'}</p>
+          return `
+            <div style="background:#0e0e0e; border:1px solid #1f1f1f; border-radius:14px; padding:20px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
+              <div>
+                <!-- Top Cover & Meta Row -->
+                <div style="display:flex; gap:16px; align-items:center; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #1a1a1a;">
+                  <img src="${coverUrl}" 
+                       style="width:75px; height:75px; object-fit:cover; border-radius:10px; border:1px solid #333; background:#181818;"
+                       onerror="this.src='${childlikeDoodles[0]}'">
+                  <div style="flex:1; overflow:hidden;">
+                    <h3 style="margin:0; color:#fff; font-size:1.1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:8px;">
+                      ${s.title}
+                      ${s.id === latestId || s.is_latest ? '<span style="color:var(--gold); font-size:0.65rem; background:rgba(246,210,138,0.12); padding:2px 8px; border-radius:50px; border:1px solid rgba(246,210,138,0.3);">首推</span>' : ''}
+                    </h3>
+                    <p style="margin:4px 0 0; color:#888; font-size:0.8rem;">${s.artist || 'Harvester Worship'}</p>
+                    <div style="display:flex; gap:10px; margin-top:6px;">
+                      <span style="font-size:0.75rem; color:${s.score_url ? '#2ed573' : '#555'};"><i class="fas fa-file-pdf"></i> ${s.score_url ? '歌谱就绪' : '无歌谱'}</span>
+                      <span style="font-size:0.75rem; color:${s.audio_url ? '#70a1ff' : '#555'};"><i class="fab fa-youtube"></i> ${s.audio_url ? 'YouTube' : '无链接'}</span>
+                      <span style="font-size:0.75rem; color:${s.spotify_url ? '#1db954' : '#555'};"><i class="fab fa-spotify"></i> ${s.spotify_url ? 'Spotify' : '无链接'}</span>
                     </div>
                   </div>
-                  <!-- 书脊预览条 -->
-                  <div style="background:${alb.spine_bg || '#1c1815'}; color:${alb.spine_color || '#f6d28a'}; padding:6px 12px; border-radius:4px; font-size:0.75rem; font-weight:bold; letter-spacing:1px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                    ${alb.spine_text || alb.title}
-                  </div>
                 </div>
-                <div style="display:flex; gap:8px;">
-                  <button class="btn-tiny" style="flex:1; padding:6px; color:var(--gold); border-color:var(--gold);" onclick="openAlbumEditModal('${alb.id}')">编辑 3D 属性与曲目</button>
-                  <button class="btn-tiny danger" style="padding:6px 10px;" onclick="deleteAlbumCustom('${alb.id}')">🗑️</button>
+
+                <!-- 3D Spine Preview Bar -->
+                <div style="background:${spineBg}; color:${spineClr}; padding:6px 12px; border-radius:6px; font-size:0.75rem; font-weight:bold; letter-spacing:1px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 2px rgba(0,0,0,0.8);">
+                  🧱 书脊: ${spineTxt}
                 </div>
               </div>
-            `).join('')}
-          </div>
-        </div>
-      `}
+
+              <!-- Action Buttons -->
+              <div style="display:flex; gap:8px; margin-top:8px;">
+                <button class="btn-tiny" style="flex:1; padding:8px; color:var(--gold); border-color:var(--gold);" onclick="openMusicModal('${s.id}')">⚙️ 编辑图文/书脊/歌谱</button>
+                <button class="btn-tiny danger" style="padding:8px 12px;" onclick="deleteItem('music_works', '${s.id}')">🗑️</button>
+              </div>
+            </div>
+          `;
+        }).join('') || '<div style="grid-column:1/-1; text-align:center; color:#555; padding:60px;">暂无单曲数据，点击右上角发布新单曲</div>'}
+      </div>
     `;
   }
 
@@ -352,42 +325,92 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       let s = null;
+      let spineCustom = null;
       if (id) {
         const { data, error } = await db.from('music_works').select('*').eq('id', id).single();
         if (error) throw error;
         const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_latest_music_id').maybeSingle();
         s = { ...data, force_latest: data.id === cfg?.value };
+
+        const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
+        if (albumCfg?.value) {
+          try {
+            const arr = JSON.parse(albumCfg.value);
+            spineCustom = arr.find(c => c.id === s.id || c.title === s.title);
+          } catch(e){}
+        }
       }
+
       const isEdit = !!s;
+      const initialCover = s?.cover_url || spineCustom?.cover_url || childlikeDoodles[Math.floor(Math.random() * childlikeDoodles.length)];
+      const spineBg = spineCustom?.spine_bg || "#1877F2";
+      const spineClr = spineCustom?.spine_color || "#ffffff";
+      const spineTxt = spineCustom?.spine_text || (s?.title ? `${s.title} · ${s.artist || 'Harvester'}` : "");
+
       const modal = document.createElement('div');
       modal.id = 'musicEditModal';
-      modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.88); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(10px); padding:20px;";
+      modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(12px); padding:20px;";
       modal.innerHTML = `
-        <div style="background:#111; border:1.5px solid var(--gold); border-radius:16px; padding:2.2rem; width:100%; max-width:620px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,1);">
+        <div style="background:#111; border:1.5px solid var(--gold); border-radius:18px; padding:2.2rem; width:100%; max-width:680px; max-height:92vh; overflow-y:auto; box-shadow:0 25px 70px rgba(0,0,0,1);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid #222; padding-bottom:10px;">
-            <h2 style="color:var(--gold); margin:0;">${isEdit ? '编辑歌曲档案' : '发布新单曲'}</h2>
+            <h2 style="color:var(--gold); margin:0;">${isEdit ? '编辑单曲与 3D 唱片档案' : '发布新单曲 / 3D 唱片'}</h2>
             <button class="btn-tiny" onclick="this.closest('#musicEditModal').remove()">✕ 关闭</button>
           </div>
           
+          <!-- 1. 封面管理与童趣手绘预设 -->
           <div style="margin-bottom:20px; background:#0a0a0a; padding:18px; border-radius:12px; border:1px solid #222; text-align:center;">
-            <label style="display:block; margin-bottom:10px; color:var(--gold); font-size:0.85rem; font-weight:bold;">📸 封面图片 (Cover Photo)</label>
-            <img id="m_prev" src="${s?.cover_url || 'assets/logo.png'}" style="width:130px; height:130px; object-fit:cover; border-radius:10px; display:block; margin:0 auto 12px; border:1px solid #333; background:#181818;">
+            <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">📸 唱片封面 (Album Cover)</label>
+            <img id="m_prev" src="${initialCover}" style="width:140px; height:140px; object-fit:cover; border-radius:12px; display:block; margin:0 auto 12px; border:1.5px solid rgba(246,210,138,0.3); background:#181818;">
+            
+            <div style="display:flex; gap:10px; justify-content:center; margin-bottom:10px;">
+              <button type="button" class="btn-tiny" style="background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); padding:8px 16px;" onclick="setRandomChildlikeCover()">
+                🎨 换一组随机童趣手绘封面
+              </button>
+            </div>
+
             <input type="file" id="mf_up" style="font-size:0.8rem; color:#aaa; margin-bottom:8px; width:100%;">
-            <button class="btn-tiny" style="width:100%; padding:8px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold);" onclick="uploadFile('mf_up', 'm_url', 'm_prev')">📤 上传封面图片</button>
-            <input type="hidden" id="m_url" value="${s?.cover_url || ''}">
+            <button type="button" class="btn-tiny" style="width:100%; padding:8px;" onclick="uploadFile('mf_up', 'm_url', 'm_prev')">📤 上传自定义封面图片</button>
+            <input type="hidden" id="m_url" value="${initialCover}">
           </div>
 
+          <!-- 2. 基本信息 -->
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲名称 (Title) *</label>
-              <input type="text" id="m_t" value="${s?.title || ''}" placeholder="例如：更新敬拜" style="width:100%; padding:10px;">
+              <input type="text" id="m_t" value="${s?.title || ''}" placeholder="例如：更新敬拜" style="width:100%; padding:10px;" oninput="document.getElementById('m_spine_t').value = this.value + ' · ' + (document.getElementById('m_artist').value || 'Harvester')">
             </div>
             <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">所属专辑 / 歌手</label>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">所属歌手 / 团队</label>
               <input type="text" id="m_artist" value="${s?.artist || 'Harvester Worship'}" placeholder="例如：Harvester Worship" style="width:100%; padding:10px;">
             </div>
           </div>
 
+          <!-- 3. 3D 立体书脊属性 -->
+          <div style="background:#0a0a0a; border:1px solid rgba(246,210,138,0.25); border-radius:10px; padding:15px; margin-bottom:15px;">
+            <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🧱 3D 立体书脊属性 (Spine Attributes)</label>
+            <div style="margin-bottom:10px;">
+              <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">书脊印制文字 (Spine Text)</label>
+              <input type="text" id="m_spine_t" value="${spineTxt}" placeholder="例如：更新敬拜 · Harvester Worship" style="width:100%; padding:8px;">
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+              <div>
+                <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">书脊底色 (Spine Color)</label>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <input type="color" id="m_spine_bg" value="${spineBg}" style="width:40px; height:35px; background:transparent; border:none; cursor:pointer;">
+                  <input type="text" id="m_spine_bg_hex" value="${spineBg}" style="flex:1; padding:6px; font-family:monospace;" onchange="document.getElementById('m_spine_bg').value=this.value">
+                </div>
+              </div>
+              <div>
+                <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">书脊文字颜色 (Text Color)</label>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <input type="color" id="m_spine_clr" value="${spineClr}" style="width:40px; height:35px; background:transparent; border:none; cursor:pointer;">
+                  <input type="text" id="m_spine_clr_hex" value="${spineClr}" style="flex:1; padding:6px; font-family:monospace;" onchange="document.getElementById('m_spine_clr').value=this.value">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. 视听与外链 -->
           <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">YouTube 播放链接 (Video / Audio URL)</label>
             <input type="text" id="m_a" value="${s?.audio_url || ''}" placeholder="https://www.youtube.com/watch?v=..." style="width:100%; padding:10px;">
@@ -400,16 +423,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <div style="margin-bottom:15px; background:#0a0a0a; padding:15px; border-radius:10px; border:1px solid #222;">
             <label style="display:block; margin-bottom:6px; color:var(--gold); font-size:0.8rem; font-weight:bold;">📄 PDF 歌谱上传 / 链接 (Score PDF)</label>
-            <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="可粘贴 Google Drive 链接或直接在下方上传 PDF" style="width:100%; padding:8px; margin-bottom:8px;">
+            <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="可直接在下方上传 PDF 或粘贴链接" style="width:100%; padding:8px; margin-bottom:8px;">
             <input type="file" id="mf_score" style="font-size:0.8rem; color:#aaa; margin-bottom:6px; width:100%;" accept=".pdf">
-            <button class="btn-tiny" style="width:100%; padding:6px;" onclick="uploadFile('mf_score', 'm_s')">📤 上传歌谱 PDF 文件</button>
+            <button type="button" class="btn-tiny" style="width:100%; padding:6px;" onclick="uploadFile('mf_score', 'm_s')">📤 上传歌谱 PDF 文件</button>
           </div>
 
+          <!-- 5. 歌词与简介 -->
           <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">完整歌词与简介 (Full Lyrics & Notes)</label>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">完整歌词与创作灵修背景 (Full Lyrics)</label>
             <textarea id="m_d" placeholder="输入完整歌词（换行自动保留）与创作背景..." style="width:100%; height:130px; padding:10px; line-height:1.5; font-size:0.85rem;">${s?.description || ''}</textarea>
           </div>
 
+          <!-- 6. 首推设置 -->
           <div style="margin: 15px 0; background:rgba(246,210,138,0.06); padding:12px 15px; border-radius:8px; border:1px solid rgba(246,210,138,0.2);">
             <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--gold); font-weight:500;">
               <input type="checkbox" id="m_latest" ${s?.force_latest || s?.is_latest ? 'checked' : ''} style="width:18px; height:18px; accent-color:var(--gold);"> 
@@ -418,12 +443,19 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
-            <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveMusic('${s?.id || ''}')">💾 保存作品信息</button>
+            <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveMusic('${s?.id || ''}')">💾 保存单曲与 3D 唱片档案</button>
             <button class="btn-tiny" style="flex:1;" onclick="this.closest('#musicEditModal').remove()">取消</button>
           </div>
         </div>
       `;
       document.body.appendChild(modal);
+
+      document.getElementById('m_spine_bg').addEventListener('input', (e) => {
+        document.getElementById('m_spine_bg_hex').value = e.target.value;
+      });
+      document.getElementById('m_spine_clr').addEventListener('input', (e) => {
+        document.getElementById('m_spine_clr_hex').value = e.target.value;
+      });
     } catch (err) {
       console.error("openMusicModal Fail:", err);
       alert("❌ 无法加载数据: " + (err.message || err));
@@ -440,17 +472,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const isLatest = document.getElementById('m_latest').checked;
+      const title = document.getElementById('m_t').value.trim();
+      const artist = document.getElementById('m_artist').value.trim() || 'Harvester Worship';
+      const cover_url = document.getElementById('m_url').value.trim();
+      const audio_url = document.getElementById('m_a').value.trim();
+      const spotify_url = document.getElementById('m_sp')?.value.trim() || '';
+      const score_url = document.getElementById('m_s').value.trim();
+      const description = document.getElementById('m_d').value.trim();
       
-      const payload = {
-        title: document.getElementById('m_t').value.trim(),
-        cover_url: document.getElementById('m_url').value.trim(),
-        audio_url: document.getElementById('m_a').value.trim(),
-        spotify_url: document.getElementById('m_sp')?.value.trim() || '',
-        score_url: document.getElementById('m_s').value.trim(),
-        description: document.getElementById('m_d').value.trim()
-      };
+      const spine_text = document.getElementById('m_spine_t').value.trim() || `${title} · ${artist}`;
+      const spine_bg = document.getElementById('m_spine_bg_hex').value.trim() || '#1877F2';
+      const spine_color = document.getElementById('m_spine_clr_hex').value.trim() || '#ffffff';
 
-      if (!payload.title) throw new Error("请输入歌曲名称");
+      if (!title) throw new Error("请输入歌曲名称");
+
+      const payload = {
+        title,
+        artist,
+        cover_url,
+        audio_url,
+        spotify_url,
+        score_url,
+        description
+      };
 
       let result;
       if(id) {
@@ -460,16 +504,47 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       if (result.error) throw result.error;
+      const savedId = id || result.data?.[0]?.id;
 
-      // Handle "Latest" logic EXCLUSIVELY via site_config
-      if (isLatest) {
-        const savedId = id || result.data?.[0]?.id;
-        if (savedId) {
-          await db.from('site_config').upsert({ key: 'cfg_latest_music_id', value: savedId });
-        }
+      // Also update site_config for 3D spine attributes and custom albums JSON
+      const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
+      let albums = [];
+      if (albumCfg?.value) {
+        try { albums = JSON.parse(albumCfg.value); } catch(e){}
+      }
+      const existingIdx = albums.findIndex(x => x.id === savedId || x.title === title);
+      const albumObj = {
+        id: savedId,
+        title,
+        title_en: "Harvester Single",
+        artist,
+        spine_text,
+        spine_bg,
+        spine_color,
+        cover_url,
+        year: "2025",
+        description,
+        score_url,
+        audio_url,
+        youtube_url: audio_url,
+        spotify_url
+      };
+      if (existingIdx >= 0) {
+        albums[existingIdx] = albumObj;
+      } else {
+        albums.push(albumObj);
+      }
+      await db.from('site_config').upsert({
+        key: 'cfg_albums_custom_json',
+        value: JSON.stringify(albums)
+      }, { onConflict: 'key' });
+
+      // Handle "Latest" featured single logic
+      if (isLatest && savedId) {
+        await db.from('site_config').upsert({ key: 'cfg_latest_music_id', value: savedId });
       }
 
-      alert("✅ 歌曲档案保存成功！");
+      alert("✅ 单曲与 3D 唱片档案已成功保存并实时同步全站！");
       const modal = document.getElementById('musicEditModal');
       if(modal) modal.remove();
       renderCMS();
@@ -479,185 +554,6 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.innerText = originalText;
       btn.disabled = false;
     }
-  };
-
-  // --- 💿 3D ALBUM SHELF CMS MODALS ---
-  window.openAlbumEditModal = async (albumId = null) => {
-    const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
-    let albums = [];
-    if (albumCfg?.value) {
-      try { albums = JSON.parse(albumCfg.value); } catch(e){}
-    }
-    
-    let a = albums.find(x => x.id === albumId) || {
-      id: "album_" + Date.now(),
-      title: "",
-      title_en: "",
-      artist: "Harvester Worship",
-      artist_short: "Harvester",
-      spine_text: "",
-      year: "2025",
-      spine_bg: "#1c1815",
-      spine_color: "#f6d28a",
-      cover_url: "assets/logo.png",
-      description: "",
-      tracks: []
-    };
-
-    const modal = document.createElement('div');
-    modal.id = 'albumCustomEditModal';
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(10px); padding:20px;";
-    modal.innerHTML = `
-      <div style="background:#111; border:1.5px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:650px; max-height:90vh; overflow-y:auto;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid #222; padding-bottom:10px;">
-          <h2 style="color:var(--gold); margin:0;">💿 编辑 3D 专辑展台</h2>
-          <button class="btn-tiny" onclick="this.closest('#albumCustomEditModal').remove()">✕ 关闭</button>
-        </div>
-
-        <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222; text-align:center;">
-          <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">📸 专辑封面 (Album Cover)</label>
-          <img id="ca_prev" src="${a.cover_url || 'assets/logo.png'}" style="width:130px; height:130px; object-fit:cover; border-radius:8px; display:block; margin:0 auto 10px; border:1px solid #333;">
-          <input type="file" id="caf_up" style="font-size:0.8rem; color:#aaa; margin-bottom:6px; width:100%;">
-          <button class="btn-tiny" style="width:100%; padding:6px;" onclick="uploadFile('caf_up', 'ca_url', 'ca_prev')">📤 上传封面图片</button>
-          <input type="hidden" id="ca_url" value="${a.cover_url || ''}">
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
-          <div>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">专辑中文名称 *</label>
-            <input type="text" id="ca_t" value="${a.title}" placeholder="例如：更新敬拜" style="width:100%; padding:8px;">
-          </div>
-          <div>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">英文副标</label>
-            <input type="text" id="ca_te" value="${a.title_en}" placeholder="Renewed Worship" style="width:100%; padding:8px;">
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
-          <div>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">艺术家 / 团队</label>
-            <input type="text" id="ca_art" value="${a.artist}" placeholder="Harvester Worship" style="width:100%; padding:8px;">
-          </div>
-          <div>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">发行年份</label>
-            <input type="text" id="ca_yr" value="${a.year || '2025'}" placeholder="2025" style="width:100%; padding:8px;">
-          </div>
-        </div>
-
-        <!-- 3D 书脊属性 -->
-        <div style="background:#0a0a0a; border:1px solid rgba(246,210,138,0.25); border-radius:10px; padding:15px; margin-bottom:15px;">
-          <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🧱 3D 立体书脊属性 (Spine Attributes)</label>
-          <div style="margin-bottom:10px;">
-            <label style="display:block; font-size:0.75rem; color:#888;">书脊横排文字 (Spine Text)</label>
-            <input type="text" id="ca_spine_t" value="${a.spine_text || a.title}" placeholder="更新敬拜 · Harvester Worship" style="width:100%; padding:8px;">
-          </div>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-            <div>
-              <label style="display:block; font-size:0.75rem; color:#888;">书脊背景色 (Spine Color)</label>
-              <div style="display:flex; gap:8px; align-items:center;">
-                <input type="color" id="ca_spine_bg" value="${a.spine_bg || '#1c1815'}" style="width:40px; height:35px; background:transparent; border:none; cursor:pointer;">
-                <input type="text" id="ca_spine_bg_hex" value="${a.spine_bg || '#1c1815'}" style="flex:1; padding:6px; font-family:monospace;" onchange="document.getElementById('ca_spine_bg').value=this.value">
-              </div>
-            </div>
-            <div>
-              <label style="display:block; font-size:0.75rem; color:#888;">书脊文字颜色 (Text Color)</label>
-              <div style="display:flex; gap:8px; align-items:center;">
-                <input type="color" id="ca_spine_clr" value="${a.spine_color || '#f6d28a'}" style="width:40px; height:35px; background:transparent; border:none; cursor:pointer;">
-                <input type="text" id="ca_spine_clr_hex" value="${a.spine_color || '#f6d28a'}" style="flex:1; padding:6px; font-family:monospace;" onchange="document.getElementById('ca_spine_clr').value=this.value">
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style="margin-bottom:15px;">
-          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">专辑简介描述 (Description)</label>
-          <textarea id="ca_desc" style="width:100%; height:80px; padding:10px;">${a.description || ''}</textarea>
-        </div>
-
-        <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
-          <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveAlbumCustom('${a.id}')">💾 保存 3D 专辑</button>
-          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#albumCustomEditModal').remove()">取消</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-
-    document.getElementById('ca_spine_bg').addEventListener('input', (e) => {
-      document.getElementById('ca_spine_bg_hex').value = e.target.value;
-    });
-    document.getElementById('ca_spine_clr').addEventListener('input', (e) => {
-      document.getElementById('ca_spine_clr_hex').value = e.target.value;
-    });
-  };
-
-  window.saveAlbumCustom = async (albumId) => {
-    const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
-    let albums = [];
-    if (albumCfg?.value) {
-      try { albums = JSON.parse(albumCfg.value); } catch(e){}
-    }
-
-    const payload = {
-      id: albumId || "album_" + Date.now(),
-      title: document.getElementById('ca_t').value.trim(),
-      title_en: document.getElementById('ca_te').value.trim(),
-      artist: document.getElementById('ca_art').value.trim(),
-      artist_short: document.getElementById('ca_art').value.trim(),
-      spine_text: document.getElementById('ca_spine_t').value.trim() || document.getElementById('ca_t').value.trim(),
-      year: document.getElementById('ca_yr').value.trim() || "2025",
-      spine_bg: document.getElementById('ca_spine_bg_hex').value.trim() || "#1c1815",
-      spine_color: document.getElementById('ca_spine_clr_hex').value.trim() || "#f6d28a",
-      cover_url: document.getElementById('ca_url').value.trim() || "assets/logo.png",
-      description: document.getElementById('ca_desc').value.trim(),
-      tracks: []
-    };
-
-    if (!payload.title) return alert("请输入专辑名称");
-
-    const existingIdx = albums.findIndex(x => x.id === albumId);
-    if (existingIdx >= 0) {
-      payload.tracks = albums[existingIdx].tracks || [];
-      albums[existingIdx] = payload;
-    } else {
-      albums.push(payload);
-    }
-
-    try {
-      await db.from('site_config').upsert({
-        key: 'cfg_albums_custom_json',
-        value: JSON.stringify(albums)
-      }, { onConflict: 'key' });
-
-      alert("✅ 3D 专辑已成功保存并同步前台！");
-      const modal = document.getElementById('albumCustomEditModal');
-      if (modal) modal.remove();
-      renderCMS();
-    } catch(err) {
-      alert("保存失败: " + err.message);
-    }
-  };
-
-  window.deleteAlbumCustom = async (albumId) => {
-    if (!confirm("确定要删除这张 3D 专辑吗？")) return;
-    const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
-    let albums = [];
-    if (albumCfg?.value) {
-      try { albums = JSON.parse(albumCfg.value); } catch(e){}
-    }
-    albums = albums.filter(x => x.id !== albumId);
-    await db.from('site_config').upsert({
-      key: 'cfg_albums_custom_json',
-      value: JSON.stringify(albums)
-    }, { onConflict: 'key' });
-    alert("已删除该专辑。");
-    renderCMS();
-  };
-
-  window.resetDefaultAlbums = async () => {
-    if (!confirm("确定恢复为系统预设的 11 张 3D 专辑吗？")) return;
-    await db.from('site_config').delete().eq('key', 'cfg_albums_custom_json');
-    alert("已恢复预设。");
-    renderCMS();
   };
 
   // --- 📅 EVENTS MODULE (Upgraded) ---
