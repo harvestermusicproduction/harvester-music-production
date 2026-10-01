@@ -409,10 +409,24 @@ You have set my feet upon the rock`
     setupTouchAndDrag();
   }
 
-  // Pull latest songs from Supabase and integrate into album 0
+  // Pull latest songs and custom albums from Supabase
   async function fetchSupabaseSongs() {
     try {
       if (window.supabase) {
+        // 1. Check if custom albums are configured via CMS
+        const { data: albumCfg } = await window.supabase.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
+        if (albumCfg && albumCfg.value) {
+          try {
+            const custom = JSON.parse(albumCfg.value);
+            if (Array.isArray(custom) && custom.length > 0) {
+              albums = custom;
+            }
+          } catch(err) {
+            console.warn("Parse custom albums error:", err);
+          }
+        }
+
+        // 2. Fetch single songs
         const { data: songs } = await window.supabase.from('music_works').select('*').order('created_at', { ascending: false });
         if (songs && songs.length > 0) {
           const dynamicTracks = songs.map((s, idx) => ({
@@ -422,14 +436,16 @@ You have set my feet upon the rock`
             artist: "Harvester Music",
             duration: "4:15",
             youtube_url: s.audio_url || s.youtube_url || "https://www.youtube.com/@harvestermusic.production",
-            spotify_url: "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
+            spotify_url: s.spotify_url || "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
             score_url: s.score_url || "assets/scores/sample.pdf",
             lyrics: s.description ? s.description : `【${s.title}】\n\n词曲：Harvester Music Production\n愿每一首写给神的歌都被听见。\n欢迎下载歌谱使用并在各处传唱。`
           }));
 
-          albums[0].tracks = dynamicTracks;
-          if (songs[0]?.cover_url) {
-            albums[0].cover_url = songs[0].cover_url;
+          if (albums[0]) {
+            albums[0].tracks = dynamicTracks;
+            if (songs[0]?.cover_url) {
+              albums[0].cover_url = songs[0].cover_url;
+            }
           }
         }
       }

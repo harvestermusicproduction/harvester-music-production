@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           
           <nav style="flex:1; display:flex; flex-direction:column; gap:6px;">
-            <p class="nav-section-title">Core Content</p>
+            <p class="nav-section-title">CORE CONTENT</p>
             <a href="javascript:void(0)" onclick="switchModule('dashboard')" class="nav-item ${currentModule==='dashboard'?'active':''}">📊 Overview</a>
             <a href="javascript:void(0)" onclick="switchModule('music')" class="nav-item ${currentModule==='music'?'active':''}">🎵 Music</a>
             <a href="javascript:void(0)" onclick="switchModule('singers')" class="nav-item ${currentModule==='singers'?'active':''}">🎙️ Singers</a>
@@ -67,11 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="javascript:void(0)" onclick="switchModule('diary')" class="nav-item ${currentModule==='diary'?'active':''}">📂 Field Diary</a>
             <a href="javascript:void(0)" onclick="switchModule('about')" class="nav-item ${currentModule==='about'?'active':''}">📖 About Us / 关于我们</a>
 
-            <p class="nav-section-title" style="margin-top:25px;">Interact</p>
+            <p class="nav-section-title" style="margin-top:25px;">INTERACT</p>
             <a href="javascript:void(0)" onclick="switchModule('echo')" class="nav-item ${currentModule==='echo'?'active':''}">🌌 Echo Space</a>
-            <a href="javascript:void(0)" onclick="switchModule('submissions')" class="nav-item ${currentModule==='submissions'?'active':''}">📮 Inbox / 留言收件</a>
+            <a href="javascript:void(0)" onclick="switchModule('submissions')" class="nav-item ${currentModule==='submissions'?'active':''}">📮 Inbox</a>
             <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ Subscriptions</a>
-            <p class="nav-section-title" style="margin-top:25px;">Engine</p>
+            <p class="nav-section-title" style="margin-top:25px;">ENGINE</p>
             <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ Global Settings</a>
           </nav>
           
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </button>
         </aside>
 
-        <main id="moduleBody" style="flex:1; padding:4rem 5rem; overflow-y:auto; background:#050505;"></main>
+        <main id="moduleBody" style="flex:1; padding:3.5rem 4.5rem; overflow-y:auto; background:#050505;"></main>
       </div>
 
       <style>
@@ -226,52 +226,129 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
+  let currentMusicSubTab = 'tracks';
+  window.switchMusicTab = (tab) => { currentMusicSubTab = tab; renderMusic(document.getElementById('moduleBody')); };
+
   async function renderMusic(container) {
     const { data: songs } = await db.from('music_works').select('*').order('created_at', {ascending: false});
     const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_latest_music_id').maybeSingle();
     const latestId = cfg?.value;
 
+    const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
+    let albumsData = [];
+    if (albumCfg?.value) {
+      try { albumsData = JSON.parse(albumCfg.value); } catch(e){}
+    }
+
     container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-        <h1 style="color:var(--gold);">音乐作品管理</h1>
-        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openMusicModal()">+ 发布新单曲</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:15px;">
+        <div>
+          <h1 style="color:var(--gold); margin:0;">🎵 音乐与歌谱集管理 (Music & Albums CMS)</h1>
+          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理单曲库（音频、歌谱PDF、歌词、Spotify）及 3D 立体唱片架专辑展台。</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          ${currentMusicSubTab === 'tracks' 
+            ? `<button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openMusicModal()">+ 发布新单曲</button>`
+            : `<button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openAlbumEditModal()">+ 创建 3D 专辑</button>`}
+        </div>
       </div>
-      
-      <div style="display:flex; flex-direction:column; gap:20px;">
-        ${songs?.map(s => `
-          <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px; transition:0.3s; position:relative;">
-            
-            <!-- 第一排：核心信息 -->
-            <div style="display:flex; gap:20px; align-items:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid #1a1a1a;">
-              <img src="${(s.cover_url && s.cover_url.startsWith('http')) ? s.cover_url : 'https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=400&q=80'}" 
-                   style="width:80px; height:80px; object-fit:cover; border-radius:8px; border:1px solid #333;"
-                   onerror="this.src='https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80'">
-              <div style="flex:1;">
-                <h3 style="margin:0; color:#fff; font-size:1.2rem;">${s.title} ${s.id === latestId || s.is_latest ? '<span style="color:var(--gold); font-size:0.7rem; background:rgba(246,210,138,0.1); padding:2px 8px; border-radius:50px; margin-left:10px;">HOME FEATURED</span>' : ''}</h3>
-                <p style="margin:5px 0 0 0; color:#666; font-size:0.85rem; line-height:1.4;">${s.description || '暂无作品简介...'}</p>
-                <div style="display:flex; gap:15px; margin-top:8px;">
-                   <span style="font-size:0.75rem; color:#444;">📺 YouTube: ${s.audio_url ? '已链接' : '未设置'}</span>
-                   <span style="font-size:0.75rem; color:#444;">📄 歌谱: ${s.score_url ? '已上传' : '未设置'}</span>
+
+      <!-- Tab Switcher -->
+      <div style="display:flex; gap:10px; margin-bottom:25px; border-bottom:1px solid #222; padding-bottom:10px;">
+        <button onclick="switchMusicTab('tracks')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentMusicSubTab==='tracks' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          🎵 单曲作品与歌谱库 (${songs?.length || 0})
+        </button>
+        <button onclick="switchMusicTab('albums')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentMusicSubTab==='albums' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          💿 3D 唱片架专辑展台 (${albumsData.length || '默认 11'})
+        </button>
+      </div>
+
+      ${currentMusicSubTab === 'tracks' ? `
+        <!-- 单曲列表 -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          ${songs?.map(s => `
+            <div style="background:#0e0e0e; border:1px solid #1f1f1f; border-radius:12px; padding:20px; transition:0.3s; position:relative;">
+              <div style="display:flex; gap:20px; align-items:center; margin-bottom:12px; padding-bottom:14px; border-bottom:1px solid #1a1a1a;">
+                <img src="${(s.cover_url && s.cover_url.startsWith('http')) ? s.cover_url : 'assets/logo.png'}" 
+                     style="width:85px; height:85px; object-fit:cover; border-radius:8px; border:1px solid #333;"
+                     onerror="this.src='assets/logo.png'">
+                <div style="flex:1;">
+                  <h3 style="margin:0; color:#fff; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+                    ${s.title} 
+                    ${s.id === latestId || s.is_latest ? '<span style="color:var(--gold); font-size:0.7rem; background:rgba(246,210,138,0.12); padding:2px 10px; border-radius:50px; border:1px solid rgba(246,210,138,0.3);">首屏主打 (FEATURED)</span>' : ''}
+                  </h3>
+                  <p style="margin:6px 0 0 0; color:#888; font-size:0.85rem; line-height:1.4; max-height:40px; overflow:hidden; text-overflow:ellipsis;">
+                    ${s.description || '暂无作品简介/歌词...'}
+                  </p>
+                  <div style="display:flex; gap:15px; margin-top:10px; flex-wrap:wrap;">
+                     <span style="font-size:0.75rem; color:${s.audio_url ? '#70a1ff' : '#555'};"><i class="fab fa-youtube"></i> YouTube: ${s.audio_url ? '已链接' : '未设置'}</span>
+                     <span style="font-size:0.75rem; color:${s.score_url ? '#2ed573' : '#555'};"><i class="fas fa-file-pdf"></i> 歌谱: ${s.score_url ? '已就绪' : '未设置'}</span>
+                     <span style="font-size:0.75rem; color:${s.spotify_url ? '#1db954' : '#555'};"><i class="fab fa-spotify"></i> Spotify: ${s.spotify_url ? '已链接' : '未设置'}</span>
+                  </div>
                 </div>
               </div>
+              <div style="display:flex; gap:10px; justify-content: flex-end;">
+                <button class="btn-tiny" style="padding:8px 22px; color:var(--gold); border-color:var(--gold);" onclick="openMusicModal('${s.id}')">⚙️ 编辑详细图文与歌谱</button>
+                <button class="btn-tiny danger" style="padding:8px 15px;" onclick="deleteItem('music_works', '${s.id}')">🗑️ 删除</button>
+              </div>
             </div>
-
-            <!-- 第二排：操作按钮 -->
-            <div style="display:flex; gap:10px; justify-content: flex-end;">
-              <button class="btn-tiny" style="padding:8px 25px;" onclick="openMusicModal('${s.id}')">⚙️ 编辑详细资料 (Edit)</button>
-              <button class="btn-tiny danger" style="padding:8px 15px;" onclick="deleteItem('music_works', '${s.id}')">🗑️ 删除 (Delete)</button>
+          `).join('') || '<p style="text-align:center; color:#555; padding:50px;">暂无单曲数据，点击右上角发布新单曲</p>'}
+        </div>
+      ` : `
+        <!-- 3D 唱片架专辑管理 -->
+        <div style="background:#0a0a0a; border:1px solid #1a1a1a; border-radius:12px; padding:25px; margin-bottom:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #222; padding-bottom:12px;">
+            <div>
+              <h3 style="color:var(--gold); margin:0;">3D 立体书脊唱片架展示目录</h3>
+              <p style="color:#777; font-size:0.8rem; margin:4px 0 0 0;">可在此直接编辑每张 3D 专辑的书脊颜色、厚度标题、封面图片及内含歌曲清单。</p>
             </div>
-
+            <button class="btn-tiny" onclick="resetDefaultAlbums()" style="border-color:#555; color:#aaa;">↺ 恢复默认 11 张专辑</button>
           </div>
-        `).join('') || '<p style="text-align:center; color:#444; padding:50px;">暂无数据，请发布您的第一首单曲</p>'}
-      </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
+            ${(albumsData.length > 0 ? albumsData : [
+              { id: "album_renew", title: "更新敬拜", title_en: "Renewed Worship", artist: "Harvester Worship", spine_text: "更新敬拜 · Harvester Worship", spine_bg: "#1c1815", spine_color: "#f6d28a", year: "2025", cover_url: "assets/logo.png", tracks_count: 4 },
+              { id: "album_fire", title: "灵火 Awakening", title_en: "Spiritual Fire", artist: "Harvester Team", spine_text: "灵火 Awakening · Harvester Creative", spine_bg: "#00b894", spine_color: "#ffffff", year: "2024", cover_url: "assets/placeholder.jpg", tracks_count: 2 },
+              { id: "album_harvest", title: "田野收割精选", title_en: "Harvest Field", artist: "Gospel Collective", spine_text: "田野收割精选 · Gospel Collective", spine_bg: "#0984e3", spine_color: "#ffffff", year: "2024", cover_url: "assets/logo.png", tracks_count: 1 },
+              { id: "album_alive", title: "生命涌流 CCM", title_en: "Living Stream Praise", artist: "Praise Band", spine_text: "生命涌流 CCM · Harvester Band", spine_bg: "#3d271d", spine_color: "#f6d28a", year: "2025", cover_url: "assets/placeholder.jpg", tracks_count: 1 },
+              { id: "album_you_are_all", title: "祢是唯一", title_en: "You Are My All", artist: "Harvester Acoustic", spine_text: "祢是唯一 · You Are My All", spine_bg: "#2d3436", spine_color: "#ffffff", year: "2025", cover_url: "assets/logo.png", tracks_count: 1 },
+              { id: "album_heart_desire", title: "心愿诗歌", title_en: "Heart's Desire", artist: "Strings Ensemble", spine_text: "心愿诗歌 · Heart's Desire", spine_bg: "#e77f67", spine_color: "#111111", year: "2025", cover_url: "assets/placeholder.jpg", tracks_count: 1 },
+              { id: "album_sanctuary", title: "圣所之中", title_en: "In The Sanctuary", artist: "Chamber Choir", spine_text: "圣所之中 · In The Sanctuary", spine_bg: "#1b2a4a", spine_color: "#ffffff", year: "2024", cover_url: "assets/logo.png", tracks_count: 1 },
+              { id: "album_disciple", title: "十字架的传人", title_en: "Disciple of The Cross", artist: "Mission Team", spine_text: "十字架的传人 · Mission Team", spine_bg: "#d38b5d", spine_color: "#111111", year: "2025", cover_url: "assets/placeholder.jpg", tracks_count: 1 },
+              { id: "album_grace", title: "恩典洋溢", title_en: "Abundant Grace", artist: "Worship Collective", spine_text: "恩典洋溢 · Abundant Grace", spine_bg: "#801323", spine_color: "#ffffff", year: "2025", cover_url: "assets/logo.png", tracks_count: 1 },
+              { id: "album_everlasting", title: "万古磐石", title_en: "Everlasting Rock", artist: "Praise Collective", spine_text: "万古磐石 · Everlasting Rock", spine_bg: "#134e4a", spine_color: "#ffffff", year: "2025", cover_url: "assets/placeholder.jpg", tracks_count: 1 },
+              { id: "album_amethyst", title: "晨光破晓", title_en: "Daybreak Glory", artist: "Ensemble", spine_text: "晨光破晓 · Daybreak Glory", spine_bg: "#6c5ce7", spine_color: "#ffffff", year: "2025", cover_url: "assets/logo.png", tracks_count: 1 }
+            ]).map((alb, i) => `
+              <div style="background:#141414; border:1px solid #222; border-radius:10px; padding:15px; display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                  <div style="display:flex; gap:12px; align-items:center; margin-bottom:10px;">
+                    <img src="${alb.cover_url || 'assets/logo.png'}" style="width:55px; height:55px; object-fit:cover; border-radius:6px; border:1px solid #333;">
+                    <div style="flex:1; overflow:hidden;">
+                      <h4 style="margin:0; color:#fff; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${alb.title}</h4>
+                      <p style="margin:2px 0 0; color:#777; font-size:0.75rem;">${alb.artist} · ${alb.year || '2025'}</p>
+                    </div>
+                  </div>
+                  <!-- 书脊预览条 -->
+                  <div style="background:${alb.spine_bg || '#1c1815'}; color:${alb.spine_color || '#f6d28a'}; padding:6px 12px; border-radius:4px; font-size:0.75rem; font-weight:bold; letter-spacing:1px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${alb.spine_text || alb.title}
+                  </div>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn-tiny" style="flex:1; padding:6px; color:var(--gold); border-color:var(--gold);" onclick="openAlbumEditModal('${alb.id}')">编辑 3D 属性与曲目</button>
+                  <button class="btn-tiny danger" style="padding:6px 10px;" onclick="deleteAlbumCustom('${alb.id}')">🗑️</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `}
     `;
   }
 
   window.openMusicModal = async (id = null) => {
     const btn = event.currentTarget;
-    const originalText = btn.innerText;
-    if (id) { btn.innerText = "⏳ 正在拉取数据..."; btn.disabled = true; }
+    const originalText = btn ? btn.innerText : '';
+    if (id && btn) { btn.innerText = "⏳ 正在拉取数据..."; btn.disabled = true; }
 
     try {
       let s = null;
@@ -284,43 +361,59 @@ document.addEventListener('DOMContentLoaded', () => {
       const isEdit = !!s;
       const modal = document.createElement('div');
       modal.id = 'musicEditModal';
-      modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(10px); padding:20px;";
+      modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.88); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(10px); padding:20px;";
       modal.innerHTML = `
-        <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,1);">
-          <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑详细资料' : '发布新单曲'}</h2>
+        <div style="background:#111; border:1.5px solid var(--gold); border-radius:16px; padding:2.2rem; width:100%; max-width:620px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,1);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid #222; padding-bottom:10px;">
+            <h2 style="color:var(--gold); margin:0;">${isEdit ? '编辑歌曲档案' : '发布新单曲'}</h2>
+            <button class="btn-tiny" onclick="this.closest('#musicEditModal').remove()">✕ 关闭</button>
+          </div>
           
-          <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222;">
-            <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem;">封面照片 (Cover Image)</label>
-            <img id="m_prev" src="${s?.cover_url || 'https://via.placeholder.com/300x300?text=Harvester+Cover'}" style="width:120px; height:120px; object-fit:cover; border-radius:8px; display:block; margin:0 auto 15px; border:1px solid #333; background:#222;">
-            <input type="file" id="mf_up" style="font-size:0.8rem; color:#888;">
-            <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('mf_up', 'm_url', 'm_prev')">📤 上传封面图</button>
+          <div style="margin-bottom:20px; background:#0a0a0a; padding:18px; border-radius:12px; border:1px solid #222; text-align:center;">
+            <label style="display:block; margin-bottom:10px; color:var(--gold); font-size:0.85rem; font-weight:bold;">📸 封面图片 (Cover Photo)</label>
+            <img id="m_prev" src="${s?.cover_url || 'assets/logo.png'}" style="width:130px; height:130px; object-fit:cover; border-radius:10px; display:block; margin:0 auto 12px; border:1px solid #333; background:#181818;">
+            <input type="file" id="mf_up" style="font-size:0.8rem; color:#aaa; margin-bottom:8px; width:100%;">
+            <button class="btn-tiny" style="width:100%; padding:8px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold);" onclick="uploadFile('mf_up', 'm_url', 'm_prev')">📤 上传封面图片</button>
             <input type="hidden" id="m_url" value="${s?.cover_url || ''}">
           </div>
 
-          <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲名字 (Title)</label>
-            <input type="text" id="m_t" value="${s?.title || ''}" placeholder="歌曲名称" style="width:100%; padding:10px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+            <div>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲名称 (Title) *</label>
+              <input type="text" id="m_t" value="${s?.title || ''}" placeholder="例如：更新敬拜" style="width:100%; padding:10px;">
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">所属专辑 / 歌手</label>
+              <input type="text" id="m_artist" value="${s?.artist || 'Harvester Worship'}" placeholder="例如：Harvester Worship" style="width:100%; padding:10px;">
+            </div>
           </div>
 
           <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">YouTube 链接</label>
-            <input type="text" id="m_a" value="${s?.audio_url || ''}" placeholder="https://youtube.com/..." style="width:100%; padding:10px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">YouTube 播放链接 (Video / Audio URL)</label>
+            <input type="text" id="m_a" value="${s?.audio_url || ''}" placeholder="https://www.youtube.com/watch?v=..." style="width:100%; padding:10px;">
           </div>
 
           <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Google Drive 歌谱链接</label>
-            <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="https://drive.google.com/..." style="width:100%; padding:10px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Spotify 聆听链接 (Spotify Track URL)</label>
+            <input type="text" id="m_sp" value="${s?.spotify_url || ''}" placeholder="https://open.spotify.com/track/..." style="width:100%; padding:10px;">
+          </div>
+
+          <div style="margin-bottom:15px; background:#0a0a0a; padding:15px; border-radius:10px; border:1px solid #222;">
+            <label style="display:block; margin-bottom:6px; color:var(--gold); font-size:0.8rem; font-weight:bold;">📄 PDF 歌谱上传 / 链接 (Score PDF)</label>
+            <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="可粘贴 Google Drive 链接或直接在下方上传 PDF" style="width:100%; padding:8px; margin-bottom:8px;">
+            <input type="file" id="mf_score" style="font-size:0.8rem; color:#aaa; margin-bottom:6px; width:100%;" accept=".pdf">
+            <button class="btn-tiny" style="width:100%; padding:6px;" onclick="uploadFile('mf_score', 'm_s')">📤 上传歌谱 PDF 文件</button>
           </div>
 
           <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲简介 (Description)</label>
-            <textarea id="m_d" placeholder="简单介绍一下这首作品..." style="width:100%; height:80px; padding:10px;">${s?.description || ''}</textarea>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">完整歌词与简介 (Full Lyrics & Notes)</label>
+            <textarea id="m_d" placeholder="输入完整歌词（换行自动保留）与创作背景..." style="width:100%; height:130px; padding:10px; line-height:1.5; font-size:0.85rem;">${s?.description || ''}</textarea>
           </div>
 
-          <div style="margin: 15px 0;">
-            <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--gold);">
-              <input type="checkbox" id="m_latest" ${s?.force_latest || s?.is_latest ? 'checked' : ''} style="width:auto;"> 
-              设为最新歌曲 (首页首屏展示)
+          <div style="margin: 15px 0; background:rgba(246,210,138,0.06); padding:12px 15px; border-radius:8px; border:1px solid rgba(246,210,138,0.2);">
+            <label style="display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--gold); font-weight:500;">
+              <input type="checkbox" id="m_latest" ${s?.force_latest || s?.is_latest ? 'checked' : ''} style="width:18px; height:18px; accent-color:var(--gold);"> 
+              设为全站首推单曲 (首页首屏大图及播放器直接调用)
             </label>
           </div>
 
@@ -335,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error("openMusicModal Fail:", err);
       alert("❌ 无法加载数据: " + (err.message || err));
     } finally {
-      if (id) { btn.innerText = originalText; btn.disabled = false; }
+      if (id && btn) { btn.innerText = originalText; btn.disabled = false; }
     }
   };
 
@@ -349,13 +442,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const isLatest = document.getElementById('m_latest').checked;
       
       const payload = {
-        title: document.getElementById('m_t').value,
-        cover_url: document.getElementById('m_url').value,
-        audio_url: document.getElementById('m_a').value,
-        score_url: document.getElementById('m_s').value,
-        description: document.getElementById('m_d').value
-        // 🚀 Physical Removal: is_latest is no longer sent to music_works table
+        title: document.getElementById('m_t').value.trim(),
+        cover_url: document.getElementById('m_url').value.trim(),
+        audio_url: document.getElementById('m_a').value.trim(),
+        spotify_url: document.getElementById('m_sp')?.value.trim() || '',
+        score_url: document.getElementById('m_s').value.trim(),
+        description: document.getElementById('m_d').value.trim()
       };
+
+      if (!payload.title) throw new Error("请输入歌曲名称");
 
       let result;
       if(id) {
@@ -366,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (result.error) throw result.error;
 
-      // Handle "Latest" logic EXCLUSIVELY via site_config (Schema-Safe)
+      // Handle "Latest" logic EXCLUSIVELY via site_config
       if (isLatest) {
         const savedId = id || result.data?.[0]?.id;
         if (savedId) {
@@ -374,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      console.log("Music saved successfully!");
+      alert("✅ 歌曲档案保存成功！");
       const modal = document.getElementById('musicEditModal');
       if(modal) modal.remove();
       renderCMS();
@@ -384,6 +479,185 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.innerText = originalText;
       btn.disabled = false;
     }
+  };
+
+  // --- 💿 3D ALBUM SHELF CMS MODALS ---
+  window.openAlbumEditModal = async (albumId = null) => {
+    const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
+    let albums = [];
+    if (albumCfg?.value) {
+      try { albums = JSON.parse(albumCfg.value); } catch(e){}
+    }
+    
+    let a = albums.find(x => x.id === albumId) || {
+      id: "album_" + Date.now(),
+      title: "",
+      title_en: "",
+      artist: "Harvester Worship",
+      artist_short: "Harvester",
+      spine_text: "",
+      year: "2025",
+      spine_bg: "#1c1815",
+      spine_color: "#f6d28a",
+      cover_url: "assets/logo.png",
+      description: "",
+      tracks: []
+    };
+
+    const modal = document.createElement('div');
+    modal.id = 'albumCustomEditModal';
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(10px); padding:20px;";
+    modal.innerHTML = `
+      <div style="background:#111; border:1.5px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:650px; max-height:90vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid #222; padding-bottom:10px;">
+          <h2 style="color:var(--gold); margin:0;">💿 编辑 3D 专辑展台</h2>
+          <button class="btn-tiny" onclick="this.closest('#albumCustomEditModal').remove()">✕ 关闭</button>
+        </div>
+
+        <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222; text-align:center;">
+          <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">📸 专辑封面 (Album Cover)</label>
+          <img id="ca_prev" src="${a.cover_url || 'assets/logo.png'}" style="width:130px; height:130px; object-fit:cover; border-radius:8px; display:block; margin:0 auto 10px; border:1px solid #333;">
+          <input type="file" id="caf_up" style="font-size:0.8rem; color:#aaa; margin-bottom:6px; width:100%;">
+          <button class="btn-tiny" style="width:100%; padding:6px;" onclick="uploadFile('caf_up', 'ca_url', 'ca_prev')">📤 上传封面图片</button>
+          <input type="hidden" id="ca_url" value="${a.cover_url || ''}">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">专辑中文名称 *</label>
+            <input type="text" id="ca_t" value="${a.title}" placeholder="例如：更新敬拜" style="width:100%; padding:8px;">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">英文副标</label>
+            <input type="text" id="ca_te" value="${a.title_en}" placeholder="Renewed Worship" style="width:100%; padding:8px;">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">艺术家 / 团队</label>
+            <input type="text" id="ca_art" value="${a.artist}" placeholder="Harvester Worship" style="width:100%; padding:8px;">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">发行年份</label>
+            <input type="text" id="ca_yr" value="${a.year || '2025'}" placeholder="2025" style="width:100%; padding:8px;">
+          </div>
+        </div>
+
+        <!-- 3D 书脊属性 -->
+        <div style="background:#0a0a0a; border:1px solid rgba(246,210,138,0.25); border-radius:10px; padding:15px; margin-bottom:15px;">
+          <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🧱 3D 立体书脊属性 (Spine Attributes)</label>
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.75rem; color:#888;">书脊横排文字 (Spine Text)</label>
+            <input type="text" id="ca_spine_t" value="${a.spine_text || a.title}" placeholder="更新敬拜 · Harvester Worship" style="width:100%; padding:8px;">
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+            <div>
+              <label style="display:block; font-size:0.75rem; color:#888;">书脊背景色 (Spine Color)</label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="color" id="ca_spine_bg" value="${a.spine_bg || '#1c1815'}" style="width:40px; height:35px; background:transparent; border:none; cursor:pointer;">
+                <input type="text" id="ca_spine_bg_hex" value="${a.spine_bg || '#1c1815'}" style="flex:1; padding:6px; font-family:monospace;" onchange="document.getElementById('ca_spine_bg').value=this.value">
+              </div>
+            </div>
+            <div>
+              <label style="display:block; font-size:0.75rem; color:#888;">书脊文字颜色 (Text Color)</label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="color" id="ca_spine_clr" value="${a.spine_color || '#f6d28a'}" style="width:40px; height:35px; background:transparent; border:none; cursor:pointer;">
+                <input type="text" id="ca_spine_clr_hex" value="${a.spine_color || '#f6d28a'}" style="flex:1; padding:6px; font-family:monospace;" onchange="document.getElementById('ca_spine_clr').value=this.value">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">专辑简介描述 (Description)</label>
+          <textarea id="ca_desc" style="width:100%; height:80px; padding:10px;">${a.description || ''}</textarea>
+        </div>
+
+        <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
+          <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveAlbumCustom('${a.id}')">💾 保存 3D 专辑</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#albumCustomEditModal').remove()">取消</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    document.getElementById('ca_spine_bg').addEventListener('input', (e) => {
+      document.getElementById('ca_spine_bg_hex').value = e.target.value;
+    });
+    document.getElementById('ca_spine_clr').addEventListener('input', (e) => {
+      document.getElementById('ca_spine_clr_hex').value = e.target.value;
+    });
+  };
+
+  window.saveAlbumCustom = async (albumId) => {
+    const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
+    let albums = [];
+    if (albumCfg?.value) {
+      try { albums = JSON.parse(albumCfg.value); } catch(e){}
+    }
+
+    const payload = {
+      id: albumId || "album_" + Date.now(),
+      title: document.getElementById('ca_t').value.trim(),
+      title_en: document.getElementById('ca_te').value.trim(),
+      artist: document.getElementById('ca_art').value.trim(),
+      artist_short: document.getElementById('ca_art').value.trim(),
+      spine_text: document.getElementById('ca_spine_t').value.trim() || document.getElementById('ca_t').value.trim(),
+      year: document.getElementById('ca_yr').value.trim() || "2025",
+      spine_bg: document.getElementById('ca_spine_bg_hex').value.trim() || "#1c1815",
+      spine_color: document.getElementById('ca_spine_clr_hex').value.trim() || "#f6d28a",
+      cover_url: document.getElementById('ca_url').value.trim() || "assets/logo.png",
+      description: document.getElementById('ca_desc').value.trim(),
+      tracks: []
+    };
+
+    if (!payload.title) return alert("请输入专辑名称");
+
+    const existingIdx = albums.findIndex(x => x.id === albumId);
+    if (existingIdx >= 0) {
+      payload.tracks = albums[existingIdx].tracks || [];
+      albums[existingIdx] = payload;
+    } else {
+      albums.push(payload);
+    }
+
+    try {
+      await db.from('site_config').upsert({
+        key: 'cfg_albums_custom_json',
+        value: JSON.stringify(albums)
+      }, { onConflict: 'key' });
+
+      alert("✅ 3D 专辑已成功保存并同步前台！");
+      const modal = document.getElementById('albumCustomEditModal');
+      if (modal) modal.remove();
+      renderCMS();
+    } catch(err) {
+      alert("保存失败: " + err.message);
+    }
+  };
+
+  window.deleteAlbumCustom = async (albumId) => {
+    if (!confirm("确定要删除这张 3D 专辑吗？")) return;
+    const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
+    let albums = [];
+    if (albumCfg?.value) {
+      try { albums = JSON.parse(albumCfg.value); } catch(e){}
+    }
+    albums = albums.filter(x => x.id !== albumId);
+    await db.from('site_config').upsert({
+      key: 'cfg_albums_custom_json',
+      value: JSON.stringify(albums)
+    }, { onConflict: 'key' });
+    alert("已删除该专辑。");
+    renderCMS();
+  };
+
+  window.resetDefaultAlbums = async () => {
+    if (!confirm("确定恢复为系统预设的 11 张 3D 专辑吗？")) return;
+    await db.from('site_config').delete().eq('key', 'cfg_albums_custom_json');
+    alert("已恢复预设。");
+    renderCMS();
   };
 
   // --- 📅 EVENTS MODULE (Upgraded) ---
@@ -986,59 +1260,224 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // --- 🎙️ SINGER MODULE ---
+  // --- 🎙️ SINGER & CO-WORKERS MODULE ---
+  let currentSingerSubTab = 'core';
+  window.switchSingerTab = (tab) => { currentSingerSubTab = tab; renderSingers(document.getElementById('moduleBody')); };
+
   async function renderSingers(container) {
     const { data: singers } = await db.from('singers').select('*').order('display_order', {ascending: true});
+    const { data: configs } = await db.from('site_config').select('*');
+    const c = (configs || []).reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
+    let aboutData = {};
+    if (c['cfg_about_content_json']) {
+      try {
+        aboutData = typeof c['cfg_about_content_json'] === 'string' ? JSON.parse(c['cfg_about_content_json']) : c['cfg_about_content_json'];
+      } catch(e){}
+    }
+    const d = (key, fallback = '') => (aboutData && aboutData[key] !== undefined && aboutData[key] !== null) ? aboutData[key] : fallback;
+
+    const gospelSingers = (singers || []).filter(s => s.category === 'gospel');
+    const worshipSingers = (singers || []).filter(s => s.category === 'worship');
+
     container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-        <h1 style="color:var(--gold);">歌手管理 Singers Management</h1>
-        <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="addSinger()">+ 邀请新歌手</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:15px;">
+        <div>
+          <h1 style="color:var(--gold); margin:0;">🎙️ 主要同工与歌手管理 (Co-workers & Singers)</h1>
+          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理 7 大核心服事同工团队、福音歌手及敬拜赞美歌手名册。</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          ${currentSingerSubTab === 'core' 
+            ? `<button class="btn btn-submit" style="width:auto; padding:10px 24px;" onclick="saveCoreCoWorkersCMS()">💾 保存所有同工修改</button>`
+            : `<button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="addSinger('${currentSingerSubTab}')">+ 邀请新歌手</button>`}
+        </div>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
-        ${singers?.map(s => `
-          <div style="background:#1a1a1a; padding:20px; border-radius:12px; border:1px solid #222;">
-            <img src="${s.image_url || 'https://via.placeholder.com/300x400?text=Singer'}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:8px; margin-bottom:15px;">
-            <h3 style="margin:0; color:var(--gold);">${s.name}</h3>
-            <p style="color:#666; font-size:0.85rem; margin:5px 0 10px;">${s.role || 'Gospel Singer'} <span style="background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-left:10px;">${s.category === 'worship' ? '敬拜' : '福音'}</span></p>
-            <div style="display:flex; gap:10px; margin-top:20px;">
-              <button class="btn-tiny" style="flex:1;" onclick="editSinger('${s.id}')">编辑</button>
-              <button class="btn-tiny danger" onclick="deleteItem('singers', '${s.id}')">删除</button>
+
+      <!-- Tab Switcher -->
+      <div style="display:flex; gap:10px; margin-bottom:25px; border-bottom:1px solid #222; padding-bottom:10px;">
+        <button onclick="switchSingerTab('core')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentSingerSubTab==='core' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          👥 主要服事同工 (7 大核心职务)
+        </button>
+        <button onclick="switchSingerTab('gospel')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentSingerSubTab==='gospel' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          🎤 福音歌手 (${gospelSingers.length})
+        </button>
+        <button onclick="switchSingerTab('worship')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentSingerSubTab==='worship' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
+          🕊️ 敬拜赞美歌手 (${worshipSingers.length})
+        </button>
+      </div>
+
+      ${currentSingerSubTab === 'core' ? `
+        <!-- 👥 主要同工管理 (7 大核心职务) -->
+        <div style="background:#0a0a0a; border:1px solid #1f1f1f; border-radius:12px; padding:25px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #222; padding-bottom:12px;">
+            <h3 style="color:var(--gold); margin:0;">7 大核心服事职务与拍立得相片管理</h3>
+            <span style="color:#777; font-size:0.8rem;">保存后将实时同步更新至前台「主要同工」与「关于我们」页面</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px; margin-bottom:25px;">
+            <!-- 1. 创办启发人 -->
+            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">01 创办启发人 (Founding Inspirer)</span>
+              <input type="text" id="in_about_team_r1_t" value="${d('about_team_r1_t', '创作平台创办启发人')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
+              <textarea id="in_about_team_r1_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r1_names', '汤小康\nWarren 沈自强')}</textarea>
+              <img id="prev_about_team_r1_img" src="${d('about_team_r1_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
+              <input type="file" id="f_about_team_r1_img" style="font-size:0.75rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r1_img', 'in_about_team_r1_img', 'prev_about_team_r1_img')">📤 更换相片</button>
+              <input type="hidden" id="in_about_team_r1_img" value="${d('about_team_r1_img', '')}">
+            </div>
+
+            <!-- 2. 创作 -->
+            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">02 创作 (Music Creation)</span>
+              <input type="text" id="in_about_team_r2_t" value="${d('about_team_r2_t', '创作')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
+              <textarea id="in_about_team_r2_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r2_names', 'Natasha')}</textarea>
+              <img id="prev_about_team_r2_img" src="${d('about_team_r2_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
+              <input type="file" id="f_about_team_r2_img" style="font-size:0.75rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r2_img', 'in_about_team_r2_img', 'prev_about_team_r2_img')">📤 更换相片</button>
+              <input type="hidden" id="in_about_team_r2_img" value="${d('about_team_r2_img', '')}">
+            </div>
+
+            <!-- 3. 制作 -->
+            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">03 制作 (Music Production)</span>
+              <input type="text" id="in_about_team_r3_t" value="${d('about_team_r3_t', '制作')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
+              <textarea id="in_about_team_r3_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r3_names', '制作团队')}</textarea>
+              <img id="prev_about_team_r3_img" src="${d('about_team_r3_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
+              <input type="file" id="f_about_team_r3_img" style="font-size:0.75rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r3_img', 'in_about_team_r3_img', 'prev_about_team_r3_img')">📤 更换相片</button>
+              <input type="hidden" id="in_about_team_r3_img" value="${d('about_team_r3_img', '')}">
+            </div>
+
+            <!-- 4. 影视设计 -->
+            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">04 影视设计 (Visual & Video Design)</span>
+              <input type="text" id="in_about_team_r4_t" value="${d('about_team_r4_t', '影视设计')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
+              <textarea id="in_about_team_r4_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r4_names', '影视设计组')}</textarea>
+              <img id="prev_about_team_r4_img" src="${d('about_team_r4_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
+              <input type="file" id="f_about_team_r4_img" style="font-size:0.75rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r4_img', 'in_about_team_r4_img', 'prev_about_team_r4_img')">📤 更换相片</button>
+              <input type="hidden" id="in_about_team_r4_img" value="${d('about_team_r4_img', '')}">
+            </div>
+
+            <!-- 5. 企划推广 -->
+            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">05 企划推广 (Marketing & Promotion)</span>
+              <input type="text" id="in_about_team_r5_t" value="${d('about_team_r5_t', '企划推广')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
+              <textarea id="in_about_team_r5_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r5_names', '企划团队')}</textarea>
+              <img id="prev_about_team_r5_img" src="${d('about_team_r5_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
+              <input type="file" id="f_about_team_r5_img" style="font-size:0.75rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r5_img', 'in_about_team_r5_img', 'prev_about_team_r5_img')">📤 更换相片</button>
+              <input type="hidden" id="in_about_team_r5_img" value="${d('about_team_r5_img', '')}">
+            </div>
+
+            <!-- 6. 行政 -->
+            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">06 行政 (Administration)</span>
+              <input type="text" id="in_about_team_r6_t" value="${d('about_team_r6_t', '行政')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
+              <textarea id="in_about_team_r6_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r6_names', '行政支持团队')}</textarea>
+              <img id="prev_about_team_r6_img" src="${d('about_team_r6_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
+              <input type="file" id="f_about_team_r6_img" style="font-size:0.75rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r6_img', 'in_about_team_r6_img', 'prev_about_team_r6_img')">📤 更换相片</button>
+              <input type="hidden" id="in_about_team_r6_img" value="${d('about_team_r6_img', '')}">
+            </div>
+
+            <!-- 7. 音响舞台 -->
+            <div style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222;">
+              <span style="color:var(--gold); font-size:0.8rem; font-weight:bold;">07 音响舞台 (Live Stage & Audio)</span>
+              <input type="text" id="in_about_team_r7_t" value="${d('about_team_r7_t', '音响舞台团队')}" style="width:100%; margin:6px 0; font-size:0.85rem;">
+              <textarea id="in_about_team_r7_names" style="width:100%; height:55px; margin-bottom:8px; font-size:0.85rem;">${d('about_team_r7_names', '敬拜工程音响组')}</textarea>
+              <img id="prev_about_team_r7_img" src="${d('about_team_r7_img', 'assets/logo.png')}" style="width:100%; height:100px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000;">
+              <input type="file" id="f_about_team_r7_img" style="font-size:0.75rem; width:100%;">
+              <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_team_r7_img', 'in_about_team_r7_img', 'prev_about_team_r7_img')">📤 更换相片</button>
+              <input type="hidden" id="in_about_team_r7_img" value="${d('about_team_r7_img', '')}">
             </div>
           </div>
-        `).join('') || '<p>暂无歌手数据</p>'}
-      </div>
+
+          <button class="btn btn-submit" style="width:100%; padding:14px; font-size:1rem;" onclick="saveCoreCoWorkersCMS()">💾 立即保存 7 大主要服事同工</button>
+        </div>
+      ` : `
+        <!-- 歌手名册列表 (Gospel or Worship) -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
+          ${(currentSingerSubTab === 'gospel' ? gospelSingers : worshipSingers).map(s => `
+            <div style="background:#111; padding:20px; border-radius:12px; border:1px solid #222; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <img src="${s.image_url || 'assets/logo.png'}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:8px; margin-bottom:15px; border:1px solid #333;" onerror="this.src='assets/logo.png'">
+                <h3 style="margin:0; color:var(--gold); font-size:1.15rem;">${s.name}</h3>
+                <p style="color:#888; font-size:0.85rem; margin:6px 0 10px;">${s.role || 'Gospel Singer'} <span style="background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-left:8px; color:#aaa;">${s.category === 'worship' ? '敬拜赞美' : '福音歌手'}</span></p>
+                <p style="color:#666; font-size:0.8rem; line-height:1.4; max-height:45px; overflow:hidden;">${s.bio || ''}</p>
+              </div>
+              <div style="display:flex; gap:10px; margin-top:20px; padding-top:12px; border-top:1px solid #1a1a1a;">
+                <button class="btn-tiny" style="flex:1; color:var(--gold); border-color:var(--gold);" onclick="editSinger('${s.id}')">⚙️ 编辑档案</button>
+                <button class="btn-tiny danger" onclick="deleteItem('singers', '${s.id}')">🗑️ 删除</button>
+              </div>
+            </div>
+          `).join('') || `<p style="grid-column:1/-1; text-align:center; color:#555; padding:60px;">暂无该分类歌手，点击右上角「+ 邀请新歌手」添加</p>`}
+        </div>
+      `}
     `;
   }
 
-  window.addSinger = async() => {
+  window.saveCoreCoWorkersCMS = async () => {
+    const { data: configs } = await db.from('site_config').select('*');
+    const c = (configs || []).reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
+    let aboutData = {};
+    if (c['cfg_about_content_json']) {
+      try {
+        aboutData = typeof c['cfg_about_content_json'] === 'string' ? JSON.parse(c['cfg_about_content_json']) : c['cfg_about_content_json'];
+      } catch(e){}
+    }
+
+    for (let i = 1; i <= 7; i++) {
+      const tEl = document.getElementById(`in_about_team_r${i}_t`);
+      const nEl = document.getElementById(`in_about_team_r${i}_names`);
+      const imgEl = document.getElementById(`in_about_team_r${i}_img`);
+      if (tEl) aboutData[`about_team_r${i}_t`] = tEl.value;
+      if (nEl) aboutData[`about_team_r${i}_names`] = nEl.value;
+      if (imgEl) aboutData[`about_team_r${i}_img`] = imgEl.value;
+    }
+
+    try {
+      await db.from('site_config').upsert({
+        key: 'cfg_about_content_json',
+        value: JSON.stringify(aboutData)
+      }, { onConflict: 'key' });
+
+      alert("🎉 7 大主要服事同工资料已成功保存并实时生效！");
+      renderCMS();
+    } catch(err) {
+      alert("保存失败: " + err.message);
+    }
+  };
+
+  window.addSinger = async(defaultCat = 'gospel') => {
     const modal = document.createElement('div');
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center;";
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; display:flex; justify-content:center; align-items:center; padding:20px; backdrop-filter:blur(10px);";
     modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:12px; padding:2rem; width:100%; max-width:500px; max-height:90vh; overflow-y:auto;">
-        <h3 style="color:var(--gold);">邀请新歌手 Invite New Singer</h3>
+      <div style="background:#111; border:1.5px solid var(--gold); border-radius:16px; padding:2.2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto;">
+        <h3 style="color:var(--gold); margin-top:0;">邀请新歌手档案 (Add Singer)</h3>
         
-        <div style="margin-bottom:20px; text-align:center;">
-          <img id="sprev_new" src="https://via.placeholder.com/300x400?text=Upload+Photo" style="width:150px; aspect-ratio:3/4; object-fit:cover; border-radius:8px; margin-bottom:10px; background:#222;">
-          <input type="file" id="sfup_new" style="display:block; margin:0 auto;">
-          <button class="btn-tiny" style="margin-top:10px;" onclick="uploadFile('sfup_new', 'surl_new', 'sprev_new')">上传照片</button>
+        <div style="margin-bottom:20px; text-align:center; background:#0a0a0a; padding:15px; border-radius:10px; border:1px solid #222;">
+          <img id="sprev_new" src="assets/logo.png" style="width:130px; aspect-ratio:3/4; object-fit:cover; border-radius:8px; margin-bottom:10px; background:#181818; border:1px solid #333;">
+          <input type="file" id="sfup_new" style="display:block; margin:0 auto; font-size:0.8rem; color:#aaa; width:100%;">
+          <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('sfup_new', 'surl_new', 'sprev_new')">📤 上传歌手照片</button>
           <input type="hidden" id="surl_new" value="">
         </div>
 
-        <label>姓名 Name</label>
-        <input type="text" id="s_n_new" placeholder="请输入姓名..." style="width:100%; margin-bottom:15px;">
+        <label style="color:#aaa; font-size:0.8rem; display:block; margin-bottom:4px;">姓名 (Name) *</label>
+        <input type="text" id="s_n_new" placeholder="歌手 / 音乐人姓名..." style="width:100%; margin-bottom:15px; padding:10px;">
 
-        <label>短简介 Bio (显示在卡片上)</label>
-        <input type="text" id="s_role_new" placeholder="例如：CCM 创作人 / 敬拜主领" style="width:100%; margin-bottom:15px;" value="">
+        <label style="color:#aaa; font-size:0.8rem; display:block; margin-bottom:4px;">短简介 Title / Role (显示在卡片上)</label>
+        <input type="text" id="s_role_new" placeholder="例如：CCM 原创歌手 / 敬拜主领" style="width:100%; margin-bottom:15px; padding:10px;" value="">
         
-        <label>详细介绍 Description (显示在弹窗里)</label>
-        <textarea id="s_bio_new" placeholder="请输入详细的歌手介绍..." style="width:100%; height:100px; margin-bottom:15px; background:#222; color:#fff; border:1px solid #444; padding:10px;"></textarea>
-        <label>展示分类 Category</label>
-        <select id="s_cat_new" style="width:100%; margin-bottom:15px; background: #222; color: #fff; padding: 10px; border: 1px solid #444;">
-          <option value="gospel">福音歌手 Gospel</option>
-          <option value="worship">敬拜歌手 Worship</option>
+        <label style="color:#aaa; font-size:0.8rem; display:block; margin-bottom:4px;">详细介绍 Description (显示在弹窗里)</label>
+        <textarea id="s_bio_new" placeholder="请输入详细的歌手介绍、信仰见证与音乐经历..." style="width:100%; height:100px; margin-bottom:15px; background:#181818; color:#fff; border:1px solid #333; padding:10px; border-radius:6px;"></textarea>
+
+        <label style="color:#aaa; font-size:0.8rem; display:block; margin-bottom:4px;">展示分类 (Category)</label>
+        <select id="s_cat_new" style="width:100%; margin-bottom:15px; background: #181818; color: #fff; padding: 10px; border: 1px solid #333; border-radius:6px;">
+          <option value="gospel" ${defaultCat==='gospel'?'selected':''}>福音歌手 Gospel</option>
+          <option value="worship" ${defaultCat==='worship'?'selected':''}>敬拜赞美歌手 Worship</option>
         </select>
         <div style="margin-top:20px; display:flex; gap:10px;">
-          <button class="btn btn-submit" style="flex:1;" onclick="submitNewSinger(this)">确认邀请</button>
+          <button class="btn btn-submit" style="flex:2;" onclick="submitNewSinger(this)">确认创建</button>
           <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.parentElement.remove()">取消</button>
         </div>
       </div>
@@ -1062,7 +1501,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderCMS();
     } catch (e) {
       alert("添加失败: " + e.message);
-      if(btn) btn.innerText = "确认邀请";
+      if(btn) btn.innerText = "确认创建";
     }
   };
 
