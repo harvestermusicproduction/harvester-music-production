@@ -2555,59 +2555,14 @@ section[id], div[id^="section-"] {
   border-left: 1px solid rgba(255, 255, 255, 0.45);
   border-right: 1px solid rgba(0, 0, 0, 0.85);
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
+  justify-content: center;
   overflow: hidden;
   box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.35), inset -2px 0 6px rgba(0, 0, 0, 0.75);
   background-image: linear-gradient(to right, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 30%, rgba(0,0,0,0.35) 100%);
 }
 
-.spine-cap-top, .spine-cap-bottom {
-  width: 12px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 1px;
-}
-
-.spine-inner-layout {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  height: 100%;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
-  user-select: none;
-}
-
-.spine-catalog {
-  font-family: var(--font-eng-title);
-  font-size: 0.62rem;
-  letter-spacing: 2px;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.spine-title {
-  font-family: var(--font-songti), serif;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-}
-
-.spine-artist {
-  font-family: var(--font-eng-title);
-  font-size: 0.68rem;
-  color: var(--gold);
-  letter-spacing: 1px;
-}
-
-/* 3. Right Spine */
+/* 3. Right Spine (Thickness Edge) */
 .cube-face.cube-spine-right {
   top: 0;
   right: -11px;
@@ -2616,7 +2571,47 @@ section[id], div[id^="section-"] {
   transform: rotateY(90deg);
   border-right: 1px solid rgba(255, 255, 255, 0.3);
   border-left: 1px solid rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
+}
+
+.spine-inner-text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 280px;
+  transform: rotate(90deg);
+  transform-origin: center center;
+  white-space: nowrap;
+  user-select: none;
+  font-family: var(--font-songti), serif;
+}
+
+.spine-catalog {
+  font-family: var(--font-eng-title);
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
+.spine-title {
+  font-family: var(--font-songti), serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+}
+
+.spine-artist {
+  font-family: var(--font-eng-title);
+  font-size: 0.68rem;
+  color: var(--gold);
+  letter-spacing: 1px;
 }
 
 /* 4. Top Thickness Edge */

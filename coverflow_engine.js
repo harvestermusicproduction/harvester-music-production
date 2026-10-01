@@ -414,17 +414,21 @@ You have set my feet upon the rock!`
 
                 <!-- Left Spine (Tactile CD Jewel Case Spine with 3D Depth) -->
                 <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#1c1815'};">
-                  <div class="spine-cap-top"></div>
-                  <div class="spine-inner-layout">
+                  <div class="spine-inner-text">
                     <span class="spine-catalog">HMP-${String(idx + 1).padStart(3, '0')}</span>
                     <span class="spine-title">${album.title}</span>
                     <span class="spine-artist">${album.artist}</span>
                   </div>
-                  <div class="spine-cap-bottom"></div>
                 </div>
 
-                <!-- Right Spine (Thickness Edge) -->
-                <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1c1815'};"></div>
+                <!-- Right Spine (Thickness Edge with Title) -->
+                <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1c1815'};">
+                  <div class="spine-inner-text">
+                    <span class="spine-catalog">HMP-${String(idx + 1).padStart(3, '0')}</span>
+                    <span class="spine-title">${album.title}</span>
+                    <span class="spine-artist">${album.artist}</span>
+                  </div>
+                </div>
 
                 <!-- Top Thickness Edge -->
                 <div class="cube-face cube-top" style="background: ${album.spine_bg || '#1c1815'}; filter: brightness(1.2);"></div>
@@ -544,14 +548,14 @@ You have set my feet upon the rock!`
     requestAnimationFrame(tick);
   }
 
-  // Continuous 3D Transform Rendering for All Slabs (Unified 3D Shelf with Visible Spines)
+  // Continuous 3D Transform Rendering for All Slabs (Flawless Coverflow with Always-Visible Spines)
   function render3DCoverflow() {
     const boxes = document.querySelectorAll('.album-3d-box');
     if (!boxes.length) return;
 
     const isMobile = window.innerWidth <= 768;
-    const stepX = isMobile ? 65 : 95;
-    const centerGap = isMobile ? 40 : 65;
+    const stepX = isMobile ? 120 : 180;
+    const centerGap = isMobile ? 45 : 75;
 
     const activeIntIdx = Math.round(currentProgress);
 
@@ -565,26 +569,32 @@ You have set my feet upon the rock!`
       let scale = 1;
       let opacity = 1;
       
-      // All albums angle uniformly towards the right shelf orientation so their left spine is always visible
-      if (offset <= 0) {
-        // Active album and albums stacked to the left
-        const pLeft = Math.min(1, Math.max(0, -offset));
-        rotY = 56 + 10 * pLeft; // 56deg at center, 66deg when stacked
-        x = offset * stepX - centerGap * pLeft;
-        z = 100 - absOffset * 48;
-        scale = 1.15 - pLeft * 0.22 - Math.max(0, absOffset - 1) * 0.04;
-        opacity = Math.max(0.15, 1 - absOffset * 0.12);
+      if (offset < 0) {
+        // Left side slabs (face slightly to the right, showing front cover & right edge)
+        const p = Math.min(1, -offset);
+        rotY = 56 * p;
+        x = offset * stepX - centerGap * p;
+        z = -absOffset * 50;
+        scale = 1.15 - p * 0.15 - Math.max(0, absOffset - 1) * 0.05;
+        opacity = Math.max(0.12, 1 - absOffset * 0.12);
+      } else if (offset > 0) {
+        // Right side slabs (face to the left, showing left spine & front cover)
+        const p = Math.min(1, offset);
+        rotY = -56 * p;
+        x = offset * stepX + centerGap * p;
+        z = -absOffset * 50;
+        scale = 1.15 - p * 0.15 - Math.max(0, absOffset - 1) * 0.05;
+        opacity = Math.max(0.12, 1 - absOffset * 0.12);
       } else {
-        // Albums stacked to the right
-        const pRight = Math.min(1, Math.max(0, offset));
-        rotY = 56 + 4 * pRight; // 56deg to 60deg, left spine remains beautifully visible
-        x = offset * stepX + centerGap * pRight;
-        z = 100 - absOffset * 48;
-        scale = 1.15 - pRight * 0.22 - Math.max(0, absOffset - 1) * 0.04;
-        opacity = Math.max(0.15, 1 - absOffset * 0.12);
+        // Center Active Spotlight
+        rotY = 0;
+        x = 0;
+        z = 60;
+        scale = 1.15;
+        opacity = 1;
       }
 
-      // Stacking order: active album highest, farther albums lower
+      // Center album has highest zIndex, farther albums cascade backward
       let zIndex = 1000 - Math.round(absOffset * 30);
 
       box.classList.toggle('active', i === activeIntIdx);
