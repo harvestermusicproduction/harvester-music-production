@@ -360,13 +360,13 @@ You have set my feet upon the rock!`
           const mappedFromDb = songs.map((s, idx) => {
             const doodleFallback = childlikeDoodles[idx % childlikeDoodles.length];
             const customMatch = customAlbums?.find(c => c.id === s.id || c.title === s.title);
-            const songYear = s.year || customMatch?.year || "2025";
+            const songYear = customMatch?.year || s.year || "2025";
             
             return {
               id: s.id,
               title: s.title,
               title_en: customMatch?.title_en || "Harvester Single",
-              artist: s.artist || customMatch?.artist || "Harvester Worship",
+              artist: customMatch?.artist || s.artist || "Harvester Worship",
               genre: customMatch?.genre || `Worship / CCM · ${songYear}`,
               year: songYear,
               theme_color: customMatch?.theme_color || ["#1c2b36", "#1a242f", "#2a2421", "#242f3a", "#202933", "#1c242d", "#2b2a27", "#161d24", "#1e2229"][idx % 9],
@@ -377,13 +377,13 @@ You have set my feet upon the rock!`
               duration: "4'15\"",
               audio_url: s.audio_url || "",
               youtube_url: s.audio_url || s.youtube_url || "https://www.youtube.com/@harvestermusic.production",
-              spotify_url: s.spotify_url || "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
+              spotify_url: customMatch?.spotify_url || s.spotify_url || "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
               score_url: s.score_url || "assets/scores/sample.pdf",
               lyrics: s.description ? s.description : `【${s.title}】\n\n词曲：Harvester Music Production\n愿每一首写给神的歌都被听见。\n欢迎下载歌谱使用并在各处传唱。`,
               key_bpm: customMatch?.key_bpm || "KEY: C · 72 BPM",
               scripture: customMatch?.scripture || "「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24",
               notes: customMatch?.notes || "在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。",
-              composer: customMatch?.composer || s.artist || "Harvester Worship",
+              composer: customMatch?.composer || customMatch?.artist || s.artist || "Harvester Worship",
               arrangement: customMatch?.arrangement || "Mango Jump & Harvester",
               vocals: customMatch?.vocals || "Creative Vocalists",
               mixing: customMatch?.mixing || "Harvester Studio HQ",

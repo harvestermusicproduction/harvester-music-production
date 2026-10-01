@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function renderHomeCMS(container) {
     const { data: configs } = await db.from('site_config').select('*');
     const c = (configs || []).reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
-    const { data: songs } = await db.from('music_works').select('id, title, artist').order('created_at', { ascending: false });
+    const { data: songs } = await db.from('music_works').select('id, title').order('created_at', { ascending: false });
 
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:15px;">
@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const customMatch = albumsCustom.find(c => c.id === s.id || c.title === s.title);
           const spineBg = customMatch?.spine_bg || ["#1877F2", "#00b894", "#f39c12", "#ea8676", "#0984e3", "#2d3436"][idx % 6];
           const spineClr = customMatch?.spine_color || "#ffffff";
-          const spineTxt = customMatch?.spine_text || `${s.title} · ${s.artist || 'Harvester'}`;
+          const spineTxt = customMatch?.spine_text || `${s.title}`;
           const coverUrl = s.cover_url || customMatch?.cover_url || childlikeDoodles[idx % childlikeDoodles.length];
 
           return `
@@ -426,11 +426,11 @@ document.addEventListener('DOMContentLoaded', () => {
                       <span style="color:var(--gold); font-size:0.7rem; background:rgba(246,210,138,0.15); border:1px solid rgba(246,210,138,0.35); padding:2px 8px; border-radius:4px; font-family:monospace; font-weight:bold;">${customMatch?.year || s.year || '2025'}</span>
                       ${s.id === latestId || s.is_latest ? '<span style="color:var(--gold); font-size:0.65rem; background:rgba(246,210,138,0.12); padding:2px 8px; border-radius:50px; border:1px solid rgba(246,210,138,0.3);">首推</span>' : ''}
                     </h3>
-                    <p style="margin:4px 0 0; color:#888; font-size:0.8rem;">${s.artist || 'Harvester Worship'}</p>
+                    <p style="margin:4px 0 0; color:#888; font-size:0.8rem;">${customMatch?.artist || s.artist || 'Harvester Worship'}</p>
                     <div style="display:flex; gap:10px; margin-top:6px;">
                       <span style="font-size:0.75rem; color:${s.score_url ? '#2ed573' : '#555'};"><i class="fas fa-file-pdf"></i> ${s.score_url ? '歌谱就绪' : '无歌谱'}</span>
                       <span style="font-size:0.75rem; color:${s.audio_url ? '#70a1ff' : '#555'};"><i class="fab fa-youtube"></i> ${s.audio_url ? 'YouTube' : '无链接'}</span>
-                      <span style="font-size:0.75rem; color:${s.spotify_url ? '#1db954' : '#555'};"><i class="fab fa-spotify"></i> ${s.spotify_url ? 'Spotify' : '无链接'}</span>
+                      <span style="font-size:0.75rem; color:${customMatch?.spotify_url || s.spotify_url ? '#1db954' : '#555'};"><i class="fab fa-spotify"></i> ${customMatch?.spotify_url || s.spotify_url ? 'Spotify' : '无链接'}</span>
                     </div>
                   </div>
                 </div>
@@ -480,7 +480,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const initialCover = s?.cover_url || spineCustom?.cover_url || childlikeDoodles[Math.floor(Math.random() * childlikeDoodles.length)];
       const spineBg = spineCustom?.spine_bg || "#1877F2";
       const spineClr = spineCustom?.spine_color || "#ffffff";
-      const spineTxt = spineCustom?.spine_text || (s?.title ? `${s.title} · ${s.artist || 'Harvester'}` : "");
+      const spineTxt = spineCustom?.spine_text || (s?.title ? `${s.title}` : "");
+      const spotifyUrl = spineCustom?.spotify_url || s?.spotify_url || '';
       const themeColor = spineCustom?.theme_color || "#2e6b82";
       const titleEn = spineCustom?.title_en || "Harvester Single";
       const year = spineCustom?.year || "2025";
@@ -488,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const keyBpm = spineCustom?.key_bpm || "KEY: C · 72 BPM";
       const scripture = spineCustom?.scripture || "「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24";
       const notes = spineCustom?.notes || "在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。";
-      const composer = spineCustom?.composer || s?.artist || "Harvester Worship";
+      const composer = spineCustom?.composer || spineCustom?.artist || s?.artist || "Harvester Worship";
       const arrangement = spineCustom?.arrangement || "Mango Jump & Harvester";
       const vocals = spineCustom?.vocals || "Creative Vocalists";
       const mixing = spineCustom?.mixing || "Harvester Studio HQ";
@@ -532,7 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:12px;">
               <div>
                 <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲中文名称 (Title) *</label>
-                <input type="text" id="m_t" value="${s?.title || ''}" placeholder="例如：更新敬拜" style="width:100%; padding:10px;" oninput="document.getElementById('m_spine_t').value = this.value + ' · ' + (document.getElementById('m_artist').value || 'Harvester')">
+                <input type="text" id="m_t" value="${s?.title || ''}" placeholder="例如：更新敬拜" style="width:100%; padding:10px;" oninput="document.getElementById('m_spine_t').value = this.value">
               </div>
               <div>
                 <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">英文译名 / 副标题 (English Title)</label>
@@ -543,7 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
               <div>
                 <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">所属歌手 / 团队</label>
-                <input type="text" id="m_artist" value="${s?.artist || 'Harvester Worship'}" placeholder="例如：Harvester Worship" style="width:100%; padding:8px;">
+                <input type="text" id="m_artist" value="${spineCustom?.artist || s?.artist || 'Harvester Worship'}" placeholder="例如：Harvester Worship" style="width:100%; padding:8px;">
               </div>
               <div>
                 <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">发行年份 (Year)</label>
@@ -569,7 +570,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🧱 3D 立体书脊属性 (Spine Attributes)</label>
             <div style="margin-bottom:10px;">
               <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">书脊印制文字 (Spine Text)</label>
-              <input type="text" id="m_spine_t" value="${spineTxt}" placeholder="例如：更新敬拜 · Harvester Worship" style="width:100%; padding:8px;">
+              <input type="text" id="m_spine_t" value="${spineTxt}" placeholder="例如：更新敬拜" style="width:100%; padding:8px;">
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
               <div>
@@ -600,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div style="margin-bottom:10px;">
               <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">Spotify 聆听链接 (Spotify URL)</label>
-              <input type="text" id="m_sp" value="${s?.spotify_url || ''}" placeholder="https://open.spotify.com/track/..." style="width:100%; padding:8px;">
+              <input type="text" id="m_sp" value="${spotifyUrl}" placeholder="https://open.spotify.com/track/..." style="width:100%; padding:8px;">
             </div>
 
             <div style="margin-top:10px;">
@@ -731,7 +732,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const score_url = document.getElementById('m_s').value.trim();
       const description = document.getElementById('m_d').value.trim();
       
-      const spine_text = document.getElementById('m_spine_t').value.trim() || `${title} · ${artist}`;
+      const spine_text = document.getElementById('m_spine_t').value.trim() || title;
       const spine_bg = document.getElementById('m_spine_bg_hex').value.trim() || '#1877F2';
       const spine_color = document.getElementById('m_spine_clr_hex').value.trim() || '#ffffff';
 
@@ -750,13 +751,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const payload = {
         title,
-        artist,
         cover_url,
         audio_url,
-        spotify_url,
         score_url,
-        description,
-        year
+        description
       };
 
       let result;
