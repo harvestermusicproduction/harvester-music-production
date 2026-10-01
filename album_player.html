@@ -638,7 +638,7 @@
 
           <!-- Bottom Action Buttons Group -->
           <div class="relative z-10 w-full flex flex-col gap-2 pt-2 border-t border-white/15">
-            <a href="javascript:void(0)" onclick="alert('歌谱 PDF 下载已启动（样例）')" class="w-full py-2 rounded-full bg-amber-400 text-black hover:bg-amber-300 font-bold text-xs tracking-wider uppercase transition flex items-center justify-center space-x-2 shadow-lg shadow-black/20">
+            <a href="assets/scores/sample.pdf" target="_blank" onclick="showMorandiToast('🎼 歌谱 PDF 正在打开/下载...')" class="w-full py-2 rounded-full bg-amber-400 text-black hover:bg-amber-300 font-bold text-xs tracking-wider uppercase transition flex items-center justify-center space-x-2 shadow-lg shadow-black/20">
               <i class="fa-solid fa-file-arrow-down text-xs"></i>
               <span>下载歌谱 (PDF)</span>
             </a>
@@ -814,7 +814,7 @@
                 <div class="text-[11px] font-mono text-[#665e56]">
                   <span>PDF 歌谱已就绪</span>
                 </div>
-                <button onclick="alert('正在调取 PDF 歌谱预览...')" class="px-3 py-1.5 rounded-md bg-[#26221f] text-[#dedad4] hover:bg-black font-mono text-xs transition">
+                <button onclick="showMorandiToast('🎼 正在调取 PDF 歌谱预览...')" class="px-3 py-1.5 rounded-md bg-[#26221f] text-[#dedad4] hover:bg-black font-mono text-xs transition">
                   <i class="fa-solid fa-file-pdf mr-1 text-amber-400"></i> 查看歌谱
                 </button>
               </div>
@@ -1671,10 +1671,32 @@
       const album = albumsData[currentIndex];
       if (navigator.clipboard) {
         navigator.clipboard.writeText(window.location.href);
-        alert(`已复制分享链接：${album.title} - ${album.artist}`);
+        showMorandiToast(`✨ 已复制分享链接：《${album.title}》`);
       } else {
-        alert(`分享：${album.title} - ${album.artist}`);
+        showMorandiToast(`🎵 分享：《${album.title} - ${album.artist}》`);
       }
+    }
+
+    let toastTimer = null;
+    function showMorandiToast(msg) {
+      let toast = document.getElementById('morandiToast');
+      let text = document.getElementById('morandiToastText');
+      if (!toast) {
+        document.body.insertAdjacentHTML('beforeend', `
+          <div id="morandiToast" class="morandi-toast">
+            <i class="fa-solid fa-compact-disc" style="color:#f6d28a;"></i>
+            <span id="morandiToastText"></span>
+          </div>
+        `);
+        toast = document.getElementById('morandiToast');
+        text = document.getElementById('morandiToastText');
+      }
+      if (text) text.innerText = msg;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2800);
     }
   </script>
 </body>

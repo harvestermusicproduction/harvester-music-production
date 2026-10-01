@@ -1094,17 +1094,209 @@ ${activeSong.lyrics}
     }
   };
 
-  window.toggleSearch = function() {
-    const q = prompt("请输入要搜索的歌曲名称：");
-    if (q) {
-      const foundIdx = albums.findIndex(a => a.title.toLowerCase().includes(q.toLowerCase()) || a.artist.toLowerCase().includes(q.toLowerCase()));
-      if (foundIdx !== -1) {
-        targetProgress = foundIdx;
-        updateMetaBar();
-      } else {
-        alert("未找到匹配的歌曲");
+  // =================================================================
+  // 🎨 BESPOKE MORANDI SEARCH MODAL & INTERACTIVE TOAST SYSTEM
+  // =================================================================
+  function initMorandiSearchModal() {
+    if (document.getElementById('morandiSearchModal')) return;
+
+    // 1. Inject Morandi Search Modal DOM
+    const modalHtml = `
+      <div id="morandiSearchModal" class="morandi-search-modal" role="dialog" aria-modal="true">
+        <div class="morandi-search-backdrop" onclick="window.toggleSearch(false)"></div>
+        <div class="morandi-search-dialog">
+          <div class="morandi-search-header">
+            <div class="morandi-search-tag">
+              <i class="fas fa-search"></i>
+              <span>单曲搜索 · SONG SEARCH</span>
+            </div>
+            <button class="morandi-search-close" onclick="window.toggleSearch(false)" title="关闭 (Esc)">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="morandi-search-body">
+            <label class="morandi-search-label" for="morandiSearchInput">请输入要搜索的歌曲名称或歌手：</label>
+            <div class="morandi-search-input-wrap">
+              <i class="fas fa-music morandi-input-icon"></i>
+              <input type="text" id="morandiSearchInput" class="morandi-search-input" placeholder="输入歌名、歌手或关键字..." autocomplete="off" />
+              <button id="morandiSearchClear" class="morandi-input-clear" style="display:none;" onclick="window.clearSearchInput()">
+                <i class="fas fa-times-circle"></i>
+              </button>
+            </div>
+
+            <div id="morandiSearchSuggestions" class="morandi-search-suggestions" style="margin-top: 10px;">
+              <!-- Dynamically populated live suggestions -->
+            </div>
+          </div>
+
+          <div class="morandi-search-footer">
+            <button class="morandi-btn-cancel" onclick="window.toggleSearch(false)">取消 Cancel</button>
+            <button class="morandi-btn-confirm" onclick="window.executeMorandiSearch()">定位单曲 Jump</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Morandi Floating Toast -->
+      <div id="morandiToast" class="morandi-toast">
+        <i class="fas fa-compact-disc" style="color:var(--gold);"></i>
+        <span id="morandiToastText">已定位到歌曲</span>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    // 2. Setup Input and Keyboard Events
+    const input = document.getElementById('morandiSearchInput');
+    const clearBtn = document.getElementById('morandiSearchClear');
+
+    if (input) {
+      input.addEventListener('input', (e) => {
+        const query = e.target.value.trim();
+        if (clearBtn) clearBtn.style.display = query ? 'block' : 'none';
+        renderSearchSuggestions(query);
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          window.executeMorandiSearch();
+        } else if (e.key === 'Escape') {
+          window.toggleSearch(false);
+        }
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('morandiSearchModal');
+        if (modal && modal.classList.contains('active')) {
+          window.toggleSearch(false);
+        }
+      }
+    });
+  }
+
+  function renderSearchSuggestions(query) {
+    const list = document.getElementById('morandiSearchSuggestions');
+    if (!list) return;
+
+    let filtered = albums;
+    if (query) {
+      const q = query.toLowerCase();
+      filtered = albums.filter(a => 
+        (a.title && a.title.toLowerCase().includes(q)) || 
+        (a.title_en && a.title_en.toLowerCase().includes(q)) || 
+        (a.artist && a.artist.toLowerCase().includes(q)) ||
+        (a.lyrics && a.lyrics.toLowerCase().includes(q))
+      );
+    }
+
+    if (!filtered.length) {
+      list.innerHTML = `
+        <div style="text-align:center; padding: 20px 10px; color: #9c9083; font-size: 0.85rem;">
+          <i class="fas fa-ghost" style="font-size: 1.4rem; margin-bottom: 8px; display:block; opacity:0.6;"></i>
+          未找到与「${query}」匹配的单曲，换个关键词试试吧
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = filtered.map((a) => {
+      const realIdx = albums.findIndex(item => item.id === a.id);
+      return `
+        <div class="morandi-search-item" onclick="window.selectSearchResult(${realIdx})">
+          <div class="morandi-item-left">
+            <img src="${a.cover_url || childlikeDoodles[realIdx % childlikeDoodles.length]}" class="morandi-item-thumb" alt="${a.title}" />
+            <div>
+              <div class="morandi-item-title">${a.title}</div>
+              <div class="morandi-item-artist">${a.artist} · ${a.year || '2025'}</div>
+            </div>
+          </div>
+          <div class="morandi-item-badge">
+            <i class="fas fa-arrow-right" style="font-size: 0.7rem; margin-right: 4px;"></i> 定位
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.toggleSearch = function(forceState) {
+    initMorandiSearchModal();
+    const modal = document.getElementById('morandiSearchModal');
+    if (!modal) return;
+
+    const isActive = forceState !== undefined ? forceState : !modal.classList.contains('active');
+    modal.classList.toggle('active', isActive);
+
+    if (isActive) {
+      const input = document.getElementById('morandiSearchInput');
+      const clearBtn = document.getElementById('morandiSearchClear');
+      if (input) {
+        input.value = '';
+        if (clearBtn) clearBtn.style.display = 'none';
+        renderSearchSuggestions('');
+        setTimeout(() => input.focus(), 60);
       }
     }
+  };
+
+  window.clearSearchInput = function() {
+    const input = document.getElementById('morandiSearchInput');
+    const clearBtn = document.getElementById('morandiSearchClear');
+    if (input) {
+      input.value = '';
+      input.focus();
+    }
+    if (clearBtn) clearBtn.style.display = 'none';
+    renderSearchSuggestions('');
+  };
+
+  window.selectSearchResult = function(realIdx) {
+    if (realIdx >= 0 && realIdx < albums.length) {
+      targetProgress = realIdx;
+      updateMetaBar();
+      window.toggleSearch(false);
+      window.showMorandiToast(`🎵 已定位到单曲：《${albums[realIdx].title}》`);
+    }
+  };
+
+  window.executeMorandiSearch = function() {
+    const input = document.getElementById('morandiSearchInput');
+    const query = input ? input.value.trim().toLowerCase() : '';
+    
+    if (!query) {
+      window.toggleSearch(false);
+      return;
+    }
+
+    const foundIdx = albums.findIndex(a => 
+      (a.title && a.title.toLowerCase().includes(query)) || 
+      (a.title_en && a.title_en.toLowerCase().includes(query)) || 
+      (a.artist && a.artist.toLowerCase().includes(query))
+    );
+
+    if (foundIdx !== -1) {
+      window.selectSearchResult(foundIdx);
+    } else {
+      window.showMorandiToast(`⚠️ 未找到与「${query}」相关的单曲`);
+    }
+  };
+
+  let toastTimer = null;
+  window.showMorandiToast = function(msg) {
+    initMorandiSearchModal();
+    const toast = document.getElementById('morandiToast');
+    const text = document.getElementById('morandiToastText');
+    if (!toast || !text) return;
+
+    text.innerText = msg;
+    toast.classList.add('show');
+
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2800);
   };
 
   // Boot on DOM Ready
