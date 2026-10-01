@@ -490,7 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const scripture = spineCustom?.scripture || "「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24";
       const notes = spineCustom?.notes || "在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。";
       const composer = spineCustom?.composer || spineCustom?.artist || s?.artist || "Harvester Worship";
-      const arrangement = spineCustom?.arrangement || "Mango Jump & Harvester";
+      const arrangement = spineCustom?.arrangement || "Harvester Music Production";
       const vocals = spineCustom?.vocals || "Creative Vocalists";
       const mixing = spineCustom?.mixing || "Harvester Studio HQ";
       const photo1 = spineCustom?.photo_1 || initialCover;
@@ -664,7 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div>
                   <label style="font-size:0.75rem; color:#888; display:block;">编曲制作</label>
-                  <input type="text" id="m_arrangement" value="${arrangement}" placeholder="Mango Jump & Harvester" style="width:100%; padding:6px;">
+                  <input type="text" id="m_arrangement" value="${arrangement}" placeholder="Harvester Music Production" style="width:100%; padding:6px;">
                 </div>
                 <div>
                   <label style="font-size:0.75rem; color:#888; display:block;">人声主唱</label>
@@ -740,7 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const scripture = document.getElementById('m_scripture')?.value.trim() || "";
       const notes = document.getElementById('m_notes')?.value.trim() || "";
       const composer = document.getElementById('m_composer')?.value.trim() || artist;
-      const arrangement = document.getElementById('m_arrangement')?.value.trim() || "Mango Jump & Harvester";
+      const arrangement = document.getElementById('m_arrangement')?.value.trim() || "Harvester Music Production";
       const vocals = document.getElementById('m_vocals')?.value.trim() || "Creative Vocalists";
       const mixing = document.getElementById('m_mixing')?.value.trim() || "Harvester Studio HQ";
       const photo_1 = document.getElementById('m_photo1')?.value.trim() || cover_url;

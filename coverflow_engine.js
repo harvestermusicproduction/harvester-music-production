@@ -384,7 +384,7 @@ You have set my feet upon the rock!`
               scripture: customMatch?.scripture || "「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24",
               notes: customMatch?.notes || "在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。",
               composer: customMatch?.composer || customMatch?.artist || s.artist || "Harvester Worship",
-              arrangement: customMatch?.arrangement || "Mango Jump & Harvester",
+              arrangement: customMatch?.arrangement || "Harvester Music Production",
               vocals: customMatch?.vocals || "Creative Vocalists",
               mixing: customMatch?.mixing || "Harvester Studio HQ",
               photo_1: customMatch?.photo_1 || s.cover_url || doodleFallback,
@@ -950,10 +950,10 @@ You have set my feet upon the rock!`
             </div>
 
             <div style="margin-top:6px;">
-              <h1 style="font-family:var(--font-eng-title); font-size:2.2rem; font-weight:900; color:#ffffff; line-height:1; letter-spacing:1.5px; margin:0; text-shadow:0 2px 10px rgba(0,0,0,0.5);">
-                MANGO JUMP <span style="font-size:1.2rem; color:#4ecdc4;">&#10022;</span>
+              <h1 style="font-family:var(--font-eng-title); font-size:1.65rem; font-weight:900; color:#ffffff; line-height:1.15; letter-spacing:1px; margin:0; text-shadow:0 2px 10px rgba(0,0,0,0.5);">
+                HARVESTER <br><span style="font-size:1.15rem; font-weight:700; color:var(--gold); letter-spacing:2px;">MUSIC PRODUCTION</span> <span style="font-size:1rem; color:#4ecdc4;">&#10022;</span>
               </h1>
-              <div style="width:110px; height:4px; background:linear-gradient(to right, #ffd166, #4ecdc4, transparent); border-radius:3px; margin-top:5px;"></div>
+              <div style="width:110px; height:3px; background:linear-gradient(to right, #ffd166, #4ecdc4, transparent); margin-top:6px;"></div>
             </div>
           </div>
 
@@ -1077,7 +1077,7 @@ ${activeSong.lyrics}
                   </div>
                   <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
                     <span style="color:#756a60;">编曲制作：</span>
-                    <span style="font-weight:600; color:#1c1815;">${activeSong.arrangement || 'Mango Jump & Harvester'}</span>
+                    <span style="font-weight:600; color:#1c1815;">${activeSong.arrangement || 'Harvester Music Production'}</span>
                   </div>
                   ${activeSong.vocals ? `
                     <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
