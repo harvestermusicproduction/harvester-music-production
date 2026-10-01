@@ -81,7 +81,7 @@
   font-display: swap;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap');
 
 :root {
   --gold: #f6d28a;
@@ -95,25 +95,27 @@
   --panel: #1a1512;
   --panel-warm: rgba(28, 23, 19, 0.75);
   
-  /* 🏛️ Professional Elegant Typography System */
-  --font-sans: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-  --font-serif: 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC', 'STSong', 'SimSun', serif;
-  --font-display-en: 'Cinzel', 'Inter', 'Noto Serif SC', serif;
+  /* 🏛️ Typography Stack: 英文 Apple Chancery / 中文 思源宋体 */
+  --font-chancery: 'Apple Chancery', 'Cinzel', 'URW Chancery L', 'Baskerville', 'Times New Roman', serif;
+  --font-songti: 'Noto Serif SC', 'Source Han Serif SC', '思源宋体', 'Songti SC', 'STSong', 'SimSun', serif;
   
-  --font-eng-title: var(--font-display-en);
-  --font-eng-body:  var(--font-sans);
-  --font-chn-title: var(--font-serif);
-  --font-chn-body:  var(--font-sans);
-  --font-hand-title: var(--font-serif);
-  --font-hand-en:    var(--font-display-en);
-  --font-hand-cn:    var(--font-sans);
-  --font-serif-cn:   var(--font-serif);
-  --font-kaiti:      var(--font-serif);
-  --font-kai:        var(--font-serif);
+  --font-eng-title: var(--font-chancery);
+  --font-eng-body:  var(--font-chancery);
+  --font-chn-title: var(--font-songti);
+  --font-chn-body:  var(--font-songti);
+  --font-hand-title: var(--font-chancery);
+  --font-hand-en:    var(--font-chancery);
+  --font-hand-cn:    var(--font-songti);
+  --font-serif-cn:   var(--font-songti);
+  --font-kaiti:      var(--font-songti);
+  --font-kai:        var(--font-songti);
+  --font-sans:       var(--font-songti);
+  --font-serif:      var(--font-songti);
   
   /* Helper Assignments */
-  --font-display: var(--font-serif);
-  --font-body:    var(--font-sans);
+  --font-display-en: var(--font-chancery);
+  --font-display: var(--font-chancery), var(--font-songti);
+  --font-body:    var(--font-songti), var(--font-chancery), serif;
   
   --transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   --hand-radius: 14px;
