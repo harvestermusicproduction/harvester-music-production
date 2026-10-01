@@ -51,16 +51,71 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
     .payment-label {
-      font-size: 0.8rem;
+      font-family: var(--font-hand-en), var(--font-hand-cn), serif;
+      font-size: 0.95rem;
       color: var(--gold);
-      text-transform: uppercase;
       letter-spacing: 2px;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
+    }
+    .payment-val-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
     .payment-value {
-      font-size: 1.3rem;
+      font-size: 1.35rem;
       color: #fff;
-      font-weight: 300;
+      font-weight: 400;
+      letter-spacing: 1px;
+      font-family: var(--font-songti), 'Inter', monospace, sans-serif;
+    }
+    /* 🏷️ Hand-drawn Organic Copy Button */
+    .sketch-copy-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: rgba(246, 210, 138, 0.08);
+      border: 1.5px dashed rgba(246, 210, 138, 0.55);
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      color: var(--gold, #d4af37);
+      font-family: var(--font-hand-en), var(--font-hand-cn), serif;
+      font-size: 0.92rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      user-select: none;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+    }
+    .sketch-copy-btn:hover {
+      transform: scale(1.08) rotate(-2deg);
+      background: rgba(246, 210, 138, 0.2);
+      border-color: var(--gold);
+      color: #fffaf0;
+      box-shadow: 0 6px 16px rgba(246, 210, 138, 0.25);
+    }
+    .sketch-copy-btn:active {
+      transform: scale(0.95);
+    }
+    .sketch-copy-btn.copied {
+      background: rgba(46, 213, 115, 0.18);
+      border-color: #2ed573;
+      border-style: solid;
+      color: #2ed573;
+      transform: scale(1.05);
+      box-shadow: 0 0 16px rgba(46, 213, 115, 0.35);
+    }
+    .sketch-copy-icon {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+    .sketch-copy-btn:hover .sketch-copy-icon {
+      transform: rotate(6deg) scale(1.1);
     }
     .qr-section {
       margin-top: 4rem;
@@ -162,7 +217,7 @@
     <div class="ppt-line"></div>
     
     <h1 class="ppt-title">支持我们 / 自由奉献</h1>
-    <p class="ppt-subtitle">BECOME A HARVESTER PARTNER</p>
+    <p class="ppt-subtitle">Become a Harvester Partner</p>
   </div>
 
   <section class="support-container fade-in" style="margin-top: 0; padding-top: 0;">
@@ -180,7 +235,16 @@
         </div>
         <div class="payment-item">
           <div class="payment-label">Account Number (银行账号)</div>
-          <div id="cfg_support_acc_no" class="payment-value">...</div>
+          <div class="payment-val-container">
+            <div id="cfg_support_acc_no" class="payment-value">...</div>
+            <button type="button" class="sketch-copy-btn" onclick="copyTextFromElement('cfg_support_acc_no', this)" title="点击自动复制银行账号 / Click to copy Bank Account">
+              <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy 复制</span>
+            </button>
+          </div>
         </div>
         <div class="payment-item">
           <div class="payment-label">Account Name (户名)</div>
@@ -188,7 +252,16 @@
         </div>
         <div class="payment-item">
           <div class="payment-label">TNG / DuitNow Contact (联系方式)</div>
-          <div id="cfg_support_tng" class="payment-value">...</div>
+          <div class="payment-val-container">
+            <div id="cfg_support_tng" class="payment-value">...</div>
+            <button type="button" class="sketch-copy-btn" onclick="copyTextFromElement('cfg_support_tng', this)" title="点击自动复制联系方式 / Click to copy Contact">
+              <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy 复制</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -216,5 +289,52 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=2.6.0"></script>
   <script src="app.js?v=15.0.0"></script>
+  <script>
+    function copyTextFromElement(targetId, btnEl) {
+      const el = document.getElementById(targetId);
+      if (!el) return;
+      const rawText = (el.innerText || el.textContent || '').trim();
+      if (!rawText || rawText === '...') return;
+
+      const doSuccess = () => {
+        const originalHTML = btnEl.innerHTML;
+        btnEl.classList.add('copied');
+        btnEl.innerHTML = `
+          <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>已复制 Copied!</span>
+        `;
+        setTimeout(() => {
+          btnEl.classList.remove('copied');
+          btnEl.innerHTML = originalHTML;
+        }, 2200);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(rawText).then(doSuccess).catch(() => {
+          fallbackCopy(rawText, doSuccess);
+        });
+      } else {
+        fallbackCopy(rawText, doSuccess);
+      }
+    }
+
+    function fallbackCopy(text, cb) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        if (cb) cb();
+      } catch (e) {
+        console.warn('Copy fallback failed', e);
+      }
+      document.body.removeChild(ta);
+    }
+  </script>
 </body>
 </html>
