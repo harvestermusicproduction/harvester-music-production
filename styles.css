@@ -3078,57 +3078,70 @@ body.immersive-modal-active header {
   z-index: 10;
 }
 
-/* Authentic physical accordion unfolding from closed state */
-@keyframes accordionUnfold1 {
+/* Authentic physical accordion unfolding sequentially from Right to Left (Fold 3 -> Fold 2 -> Fold 1) */
+@keyframes accordionUnfoldRight3 {
   0% { 
     opacity: 0; 
-    transform: perspective(1200px) rotateY(-88deg) scaleX(0.08); 
+    transform: perspective(1600px) rotateY(85deg) scaleX(0.05); 
+    box-shadow: -15px 0 35px rgba(0, 0, 0, 0.6);
   }
-  30% {
-    opacity: 0.85;
+  35% {
+    opacity: 0.9;
   }
   100% { 
     opacity: 1; 
-    transform: perspective(1200px) rotateY(0deg) scaleX(1); 
-  }
-}
-@keyframes accordionUnfold2 {
-  0% { 
-    opacity: 0; 
-    transform: perspective(1200px) rotateY(88deg) scaleX(0.08); 
-  }
-  30% {
-    opacity: 0.85;
-  }
-  100% { 
-    opacity: 1; 
-    transform: perspective(1200px) rotateY(0deg) scaleX(1); 
-  }
-}
-@keyframes accordionUnfold3 {
-  0% { 
-    opacity: 0; 
-    transform: perspective(1200px) rotateY(-88deg) scaleX(0.08); 
-  }
-  30% {
-    opacity: 0.85;
-  }
-  100% { 
-    opacity: 1; 
-    transform: perspective(1200px) rotateY(0deg) scaleX(1); 
+    transform: perspective(1600px) rotateY(0deg) scaleX(1); 
+    box-shadow: -8px 0 25px rgba(0, 0, 0, 0.35);
   }
 }
 
-.unfold-panel-1 {
-  animation: accordionUnfold1 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+@keyframes accordionUnfoldMiddle2 {
+  0% { 
+    opacity: 0; 
+    transform: perspective(1600px) rotateY(-85deg) scaleX(0.05); 
+    box-shadow: -15px 0 35px rgba(0, 0, 0, 0.6);
+  }
+  35% {
+    opacity: 0.9;
+  }
+  100% { 
+    opacity: 1; 
+    transform: perspective(1600px) rotateY(0deg) scaleX(1); 
+    box-shadow: -8px 0 25px rgba(0, 0, 0, 0.35);
+  }
+}
+
+@keyframes accordionUnfoldLeft1 {
+  0% { 
+    opacity: 0; 
+    transform: perspective(1600px) rotateY(85deg) scaleX(0.05); 
+    box-shadow: -15px 0 35px rgba(0, 0, 0, 0.6);
+  }
+  35% {
+    opacity: 0.9;
+  }
+  100% { 
+    opacity: 1; 
+    transform: perspective(1600px) rotateY(0deg) scaleX(1); 
+    box-shadow: -8px 0 25px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* Staggered Right-to-Left Unfold Timing (一页一页从右到左展开) */
+.unfold-panel-3 {
+  opacity: 0;
+  transform-origin: left center;
+  animation: accordionUnfoldRight3 0.72s cubic-bezier(0.2, 0.9, 0.3, 1) 0.08s forwards;
 }
 .unfold-panel-2 {
-  animation: accordionUnfold2 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.16s forwards;
   opacity: 0;
+  transform-origin: left center;
+  animation: accordionUnfoldMiddle2 0.75s cubic-bezier(0.2, 0.9, 0.3, 1) 0.28s forwards;
 }
-.unfold-panel-3 {
-  animation: accordionUnfold3 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.32s forwards;
+.unfold-panel-1 {
   opacity: 0;
+  transform-origin: left center;
+  animation: accordionUnfoldLeft1 0.78s cubic-bezier(0.2, 0.9, 0.3, 1) 0.48s forwards;
 }
 
 .cutout-sticker {
