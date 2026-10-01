@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="javascript:void(0)" onclick="switchModule('home')" class="nav-item ${currentModule==='home'?'active':''}">🏠 主页</a>
             <a href="javascript:void(0)" onclick="switchModule('music')" class="nav-item ${currentModule==='music'?'active':''}">🎵 音乐与歌谱集</a>
             <a href="javascript:void(0)" onclick="switchModule('events')" class="nav-item ${currentModule==='events'?'active':''}">📅 活动</a>
-            <a href="javascript:void(0)" onclick="switchModule('diary')" class="nav-item ${currentModule==='diary'?'active':''}">📂 田野日志</a>
+            <a href="javascript:void(0)" onclick="switchModule('diary')" class="nav-item ${currentModule==='diary'?'active':''}">📂 照片集</a>
             <a href="javascript:void(0)" onclick="switchModule('submit')" class="nav-item ${currentModule==='submit' || currentModule==='submissions'?'active':''}">📮 我要投稿</a>
             <a href="javascript:void(0)" onclick="switchModule('about')" class="nav-item ${currentModule==='about'?'active':''}">📖 关于我们</a>
             <a href="javascript:void(0)" onclick="switchModule('singers')" class="nav-item ${currentModule==='singers'?'active':''}">👥 主要同工</a>
@@ -3398,7 +3398,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const { data: albums } = await db.from('diary_albums').select('*').order('date', {ascending: false});
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-        <h1 style="color:var(--gold);">田野日志 Diary Management</h1>
+        <h1 style="color:var(--gold);">照片集 Photo Gallery Management</h1>
         <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openDiaryModal()">+ 新建相册</button>
       </div>
       <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">

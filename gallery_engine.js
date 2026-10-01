@@ -37,7 +37,7 @@ const defaultCoreStaff = [
     category: "core",
     role: "拍摄 / 影视设计",
     image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
-    bio: "负责收割机官方 MV 拍摄制作、专辑封面美学设计与田野日志影像记录，以现代电影感画面传递每首诗歌背后的属灵故事。"
+    bio: "负责收割机官方 MV 拍摄制作、专辑封面美学设计与照片集影像记录，以现代电影感画面传递每首诗歌背后的属灵故事。"
   },
   {
     id: "staff_promo",
