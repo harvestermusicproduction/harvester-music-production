@@ -545,29 +545,31 @@ header.scrolled {
 }
 
 .btn-score-premium {
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  background: #000 !important;
+  background: rgba(246, 210, 138, 0.05) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
   color: var(--gold) !important;
-  padding: 16px 35px;
+  padding: 14px 35px;
   border-radius: 60px;
   text-decoration: none;
-  font-weight: 800 !important;
+  font-family: var(--font-hand-cn), var(--font-hand-en) !important;
+  font-size: 1.1rem;
   letter-spacing: 2px;
-  font-size: 1.1rem; /* Bolder size */
-  transition: var(--transition);
-  border: 1px solid var(--gold) !important;
-  text-transform: uppercase;
+  transition: all 0.35s cubic-bezier(0.19, 1, 0.22, 1);
+  border: 1.5px solid rgba(246, 210, 138, 0.28) !important;
   cursor: pointer;
   box-shadow: 0 8px 25px rgba(0,0,0,0.4);
 }
 .btn-score-premium:hover {
-  background: var(--gold) !important;
-  color: #000 !important;
+  background: rgba(246, 210, 138, 0.18) !important;
+  border-color: var(--gold) !important;
+  color: #fffaf0 !important;
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(246, 210, 138, 0.4);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(246, 210, 138, 0.2) !important;
 }
 
 /* 🔳 PPT Style Page Header System */
