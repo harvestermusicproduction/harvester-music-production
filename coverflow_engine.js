@@ -826,56 +826,161 @@ You have set my feet upon the rock!`
     if (!stage || !activeSong) return;
 
     stage.innerHTML = `
-      <div class="immersive-page page-1 fade-in">
-        <!-- Left Column: Childlike Doodle Cover + Play Controls -->
-        <div class="imm-left-col">
-          <div class="imm-cover-card">
-            <img src="${activeSong.cover_url}" alt="${activeSong.title}">
-            <div class="cover-shine"></div>
+      <div class="immersive-page page-1 fade-in" style="align-items:stretch; gap:25px;">
+        <!-- Left Column: Poster & Actions (MANGO JUMP Reference Aesthetic) -->
+        <div class="imm-left-col" style="background:#2e6b82; border:2px solid rgba(255,255,255,0.25); border-radius:18px; padding:28px 24px; box-shadow:0 20px 50px rgba(0,0,0,0.5); justify-content:space-between; position:relative; overflow:hidden;">
+          <div style="position:relative; z-index:2;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-family:var(--font-eng-title); font-size:0.75rem; letter-spacing:2px; background:rgba(0,0,0,0.3); padding:3px 10px; border-radius:4px; color:#4ecdc4;">AUDIO ARCHIVE</span>
+              <span style="font-family:var(--font-eng-title); font-size:0.8rem; color:var(--gold);">VOL. 01</span>
+            </div>
+
+            <div style="margin-top:10px;">
+              <h1 style="font-family:var(--font-eng-title); font-size:2.8rem; font-weight:900; color:#111; line-height:1; letter-spacing:2px; margin:0;">
+                MANGO JUMP <span style="font-size:1.4rem; color:#4ecdc4;">&#10022;</span>
+              </h1>
+              <div style="width:120px; height:5px; background:linear-gradient(to right, #ffd166, #4ecdc4, transparent); border-radius:3px; margin-top:4px;"></div>
+            </div>
           </div>
 
-          <div class="imm-album-info">
-            <h1 class="imm-album-title">${activeSong.title}</h1>
-            <p class="imm-album-artist">${activeSong.artist}</p>
-            <span class="imm-album-genre">${activeSong.genre || (activeSong.year + ' · Original Worship')}</span>
+          <!-- Center Band Member Cut-out Sticker -->
+          <div style="position:relative; z-index:2; margin:15px 0; text-align:center;">
+            <div class="cutout-sticker" style="width:240px; height:240px; margin:0 auto; overflow:hidden; position:relative;">
+              <img src="${activeSong.cover_url}" alt="${activeSong.title}" style="width:100%; height:100%; object-fit:cover;">
+              <div style="position:absolute; bottom:8px; left:8px; right:8px; background:rgba(0,0,0,0.55); backdrop-filter:blur(8px); padding:4px 10px; border-radius:6px; font-size:0.75rem; color:#fff; display:flex; justify-content:space-between;">
+                <span>${activeSong.artist}</span>
+                <span style="color:var(--gold); font-family:var(--font-eng-title);">${activeSong.year || '2025'}</span>
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <h2 style="font-family:var(--font-songti), serif; font-size:1.6rem; font-weight:700; color:#fff; margin:0 0 4px;">
+                ${activeSong.title}
+              </h2>
+              <p style="font-size:0.85rem; color:rgba(255,255,255,0.85); margin:0;">
+                ${activeSong.artist} · ${activeSong.genre || '敬拜单曲'}
+              </p>
+            </div>
           </div>
 
-          <!-- Direct Action Buttons: Score Download / YouTube / Spotify -->
-          <div class="imm-action-pills" style="flex-wrap:wrap; gap:10px; margin-top:1.5rem;">
+          <!-- Bottom Action Buttons -->
+          <div style="position:relative; z-index:2; display:flex; flex-direction:column; gap:8px; border-top:1px solid rgba(255,255,255,0.2); pt:12px;">
             ${activeSong.score_url ? `
-              <a href="${activeSong.score_url}" target="_blank" class="imm-pill-btn" style="background:var(--gold); color:#111; font-weight:700;">
+              <a href="${activeSong.score_url}" target="_blank" class="imm-pill-btn" style="background:var(--gold); color:#111; font-weight:700; border:none; padding:10px 16px;">
                 <i class="fas fa-file-pdf"></i> 下载歌谱 (PDF)
               </a>
             ` : ''}
-            ${activeSong.youtube_url ? `
-              <a href="${activeSong.youtube_url}" target="_blank" class="imm-pill-btn" style="background:rgba(255,0,0,0.2); border-color:#ff4d4d; color:#fff;">
-                <i class="fab fa-youtube"></i> YouTube 播放
-              </a>
-            ` : ''}
-            ${activeSong.spotify_url ? `
-              <a href="${activeSong.spotify_url}" target="_blank" class="imm-pill-btn" style="background:rgba(29,185,84,0.2); border-color:#1db954; color:#fff;">
-                <i class="fab fa-spotify"></i> Spotify 聆听
-              </a>
-            ` : ''}
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              ${activeSong.youtube_url ? `
+                <a href="${activeSong.youtube_url}" target="_blank" class="imm-pill-btn" style="background:rgba(0,0,0,0.4); border-color:rgba(255,255,255,0.3); font-size:0.8rem; padding:8px;">
+                  <i class="fab fa-youtube" style="color:#ff4d4d;"></i> YouTube
+                </a>
+              ` : ''}
+              ${activeSong.spotify_url ? `
+                <a href="${activeSong.spotify_url}" target="_blank" class="imm-pill-btn" style="background:rgba(0,0,0,0.4); border-color:rgba(255,255,255,0.3); font-size:0.8rem; padding:8px;">
+                  <i class="fab fa-spotify" style="color:#1db954;"></i> Spotify
+                </a>
+              ` : ''}
+            </div>
           </div>
         </div>
 
-        <!-- Right Column: Full Clean Lyrics Panel -->
-        <div class="imm-right-col" style="max-width:700px;">
-          <div style="background:rgba(0,0,0,0.35); backdrop-filter:blur(15px); border:1px solid rgba(255,255,255,0.15); border-radius:18px; padding:30px 35px; height:100%; display:flex; flex-direction:column;">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:18px;">
+        <!-- Right Column: Accordion Fold Stage (风琴折展开: 沙色折页 + 勃艮第红折页 + 浅灰麻布折页) -->
+        <div class="imm-right-col" style="flex:1; max-width:1000px; overflow-x:auto; padding-bottom:10px;">
+          <div class="accordion-booklet-stage">
+            
+            <!-- FOLD 1: 沙色莫兰迪 (WARM KRAFT SAND CREAM) -->
+            <div class="accordion-panel unfold-panel-1" style="background:#dfd5c4; color:#2c241c; border-radius:12px 0 0 12px; padding:24px; border-right:1px solid #c9bda8;">
               <div>
-                <span style="font-size:0.75rem; letter-spacing:2px; color:var(--gold); font-family:var(--font-eng-title);">LYRICS & WORSHIP NOTES</span>
-                <h3 style="margin:4px 0 0; color:#fff; font-size:1.4rem; font-family:var(--font-songti), serif;">《${activeSong.title}》完整歌词</h3>
+                <!-- Top Polaroid Photo (01 badge) -->
+                <div style="width:100%; height:150px; border-radius:8px; overflow:hidden; border:2px solid #c9bda8; position:relative; margin-bottom:16px;">
+                  <img src="${activeSong.cover_url}" alt="Art 01" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);">
+                  <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-eng-title); font-size:0.75rem; padding:2px 8px; border-radius:4px; font-weight:700;">01</div>
+                </div>
+
+                <div style="border-bottom:1px solid rgba(44,36,28,0.15); padding-bottom:8px; margin-bottom:12px;">
+                  <span style="font-family:var(--font-eng-title); font-size:0.75rem; letter-spacing:2px; color:#7c664d;">FOLD 01 · LYRICS</span>
+                  <h3 style="margin:2px 0 0; color:#2c241c; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">完整歌词 (LYRICS)</h3>
+                </div>
+
+                <div style="font-family:var(--font-songti), serif; font-size:0.98rem; line-height:1.9; color:#3a3025; white-space:pre-wrap; max-height:260px; overflow-y:auto; padding-right:6px;">
+${activeSong.lyrics}
+                </div>
               </div>
-              <button class="imm-pill-btn" style="padding:6px 16px; font-size:0.85rem;" onclick="toggleAudioPlay()">
-                <i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '试听'}
-              </button>
+
+              <div style="border-top:1px solid rgba(44,36,28,0.15); pt:12px; display:flex; justify-content:space-between; font-family:var(--font-eng-title); font-size:0.75rem; color:#6e5d48;">
+                <span>ORIGINAL MASTER</span>
+                <span style="color:#2c241c; font-weight:700;">HARVESTER</span>
+              </div>
             </div>
 
-            <div style="flex:1; overflow-y:auto; font-family:var(--font-songti), serif; font-size:1.1rem; line-height:2.2; color:#f1ebd8; white-space:pre-wrap; padding-right:15px;">
-              ${activeSong.lyrics}
+            <!-- FOLD 2: 勃艮第红莫兰迪 (MUTED BURGUNDY / WINE) -->
+            <div class="accordion-panel unfold-panel-2" style="background:#5c2734; color:#fae8ec; padding:24px; border-right:1px solid #451c27;">
+              <div>
+                <div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:8px; margin-bottom:14px;">
+                  <span style="font-family:var(--font-eng-title); font-size:0.75rem; letter-spacing:2px; color:var(--gold);">FOLD 02 · WORSHIP INSPIRATION</span>
+                  <h3 style="margin:2px 0 0; color:#fff; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">创作心得与经文 (NOTES)</h3>
+                </div>
+
+                <div style="font-family:var(--font-songti), serif; font-size:0.95rem; line-height:1.8; color:#f3d7df; space-y:10px;">
+                  <div style="background:rgba(0,0,0,0.25); border-left:3px solid var(--gold); padding:10px 12px; border-radius:4px; font-size:0.85rem; color:var(--gold); margin-bottom:12px;">
+                    「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24
+                  </div>
+                  <p style="margin:0 0 10px;">
+                    在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。
+                  </p>
+                  <p style="margin:0;">
+                    无论行过高山或低谷，神的爱总如晨曦般恒常守护，指引前行的道路。
+                  </p>
+                </div>
+              </div>
+
+              <!-- Bottom Polaroid photo -->
+              <div style="width:100%; height:130px; border-radius:8px; overflow:hidden; border:2px solid rgba(255,255,255,0.2); position:relative; margin-top:16px;">
+                <img src="${childlikeDoodles[2]}" alt="Art 02" style="width:100%; height:100%; object-fit:cover; opacity:0.9;">
+                <div style="position:absolute; bottom:6px; left:6px; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); color:var(--gold); font-family:var(--font-eng-title); font-size:0.7rem; padding:2px 8px; border-radius:4px;">
+                  WORSHIP HEART · 02
+                </div>
+              </div>
             </div>
+
+            <!-- FOLD 3: 浅灰麻布莫兰迪 (MUTED LINEN / STONE GREY) -->
+            <div class="accordion-panel unfold-panel-3" style="background:#dedad4; color:#26221f; border-radius:0 12px 12px 0; padding:24px;">
+              <div>
+                <div style="width:100%; height:150px; border-radius:8px; overflow:hidden; border:2px solid #c6c0b6; position:relative; margin-bottom:16px;">
+                  <img src="${childlikeDoodles[3]}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);">
+                  <div style="position:absolute; bottom:6px; right:6px; background:#000; color:#fff; font-family:var(--font-eng-title); font-size:0.75rem; padding:2px 8px; border-radius:4px; font-weight:700;">03</div>
+                </div>
+
+                <div style="border-bottom:1px solid rgba(38,34,31,0.15); padding-bottom:8px; margin-bottom:12px;">
+                  <span style="font-family:var(--font-eng-title); font-size:0.75rem; letter-spacing:2px; color:#665e56;">FOLD 03 · PRODUCTION CREDITS</span>
+                  <h3 style="margin:2px 0 0; color:#26221f; font-size:1.3rem; font-family:var(--font-eng-title); font-weight:700;">同工团队 (CREDITS)</h3>
+                </div>
+
+                <div style="font-size:0.85rem; space-y:8px; color:#423b35; font-family:var(--font-body);">
+                  <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
+                    <span style="color:#756a60;">词曲创作：</span>
+                    <span style="font-weight:600; color:#1c1815;">${activeSong.artist}</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
+                    <span style="color:#756a60;">编曲制作：</span>
+                    <span style="font-weight:600; color:#1c1815;">Mango Jump & Harvester</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(38,34,31,0.08); padding-bottom:6px;">
+                    <span style="color:#756a60;">录音母带：</span>
+                    <span style="font-weight:600; color:#1c1815;">Harvester Studio HQ</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="border-top:1px solid rgba(38,34,31,0.15); pt:12px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-family:var(--font-eng-title); font-size:0.75rem; color:#665e56;">PDF SCORES</span>
+                <button onclick="toggleAudioPlay()" class="imm-pill-btn" style="background:#26221f; color:#dedad4; border:none; font-size:0.8rem; padding:6px 14px;">
+                  <i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '试听'}
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MANGO JUMP // 3D 唱片展架 & 沉浸式播放器</title>
+  <title>MANGO JUMP // 3D 唱片展架 & 莫兰迪风琴折内页播放器</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -25,12 +25,16 @@
               600: '#5c172b',
               900: '#2b0b14',
             },
-            sand: {
-              100: '#f7f4eb',
-              200: '#ebe4d3',
-              300: '#ded2ba',
-              800: '#524939',
-              900: '#2c261d',
+            morandi: {
+              blue: '#2e6b82',
+              sand: '#dfd5c4',
+              sandDark: '#c9bda8',
+              wine: '#5c2734',
+              wineDark: '#451c27',
+              grey: '#dedad4',
+              greyDark: '#c6c0b6',
+              charcoal: '#26221f',
+              cream: '#fcfaf6',
             }
           },
           fontFamily: {
@@ -271,10 +275,83 @@
       filter: brightness(1.15) drop-shadow(0 0 15px rgba(78, 205, 196, 0.3));
     }
 
-    /* Sticker & Collage Aesthetic */
-    .sticker-badge {
-      box-shadow: 0 4px 14px rgba(0,0,0,0.35);
-      transform: rotate(var(--rot, -3deg));
+    /* ================= ACCORDION FOLD (风琴折) SYSTEM ================= */
+    .accordion-booklet-stage {
+      perspective: 1600px;
+      -webkit-perspective: 1600px;
+      transform-style: preserve-3d;
+    }
+
+    .accordion-panel {
+      position: relative;
+      flex-shrink: 0;
+      width: 330px;
+      min-height: 600px;
+      box-shadow: -8px 0 24px rgba(0, 0, 0, 0.35), inset 1px 0 0 rgba(255, 255, 255, 0.2);
+      transform-origin: left center;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    }
+
+    /* Vertical Fold Lines & Inset Shadows */
+    .accordion-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 10px;
+      background: linear-gradient(to right, rgba(0,0,0,0.22), transparent);
+      pointer-events: none;
+      z-index: 10;
+    }
+    .accordion-panel::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 10px;
+      background: linear-gradient(to left, rgba(0,0,0,0.18), transparent);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Accordion Unfolding Animations */
+    @keyframes accordionUnfold1 {
+      0% { opacity: 0; transform: rotateY(-40deg) scaleX(0.7); }
+      100% { opacity: 1; transform: rotateY(0deg) scaleX(1); }
+    }
+    @keyframes accordionUnfold2 {
+      0% { opacity: 0; transform: rotateY(-45deg) scaleX(0.65); }
+      100% { opacity: 1; transform: rotateY(0deg) scaleX(1); }
+    }
+    @keyframes accordionUnfold3 {
+      0% { opacity: 0; transform: rotateY(-50deg) scaleX(0.6); }
+      100% { opacity: 1; transform: rotateY(0deg) scaleX(1); }
+    }
+
+    .unfold-panel-1 {
+      animation: accordionUnfold1 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .unfold-panel-2 {
+      animation: accordionUnfold2 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards;
+    }
+    .unfold-panel-3 {
+      animation: accordionUnfold3 1.0s cubic-bezier(0.16, 1, 0.3, 1) 0.24s forwards;
+    }
+
+    /* Sticker Cut-out with White Border */
+    .cutout-sticker {
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.45));
+      border: 4px solid #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
+    }
+
+    /* Retro Paper Texture Overlay */
+    .paper-texture {
+      background-image: radial-gradient(rgba(0,0,0,0.03) 1px, transparent 0);
+      background-size: 24px 24px;
     }
 
     /* Custom Scrollbar */
@@ -293,7 +370,7 @@
       background: rgba(255, 255, 255, 0.4);
     }
 
-    /* Vinyl Grooves & Sheen */
+    /* Vinyl Grooves */
     .vinyl-grooves {
       background: repeating-radial-gradient(
         circle at 50% 50%,
@@ -304,7 +381,7 @@
       );
     }
 
-    /* Animated Sound Wave Equalizer */
+    /* Equalizer Wave */
     @keyframes barWave {
       0%, 100% { height: 4px; }
       50% { height: 18px; }
@@ -338,12 +415,12 @@
         <span>3D 唱片展架 (3D Rack)</span>
       </button>
       <button onclick="openDetailView(currentIndex)" id="nav-detail-btn" class="text-slate-400 hover:text-white transition flex items-center space-x-2">
-        <i class="fa-solid fa-record-vinyl"></i>
-        <span>专辑详情 (Detail)</span>
+        <i class="fa-solid fa-book-open"></i>
+        <span>莫兰迪风琴折内页 (Folded Booklet)</span>
       </button>
       <div class="h-4 w-[1px] bg-white/20"></div>
       <span class="text-xs bg-amber-400/20 text-amber-300 px-2.5 py-1 rounded-full border border-amber-400/30 uppercase tracking-widest font-mono">
-        <i class="fa-solid fa-sparkles mr-1"></i> Hi-Res Vinyl
+        <i class="fa-solid fa-sparkles mr-1"></i> Hi-Res Master
       </span>
     </div>
 
@@ -378,19 +455,19 @@
             VINYL &amp; ALBUM COLLECTION
           </h2>
           <p class="text-slate-400 text-xs md:text-sm max-w-xl mt-1">
-            书脊与封面在 3D 空间中紧密结合，随鼠标拖拽与滚轮丝滑滑动。点击唱片可翻开单曲歌词与歌谱。
+            书脊与封面在 3D 空间中紧密结合，随鼠标拖拽与滚轮丝滑滑动。点击唱片可展开莫兰迪风琴折内页与歌谱。
           </p>
         </div>
 
         <!-- Fun Retro Sticker Elements -->
         <div class="hidden lg:flex items-center space-x-3">
-          <div class="sticker-badge bg-rose-600 text-white font-display text-lg tracking-wider px-3 py-1 rounded-sm border-2 border-white shadow-xl" style="--rot: -4deg">
+          <div class="bg-rose-600 text-white font-display text-lg tracking-wider px-3 py-1 rounded-sm border-2 border-white shadow-xl transform -rotate-3">
             100% ANALOG
           </div>
-          <div class="sticker-badge bg-amber-400 text-black font-display text-lg tracking-wider px-3 py-1 rounded-sm border-2 border-black shadow-xl" style="--rot: 3deg">
+          <div class="bg-amber-400 text-black font-display text-lg tracking-wider px-3 py-1 rounded-sm border-2 border-black shadow-xl transform rotate-3">
             LIMITED EDITION
           </div>
-          <div class="sticker-badge bg-teal-400 text-black font-display text-lg tracking-wider px-3 py-1 rounded-sm border-2 border-black shadow-xl" style="--rot: -2deg">
+          <div class="bg-teal-400 text-black font-display text-lg tracking-wider px-3 py-1 rounded-sm border-2 border-black shadow-xl transform -rotate-2">
             ORIGINAL MASTER
           </div>
         </div>
@@ -419,8 +496,8 @@
           <span><i class="fa-solid fa-arrows-left-right text-teal-400 mr-1"></i> 鼠标拖拽 / 滚轮滑动</span>
           <span class="text-slate-700">|</span>
           <button onclick="openDetailView(currentIndex)" class="text-teal-300 hover:text-white underline underline-offset-4 flex items-center space-x-1.5 font-bold">
-            <i class="fa-solid fa-music"></i>
-            <span>翻开单曲与歌谱 (View Song &amp; Scores)</span>
+            <i class="fa-solid fa-book-open"></i>
+            <span>展开风琴折内页 (Unfold Accordion Booklet)</span>
           </button>
         </div>
         <div id="rack-indicator" class="flex items-center space-x-2 font-mono">
@@ -430,184 +507,284 @@
     </section>
 
 
-    <!-- ======================================================== -->
-    <!-- VIEW 2: 专辑详情页 (Detail View - 左右分栏 / 沉浸式体验)    -->
-    <!-- ======================================================== -->
-    <section id="view-detail" class="absolute inset-0 flex flex-col transition-all duration-700 ease-out transform opacity-0 scale-95 pointer-events-none z-20 overflow-y-auto">
+    <!-- ========================================================================= -->
+    <!-- VIEW 2: 莫兰迪风琴折内页 (Accordion Folded Booklet - 左侧海报 + 右侧折页展开) -->
+    <!-- ========================================================================= -->
+    <section id="view-detail" class="absolute inset-0 flex flex-col transition-all duration-700 ease-out transform opacity-0 scale-95 pointer-events-none z-20 overflow-y-auto bg-[#1c242d]">
       
-      <!-- Back to Rack Button -->
-      <div class="w-full px-6 md:px-12 pt-6 flex items-center justify-between shrink-0">
-        <button onclick="switchView('rack')" class="px-4 py-2 rounded-full bg-black/40 border border-white/20 text-slate-200 hover:text-white hover:bg-white/10 backdrop-blur-md font-medium text-xs tracking-wider uppercase transition flex items-center space-x-2">
+      <!-- Top Control Bar -->
+      <div class="w-full px-6 md:px-12 pt-5 pb-3 flex items-center justify-between shrink-0 border-b border-white/10 bg-black/30 backdrop-blur-md">
+        <button onclick="switchView('rack')" class="px-4 py-2 rounded-full bg-black/50 border border-white/20 text-slate-200 hover:text-white hover:bg-white/10 backdrop-blur-md font-medium text-xs tracking-wider uppercase transition flex items-center space-x-2">
           <i class="fa-solid fa-arrow-left"></i>
           <span>返回 3D 展台 (Back to Rack)</span>
         </button>
 
-        <!-- Current Album Switcher Pill -->
-        <div class="flex items-center space-x-2">
-          <button onclick="prevAlbum()" class="w-8 h-8 rounded-full bg-black/40 border border-white/10 hover:border-white/30 text-white flex items-center justify-center transition">
-            <i class="fa-solid fa-chevron-left text-xs"></i>
-          </button>
-          <span id="detail-album-counter" class="text-xs font-mono text-slate-300 px-2 font-bold">01 / 06</span>
-          <button onclick="nextAlbum()" class="w-8 h-8 rounded-full bg-black/40 border border-white/10 hover:border-white/30 text-white flex items-center justify-center transition">
-            <i class="fa-solid fa-chevron-right text-xs"></i>
-          </button>
+        <div class="flex items-center space-x-3">
+          <span class="text-xs font-mono tracking-widest text-amber-300 uppercase px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/30 hidden sm:inline-block">
+            <i class="fa-solid fa-book-open mr-1"></i> CONCERTINA FOLD BOOKLET &bull; 莫兰迪风琴折
+          </span>
+          <!-- Current Album Switcher -->
+          <div class="flex items-center space-x-2">
+            <button onclick="prevAlbum()" class="w-8 h-8 rounded-full bg-black/40 border border-white/10 hover:border-white/30 text-white flex items-center justify-center transition">
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            <span id="detail-album-counter" class="text-xs font-mono text-slate-300 px-2 font-bold">01 / 06</span>
+            <button onclick="nextAlbum()" class="w-8 h-8 rounded-full bg-black/40 border border-white/10 hover:border-white/30 text-white flex items-center justify-center transition">
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Detail 2-Column Split Content -->
-      <div class="flex-1 w-full max-w-7xl mx-auto px-6 md:px-12 py-8 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start pb-32">
+      <!-- Main Booklet Stage (Left Poster + Right Accordion Folds) -->
+      <div class="flex-1 w-full max-w-[1600px] mx-auto px-4 md:px-10 py-6 flex flex-col lg:flex-row items-stretch gap-6 pb-28">
         
-        <!-- ================= LEFT COLUMN (40% - 5 Cols) ================= -->
-        <div class="lg:col-span-5 lg:sticky lg:top-8 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
+        <!-- ========================================================= -->
+        <!-- LEFT POSTER COLUMN (保持左侧海报与操作按钮)                  -->
+        <!-- ========================================================= -->
+        <div class="w-full lg:w-[380px] xl:w-[420px] shrink-0 rounded-2xl bg-[#2e6b82] border-2 border-white/20 shadow-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden text-white" id="poster-container">
           
-          <!-- Large 3D Vinyl Sleeve Artwork -->
-          <div class="relative group w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 shrink-0">
-            <!-- Background Glow -->
-            <div id="detail-cover-glow" class="absolute -inset-4 rounded-3xl bg-teal-500/30 blur-2xl opacity-60 group-hover:opacity-100 transition duration-700"></div>
+          <!-- Background Subtle Watermark -->
+          <div class="absolute right-[-20px] top-[40px] font-display text-[120px] font-black text-black/10 leading-none select-none pointer-events-none uppercase">
+            MANGO
+          </div>
 
-            <!-- Vinyl Disc Peeking Out -->
-            <div class="absolute top-0 right-0 w-full h-full rounded-full bg-black border-4 border-[#222] shadow-2xl flex items-center justify-center vinyl-grooves transform translate-x-12 group-hover:translate-x-20 transition-all duration-500 ease-out z-0">
-              <div class="w-28 h-28 rounded-full bg-cover bg-center border-2 border-amber-400/80 shadow-inner relative flex items-center justify-center" id="detail-vinyl-center">
-                <div class="w-6 h-6 rounded-full bg-black border-2 border-white/30"></div>
-              </div>
+          <!-- Top Poster Header & Doodle (Reference: MANGO JUMP) -->
+          <div class="relative z-10 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono tracking-widest text-teal-200 uppercase bg-black/25 px-2.5 py-0.5 rounded">
+                AUDIO ARCHIVE
+              </span>
+              <span class="text-xs font-mono text-amber-300">VOL. 01</span>
             </div>
 
-            <!-- Front Jacket Card -->
-            <div class="relative w-full h-full rounded-2xl overflow-hidden bg-slate-900 border border-white/20 shadow-2xl z-10 transform group-hover:scale-[1.02] transition duration-500">
-              <img id="detail-cover-img" src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=900&auto=format&fit=crop&q=80" alt="Album Cover" class="w-full h-full object-cover" />
-              <!-- Gloss overlay -->
-              <div class="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/15 pointer-events-none"></div>
-              
-              <!-- Quick Play Overlay Button -->
-              <button onclick="playTrack(0)" class="absolute bottom-4 right-4 w-14 h-14 rounded-full bg-teal-500 text-black flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition">
+            <div class="pt-2">
+              <h1 class="text-4xl sm:text-5xl font-display font-black tracking-tight uppercase text-black drop-shadow-sm leading-none flex items-center gap-2">
+                <span>MANGO JUMP</span>
+                <span class="text-2xl text-teal-300">&#10022;</span>
+              </h1>
+              <!-- Brush underline doodle -->
+              <div class="w-32 h-1.5 bg-gradient-to-r from-amber-300 via-teal-200 to-transparent rounded-full mt-1"></div>
+            </div>
+          </div>
+
+          <!-- Band Cut-Out Sticker Collage (Reference Image Centerpiece) -->
+          <div class="relative z-10 my-6 flex flex-col items-center">
+            <div class="relative group cursor-pointer w-full max-w-[280px]">
+              <div class="cutout-sticker bg-slate-800 overflow-hidden relative aspect-[4/5] rounded-xl">
+                <img id="detail-cover-img" src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=900&auto=format&fit=crop&q=80" alt="Band Collage" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                
+                <!-- Polaroid label on photo bottom -->
+                <div class="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[11px] font-bold text-white bg-black/50 backdrop-blur-md px-2.5 py-1 rounded">
+                  <span id="detail-artist-badge">Harvester Music</span>
+                  <span class="text-amber-300 font-mono">2026</span>
+                </div>
+              </div>
+
+              <!-- Quick Play Floating Badge -->
+              <button onclick="playTrack(0)" class="absolute -bottom-4 -right-4 w-14 h-14 rounded-full bg-amber-400 text-black flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition border-2 border-black">
                 <i class="fa-solid fa-play text-xl ml-1"></i>
               </button>
             </div>
+
+            <!-- Title & Short Subtitle -->
+            <div class="mt-5 text-center space-y-1">
+              <h2 id="detail-title" class="text-2xl sm:text-3xl font-display font-bold uppercase tracking-wide text-white drop-shadow">
+                更新敬拜 (Renewed Worship)
+              </h2>
+              <p id="detail-artist" class="text-xs text-teal-100 font-medium">
+                Harvester Worship &bull; 敬拜单曲大碟
+              </p>
+            </div>
           </div>
 
-          <!-- Album Meta Info -->
-          <div class="w-full space-y-3">
-            <div class="flex items-center justify-center lg:justify-start space-x-2">
-              <span id="detail-genre-year" class="text-xs font-mono tracking-widest text-teal-300 uppercase px-3 py-1 rounded-full bg-teal-500/20 border border-teal-500/30">
-                ALTERNATIVE &bull; 2026
-              </span>
-              <span class="text-xs font-mono tracking-widest text-amber-300 uppercase px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/30">
-                Hi-Res Master
-              </span>
-            </div>
-
-            <h2 id="detail-title" class="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight uppercase text-white leading-tight">
-              MISSION: HEARTBEAT DEFENSE
-            </h2>
-
-            <div class="flex items-center justify-center lg:justify-start space-x-3 text-lg font-medium text-slate-300">
-              <i class="fa-solid fa-users text-teal-400 text-base"></i>
-              <span id="detail-artist">Mango Jump &amp; Harvester Music</span>
-            </div>
-
-            <p id="detail-description" class="text-sm text-slate-400 leading-relaxed max-w-md pt-1">
-              融合了复古朋克摇滚、数字合成器与现代敬拜旋律的先锋之作。用强劲的心跳脉动守望音乐的纯粹与自由。
-            </p>
-          </div>
-
-          <!-- Action Buttons / Links -->
-          <div class="w-full flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
-            <a href="javascript:void(0)" onclick="alert('歌谱 PDF 下载已启动（样例）')" class="px-5 py-2.5 rounded-full bg-amber-400 text-black hover:bg-amber-300 font-bold text-xs tracking-wider uppercase transition flex items-center space-x-2 shadow-lg shadow-amber-400/20">
+          <!-- Bottom Action Buttons Group -->
+          <div class="relative z-10 w-full flex flex-col gap-2.5 pt-2 border-t border-white/20">
+            <a href="javascript:void(0)" onclick="alert('歌谱 PDF 下载已启动（样例）')" class="w-full py-2.5 rounded-full bg-amber-400 text-black hover:bg-amber-300 font-bold text-xs tracking-wider uppercase transition flex items-center justify-center space-x-2 shadow-lg shadow-black/20">
               <i class="fa-solid fa-file-arrow-down text-sm"></i>
               <span>下载歌谱 (PDF)</span>
             </a>
-            <a href="https://www.youtube.com/@harvestermusic.production" target="_blank" class="px-5 py-2.5 rounded-full bg-rose-600/30 border border-rose-500/50 text-rose-200 hover:bg-rose-600 hover:text-white font-semibold text-xs tracking-wider uppercase transition flex items-center space-x-2">
-              <i class="fa-brands fa-youtube text-sm text-rose-400"></i>
-              <span>YouTube 播放</span>
-            </a>
-            <a href="https://open.spotify.com" target="_blank" class="px-5 py-2.5 rounded-full bg-emerald-600/30 border border-emerald-500/50 text-emerald-200 hover:bg-emerald-600 hover:text-white font-semibold text-xs tracking-wider uppercase transition flex items-center space-x-2">
-              <i class="fa-brands fa-spotify text-sm text-emerald-400"></i>
-              <span>Spotify 聆听</span>
-            </a>
-          </div>
-
-          <!-- Band Collage / Member Polaroids -->
-          <div class="w-full pt-4 border-t border-white/10 flex flex-col items-center lg:items-start space-y-3">
-            <div class="text-[11px] font-mono tracking-widest text-slate-400 uppercase flex items-center space-x-2">
-              <i class="fa-solid fa-camera-retro text-amber-400"></i>
-              <span>BAND MEMBERS &amp; CREW // 乐团同工剪影</span>
-            </div>
-            <div class="flex items-center space-x-3 overflow-x-auto py-2">
-              <div class="w-16 h-20 bg-white p-1 rounded shadow-md transform -rotate-6 hover:rotate-0 transition shrink-0">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" class="w-full h-14 object-cover grayscale contrast-125" />
-                <div class="text-[8px] font-bold text-slate-800 text-center mt-0.5">主唱 / Lead</div>
-              </div>
-              <div class="w-16 h-20 bg-white p-1 rounded shadow-md transform rotate-3 hover:rotate-0 transition shrink-0">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" class="w-full h-14 object-cover grayscale contrast-125" />
-                <div class="text-[8px] font-bold text-slate-800 text-center mt-0.5">吉他 / Riff</div>
-              </div>
-              <div class="w-16 h-20 bg-white p-1 rounded shadow-md transform -rotate-3 hover:rotate-0 transition shrink-0">
-                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" class="w-full h-14 object-cover grayscale contrast-125" />
-                <div class="text-[8px] font-bold text-slate-800 text-center mt-0.5">贝斯 / Groove</div>
-              </div>
-              <div class="w-16 h-20 bg-white p-1 rounded shadow-md transform rotate-6 hover:rotate-0 transition shrink-0">
-                <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300&auto=format&fit=crop&q=80" class="w-full h-14 object-cover grayscale contrast-125" />
-                <div class="text-[8px] font-bold text-slate-800 text-center mt-0.5">鼓手 / Beat</div>
-              </div>
+            <div class="grid grid-cols-2 gap-2">
+              <a href="https://www.youtube.com/@harvestermusic.production" target="_blank" class="py-2 rounded-full bg-black/40 border border-white/30 text-white hover:bg-rose-600 font-medium text-[11px] tracking-wider uppercase transition flex items-center justify-center space-x-1.5">
+                <i class="fa-brands fa-youtube text-rose-400"></i>
+                <span>YouTube</span>
+              </a>
+              <a href="https://open.spotify.com" target="_blank" class="py-2 rounded-full bg-black/40 border border-white/30 text-white hover:bg-emerald-600 font-medium text-[11px] tracking-wider uppercase transition flex items-center justify-center space-x-1.5">
+                <i class="fa-brands fa-spotify text-emerald-400"></i>
+                <span>Spotify</span>
+              </a>
             </div>
           </div>
 
         </div>
 
 
-        <!-- ================= RIGHT COLUMN (60% - 7 Cols) ================= -->
-        <div class="lg:col-span-7 flex flex-col space-y-6">
-          
-          <!-- Glass Tracklist Container -->
-          <div class="w-full rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl p-6 sm:p-8 shadow-2xl">
-            
-            <!-- Tracklist Header -->
-            <div class="flex items-center justify-between pb-6 border-b border-white/10">
-              <div>
-                <span class="text-xs font-mono tracking-widest text-teal-400 uppercase">TRACKLIST &bull; 音轨曲目</span>
-                <h3 class="text-2xl font-display font-bold uppercase tracking-wider text-white">
-                  ALBUM TRACKS
-                </h3>
+        <!-- ========================================================= -->
+        <!-- RIGHT ACCORDION FOLD SYSTEM (风琴折展开 - 莫兰迪多折页)       -->
+        <!-- ========================================================= -->
+        <div class="flex-1 overflow-x-auto pb-4 no-scrollbar">
+          <div class="accordion-booklet-stage flex items-stretch gap-0.5 min-w-max h-full">
+
+            <!-- ---------------------------------------------------- -->
+            <!-- FOLD PANEL 1: 沙色莫兰迪 (WARM KRAFT SAND CREAM)      -->
+            <!-- ---------------------------------------------------- -->
+            <div class="accordion-panel unfold-panel-1 bg-[#dfd5c4] text-[#2c241c] rounded-l-xl p-6 sm:p-7 flex flex-col justify-between paper-texture border-r border-[#c9bda8]">
+              
+              <div class="space-y-4">
+                <!-- Top Polaroid Photo (Reference Image: Top Photo Box with '01' Badge) -->
+                <div class="relative w-full aspect-[4/3] rounded-lg overflow-hidden border-2 border-[#c9bda8] bg-[#c9bda8] shadow-md">
+                  <img id="panel1-photo" src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&auto=format&fit=crop&q=80" alt="Art 01" class="w-full h-full object-cover grayscale contrast-125" />
+                  <div class="absolute bottom-2 right-2 bg-black text-white text-[10px] font-mono px-2 py-0.5 rounded font-bold">
+                    01
+                  </div>
+                </div>
+
+                <!-- Panel 1 Header -->
+                <div class="border-b border-[#2c241c]/15 pb-2">
+                  <span class="text-[10px] font-mono uppercase tracking-widest text-[#6e5d48] font-bold">FOLD 01 &bull; LYRICS &amp; CHORDS</span>
+                  <h3 class="text-xl font-display font-bold uppercase tracking-wider text-[#2c241c]">
+                    完整歌词 (LYRICS)
+                  </h3>
+                </div>
+
+                <!-- Lyrics Stanzas (Styled like track lines in reference) -->
+                <div id="detail-lyrics-panel1" class="font-serif text-sm leading-relaxed space-y-3.5 text-[#3a3025] select-text">
+                  <div class="flex items-start justify-between border-b border-[#2c241c]/10 pb-2">
+                    <div>
+                      <span class="font-mono text-xs font-bold text-[#7c664d] mr-2">01</span>
+                      <span class="font-bold">在祢的光中我们得见光</span>
+                    </div>
+                    <span class="font-mono text-xs text-[#7c664d]">01'15"</span>
+                  </div>
+                  <div class="flex items-start justify-between border-b border-[#2c241c]/10 pb-2">
+                    <div>
+                      <span class="font-mono text-xs font-bold text-[#7c664d] mr-2">02</span>
+                      <span class="font-bold">圣灵的火燃烧我们心房</span>
+                    </div>
+                    <span class="font-mono text-xs text-[#7c664d]">02'08"</span>
+                  </div>
+                  <div class="flex items-start justify-between border-b border-[#2c241c]/10 pb-2">
+                    <div>
+                      <span class="font-mono text-xs font-bold text-[#7c664d] mr-2">03</span>
+                      <span class="font-bold">愿祢国度降临旨意成全</span>
+                    </div>
+                    <span class="font-mono text-xs text-[#7c664d]">03'22"</span>
+                  </div>
+                  <div class="flex items-start justify-between border-b border-[#2c241c]/10 pb-2">
+                    <div>
+                      <span class="font-mono text-xs font-bold text-[#7c664d] mr-2">04</span>
+                      <span class="font-bold">在这里更新我们敬拜</span>
+                    </div>
+                    <span class="font-mono text-xs text-[#7c664d]">04'18"</span>
+                  </div>
+                </div>
               </div>
-              <button onclick="playAll()" class="px-4 py-2 rounded-full bg-teal-500 text-black hover:bg-teal-400 font-bold text-xs tracking-wider uppercase transition flex items-center space-x-2">
-                <i class="fa-solid fa-play"></i>
-                <span>播放全部</span>
-              </button>
+
+              <!-- Bottom Note -->
+              <div class="pt-4 border-t border-[#2c241c]/15 flex items-center justify-between text-[11px] font-mono text-[#6e5d48]">
+                <span>KEY: C &bull; 72 BPM</span>
+                <span>ORIGINAL MASTER</span>
+              </div>
+
             </div>
 
-            <!-- Tracks List -->
-            <div id="detail-tracklist" class="divide-y divide-white/5 my-2">
-              <!-- Dynamically populated tracks -->
+
+            <!-- ---------------------------------------------------- -->
+            <!-- FOLD PANEL 2: 勃艮第红莫兰迪 (MUTED BURGUNDY / WINE)   -->
+            <!-- ---------------------------------------------------- -->
+            <div class="accordion-panel unfold-panel-2 bg-[#5c2734] text-[#fae8ec] p-6 sm:p-7 flex flex-col justify-between paper-texture border-r border-[#451c27]">
+              
+              <div class="space-y-4">
+                <!-- Panel 2 Header -->
+                <div class="border-b border-white/15 pb-2">
+                  <span class="text-[10px] font-mono uppercase tracking-widest text-[#f1c882] font-bold">FOLD 02 &bull; WORSHIP INSPIRATION</span>
+                  <h3 class="text-xl font-display font-bold uppercase tracking-wider text-white">
+                    创作心得与经文 (NOTES)
+                  </h3>
+                </div>
+
+                <!-- Spiritual Inspiration Text -->
+                <div id="detail-notes-panel2" class="font-serif text-sm leading-relaxed space-y-3 text-[#f3d7df] select-text">
+                  <p class="italic text-xs text-[#f1c882] bg-black/20 p-2.5 rounded border-l-2 border-[#f1c882]">
+                    「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24
+                  </p>
+                  <p class="pt-1">
+                    这首诗歌诞生于清晨的安静祷告中。在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。
+                  </p>
+                  <p>
+                    无论行过高山或低谷，神的爱总如晨曦般恒常守护。
+                  </p>
+                </div>
+              </div>
+
+              <!-- Bottom Polaroid Photo (Reference Image: Bottom Box) -->
+              <div class="relative w-full aspect-[16/9] rounded-lg overflow-hidden border-2 border-white/20 bg-black/40 shadow-md mt-4">
+                <img id="panel2-photo" src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=600&auto=format&fit=crop&q=80" alt="Art 02" class="w-full h-full object-cover contrast-125 opacity-90" />
+                <div class="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md text-[#f1c882] text-[10px] font-mono px-2 py-0.5 rounded">
+                  WORSHIP HEART &bull; 02
+                </div>
+              </div>
+
             </div>
 
-            <!-- Album Total Runtime & Summary -->
-            <div class="pt-6 mt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-400 gap-2">
-              <div class="flex items-center space-x-2">
-                <i class="fa-solid fa-circle-check text-teal-400"></i>
-                <span id="detail-summary-count">1 TRACK &bull; 04:18</span>
+
+            <!-- ---------------------------------------------------- -->
+            <!-- FOLD PANEL 3: 浅灰麻布莫兰迪 (MUTED LINEN / STONE GREY)-->
+            <!-- ---------------------------------------------------- -->
+            <div class="accordion-panel unfold-panel-3 bg-[#dedad4] text-[#26221f] rounded-r-xl p-6 sm:p-7 flex flex-col justify-between paper-texture">
+              
+              <div class="space-y-4">
+                <!-- Top Artwork -->
+                <div class="relative w-full aspect-[4/3] rounded-lg overflow-hidden border-2 border-[#c6c0b6] bg-[#c6c0b6] shadow-md">
+                  <img id="panel3-photo" src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80" alt="Art 03" class="w-full h-full object-cover grayscale contrast-125" />
+                  <div class="absolute bottom-2 right-2 bg-black text-white text-[10px] font-mono px-2 py-0.5 rounded font-bold">
+                    03
+                  </div>
+                </div>
+
+                <!-- Panel 3 Header -->
+                <div class="border-b border-[#26221f]/15 pb-2">
+                  <span class="text-[10px] font-mono uppercase tracking-widest text-[#665e56] font-bold">FOLD 03 &bull; CREDITS &amp; MUSICIANS</span>
+                  <h3 class="text-xl font-display font-bold uppercase tracking-wider text-[#26221f]">
+                    同工团队 (CREDITS)
+                  </h3>
+                </div>
+
+                <!-- Credits List -->
+                <div id="detail-credits-panel3" class="font-sans text-xs space-y-2.5 text-[#423b35]">
+                  <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+                    <span class="text-[#756a60]">词曲创作：</span>
+                    <span class="font-semibold text-[#1c1815]">Harvester Worship</span>
+                  </div>
+                  <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+                    <span class="text-[#756a60]">编曲制作：</span>
+                    <span class="font-semibold text-[#1c1815]">Mango Jump Band</span>
+                  </div>
+                  <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+                    <span class="text-[#756a60]">人声主唱：</span>
+                    <span class="font-semibold text-[#1c1815]">Creative Vocalists</span>
+                  </div>
+                  <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+                    <span class="text-[#756a60]">混音母带：</span>
+                    <span class="font-semibold text-[#1c1815]">Harvester Studio HQ</span>
+                  </div>
+                </div>
               </div>
-              <span class="text-slate-500">© 2026 HARVESTER MUSIC / ALL RIGHTS RESERVED</span>
+
+              <!-- Bottom Score Download Callout -->
+              <div class="pt-4 border-t border-[#26221f]/15 flex items-center justify-between">
+                <div class="text-[11px] font-mono text-[#665e56]">
+                  <span>PDF 歌谱已就绪</span>
+                </div>
+                <button onclick="alert('正在调取 PDF 歌谱预览...')" class="px-3 py-1.5 rounded-md bg-[#26221f] text-[#dedad4] hover:bg-black font-mono text-xs transition">
+                  <i class="fa-solid fa-file-pdf mr-1 text-amber-400"></i> 查看歌谱
+                </button>
+              </div>
+
             </div>
+
           </div>
-
-          <!-- Lyrics & Worship Story Container -->
-          <div class="w-full rounded-2xl bg-black/30 border border-white/10 backdrop-blur-md p-6 sm:p-8 space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b border-white/10">
-              <div class="flex items-center space-x-3">
-                <div class="w-3 h-3 rounded-full bg-amber-400"></div>
-                <h4 class="font-display text-lg tracking-wider uppercase text-amber-200">
-                  LYRICS &amp; WORSHIP NOTES // 歌词与敬拜信息
-                </h4>
-              </div>
-              <span class="text-[11px] font-mono text-slate-400 uppercase">SONGTI / SERIF</span>
-            </div>
-
-            <!-- Lyrics Text -->
-            <div id="detail-lyrics-content" class="font-serif text-sand-100/90 text-base leading-loose whitespace-pre-line py-2 select-text">
-              <!-- Lyrics loaded dynamically -->
-            </div>
-          </div>
-
         </div>
 
       </div>
@@ -688,8 +865,8 @@
             <input id="player-volume" type="range" min="0" max="100" value="85" class="w-16 md:w-24 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-teal-400" />
           </div>
           <!-- Playlist / Queue -->
-          <button onclick="openDetailView(currentIndex)" class="text-slate-400 hover:text-white transition p-1.5" title="打开单曲详情">
-            <i class="fa-solid fa-list-music text-base"></i>
+          <button onclick="openDetailView(currentIndex)" class="text-slate-400 hover:text-white transition p-1.5" title="打开风琴折内页">
+            <i class="fa-solid fa-book-open text-base"></i>
           </button>
           <!-- Share / Info -->
           <button onclick="shareSong()" class="text-slate-400 hover:text-white transition p-1.5" title="分享">
@@ -729,39 +906,25 @@
         year: "2025",
         genre: "Worship / CCM · 2025",
         theme: "teal",
-        bgColor: "#163842",
-        accentColor: "#3b9c9c",
+        posterBg: "#2e6b82",
         spineBg: "#1877F2",
-        spineColor: "#ffffff",
         cover: childlikeDoodles[0],
-        description: "在祢的光中我们得见光，圣灵的火燃烧我们心房。愿祢国度降临，愿祢旨意成全，更新我们的敬拜生命。",
-        lyrics: `【更新敬拜】
-词曲：Harvester Music Production
-
-在祢的光中 我们得见光
-圣灵的火 燃烧我们心房
-愿祢国度降临 愿祢旨意成全
-在这里 更新我们敬拜
-
-主祢的名 在全地何其美
-祢的慈爱 存到永远
-我们要歌唱 赞美祢的作为
-从今时 直到永永远远
-
-（副歌）
-更新我们 燃烧我们
-以真理和圣灵敬拜祢
-生命献上 作活祭
-一生跟随 荣耀主名
-
-（桥段）
-哈利路亚 荣耀归于全能神
-哈利路亚 配得万民称颂
-万膝要跪拜 万口要承认
-耶稣基督是主！`,
-        tracks: [
-          { title: "更新敬拜 (Renewed Worship)", duration: "04:18", sec: 258 }
-        ]
+        photos: [childlikeDoodles[1], childlikeDoodles[2], childlikeDoodles[3]],
+        duration: "04:18",
+        sec: 258,
+        lyricsLines: [
+          { text: "在祢的光中我们得见光", time: "01'15\"" },
+          { text: "圣灵的火燃烧我们心房", time: "02'08\"" },
+          { text: "愿祢国度降临旨意成全", time: "03'22\"" },
+          { text: "在这里更新我们敬拜", time: "04'18\"" }
+        ],
+        notes: "这首诗歌诞生于清晨的安静祷告中。在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。\n\n「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24",
+        credits: {
+          composer: "Harvester Worship",
+          arrangement: "Mango Jump Band",
+          vocals: "Creative Vocalists",
+          mixing: "Harvester Studio HQ"
+        }
       },
       {
         id: "song_fire",
@@ -771,28 +934,25 @@
         year: "2024",
         genre: "Acoustic Worship · 2024",
         theme: "teal",
-        bgColor: "#133535",
-        accentColor: "#00b894",
+        posterBg: "#1c5d5e",
         spineBg: "#00b894",
-        spineColor: "#ffffff",
         cover: childlikeDoodles[1],
-        description: "灵火降下，照明我心中的每一个角落。愿圣灵的烈火洁净心思，在祢爱中重获自由与新生。",
-        lyrics: `【灵火 Awakening】
-词曲：Harvester Music Production
-
-灵火 降下 在这安静时刻
-照明我心中的每一个角落
-我们若认自己的罪
-神是信实的 必然赦免我
-
-（副歌）
-愿圣灵的烈火 洁净我心思
-让我的敬拜 单单归于祢
-放下一切重担 紧随祢脚踪
-在祢爱中 重获自由与新生`,
-        tracks: [
-          { title: "灵火 Awakening (Spiritual Fire)", duration: "04:52", sec: 292 }
-        ]
+        photos: [childlikeDoodles[4], childlikeDoodles[5], childlikeDoodles[6]],
+        duration: "04:52",
+        sec: 292,
+        lyricsLines: [
+          { text: "灵火降下在这安静时刻", time: "01'20\"" },
+          { text: "照明我心中每一个角落", time: "02'15\"" },
+          { text: "愿圣灵烈火洁净我心思", time: "03'30\"" },
+          { text: "在祢爱中重获自由与新生", time: "04'52\"" }
+        ],
+        notes: "愿圣灵的烈火燃烧我们麻木的心灵，除掉一切重担与缠累，重新得着属天的喜乐与自由！",
+        credits: {
+          composer: "Harvester Creative",
+          arrangement: "Acoustic Strings",
+          vocals: "Chamber Voices",
+          mixing: "Firefly Audio"
+        }
       },
       {
         id: "song_because_god",
@@ -802,28 +962,25 @@
         year: "2025",
         genre: "Praise & Worship · 2025",
         theme: "sand",
-        bgColor: "#382e1c",
-        accentColor: "#f39c12",
+        posterBg: "#4a3c25",
         spineBg: "#f39c12",
-        spineColor: "#111111",
         cover: childlikeDoodles[2],
-        description: "因为祢上帝赐下丰盛恩典，在旷野开道路，在沙漠开江河。从日出之地到日落之处，祢的名当受称颂。",
-        lyrics: `【因为祢 上帝】
-词曲：Harvester Music Production
-
-因为祢 上帝 赐下丰盛恩典
-在旷野开道路 在沙漠开江河
-祢是我坚固台 是我避难所
-我心单单仰望祢
-
-（副歌）
-哈利路亚 赞美归于宝座上的羔羊
-哈利路亚 祢配得万民尊崇
-从日出之地 到日落之处
-祢的名当受称颂`,
-        tracks: [
-          { title: "因为祢 上帝 (Because of You God)", duration: "05:10", sec: 310 }
-        ]
+        photos: [childlikeDoodles[7], childlikeDoodles[0], childlikeDoodles[1]],
+        duration: "05:10",
+        sec: 310,
+        lyricsLines: [
+          { text: "因为祢上帝赐下丰盛恩典", time: "01'05\"" },
+          { text: "在旷野开道路在沙漠开江河", time: "02'18\"" },
+          { text: "祢是我坚固台是我避难所", time: "03'40\"" },
+          { text: "从日出到日落祢名当受称颂", time: "05'10\"" }
+        ],
+        notes: "在荒漠之地开出江河，在绝望之中重见黎明！祢是永远信实看顾我们的神。",
+        credits: {
+          composer: "Harvester Worship",
+          arrangement: "Full Brass Ensemble",
+          vocals: "Worship Choir",
+          mixing: "Glory Sounds"
+        }
       },
       {
         id: "song_alive",
@@ -833,22 +990,25 @@
         year: "2025",
         genre: "Pop Praise · 2025",
         theme: "burgundy",
-        bgColor: "#3d1320",
-        accentColor: "#ea8676",
+        posterBg: "#5c2a38",
         spineBg: "#ea8676",
-        spineColor: "#ffffff",
         cover: childlikeDoodles[3],
-        description: "I'm alive in Your love, Jesus! Every breath I take is by Your grace. 从黑暗进入奇妙光明。",
-        lyrics: `【Im Alive】
-Lyrics & Music: Harvester Praise
-
-I'm alive in Your love, Jesus
-Every breath I take is by Your grace
-From the darkness into Your glorious light
-You have set my feet upon the rock!`,
-        tracks: [
-          { title: "Im Alive (活在爱中)", duration: "03:45", sec: 225 }
-        ]
+        photos: [childlikeDoodles[2], childlikeDoodles[3], childlikeDoodles[4]],
+        duration: "03:45",
+        sec: 225,
+        lyricsLines: [
+          { text: "I'm alive in Your love, Jesus", time: "00'55\"" },
+          { text: "Every breath I take is by Your grace", time: "01'48\"" },
+          { text: "From the darkness into glorious light", time: "02'50\"" },
+          { text: "You have set my feet upon the rock", time: "03'45\"" }
+        ],
+        notes: "活力满满的流行敬拜节拍，宣告在基督里天天都是重获新生的一天！",
+        credits: {
+          composer: "Harvester Praise",
+          arrangement: "Pop Synth Lab",
+          vocals: "Youth Collective",
+          mixing: "Neon Master Studio"
+        }
       },
       {
         id: "song_harvest_call",
@@ -858,53 +1018,30 @@ You have set my feet upon the rock!`,
         year: "2024",
         genre: "Gospel / CCM · 2024",
         theme: "navy",
-        bgColor: "#132338",
-        accentColor: "#0984e3",
+        posterBg: "#1d364a",
         spineBg: "#0984e3",
-        spineColor: "#ffffff",
         cover: childlikeDoodles[4],
-        description: "庄稼已经熟了，求庄稼的主打发工人出去收祂的庄稼！愿每一首写给神的歌都被听见。",
-        lyrics: `【收割的呼召】
-词曲：Harvester Gospel Collective
-
-「那人撒种，这人收割」
-庄稼已经熟了，求庄稼的主打发工人出去收祂的庄稼！
-愿每一首写给神的歌都被听见，
-在各处传扬救恩的喜讯。`,
-        tracks: [
-          { title: "收割的呼召 (Call to Harvest)", duration: "04:15", sec: 255 }
-        ]
-      },
-      {
-        id: "song_you_are_all",
-        title: "祢是唯一",
-        titleEn: "You Are My All",
-        artist: "Harvester Acoustic",
-        year: "2024",
-        genre: "Piano Devotional · 2024",
-        theme: "navy",
-        bgColor: "#182736",
-        accentColor: "#255977",
-        spineBg: "#2d3436",
-        spineColor: "#ffffff",
-        cover: childlikeDoodles[5],
-        description: "在天地之间，唯有祢是我心所慕；在黑暗深夜，祢是我唯一的亮光。",
-        lyrics: `【祢是唯一】
-词曲：Harvester Acoustic
-
-在天地之间，唯有祢是我心所慕，
-在黑暗深夜，祢是我唯一的亮光。
-主啊，我将我的一切向祢倾心吐意，
-因为祢是我永远的福分。`,
-        tracks: [
-          { title: "祢是唯一 (You Are My All)", duration: "04:40", sec: 280 }
-        ]
+        photos: [childlikeDoodles[5], childlikeDoodles[6], childlikeDoodles[7]],
+        duration: "04:15",
+        sec: 255,
+        lyricsLines: [
+          { text: "那人撒种这人收割", time: "01'10\"" },
+          { text: "庄稼已经熟了求主打发工人", time: "02'22\"" },
+          { text: "愿每一首写给神的歌被听见", time: "03'15\"" },
+          { text: "在各处传扬救恩的好消息", time: "04'15\"" }
+        ],
+        notes: "「那人撒种，这人收割」愿每一首敬拜诗歌都在全地结出生命的硕果。",
+        credits: {
+          composer: "Gospel Collective",
+          arrangement: "Gospel Organ & Strings",
+          vocals: "Harvest Choir",
+          mixing: "Kingdom Audio"
+        }
       }
     ];
 
     /* ================= STATE & CONTINUOUS PHYSICS ================= */
     let currentIndex = 0;
-    let currentTrackIndex = 0;
     let isPlaying = false;
     let isShuffle = false;
     let isLoop = false;
@@ -912,7 +1049,7 @@ You have set my feet upon the rock!`,
     let playbackInterval = null;
 
     // Physics Engine State
-    let currentProgress = 0; // Floating index for silky 60fps/120fps motion
+    let currentProgress = 0;
     let targetProgress = 0;
     let isDragging = false;
     let dragStartX = 0;
@@ -975,8 +1112,7 @@ You have set my feet upon the rock!`,
             </div>
 
             <!-- 3. Right Spine Edge -->
-            <div class="cube-face cube-spine-right" style="background: ${album.spineBg};">
-            </div>
+            <div class="cube-face cube-spine-right" style="background: ${album.spineBg};"></div>
 
             <!-- 4. Top Thickness Face -->
             <div class="cube-face cube-top" style="background: ${album.spineBg}; filter: brightness(1.2);"></div>
@@ -1051,7 +1187,7 @@ You have set my feet upon the rock!`,
       requestAnimationFrame(tick);
     }
 
-    /* ================= 3D TRANSFORM CALCULATIONS (SPINE & COVER SLIDE TOGETHER) ================= */
+    /* ================= 3D TRANSFORM CALCULATIONS ================= */
     function render3DTransforms() {
       const boxes = document.querySelectorAll(".album-3d-box");
       if (!boxes.length) return;
@@ -1065,7 +1201,6 @@ You have set my feet upon the rock!`,
         const offset = i - currentProgress;
         const absOffset = Math.abs(offset);
 
-        // Angled perspective (-46deg to -36deg) so that both the spine and cover are always visibly coupled
         const pActive = Math.max(0, 1 - absOffset);
         const rotY = -48 + 12 * pActive;
 
@@ -1088,7 +1223,6 @@ You have set my feet upon the rock!`,
         box.style.opacity = Math.max(0, Math.min(1, opacity)).toFixed(3);
       });
 
-      // Update indicator dots
       const dots = document.querySelectorAll("#rack-indicator button");
       dots.forEach((dot, idx) => {
         if (idx === activeIntIdx) {
@@ -1104,7 +1238,7 @@ You have set my feet upon the rock!`,
       currentIndex = activeIdx;
     }
 
-    /* ================= INTERACTIVE MOUSE DRAG & TOUCH ENGINE ================= */
+    /* ================= INTERACTIVE MOUSE DRAG & TOUCH ================= */
     function setupInteractiveDrag() {
       const carousel = document.getElementById("coverflowCarousel");
       if (!carousel) return;
@@ -1153,7 +1287,6 @@ You have set my feet upon the rock!`,
         updateActiveMeta();
       }
 
-      // Mouse Events
       carousel.addEventListener("mousedown", (e) => {
         if (e.button !== 0) return;
         handleDragStart(e.clientX);
@@ -1167,7 +1300,6 @@ You have set my feet upon the rock!`,
         if (isDragging) handleDragEnd();
       });
 
-      // Mouse Wheel to Horizontal Carousel Navigation
       carousel.addEventListener("wheel", (e) => {
         if (e.deltaY !== 0 || e.deltaX !== 0) {
           e.preventDefault();
@@ -1176,7 +1308,6 @@ You have set my feet upon the rock!`,
         }
       }, { passive: false });
 
-      // Touch Events
       carousel.addEventListener("touchstart", (e) => {
         if (e.touches.length === 1) handleDragStart(e.touches[0].clientX);
       }, { passive: true });
@@ -1222,7 +1353,19 @@ You have set my feet upon the rock!`,
 
         navRack.className = "text-slate-400 hover:text-white transition flex items-center space-x-2";
         navDetail.className = "text-teal-400 hover:text-white transition flex items-center space-x-2";
+
+        // Trigger replay of unfolding animations
+        triggerAccordionUnfoldAnimation();
       }
+    }
+
+    function triggerAccordionUnfoldAnimation() {
+      const panels = document.querySelectorAll(".accordion-panel");
+      panels.forEach((p, idx) => {
+        p.style.animation = 'none';
+        p.offsetHeight; // Trigger reflow
+        p.style.animation = '';
+      });
     }
 
     function openDetailView(albumIndex) {
@@ -1230,72 +1373,64 @@ You have set my feet upon the rock!`,
       switchView("detail");
     }
 
-    /* ================= VIEW 2: LOAD DETAIL VIEW ================= */
+    /* ================= VIEW 2: LOAD MORANDI ACCORDION DETAIL ================= */
     function loadAlbumDetail(albumIdx) {
       currentIndex = albumIdx;
       targetProgress = albumIdx;
       const album = albumsData[albumIdx];
 
-      // Dynamic Theme Color
-      const viewDetail = document.getElementById("view-detail");
-      viewDetail.style.backgroundColor = album.bgColor || "#0d0f14";
-
-      // Meta elements
-      document.getElementById("detail-title").innerText = album.title;
-      document.getElementById("detail-artist").innerText = album.artist;
-      document.getElementById("detail-genre-year").innerText = `${album.genre}`;
-      document.getElementById("detail-description").innerText = album.description;
+      // Poster left column
+      document.getElementById("poster-container").style.backgroundColor = album.posterBg || "#2e6b82";
       document.getElementById("detail-cover-img").src = album.cover;
-      document.getElementById("detail-vinyl-center").style.backgroundImage = `url('${album.cover}')`;
-      document.getElementById("detail-cover-glow").style.backgroundColor = album.accentColor;
-      document.getElementById("detail-lyrics-content").innerText = album.lyrics || "暂无歌词";
+      document.getElementById("detail-title").innerText = `${album.title} (${album.titleEn})`;
+      document.getElementById("detail-artist").innerText = `${album.artist} • ${album.genre}`;
+      document.getElementById("detail-artist-badge").innerText = album.artist;
       document.getElementById("detail-album-counter").innerText = `0${albumIdx + 1} / 0${albumsData.length}`;
 
-      // Calculate runtime
-      const totalSeconds = album.tracks.reduce((sum, t) => sum + (t.sec || 240), 0);
-      const mins = Math.floor(totalSeconds / 60);
-      const secs = totalSeconds % 60;
-      document.getElementById("detail-summary-count").innerText = `${album.tracks.length} TRACK &bull; ${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
-
-      // Render Tracks List
-      const tracklist = document.getElementById("detail-tracklist");
-      tracklist.innerHTML = "";
-
-      album.tracks.forEach((track, tIdx) => {
-        const row = document.createElement("div");
-        row.className = `group flex items-center justify-between p-3.5 sm:p-4 rounded-xl hover:bg-white/10 transition cursor-pointer ${
-          currentIndex === albumIdx && currentTrackIndex === tIdx ? 'bg-white/10 border-l-4 border-teal-400' : ''
-        }`;
-        
-        row.innerHTML = `
-          <div class="flex items-center space-x-4 min-w-0">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center font-mono text-sm text-slate-400 group-hover:bg-teal-400 group-hover:text-black transition">
-              <span class="group-hover:hidden">0${tIdx + 1}</span>
-              <i class="fa-solid fa-play text-xs hidden group-hover:block ml-0.5"></i>
-            </div>
-            <div class="flex flex-col min-w-0">
-              <span class="text-sm sm:text-base font-semibold text-white group-hover:text-teal-300 transition truncate">
-                ${track.title}
-              </span>
-              <span class="text-xs text-slate-400 truncate">${album.artist}</span>
-            </div>
+      // Panel 1: Lyrics & Chords
+      const panel1Photos = album.photos || [childlikeDoodles[1], childlikeDoodles[2], childlikeDoodles[3]];
+      document.getElementById("panel1-photo").src = panel1Photos[0] || album.cover;
+      
+      const lyricsContainer = document.getElementById("detail-lyrics-panel1");
+      lyricsContainer.innerHTML = album.lyricsLines.map((line, lIdx) => `
+        <div class="flex items-start justify-between border-b border-[#2c241c]/10 pb-2 hover:bg-black/5 px-1 rounded transition">
+          <div>
+            <span class="font-mono text-xs font-bold text-[#7c664d] mr-2">0${lIdx + 1}</span>
+            <span class="font-bold">${line.text}</span>
           </div>
-          
-          <div class="flex items-center space-x-4 shrink-0 font-mono text-xs text-slate-400">
-            <span class="hidden sm:inline-block px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] text-teal-300">HQ 24-BIT</span>
-            <span>${track.duration}</span>
-            <button onclick="event.stopPropagation(); alert('已加入播放收藏列表')" class="opacity-0 group-hover:opacity-100 hover:text-white transition p-1">
-              <i class="fa-regular fa-heart"></i>
-            </button>
-          </div>
-        `;
+          <span class="font-mono text-xs text-[#7c664d]">${line.time}</span>
+        </div>
+      `).join('');
 
-        row.addEventListener("click", () => {
-          playTrack(tIdx);
-        });
+      // Panel 2: Notes & Reflections
+      document.getElementById("panel2-photo").src = panel1Photos[1] || album.cover;
+      document.getElementById("detail-notes-panel2").innerHTML = `
+        <p class="italic text-xs text-[#f1c882] bg-black/20 p-2.5 rounded border-l-2 border-[#f1c882]">
+          「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24
+        </p>
+        <p class="pt-1 whitespace-pre-line">${album.notes}</p>
+      `;
 
-        tracklist.appendChild(row);
-      });
+      // Panel 3: Credits & Production
+      document.getElementById("panel3-photo").src = panel1Photos[2] || album.cover;
+      document.getElementById("detail-credits-panel3").innerHTML = `
+        <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+          <span class="text-[#756a60]">词曲创作：</span>
+          <span class="font-semibold text-[#1c1815]">${album.credits.composer}</span>
+        </div>
+        <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+          <span class="text-[#756a60]">编曲制作：</span>
+          <span class="font-semibold text-[#1c1815]">${album.credits.arrangement}</span>
+        </div>
+        <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+          <span class="text-[#756a60]">人声主唱：</span>
+          <span class="font-semibold text-[#1c1815]">${album.credits.vocals}</span>
+        </div>
+        <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+          <span class="text-[#756a60]">混音母带：</span>
+          <span class="font-semibold text-[#1c1815]">${album.credits.mixing}</span>
+        </div>
+      `;
     }
 
     function prevAlbum() {
@@ -1308,35 +1443,24 @@ You have set my feet upon the rock!`,
       openDetailView(nextIdx);
     }
 
-    /* ================= PLAYBACK ENGINE (SIMULATED & SYNCHRONIZED) ================= */
+    /* ================= PLAYBACK ENGINE ================= */
     function playTrack(trackIdx) {
-      currentTrackIndex = trackIdx;
       const album = albumsData[currentIndex];
-      const track = album.tracks[trackIdx];
 
-      // Update Mini Player UI
       document.getElementById("player-mini-cover").src = album.cover;
-      document.getElementById("player-mini-title").innerText = track.title;
+      document.getElementById("player-mini-title").innerText = album.title;
       document.getElementById("player-mini-artist").innerText = album.artist;
-      document.getElementById("player-time-dur").innerText = track.duration;
+      document.getElementById("player-time-dur").innerText = album.duration;
 
-      // Start Playing
       currentPlaybackSeconds = 0;
       isPlaying = true;
       updatePlayPauseButton();
-      startPlaybackTimer(track.sec || 240);
-
-      // Re-render tracklist highlight
-      loadAlbumDetail(currentIndex);
+      startPlaybackTimer(album.sec || 250);
     }
 
     function quickPlay(albumIdx) {
       currentIndex = albumIdx;
       targetProgress = albumIdx;
-      playTrack(0);
-    }
-
-    function playAll() {
       playTrack(0);
     }
 
@@ -1352,10 +1476,8 @@ You have set my feet upon the rock!`,
       updatePlayPauseButton();
 
       const album = albumsData[currentIndex];
-      const track = album.tracks[currentTrackIndex];
-
       if (isPlaying) {
-        startPlaybackTimer(track.sec || 240);
+        startPlaybackTimer(album.sec || 250);
       } else {
         clearInterval(playbackInterval);
       }
@@ -1377,24 +1499,26 @@ You have set my feet upon the rock!`,
     }
 
     function prevTrack() {
-      if (currentIndex > 0) {
-        currentIndex--;
-      } else {
-        currentIndex = albumsData.length - 1;
-      }
+      if (currentIndex > 0) currentIndex--;
+      else currentIndex = albumsData.length - 1;
       targetProgress = currentIndex;
       playTrack(0);
+      if (document.getElementById("view-detail").classList.contains("opacity-100")) {
+        loadAlbumDetail(currentIndex);
+      }
     }
 
     function nextTrack() {
       if (isShuffle) {
-        const rand = Math.floor(Math.random() * albumsData.length);
-        currentIndex = rand;
+        currentIndex = Math.floor(Math.random() * albumsData.length);
       } else {
         currentIndex = (currentIndex + 1) % albumsData.length;
       }
       targetProgress = currentIndex;
       playTrack(0);
+      if (document.getElementById("view-detail").classList.contains("opacity-100")) {
+        loadAlbumDetail(currentIndex);
+      }
     }
 
     function toggleShuffle() {
@@ -1441,8 +1565,7 @@ You have set my feet upon the rock!`,
         const pct = Math.max(0, Math.min(1, clickX / rect.width));
         
         const album = albumsData[currentIndex];
-        const track = album.tracks[currentTrackIndex];
-        const totalSec = track.sec || 240;
+        const totalSec = album.sec || 250;
 
         currentPlaybackSeconds = Math.floor(pct * totalSec);
         document.getElementById("player-progress-bar").style.width = `${pct * 100}%`;
@@ -1455,19 +1578,16 @@ You have set my feet upon the rock!`,
 
     function setupVolumeControl() {
       const vol = document.getElementById("player-volume");
-      vol.addEventListener("input", (e) => {
-        // Volume adjustment simulation
-      });
+      vol.addEventListener("input", (e) => {});
     }
 
     function shareSong() {
       const album = albumsData[currentIndex];
-      const track = album.tracks[currentTrackIndex];
       if (navigator.clipboard) {
         navigator.clipboard.writeText(window.location.href);
-        alert(`已复制分享链接：${track.title} - ${album.artist}`);
+        alert(`已复制分享链接：${album.title} - ${album.artist}`);
       } else {
-        alert(`分享：${track.title} - ${album.artist}`);
+        alert(`分享：${album.title} - ${album.artist}`);
       }
     }
   </script>
