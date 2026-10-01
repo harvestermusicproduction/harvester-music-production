@@ -2485,7 +2485,7 @@ section[id], div[id^="section-"] {
   width: 230px;
   height: 310px;
   transform-style: preserve-3d;
-  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+  transition: opacity 0.3s ease;
   cursor: pointer;
   will-change: transform, opacity;
 }

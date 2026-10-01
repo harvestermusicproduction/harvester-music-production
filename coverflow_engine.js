@@ -1,24 +1,28 @@
 /**
  * 🎵 Harvester 3D Album Cover Flow & Immersive Single Song Engine
  * 1. Each 3D Album Box = 1 Single Track (1 Album = 1 Single)
- * 2. Playful, Childlike Hand-Drawn & Whimsical Crayon / Watercolor Covers
- * 3. 3D Spine-Stacked Rack with Thick Slabs, Dynamic Spine Colors & Fluid Momentum
- * 4. Immersive Album Experience Screen with Single Track Focus, Full Lyrics & Scores
- * 5. Floating Glass Mini-Player Pill with Real Audio Playback & Sound Wave Visualizer
+ * 2. Whimsical Childlike Hand-Drawn & Crayon / Watercolor Doodle Art Covers
+ * 3. Continuous 60fps/120fps Smooth Physics Lerp with Momentum Mouse Drag & Swipe
+ * 4. 3D Spine-Stacked Rack with Real-Time Depth & Angles
+ * 5. Immersive Single Song Experience with PDF Scores, Full Lyrics, YouTube & Spotify
+ * 6. Floating Glass Mini-Player Pill with Sound Wave Visualizer
  */
 
 (function() {
-  // Curated Whimsical & Childlike Hand-Drawn Doodle Illustrations
+  // Curated Collection of Childlike Hand-Drawn & Whimsical Crayon / Watercolor Doodle Illustrations
   const childlikeDoodles = [
-    "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800&auto=format&fit=crop&q=80", // colorful whimsical painting
-    "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&auto=format&fit=crop&q=80", // watercolor splash & doodle
-    "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=800&auto=format&fit=crop&q=80", // playful abstract shapes
-    "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=800&auto=format&fit=crop&q=80", // botanical playful sketch
-    "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=800&auto=format&fit=crop&q=80", // cute hand-drawn illustration
-    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80", // pastel childlike dream
-    "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=800&auto=format&fit=crop&q=80", // creative vibrant brushstrokes
-    "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800&auto=format&fit=crop&q=80", // bright playful colors
-    "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=800&auto=format&fit=crop&q=80"  // childlike expressive painting
+    "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=900&auto=format&fit=crop&q=80", // colorful whimsical painting
+    "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=900&auto=format&fit=crop&q=80", // watercolor splash & doodle
+    "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=900&auto=format&fit=crop&q=80", // playful abstract shapes
+    "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=900&auto=format&fit=crop&q=80", // botanical playful sketch
+    "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=900&auto=format&fit=crop&q=80", // cute hand-drawn illustration
+    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=900&auto=format&fit=crop&q=80", // pastel childlike dream
+    "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=900&auto=format&fit=crop&q=80", // creative vibrant brushstrokes
+    "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=900&auto=format&fit=crop&q=80", // bright playful colors
+    "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=900&auto=format&fit=crop&q=80", // childlike expressive painting
+    "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?w=900&auto=format&fit=crop&q=80", // warm joyful mountains & sun
+    "https://images.unsplash.com/photo-1579783901586-d88db74b4fe4?w=900&auto=format&fit=crop&q=80", // whimsical starry dream doodle
+    "https://images.unsplash.com/photo-1549490349-8643362247b5?w=900&auto=format&fit=crop&q=80"  // pastel crayon art
   ];
 
   // Default Curated Single Songs (1 Album = 1 Single Track) with Childlike Doodle Art
@@ -284,6 +288,18 @@ You have set my feet upon the rock!`
   let isPlaying = false;
   let audioPlayer = new Audio();
 
+  // Continuous Physics Drag & Animation State
+  let currentProgress = 0; // Continuous floating index (e.g. 0.0 -> 1.45 -> 2.0)
+  let targetProgress = 0;  // Target integer/float index
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartProgress = 0;
+  let lastDragX = 0;
+  let lastDragTime = 0;
+  let dragVelocity = 0;
+  let hasMovedFar = false;
+  let isPhysicsRunning = false;
+
   // Audio Event Listeners
   audioPlayer.addEventListener('ended', () => {
     isPlaying = false;
@@ -295,11 +311,12 @@ You have set my feet upon the rock!`
     await fetchSupabaseSongs();
     renderAppLayout();
     setupEventListeners();
-    setupTouchAndDrag();
+    setupInteractiveDrag();
     renderMiniPlayer();
+    startPhysicsLoop();
   }
 
-  // Fetch Dynamic CMS Songs and Map 1:1 to 3D Albums
+  // Fetch Dynamic CMS Songs and Map 1:1 to 3D Albums with Childlike Doodle Art
   async function fetchSupabaseSongs() {
     try {
       if (window.supabase) {
@@ -318,7 +335,6 @@ You have set my feet upon the rock!`
         // 2. Fetch single songs from music_works
         const { data: songs } = await window.supabase.from('music_works').select('*').order('created_at', { ascending: false });
         if (songs && songs.length > 0) {
-          // Map each single song 1:1 to a 3D Album slab!
           const mappedFromDb = songs.map((s, idx) => {
             const doodleFallback = childlikeDoodles[idx % childlikeDoodles.length];
             const customMatch = customAlbums?.find(c => c.id === s.id || c.title === s.title);
@@ -330,8 +346,8 @@ You have set my feet upon the rock!`
               artist: s.artist || customMatch?.artist || "Harvester Worship",
               genre: customMatch?.genre || "CCM / Worship · 2025",
               year: customMatch?.year || "2025",
-              theme_color: customMatch?.theme_color || ["#1c2b36", "#169b9b", "#3a2d10", "#b06d60", "#182736", "#255977"][idx % 6],
-              spine_bg: customMatch?.spine_bg || ["#1877F2", "#00b894", "#f39c12", "#ea8676", "#0984e3", "#2d3436"][idx % 6],
+              theme_color: customMatch?.theme_color || ["#1c2b36", "#169b9b", "#3a2d10", "#b06d60", "#182736", "#255977", "#271b16", "#0f1c24", "#1f1d36"][idx % 9],
+              spine_bg: customMatch?.spine_bg || ["#1877F2", "#00b894", "#f39c12", "#ea8676", "#0984e3", "#2d3436", "#e77f67", "#1b2a4a", "#6c5ce7"][idx % 9],
               spine_color: customMatch?.spine_color || "#ffffff",
               spine_text: customMatch?.spine_text || `${s.title} · ${s.artist || 'Harvester'}`,
               cover_url: s.cover_url || customMatch?.cover_url || doodleFallback,
@@ -374,7 +390,7 @@ You have set my feet upon the rock!`
 
         <div class="header-center">
           <div class="pill-segmented-control">
-            <button class="pill-btn active">🎵 3D 敬拜诗歌展台 (Single Works)</button>
+            <button class="pill-btn active">🎵 3D 敬拜诗歌展台 (Single Works · 左右滑动浏览)</button>
           </div>
         </div>
 
@@ -385,13 +401,13 @@ You have set my feet upon the rock!`
 
       <!-- 2. 3D Coverflow Stage (1 Album = 1 Single Track) -->
       <div class="shelf-wrapper" id="shelfWrapper">
-        <div class="coverflow-carousel" id="coverflowCarousel">
+        <div class="coverflow-carousel" id="coverflowCarousel" style="touch-action: pan-y; cursor: grab; user-select: none;">
           ${albums.map((album, idx) => `
-            <div class="album-3d-box ${idx === currentIndex ? 'active' : ''}" data-index="${idx}" onclick="handleAlbumClick(${idx})">
+            <div class="album-3d-box ${idx === currentIndex ? 'active' : ''}" data-index="${idx}" style="transition: opacity 0.3s ease;">
               <div class="album-cube">
                 <!-- Front Cover Face (Childlike Doodle Art) -->
                 <div class="cube-face cube-front">
-                  <img src="${album.cover_url || childlikeDoodles[idx % childlikeDoodles.length]}" alt="${album.title}" onerror="this.src='assets/logo.png'">
+                  <img src="${album.cover_url || childlikeDoodles[idx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
                   <div class="album-glass-sheen"></div>
                   <div class="album-inner-border"></div>
                 </div>
@@ -446,7 +462,7 @@ You have set my feet upon the rock!`
             <span class="cf-tag font-eng-title" id="cfAlbumYear">${albums[currentIndex]?.year || '2025'} RELEASE</span>
             <h2 class="cf-album-title" id="cfAlbumTitle">${albums[currentIndex]?.title}</h2>
             <p class="cf-album-artist" id="cfAlbumArtist">${albums[currentIndex]?.artist}</p>
-            <button class="btn-open-booklet" onclick="openSongDetailView(${currentIndex})">
+            <button class="btn-open-booklet" onclick="openSongDetailView(Math.round(currentProgress))">
               <i class="fas fa-music"></i> 翻开单曲与歌谱 (View Song & Scores)
             </button>
           </div>
@@ -489,87 +505,260 @@ You have set my feet upon the rock!`
           <button class="mini-play-btn" onclick="event.stopPropagation(); toggleAudioPlay();">
             <i id="miniPlayIcon" class="fas fa-play"></i>
           </button>
-          <button class="mini-queue-btn" onclick="event.stopPropagation(); openSongDetailView(currentIndex);" title="查看歌谱与歌词">
+          <button class="mini-queue-btn" onclick="event.stopPropagation(); openSongDetailView(Math.round(currentProgress));" title="查看歌谱与歌词">
             <i class="fas fa-file-alt"></i>
           </button>
         </div>
       </div>
     `;
 
-    updateCoverFlow3DPositions();
+    render3DCoverflow();
   }
 
-  // Update 3D Matrix & Angles for Shelf
-  function updateCoverFlow3DPositions() {
-    const boxes = document.querySelectorAll('.album-3d-box');
-    const isMobile = window.innerWidth <= 768;
-    const stepX = isMobile ? 48 : 68;
-    const centerGap = isMobile ? 32 : 52;
+  // =================================================================
+  // 🚀 HIGH PERFORMANCE 60FPS/120FPS PHYSICS LOOP (BUTTERY SMOOTH)
+  // =================================================================
+  function startPhysicsLoop() {
+    if (isPhysicsRunning) return;
+    isPhysicsRunning = true;
 
-    boxes.forEach((box, i) => {
-      const offset = i - currentIndex;
-      box.classList.toggle('active', offset === 0);
-
-      let transformStyle = '';
-      let zIndex = 100 - Math.abs(offset);
-      let opacity = 1;
-
-      if (offset === 0) {
-        // Active Center Album: Standing at 65deg slightly turned forward with crisp sheen
-        transformStyle = `translateX(0px) translateZ(80px) rotateY(65deg) scale(1.1)`;
-        opacity = 1;
-      } else if (offset < 0) {
-        // Left Side Albums: Tilted +76deg showing thick spine facing viewer-left and cover facing right
-        const xOffset = offset * stepX - centerGap;
-        const zOffset = Math.abs(offset) * -38;
-        const rotY = 76;
-        const scale = Math.max(0.72, 1 - Math.abs(offset) * 0.035);
-        opacity = Math.max(0.35, 1 - Math.abs(offset) * 0.08);
-        transformStyle = `translateX(${xOffset}px) translateZ(${zOffset}px) rotateY(${rotY}deg) scale(${scale})`;
+    function tick() {
+      if (!isDragging) {
+        // Continuous Spring Lerp toward targetProgress
+        const diff = targetProgress - currentProgress;
+        if (Math.abs(diff) > 0.0004) {
+          currentProgress += diff * 0.135;
+          render3DCoverflow();
+        } else if (currentProgress !== targetProgress) {
+          currentProgress = targetProgress;
+          render3DCoverflow();
+          updateMetaBar();
+        }
       } else {
-        // Right Side Albums: Tilted -76deg showing thick spine facing viewer-right and cover facing left
-        const xOffset = offset * stepX + centerGap;
-        const zOffset = Math.abs(offset) * -38;
-        const rotY = -76;
-        const scale = Math.max(0.72, 1 - Math.abs(offset) * 0.035);
-        opacity = Math.max(0.35, 1 - Math.abs(offset) * 0.08);
-        transformStyle = `translateX(${xOffset}px) translateZ(${zOffset}px) rotateY(${rotY}deg) scale(${scale})`;
+        // While dragging, lerp fast for responsive direct-follow feeling
+        currentProgress += (targetProgress - currentProgress) * 0.38;
+        render3DCoverflow();
       }
 
-      box.style.transform = transformStyle;
-      box.style.zIndex = zIndex;
-      box.style.opacity = opacity;
-    });
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
 
-    // Update Meta Bar Text
-    const cur = albums[currentIndex];
+  // Continuous 3D Transform Rendering for All Slabs
+  function render3DCoverflow() {
+    const boxes = document.querySelectorAll('.album-3d-box');
+    if (!boxes.length) return;
+
+    const isMobile = window.innerWidth <= 768;
+    const stepX = isMobile ? 52 : 72;
+    const centerGap = isMobile ? 38 : 58;
+
+    const activeIntIdx = Math.round(currentProgress);
+
+    boxes.forEach((box, i) => {
+      const offset = i - currentProgress;
+      const absOffset = Math.abs(offset);
+
+      let x = 0;
+      let z = 0;
+      let rotY = 0;
+      let scale = 1;
+      let opacity = 1;
+      let zIndex = Math.round(120 - absOffset * 10);
+
+      if (offset <= 0) {
+        // Center to Left side slabs
+        const pLeft = Math.min(1, Math.max(0, -offset));
+        rotY = 62 + (75 - 62) * pLeft;
+        x = offset * stepX - centerGap * pLeft;
+        z = 90 - (90 - (-absOffset * 44)) * pLeft;
+        scale = 1.12 - (1.12 - Math.max(0.68, 1 - absOffset * 0.038)) * pLeft;
+        opacity = 1 - (1 - Math.max(0.25, 1 - absOffset * 0.09)) * pLeft;
+      } else {
+        // Center to Right side slabs
+        const pRight = Math.min(1, Math.max(0, offset));
+        rotY = 62 + (-75 - 62) * pRight;
+        x = offset * stepX + centerGap * pRight;
+        z = 90 - (90 - (-absOffset * 44)) * pRight;
+        scale = 1.12 - (1.12 - Math.max(0.68, 1 - absOffset * 0.038)) * pRight;
+        opacity = 1 - (1 - Math.max(0.25, 1 - absOffset * 0.09)) * pRight;
+      }
+
+      box.classList.toggle('active', i === activeIntIdx);
+      box.style.transform = `translateX(${x.toFixed(2)}px) translateZ(${z.toFixed(2)}px) rotateY(${rotY.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+      box.style.zIndex = zIndex;
+      box.style.opacity = Math.max(0, Math.min(1, opacity)).toFixed(3);
+    });
+  }
+
+  // Update Meta Caption for Active Album
+  function updateMetaBar() {
+    const activeIdx = Math.max(0, Math.min(albums.length - 1, Math.round(currentProgress)));
+    currentIndex = activeIdx;
+    const cur = albums[activeIdx];
     if (cur) {
       const titleEl = document.getElementById('cfAlbumTitle');
       const artistEl = document.getElementById('cfAlbumArtist');
       const yearEl = document.getElementById('cfAlbumYear');
-      if (titleEl) titleEl.innerText = cur.title;
-      if (artistEl) artistEl.innerText = cur.artist;
+      if (titleEl && titleEl.innerText !== cur.title) titleEl.innerText = cur.title;
+      if (artistEl && artistEl.innerText !== cur.artist) artistEl.innerText = cur.artist;
       if (yearEl) yearEl.innerText = `${cur.year || '2025'} RELEASE`;
     }
   }
 
-  // Handle Album Card Click
-  window.handleAlbumClick = function(idx) {
-    if (idx === currentIndex) {
-      openSongDetailView(idx);
-    } else {
-      currentIndex = idx;
-      updateCoverFlow3DPositions();
-    }
-  };
-
   // Navigate Coverflow Left / Right
   window.navigateCoverFlow = function(dir) {
-    currentIndex += dir;
-    if (currentIndex < 0) currentIndex = 0;
-    if (currentIndex >= albums.length) currentIndex = albums.length - 1;
-    updateCoverFlow3DPositions();
+    let nextIdx = Math.round(targetProgress) + dir;
+    nextIdx = Math.max(0, Math.min(albums.length - 1, nextIdx));
+    targetProgress = nextIdx;
+    updateMetaBar();
   };
+
+  // =================================================================
+  // 🖱️ MOUSE DRAG & TOUCH SWIPE ENGINE (SLIK & FLUID)
+  // =================================================================
+  function setupInteractiveDrag() {
+    const carousel = document.getElementById('coverflowCarousel');
+    const shelf = document.getElementById('shelfWrapper');
+    if (!carousel || !shelf) return;
+
+    function handleDragStart(clientX) {
+      isDragging = true;
+      hasMovedFar = false;
+      dragStartX = clientX;
+      dragStartProgress = currentProgress;
+      lastDragX = clientX;
+      lastDragTime = performance.now();
+      dragVelocity = 0;
+      carousel.style.cursor = 'grabbing';
+      document.body.style.userSelect = 'none';
+    }
+
+    function handleDragMove(clientX) {
+      if (!isDragging) return;
+      const dx = clientX - dragStartX;
+      if (Math.abs(dx) > 5) hasMovedFar = true;
+
+      const now = performance.now();
+      const dt = Math.max(1, now - lastDragTime);
+      dragVelocity = (clientX - lastDragX) / dt;
+      lastDragX = clientX;
+      lastDragTime = now;
+
+      // Sensitivity: ~160px drag = 1 album
+      const pxPerAlbum = window.innerWidth <= 768 ? 120 : 165;
+      let newTarget = dragStartProgress - (dx / pxPerAlbum);
+
+      // Elastic resistance on out of bounds
+      if (newTarget < 0) {
+        newTarget = newTarget * 0.3;
+      } else if (newTarget > albums.length - 1) {
+        const max = albums.length - 1;
+        newTarget = max + (newTarget - max) * 0.3;
+      }
+
+      targetProgress = newTarget;
+    }
+
+    function handleDragEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+      carousel.style.cursor = 'grab';
+      document.body.style.userSelect = '';
+
+      // Project momentum based on release velocity
+      const momentum = -dragVelocity * 14;
+      let finalTarget = Math.round(targetProgress + momentum);
+      finalTarget = Math.max(0, Math.min(albums.length - 1, finalTarget));
+
+      targetProgress = finalTarget;
+      updateMetaBar();
+    }
+
+    // Mouse Events
+    carousel.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return; // Only left click
+      handleDragStart(e.clientX);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isDragging) handleDragMove(e.clientX);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDragging) handleDragEnd();
+    });
+
+    // Touch Events
+    carousel.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        handleDragStart(e.touches[0].clientX);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (isDragging && e.touches.length === 1) {
+        handleDragMove(e.touches[0].clientX);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+      if (isDragging) handleDragEnd();
+    }, { passive: true });
+
+    // Click on individual album slab
+    carousel.addEventListener('click', (e) => {
+      const box = e.target.closest('.album-3d-box');
+      if (!box) return;
+
+      const idx = parseInt(box.dataset.index, 10);
+      if (isNaN(idx)) return;
+
+      // If user dragged more than 6px, it was a drag, not a click
+      if (hasMovedFar) return;
+
+      if (idx === Math.round(currentProgress)) {
+        openSongDetailView(idx);
+      } else {
+        targetProgress = idx;
+        updateMetaBar();
+      }
+    });
+
+    // Mouse Wheel & Trackpad Continuous Scroll
+    let wheelDebounce;
+    shelf.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const delta = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY);
+      targetProgress += delta * 0.0025;
+      targetProgress = Math.max(0, Math.min(albums.length - 1, targetProgress));
+
+      clearTimeout(wheelDebounce);
+      wheelDebounce = setTimeout(() => {
+        targetProgress = Math.round(targetProgress);
+        updateMetaBar();
+      }, 90);
+    }, { passive: false });
+  }
+
+  // Keyboard Navigation
+  function setupEventListeners() {
+    window.addEventListener('keydown', (e) => {
+      const view = document.getElementById('immersiveAlbumView');
+      const isImmersive = view && view.style.display === 'flex';
+
+      if (e.key === 'Escape') {
+        if (isImmersive) closeSongDetailView();
+        return;
+      }
+
+      if (!isImmersive) {
+        if (e.key === 'ArrowLeft') navigateCoverFlow(-1);
+        if (e.key === 'ArrowRight') navigateCoverFlow(1);
+      }
+    });
+  }
 
   // =================================================================
   // 🌟 IMMERSIVE SINGLE SONG DETAIL VIEW (1 Album = 1 Single Track)
@@ -577,11 +766,12 @@ You have set my feet upon the rock!`
   window.openSongDetailView = function(idx) {
     activeSong = albums[idx] || albums[0];
     currentIndex = idx;
+    targetProgress = idx;
+    currentProgress = idx;
 
     const view = document.getElementById('immersiveAlbumView');
     if (!view) return;
 
-    // Apply dynamic ambient background color
     view.style.background = activeSong.theme_color || '#1c2b36';
     view.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -589,7 +779,7 @@ You have set my feet upon the rock!`
     renderSingleSongDetail();
 
     if (window.gsap) {
-      gsap.fromTo(view, { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" });
+      gsap.fromTo(view, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" });
     }
   };
 
@@ -597,7 +787,7 @@ You have set my feet upon the rock!`
     const view = document.getElementById('immersiveAlbumView');
     if (!view) return;
     if (window.gsap) {
-      gsap.to(view, { opacity: 0, scale: 0.95, duration: 0.3, onComplete: () => {
+      gsap.to(view, { opacity: 0, scale: 0.96, duration: 0.3, onComplete: () => {
         view.style.display = 'none';
         document.body.style.overflow = '';
       }});
@@ -674,7 +864,7 @@ You have set my feet upon the rock!`
       audioPlayer.pause();
       isPlaying = false;
     } else {
-      const cur = activeSong || albums[currentIndex];
+      const cur = activeSong || albums[Math.round(currentProgress)];
       if (cur?.audio_url) {
         audioPlayer.src = cur.audio_url;
         audioPlayer.play().catch(e => console.warn(e));
@@ -696,7 +886,7 @@ You have set my feet upon the rock!`
     if (lyricsPlayBtnIcon) lyricsPlayBtnIcon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
     if (miniEqBars) miniEqBars.classList.toggle('playing', isPlaying);
 
-    const cur = activeSong || albums[currentIndex];
+    const cur = activeSong || albums[Math.round(currentProgress)];
     if (cur) {
       if (miniCover) miniCover.src = cur.cover_url;
       if (miniTitle) miniTitle.innerText = cur.title;
@@ -709,7 +899,7 @@ You have set my feet upon the rock!`
   }
 
   window.handleMiniPlayerClick = function() {
-    openSongDetailView(currentIndex);
+    openSongDetailView(Math.round(currentProgress));
   };
 
   window.toggleFullscreen = function() {
@@ -726,83 +916,13 @@ You have set my feet upon the rock!`
     if (q) {
       const foundIdx = albums.findIndex(a => a.title.toLowerCase().includes(q.toLowerCase()) || a.artist.toLowerCase().includes(q.toLowerCase()));
       if (foundIdx !== -1) {
-        currentIndex = foundIdx;
-        updateCoverFlow3DPositions();
+        targetProgress = foundIdx;
+        updateMetaBar();
       } else {
         alert("未找到匹配的歌曲");
       }
     }
   };
-
-  // Keyboard, Mouse Wheel and Touch Drag Physics
-  function setupEventListeners() {
-    window.addEventListener('keydown', (e) => {
-      const view = document.getElementById('immersiveAlbumView');
-      const isImmersive = view && view.style.display === 'flex';
-
-      if (e.key === 'Escape') {
-        if (isImmersive) closeSongDetailView();
-        return;
-      }
-
-      if (!isImmersive) {
-        if (e.key === 'ArrowLeft') navigateCoverFlow(-1);
-        if (e.key === 'ArrowRight') navigateCoverFlow(1);
-      }
-    });
-
-    // Mouse Wheel on Carousel
-    const shelf = document.getElementById('shelfWrapper');
-    if (shelf) {
-      let wheelTimeout;
-      shelf.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        clearTimeout(wheelTimeout);
-        wheelTimeout = setTimeout(() => {
-          if (e.deltaY > 15 || e.deltaX > 15) navigateCoverFlow(1);
-          else if (e.deltaY < -15 || e.deltaX < -15) navigateCoverFlow(-1);
-        }, 35);
-      }, { passive: false });
-    }
-  }
-
-  // Touch and Drag Physics
-  function setupTouchAndDrag() {
-    const carousel = document.getElementById('coverflowCarousel');
-    if (!carousel) return;
-
-    let startX = 0;
-    let isDragging = false;
-
-    carousel.addEventListener('touchstart', (e) => {
-      startX = e.touches[0].clientX;
-      isDragging = true;
-    }, { passive: true });
-
-    carousel.addEventListener('touchend', (e) => {
-      if (!isDragging) return;
-      const endX = e.changedTouches[0].clientX;
-      const diff = endX - startX;
-      if (Math.abs(diff) > 40) {
-        navigateCoverFlow(diff > 0 ? -1 : 1);
-      }
-      isDragging = false;
-    }, { passive: true });
-
-    carousel.addEventListener('mousedown', (e) => {
-      startX = e.clientX;
-      isDragging = true;
-    });
-
-    window.addEventListener('mouseup', (e) => {
-      if (!isDragging) return;
-      const diff = e.clientX - startX;
-      if (Math.abs(diff) > 50) {
-        navigateCoverFlow(diff > 0 ? -1 : 1);
-      }
-      isDragging = false;
-    });
-  }
 
   // Boot on DOM Ready
   if (document.readyState === 'loading') {
