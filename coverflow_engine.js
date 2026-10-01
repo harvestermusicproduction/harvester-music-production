@@ -409,64 +409,74 @@ You have set my feet upon the rock!`
         </div>
       </div>
 
-      <!-- 2. 3D Coverflow Stage (1 Album = 1 Single Track) -->
+      <!-- 2. 3D Coverflow Stage (1 Album = 1 Single Track · Arc Cylinder with Infinite Seamless Loop) -->
       <div class="shelf-wrapper" id="shelfWrapper">
         <div class="coverflow-carousel" id="coverflowCarousel" style="touch-action: pan-y; cursor: grab; user-select: none;">
-          ${albums.map((album, idx) => `
-            <div class="album-3d-box ${idx === currentIndex ? 'active' : ''}" data-index="${idx}" style="transition: opacity 0.3s ease;">
-              <div class="album-cube">
-                <!-- Front Cover Face (Childlike Doodle Art) -->
-                <div class="cube-face cube-front">
-                  <img src="${album.cover_url || childlikeDoodles[idx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
-                  <div class="album-glass-sheen"></div>
-                  <div class="album-inner-border"></div>
-                </div>
+          ${(() => {
+            const M = albums.length || 1;
+            const repeatCount = Math.max(1, Math.ceil(12 / M));
+            const virtualList = [];
+            for (let r = 0; r < repeatCount; r++) {
+              albums.forEach((album, origIdx) => {
+                virtualList.push({ album, origIdx, vIdx: virtualList.length });
+              });
+            }
+            return virtualList.map(({ album, origIdx, vIdx }) => `
+              <div class="album-3d-box ${origIdx === currentIndex && vIdx === 0 ? 'active' : ''}" data-vindex="${vIdx}" data-real-index="${origIdx}">
+                <div class="album-cube">
+                  <!-- Front Cover Face (Childlike Doodle Art) -->
+                  <div class="cube-face cube-front">
+                    <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
+                    <div class="album-glass-sheen"></div>
+                    <div class="album-inner-border"></div>
+                  </div>
 
-                <!-- Left Spine (Tactile CD Jewel Case Spine with 3D Depth) -->
-                <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#1c1815'};">
-                  <div class="spine-inner-text">
-                    <span class="spine-catalog">HMP-${String(idx + 1).padStart(3, '0')}</span>
-                    <span class="spine-title">${album.title}</span>
-                    <span class="spine-artist">${album.artist}</span>
+                  <!-- Left Spine (Tactile CD Jewel Case Spine with 3D Depth) -->
+                  <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#1c1815'};">
+                    <div class="spine-inner-text">
+                      <span class="spine-catalog">HMP-${String(origIdx + 1).padStart(3, '0')}</span>
+                      <span class="spine-title">${album.title}</span>
+                      <span class="spine-artist">${album.artist}</span>
+                    </div>
+                  </div>
+
+                  <!-- Right Spine (Thickness Edge with Title) -->
+                  <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1c1815'};">
+                    <div class="spine-inner-text">
+                      <span class="spine-catalog">HMP-${String(origIdx + 1).padStart(3, '0')}</span>
+                      <span class="spine-title">${album.title}</span>
+                      <span class="spine-artist">${album.artist}</span>
+                    </div>
+                  </div>
+
+                  <!-- Top Thickness Edge -->
+                  <div class="cube-face cube-top" style="background: ${album.spine_bg || '#1c1815'}; filter: brightness(1.2);"></div>
+
+                  <!-- Bottom Thickness Edge -->
+                  <div class="cube-face cube-bottom"></div>
+
+                  <!-- Back Cover Face -->
+                  <div class="cube-face cube-back">
+                    <div class="cube-back-header">
+                      <span class="cube-back-title">${album.title}</span>
+                      <span class="cube-back-logo">HARVESTER</span>
+                    </div>
+                    <div class="cube-back-tracks">
+                      <div style="color:var(--gold); font-weight:bold; margin-bottom:6px;">01. ${album.title}</div>
+                      <div style="font-size:0.75rem; color:#aaa; line-height:1.4;">${album.artist} · ${album.year || '2025'}</div>
+                    </div>
+                    <div class="cube-back-footer">
+                      <span>© ${album.year || '2025'} HARVESTER</span>
+                      <span><i class="fas fa-barcode"></i></span>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Right Spine (Thickness Edge with Title) -->
-                <div class="cube-face cube-spine-right" style="background: ${album.spine_bg || '#1c1815'};">
-                  <div class="spine-inner-text">
-                    <span class="spine-catalog">HMP-${String(idx + 1).padStart(3, '0')}</span>
-                    <span class="spine-title">${album.title}</span>
-                    <span class="spine-artist">${album.artist}</span>
-                  </div>
-                </div>
-
-                <!-- Top Thickness Edge -->
-                <div class="cube-face cube-top" style="background: ${album.spine_bg || '#1c1815'}; filter: brightness(1.2);"></div>
-
-                <!-- Bottom Thickness Edge -->
-                <div class="cube-face cube-bottom"></div>
-
-                <!-- Back Cover Face -->
-                <div class="cube-face cube-back">
-                  <div class="cube-back-header">
-                    <span class="cube-back-title">${album.title}</span>
-                    <span class="cube-back-logo">HARVESTER</span>
-                  </div>
-                  <div class="cube-back-tracks">
-                    <div style="color:var(--gold); font-weight:bold; margin-bottom:6px;">01. ${album.title}</div>
-                    <div style="font-size:0.75rem; color:#aaa; line-height:1.4;">${album.artist} · ${album.year || '2025'}</div>
-                  </div>
-                  <div class="cube-back-footer">
-                    <span>© ${album.year || '2025'} HARVESTER</span>
-                    <span><i class="fas fa-barcode"></i></span>
-                  </div>
-                </div>
+                <!-- 3D Ground Shadow -->
+                <div class="album-shadow-3d"></div>
               </div>
-
-              <!-- 3D Ground Shadow -->
-              <div class="album-shadow-3d"></div>
-            </div>
-          `).join('')}
+            `).join('');
+          })()}
         </div>
 
         <!-- Shelf Meta Caption -->
@@ -558,52 +568,68 @@ You have set my feet upon the rock!`
     requestAnimationFrame(tick);
   }
 
-  // Continuous 3D Transform Rendering for All Slabs (Unified 3D Shelf with Visible Spines)
+  // Continuous 3D Transform Rendering for All Slabs (Curved Arc Cylinder with Infinite Seamless Loop)
   function render3DCoverflow() {
     const boxes = document.querySelectorAll('.album-3d-box');
-    if (!boxes.length) return;
+    if (!boxes.length || !albums.length) return;
 
+    const N = boxes.length;
+    const M = albums.length;
     const isMobile = window.innerWidth <= 768;
-    const stepX = isMobile ? 85 : 125;
-    const centerGap = isMobile ? 35 : 55;
+    const R = isMobile ? 620 : 880;
+    const degStep = isMobile ? 18 : 15.5;
+    const radStep = (degStep * Math.PI) / 180;
 
-    const activeIntIdx = Math.round(currentProgress);
+    const activeRealIdx = ((Math.round(currentProgress) % M) + M) % M;
 
     boxes.forEach((box, i) => {
-      const offset = i - currentProgress;
-      const absOffset = Math.abs(offset);
-
-      // Consistent angled perspective: all albums consistently show their thick left spine
-      // Center active album is at -44deg (showing both cover & spine clearly in spotlight)
-      // Side albums are at -56deg (neatly stacked along the 3D rack)
-      const pActive = Math.max(0, 1 - absOffset);
-      const rotY = -56 + 12 * pActive; // -56deg on sides -> -44deg at center
-
-      let x = offset * stepX;
-      if (offset < 0) x -= centerGap * (1 - pActive);
-      else if (offset > 0) x += centerGap * (1 - pActive);
-
-      const z = 80 * pActive - absOffset * 35;
-      const scale = 0.92 + 0.23 * pActive; // 0.92 on sides -> 1.15 at center
-      const opacity = Math.max(0.18, 1 - absOffset * 0.1);
-
-      // Stacking order: albums stack from left to right along the rack perspective,
-      // with the active spotlight album at the highest priority
-      let zIndex = 500 + i * 10;
-      if (absOffset < 0.6) {
-        zIndex = 1000 + Math.round((0.6 - absOffset) * 200);
+      // Modulo wrap circular distance to [-N/2, N/2]
+      let rawDiff = i - currentProgress;
+      let offset = ((rawDiff % N) + N) % N;
+      if (offset > N / 2) {
+        offset -= N;
       }
 
-      box.classList.toggle('active', i === activeIntIdx);
-      box.style.transform = `translateX(${x.toFixed(2)}px) translateZ(${z.toFixed(2)}px) rotateY(${rotY.toFixed(2)}deg) scale(${Math.max(0.5, scale).toFixed(3)})`;
+      const absOffset = Math.abs(offset);
+      const rad = offset * radStep;
+      const deg = offset * degStep;
+
+      // Concave cylinder arc in 3D space: center is at (0, 0), wings curve backwards into distance
+      const x = R * Math.sin(rad);
+      const z = R * (Math.cos(rad) - 1) + 40 * Math.max(0, 1 - absOffset);
+      const rotY = -deg; // Arc tangential orientation facing viewer along the curve
+
+      // Center spotlight scale
+      const pActive = Math.max(0, 1 - absOffset);
+      const scale = 0.90 + 0.25 * pActive; // 0.90 on wings -> 1.15 in center
+
+      // Opacity along arc: fade out smoothly on periphery
+      let opacity = 1;
+      if (absOffset > 4.5) {
+        opacity = 0;
+      } else if (absOffset > 2.6) {
+        opacity = Math.max(0, 1 - (absOffset - 2.6) / 1.9);
+      }
+
+      // Dynamic Z-Index stacking: items closest to center are always on top
+      const zIndex = 1000 - Math.round(absOffset * 80);
+
+      const realIdx = parseInt(box.dataset.realIndex, 10);
+      const isActive = (realIdx === activeRealIdx) && (absOffset < 0.55);
+      box.classList.toggle('active', isActive);
+
+      box.style.display = opacity <= 0.005 ? 'none' : 'block';
+      box.style.transform = `translateX(${x.toFixed(2)}px) translateZ(${z.toFixed(2)}px) rotateY(${rotY.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
       box.style.zIndex = zIndex;
-      box.style.opacity = Math.max(0, Math.min(1, opacity)).toFixed(3);
+      box.style.opacity = opacity.toFixed(3);
     });
   }
 
   // Update Meta Caption for Active Album
   function updateMetaBar() {
-    const activeIdx = Math.max(0, Math.min(albums.length - 1, Math.round(currentProgress)));
+    if (!albums.length) return;
+    const M = albums.length;
+    const activeIdx = ((Math.round(currentProgress) % M) + M) % M;
     currentIndex = activeIdx;
     const cur = albums[activeIdx];
     if (cur) {
@@ -616,16 +642,14 @@ You have set my feet upon the rock!`
     }
   }
 
-  // Navigate Coverflow Left / Right
+  // Navigate Coverflow Left / Right (Infinite Loop)
   window.navigateCoverFlow = function(dir) {
-    let nextIdx = Math.round(targetProgress) + dir;
-    nextIdx = Math.max(0, Math.min(albums.length - 1, nextIdx));
-    targetProgress = nextIdx;
+    targetProgress = Math.round(targetProgress) + dir;
     updateMetaBar();
   };
 
   // =================================================================
-  // 🖱️ MOUSE DRAG & TOUCH SWIPE ENGINE (SLIK & FLUID)
+  // 🖱️ MOUSE DRAG & TOUCH SWIPE ENGINE (SLIK & FLUID · INFINITE LOOP)
   // =================================================================
   function setupInteractiveDrag() {
     const carousel = document.getElementById('coverflowCarousel');
@@ -655,19 +679,9 @@ You have set my feet upon the rock!`
       lastDragX = clientX;
       lastDragTime = now;
 
-      // Sensitivity: ~160px drag = 1 album
-      const pxPerAlbum = window.innerWidth <= 768 ? 120 : 165;
-      let newTarget = dragStartProgress - (dx / pxPerAlbum);
-
-      // Elastic resistance on out of bounds
-      if (newTarget < 0) {
-        newTarget = newTarget * 0.3;
-      } else if (newTarget > albums.length - 1) {
-        const max = albums.length - 1;
-        newTarget = max + (newTarget - max) * 0.3;
-      }
-
-      targetProgress = newTarget;
+      // Sensitivity: ~165px drag = 1 album (Infinite seamless rotation)
+      const pxPerAlbum = window.innerWidth <= 768 ? 125 : 165;
+      targetProgress = dragStartProgress - (dx / pxPerAlbum);
     }
 
     function handleDragEnd() {
@@ -678,10 +692,7 @@ You have set my feet upon the rock!`
 
       // Project momentum based on release velocity
       const momentum = -dragVelocity * 14;
-      let finalTarget = Math.round(targetProgress + momentum);
-      finalTarget = Math.max(0, Math.min(albums.length - 1, finalTarget));
-
-      targetProgress = finalTarget;
+      targetProgress = Math.round(targetProgress + momentum);
       updateMetaBar();
     }
 
@@ -716,21 +727,28 @@ You have set my feet upon the rock!`
       if (isDragging) handleDragEnd();
     }, { passive: true });
 
-    // Click on individual album slab
+    // Click on individual album slab (Supports Infinite Virtual Ring)
     carousel.addEventListener('click', (e) => {
       const box = e.target.closest('.album-3d-box');
       if (!box) return;
 
-      const idx = parseInt(box.dataset.index, 10);
-      if (isNaN(idx)) return;
+      const vIdx = parseInt(box.dataset.vindex, 10);
+      const realIdx = parseInt(box.dataset.realIndex, 10);
+      if (isNaN(vIdx)) return;
 
-      // If user dragged more than 6px, it was a drag, not a click
+      // If user dragged more than 5px, it was a drag, not a click
       if (hasMovedFar) return;
 
-      if (idx === Math.round(currentProgress)) {
-        openSongDetailView(idx);
+      const boxes = document.querySelectorAll('.album-3d-box');
+      const N = boxes.length;
+      let rawDiff = vIdx - currentProgress;
+      let offset = ((rawDiff % N) + N) % N;
+      if (offset > N / 2) offset -= N;
+
+      if (Math.abs(offset) < 0.45) {
+        openSongDetailView(realIdx);
       } else {
-        targetProgress = idx;
+        targetProgress = currentProgress + offset;
         updateMetaBar();
       }
     });
@@ -743,8 +761,7 @@ You have set my feet upon the rock!`
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) {
         e.preventDefault();
         const delta = e.shiftKey ? e.deltaY : e.deltaX;
-        targetProgress += delta * 0.003;
-        targetProgress = Math.max(0, Math.min(albums.length - 1, targetProgress));
+        targetProgress += delta * 0.0028;
 
         clearTimeout(wheelDebounce);
         wheelDebounce = setTimeout(() => {
