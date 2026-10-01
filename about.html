@@ -382,13 +382,14 @@
       background: rgba(28, 36, 45, 0.85);
       border: 1.5px solid rgba(246, 210, 138, 0.25);
       border-radius: var(--hand-radius-soft);
-      padding: 2rem;
-      display: grid;
-      grid-template-columns: 140px 1fr;
-      gap: 1.5rem;
-      align-items: center;
+      padding: 2.2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 0.8rem;
       transition: all 0.35s ease;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      position: relative;
     }
     .category-card:hover {
       transform: translateY(-4px);
@@ -396,38 +397,41 @@
       background: rgba(36, 46, 56, 0.95);
       box-shadow: 0 20px 45px rgba(0,0,0,0.7), 0 0 25px rgba(246, 210, 138, 0.08);
     }
-    .category-thumb {
-      width: 140px;
-      height: 140px;
+    .category-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px dashed rgba(246, 210, 138, 0.25);
+      padding-bottom: 0.8rem;
+    }
+    .category-card-icon {
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
-      overflow: hidden;
+      background: rgba(246, 210, 138, 0.1);
       border: 1px solid rgba(246, 210, 138, 0.3);
-      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 1.25rem;
       flex-shrink: 0;
     }
-    .category-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.4s ease;
-    }
-    .category-card:hover .category-thumb img {
-      transform: scale(1.06);
-    }
-    .category-content h4 {
+    .category-card-titles h4 {
       font-family: var(--font-hand-cn);
       font-size: 1.65rem;
       color: var(--gold);
-      margin: 0 0 0.2rem 0;
+      margin: 0;
       letter-spacing: 2px;
+      line-height: 1.2;
     }
     .category-content-en {
       font-family: var(--font-hand-en);
       font-size: 0.95rem;
       color: #9c9083;
       letter-spacing: 1px;
-      margin-bottom: 0.8rem;
+      margin: 2px 0 0 0;
     }
     .category-text {
       font-family: var(--font-hand-cn);
@@ -904,7 +908,7 @@
 
         <!-- 名字由来配图 -->
         <div class="origin-photo-frame">
-          <img id="about_origin_img" src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80" alt="收割与田野">
+          <img id="about_origin_img" src="assets/illustrations/morandi-green-tree.jpg" alt="收割与田野">
         </div>
       </div>
     </section>
@@ -1051,7 +1055,7 @@
             </p>
           </div>
           <div class="audience-photo-wrap">
-            <img id="about_aud_call_img" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80" alt="创作门徒乐手">
+            <img id="about_aud_call_img" src="assets/illustrations/morandi-light-silhouette.png" alt="创作门徒乐手">
           </div>
         </div>
 
@@ -1076,7 +1080,7 @@
             </p>
           </div>
           <div class="audience-photo-wrap">
-            <img id="about_aud_target_img" src="https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=800&q=80" alt="现场敬拜青年">
+            <img id="about_aud_target_img" src="assets/illustrations/morandi-bird-sky.png" alt="现场敬拜青年">
           </div>
         </div>
       </div>
@@ -1095,61 +1099,62 @@
       <div class="categories-grid">
         <!-- 类别 1: 布道型 -->
         <div class="category-card">
-          <div class="category-thumb">
-            <img id="about_cat1_img" src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&w=600&q=80" alt="布道型">
+          <div class="category-card-header">
+            <div class="category-card-icon"><i class="fas fa-bullhorn"></i></div>
+            <div class="category-card-titles">
+              <h4 id="about_cat1_t">布道型</h4>
+              <div id="about_cat1_te" class="category-content-en">Evangelistic</div>
+            </div>
           </div>
-          <div class="category-content">
-            <h4 id="about_cat1_t">布道型</h4>
-            <div id="about_cat1_te" class="category-content-en">Evangelistic</div>
-            <p id="about_cat1_d1" class="category-text">适用于布道会或福音外展活动，结合流行音乐元素，使福音信息更具吸引力。</p>
-            <p id="about_cat1_d2" class="category-text" style="color:var(--gold);">目的在于带动气氛，并整体传达基督信仰的核心价值观。</p>
-          </div>
+          <p id="about_cat1_d1" class="category-text">适用于布道会或福音外展活动，结合流行音乐元素，使福音信息更具吸引力。</p>
+          <p id="about_cat1_d2" class="category-text" style="color:var(--gold);">目的在于带动气氛，并整体传达基督信仰的核心价值观。</p>
         </div>
 
         <!-- 类别 2: 教会型 -->
         <div class="category-card">
-          <div class="category-thumb">
-            <img id="about_cat2_img" src="https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&w=600&q=80" alt="教会型">
+          <div class="category-card-header">
+            <div class="category-card-icon"><i class="fas fa-church"></i></div>
+            <div class="category-card-titles">
+              <h4 id="about_cat2_t">教会型</h4>
+              <div id="about_cat2_te" class="category-content-en">Church Worship</div>
+            </div>
           </div>
-          <div class="category-content">
-            <h4 id="about_cat2_t">教会型</h4>
-            <div id="about_cat2_te" class="category-content-en">Church Worship</div>
-            <p id="about_cat2_d1" class="category-text">适用于教会敬拜、团契、主日崇拜等，歌词内容以赞美、敬拜、祷告为主，符合教会使用需求。</p>
-            <p id="about_cat2_d2" class="category-text" style="color:var(--gold);">旨在帮助信徒更深入地进入敬拜神的氛围。</p>
-          </div>
+          <p id="about_cat2_d1" class="category-text">适用于教会敬拜、团契、主日崇拜等，歌词内容以赞美、敬拜、祷告为主，符合教会使用需求。</p>
+          <p id="about_cat2_d2" class="category-text" style="color:var(--gold);">旨在帮助信徒更深入地进入敬拜神的氛围。</p>
         </div>
 
         <!-- 类别 3: 商业型 -->
         <div class="category-card">
-          <div class="category-thumb">
-            <img id="about_cat3_img" src="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=600&q=80" alt="商业型">
+          <div class="category-card-header">
+            <div class="category-card-icon"><i class="fas fa-broadcast-tower"></i></div>
+            <div class="category-card-titles">
+              <h4 id="about_cat3_t">商业型</h4>
+              <div id="about_cat3_te" class="category-content-en">Commercial / Contemporary</div>
+            </div>
           </div>
-          <div class="category-content">
-            <h4 id="about_cat3_t">商业型</h4>
-            <div id="about_cat3_te" class="category-content-en">Commercial / Contemporary</div>
-            <p id="about_cat3_d1" class="category-text">适用于日常生活，可在社交媒体、流行音乐平台上播放。</p>
-            <p id="about_cat3_d2" class="category-text">歌词生活化、口语化，使非信徒也能接受和感动。</p>
-            <p id="about_cat3_d3" class="category-text" style="color:var(--gold);">通过触动人心的旋律和歌词，引导听众认识上帝的爱。</p>
-          </div>
+          <p id="about_cat3_d1" class="category-text">适用于日常生活，可在社交媒体、流行音乐平台上播放。</p>
+          <p id="about_cat3_d2" class="category-text">歌词生活化、口语化，使非信徒也能接受和感动。</p>
+          <p id="about_cat3_d3" class="category-text" style="color:var(--gold);">通过触动人心的旋律和歌词，引导听众认识上帝的爱。</p>
         </div>
 
         <!-- 类别 4: 主题曲 (机构/特殊事工) -->
         <div class="category-card">
-          <div class="category-thumb">
-            <img id="about_cat4_img" src="https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=600&q=80" alt="主题曲">
+          <div class="category-card-header">
+            <div class="category-card-icon"><i class="fas fa-heart"></i></div>
+            <div class="category-card-titles">
+              <h4 id="about_cat4_t">主题曲</h4>
+              <div id="about_cat4_te" class="category-content-en">Theme Songs</div>
+            </div>
           </div>
-          <div class="category-content">
-            <h4 id="about_cat4_t">主题曲</h4>
-            <div id="about_cat4_te" class="category-content-en">Theme Songs</div>
-            <p id="about_cat4_d1" class="category-text">为特殊的基督教机构创作主题曲：</p>
-            <p id="about_cat4_d2" class="category-text" style="color:var(--gold); line-height: 1.6;">
-              • 孤儿院 (Orphanage)<br>
-              • 老人院 (Nursing Home)<br>
-              • 特殊儿童教育机构 (Special Needs Children)
-            </p>
-          </div>
+          <p id="about_cat4_d1" class="category-text">为特殊的基督教机构创作主题曲：</p>
+          <p id="about_cat4_d2" class="category-text" style="color:var(--gold); line-height: 1.6;">
+            • 孤儿院 (Orphanage)<br>
+            • 老人院 (Nursing Home)<br>
+            • 特殊儿童教育机构 (Special Needs Children)
+          </p>
         </div>
       </div>
+    </section>
     <!-- ===================================================
          👥 6. 主要同工 (KEY CO-WORKERS · 拍立得手绘画廊)
          =================================================== -->
@@ -1262,7 +1267,7 @@ Edward</div>
         <div class="pastoral-advisory-grid">
           <!-- Left: Polaroid with Bible and Cross -->
           <div class="pastoral-photo-polaroid">
-            <img id="about_pastoral_img" src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80" alt="圣经与属灵遮盖" class="pastoral-photo-img">
+            <img id="about_pastoral_img" src="assets/illustrations/morandi-white-tree.jpg" alt="圣经与属灵遮盖" class="pastoral-photo-img">
             <div class="polaroid-role-badge" id="about_pastoral_badge" style="font-size:1.2rem; color:#b37d2e;">属灵遮盖与歌词监督</div>
             <div class="polaroid-role-en" id="about_pastoral_badge_en" style="font-size:0.75rem;">Spiritual Covering & Supervision</div>
           </div>
@@ -1349,7 +1354,7 @@ Edward</div>
       </div>
 
       <div id="cfg_about_media_container" style="width: 100%; max-width: 1000px; aspect-ratio: 16 / 9; margin: 0 auto; overflow: hidden; border-radius: var(--hand-radius-soft); border: 1.5px solid rgba(246,210,138,0.25); background: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
-        <img id="cfg_about_banner" src="https://images.unsplash.com/photo-1514525253361-9ee1a07b7ec2?auto=format&fit=crop&w=1200&q=80" alt="关于我们主视觉" style="width: 100%; height: 100%; object-fit: cover;">
+        <img id="cfg_about_banner" src="assets/illustrations/morandi-snow-mountain.jpg" alt="关于我们主视觉" style="width: 100%; height: 100%; object-fit: cover;">
       </div>
 
       <div style="max-width: 850px; margin: 2rem auto 0; text-align: center;">

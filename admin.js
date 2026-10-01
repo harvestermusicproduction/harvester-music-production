@@ -2144,10 +2144,10 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
               <label style="display:block; color:var(--gold); font-size:0.85rem; font-weight:bold; margin-bottom:10px;">投稿须知宣传海报 (Poster)</label>
-              <img id="prev_submit_poster" src="${c['cfg_submit_poster'] || 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80'}" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:10px; border:1px solid #222;">
+              <img id="prev_submit_poster" src="${c['cfg_submit_poster'] || 'assets/illustrations/morandi-bird-sky.png'}" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:10px; border:1px solid #222;">
               <input type="file" id="f_submit_poster" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:8px;">
               <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_submit_poster', 'in_submit_poster', 'prev_submit_poster')">📤 上传海报图片</button>
-              <input type="hidden" id="in_submit_poster" value="${c['cfg_submit_poster'] || ''}">
+              <input type="hidden" id="in_submit_poster" value="${c['cfg_submit_poster'] || 'assets/illustrations/morandi-bird-sky.png'}">
             </div>
           </div>
           <button class="btn btn-submit" style="width:100%; padding:14px; margin-top:20px;" onclick="saveSubmitPageCMS()">💾 立即保存投稿须知设置</button>
@@ -2552,10 +2552,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <!-- 配图上传 -->
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
               <label style="display:block; color:var(--gold); font-size:0.85rem; font-weight:bold; margin-bottom:10px;">名字由来展示配图 (Origin Photo)</label>
-              <img id="prev_about_origin_img" src="${d('about_origin_img', 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80')}" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:12px; border:1px solid #222;">
+              <img id="prev_about_origin_img" src="${d('about_origin_img', 'assets/illustrations/morandi-green-tree.jpg')}" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:12px; border:1px solid #222;">
               <input type="file" id="f_about_origin_img" style="font-size:0.8rem; width:100%; margin-bottom:8px;">
               <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_origin_img', 'in_about_origin_img', 'prev_about_origin_img')">📤 上传并更换配图</button>
-              <input type="hidden" id="in_about_origin_img" value="${d('about_origin_img', 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80')}">
+              <input type="hidden" id="in_about_origin_img" value="${d('about_origin_img', 'assets/illustrations/morandi-green-tree.jpg')}">
             </div>
           </div>
         </div>
@@ -2744,10 +2744,10 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <div>
                 <label style="font-size:0.75rem; color:var(--gold); display:block; margin-bottom:5px;">群体配图 (Photo)</label>
-                <img id="prev_about_aud_call_img" src="${d('about_aud_call_img', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80')}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin-bottom:8px; border:1px solid #333;">
+                <img id="prev_about_aud_call_img" src="${d('about_aud_call_img', 'assets/illustrations/morandi-light-silhouette.png')}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin-bottom:8px; border:1px solid #333;">
                 <input type="file" id="f_about_aud_call_img" style="font-size:0.8rem; width:100%; margin-bottom:5px;">
                 <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_aud_call_img', 'in_about_aud_call_img', 'prev_about_aud_call_img')">📤 上传群体配图</button>
-                <input type="hidden" id="in_about_aud_call_img" value="${d('about_aud_call_img', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80')}">
+                <input type="hidden" id="in_about_aud_call_img" value="${d('about_aud_call_img', 'assets/illustrations/morandi-light-silhouette.png')}">
               </div>
             </div>
 
@@ -2773,10 +2773,10 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <div>
                 <label style="font-size:0.75rem; color:var(--gold); display:block; margin-bottom:5px;">受众配图 (Photo)</label>
-                <img id="prev_about_aud_target_img" src="${d('about_aud_target_img', 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=800&q=80')}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin-bottom:8px; border:1px solid #333;">
+                <img id="prev_about_aud_target_img" src="${d('about_aud_target_img', 'assets/illustrations/morandi-bird-sky.png')}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin-bottom:8px; border:1px solid #333;">
                 <input type="file" id="f_about_aud_target_img" style="font-size:0.8rem; width:100%; margin-bottom:5px;">
                 <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_aud_target_img', 'in_about_aud_target_img', 'prev_about_aud_target_img')">📤 上传受众配图</button>
-                <input type="hidden" id="in_about_aud_target_img" value="${d('about_aud_target_img', 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=800&q=80')}">
+                <input type="hidden" id="in_about_aud_target_img" value="${d('about_aud_target_img', 'assets/illustrations/morandi-bird-sky.png')}">
               </div>
             </div>
           </div>
@@ -2905,10 +2905,10 @@ document.addEventListener('DOMContentLoaded', () => {
               <!-- Photo -->
               <div style="background:#111; padding:12px; border-radius:8px; border:1px dashed #333; text-align:center;">
                 <label style="font-size:0.75rem; color:#aaa; display:block; margin-bottom:4px;">顾问团圣经配图</label>
-                <img id="prev_about_pastoral_img" src="${d('about_pastoral_img', 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80')}" style="width:100%; height:110px; object-fit:cover; border-radius:4px; margin-bottom:6px;">
+                <img id="prev_about_pastoral_img" src="${d('about_pastoral_img', 'assets/illustrations/morandi-white-tree.jpg')}" style="width:100%; height:110px; object-fit:cover; border-radius:4px; margin-bottom:6px;">
                 <input type="file" id="f_about_pastoral_img" style="font-size:0.7rem; width:100%;">
                 <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_about_pastoral_img', 'in_about_pastoral_img', 'prev_about_pastoral_img')">更换圣经相片</button>
-                <input type="hidden" id="in_about_pastoral_img" value="${d('about_pastoral_img', 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=800&q=80')}">
+                <input type="hidden" id="in_about_pastoral_img" value="${d('about_pastoral_img', 'assets/illustrations/morandi-white-tree.jpg')}">
               </div>
 
               <!-- Content details -->
@@ -2993,10 +2993,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <!-- Banner / Main Image -->
             <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
               <label style="color:var(--gold); font-size:0.8rem; font-weight:bold;">宣传主视觉海报 (Main Image Fallback)</label>
-              <img id="prev_about_banner_file" src="${c['cfg_about_banner']||'https://images.unsplash.com/photo-1514525253361-9ee1a07b7ec2?auto=format&fit=crop&w=1200&q=80'}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin:8px 0; border:1px solid #333;">
+              <img id="prev_about_banner_file" src="${c['cfg_about_banner']||'assets/illustrations/morandi-snow-mountain.jpg'}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin:8px 0; border:1px solid #333;">
               <input type="file" id="f_about_b_file" style="font-size:0.75rem; width:100%;">
               <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_about_b_file', 'in_about_banner', 'prev_about_banner_file')">上传海报</button>
-              <input type="hidden" id="in_about_banner" value="${c['cfg_about_banner']||'https://images.unsplash.com/photo-1514525253361-9ee1a07b7ec2?auto=format&fit=crop&w=1200&q=80'}">
+              <input type="hidden" id="in_about_banner" value="${c['cfg_about_banner']||'assets/illustrations/morandi-snow-mountain.jpg'}">
             </div>
           </div>
 
