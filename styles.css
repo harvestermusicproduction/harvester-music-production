@@ -2772,18 +2772,18 @@ section[id], div[id^="section-"] {
 }
 
 .pill-segmented-control {
-  background: rgba(28, 36, 45, 0.75);
-  border: 1.5px solid rgba(246, 210, 138, 0.3);
-  border-radius: 50px;
+  background: rgba(20, 26, 32, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
   padding: 4px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
   max-width: 100%;
   overflow-x: auto;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .pill-segmented-control::-webkit-scrollbar {
@@ -2792,31 +2792,39 @@ section[id], div[id^="section-"] {
 
 .pill-btn {
   background: transparent;
-  color: var(--text-muted);
-  border: none;
-  padding: 6px 16px;
-  border-radius: 50px;
-  font-size: 0.8rem;
-  font-family: var(--font-songti), serif;
-  letter-spacing: 1px;
+  color: rgba(240, 235, 225, 0.7);
+  border: 1px solid transparent;
+  padding: 7px 18px;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.5px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
+  user-select: none;
 }
 
 .pill-btn:hover {
-  color: #fff;
+  color: #ffffff;
   background: rgba(255, 255, 255, 0.08);
 }
 
 .pill-btn.active {
-  background: linear-gradient(135deg, #f6d28a 0%, #e8a848 100%);
-  color: #161c24;
-  font-weight: 700;
-  box-shadow: 0 4px 12px rgba(246, 210, 138, 0.35);
+  background: linear-gradient(135deg, rgba(68, 88, 100, 0.95) 0%, rgba(44, 58, 68, 0.95) 100%);
+  color: #fffaf0;
+  font-weight: 600;
+  border: 1px solid rgba(246, 210, 138, 0.42);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+.pill-btn.active span {
+  color: #fffaf0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .header-right .icon-btn {

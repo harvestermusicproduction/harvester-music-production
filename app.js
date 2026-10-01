@@ -674,9 +674,12 @@ document.addEventListener('DOMContentLoaded', () => {
       </a>
     `;
 
-    // Repeat items to make an infinite seamless running ribbon
-    track.innerHTML = galleryItems.map(renderCard).join('') + galleryItems.map(renderCard).join('');
+    // Repeat items 3 times to make a truly endless panoramic ribbon on any screen width
+    const singleSet = galleryItems.map(renderCard).join('');
+    track.innerHTML = singleSet + singleSet + singleSet;
     if (heroSec) heroSec.style.display = 'block';
+
+    const oneSetWidth = () => track.scrollWidth / 3;
 
     // 🏹 Setup Arrow Navigation
     window.scrollEventsGallery = function(direction) {
@@ -693,9 +696,9 @@ document.addEventListener('DOMContentLoaded', () => {
       autoScrollInterval = setInterval(() => {
         if (!isAutoScrolling) return;
         viewport.scrollLeft += 1;
-        // Loop back when reaching half of the duplicated track
-        if (viewport.scrollLeft >= (track.scrollWidth / 2)) {
-          viewport.scrollLeft = 0;
+        const setW = oneSetWidth();
+        if (setW > 0 && viewport.scrollLeft >= setW * 2) {
+          viewport.scrollLeft -= setW;
         }
       }, 25);
     }
