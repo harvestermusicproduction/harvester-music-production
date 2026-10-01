@@ -81,7 +81,7 @@
   font-display: swap;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Patrick+Hand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap');
 
 :root {
   --gold: #f6d28a;
@@ -95,40 +95,40 @@
   --panel: #1a1512;
   --panel-warm: rgba(28, 23, 19, 0.75);
   
-  /* 🖋️ 乐米秋叙手书体 / 漓雨手书 & 中文字体系统 */
-  --font-qiuxu: '漓雨手书', 'LiyuShouShu', '乐米秋叙手书体', 'LemiQiuXuShouShuTi', 'Lemi-QiuXu-ShouShuTi', 'Lemi QiuXu ShouShu Ti', 'ChenYuluoyan', 'Yozai', '乐米宋刻', 'Noto Serif SC', 'Noto Sans SC', sans-serif;
-  --font-songke: '乐米秋叙手书体', 'LemiQiuXuShouShuTi', '乐米宋刻', 'Noto Serif SC', 'Noto Sans SC', serif;
-  --font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* 🏛️ Professional Elegant Typography System */
+  --font-sans: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-serif: 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC', 'STSong', 'SimSun', serif;
+  --font-display-en: 'Cinzel', 'Inter', 'Noto Serif SC', serif;
   
-  --font-eng-title: 'Gaegu', 'Patrick Hand', var(--font-qiuxu), cursive, sans-serif;
-  --font-eng-body:  'Patrick Hand', 'Gaegu', var(--font-sans), cursive, sans-serif;
-  --font-chn-title: var(--font-qiuxu);
-  --font-chn-body:  var(--font-qiuxu);
-  --font-hand-title: var(--font-qiuxu);
-  --font-hand-en:    'Gaegu', 'Patrick Hand', var(--font-qiuxu), cursive;
-  --font-hand-cn:    var(--font-qiuxu);
-  --font-serif-cn:   var(--font-qiuxu);
-  --font-kaiti:      var(--font-qiuxu);
-  --font-kai:        var(--font-qiuxu);
+  --font-eng-title: var(--font-display-en);
+  --font-eng-body:  var(--font-sans);
+  --font-chn-title: var(--font-serif);
+  --font-chn-body:  var(--font-sans);
+  --font-hand-title: var(--font-serif);
+  --font-hand-en:    var(--font-display-en);
+  --font-hand-cn:    var(--font-sans);
+  --font-serif-cn:   var(--font-serif);
+  --font-kaiti:      var(--font-serif);
+  --font-kai:        var(--font-serif);
   
   /* Helper Assignments */
-  --font-display: var(--font-qiuxu);
-  --font-body:    var(--font-qiuxu);
+  --font-display: var(--font-serif);
+  --font-body:    var(--font-sans);
   
-  --transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-  --hand-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-  --hand-radius-soft: 22px 26px 20px 24px / 24px 20px 26px 22px;
+  --transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  --hand-radius: 14px;
+  --hand-radius-soft: 10px;
 }
 
 /* Base resets */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 18px; }
+html { scroll-behavior: smooth; font-size: 17px; }
 body {
   font-family: var(--font-body);
   background: var(--bg);
   background-color: var(--bg);
   color: var(--text);
-  line-height: 1.85;
+  line-height: 1.8;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -173,12 +173,12 @@ body {
 }
 
 .hero-hand-title {
-  font-family: var(--font-hand-title) !important;
-  font-size: clamp(2.2rem, 5.5vw, 5.2rem) !important;
-  font-weight: normal !important;
+  font-family: var(--font-display-en) !important;
+  font-size: clamp(2.2rem, 5.5vw, 4.6rem) !important;
+  font-weight: 700 !important;
   color: #fffaf0 !important;
-  letter-spacing: 3px !important;
-  text-shadow: 0 8px 30px rgba(0,0,0,0.85), 0 0 40px rgba(246, 210, 138, 0.35) !important;
+  letter-spacing: 4px !important;
+  text-shadow: 0 8px 30px rgba(0,0,0,0.85), 0 0 35px rgba(246, 210, 138, 0.3) !important;
   line-height: 1.25 !important;
   display: block !important;
   width: 100% !important;
@@ -192,33 +192,33 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 { 
-  font-family: var(--font-hand-cn), var(--font-eng-title); 
-  font-weight: normal; 
+  font-family: var(--font-display); 
+  font-weight: 600; 
   line-height: 1.4; 
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
 }
 p { 
-  font-family: var(--font-chn-body); 
-  color: rgba(250, 246, 240, 0.95); 
-  font-weight: normal; 
+  font-family: var(--font-body); 
+  color: rgba(250, 246, 240, 0.9); 
+  font-weight: 400; 
   margin-bottom: 1.5rem; 
-  letter-spacing: 1.2px;
-  font-size: 1.18rem;
-  line-height: 2.0;
+  letter-spacing: 0.5px;
+  font-size: 1.05rem;
+  line-height: 1.9;
 }
-a { color: var(--text); text-decoration: none; transition: var(--transition); font-family: var(--font-hand-cn), var(--font-eng-body); font-size: 1.05rem; }
+a { color: var(--text); text-decoration: none; transition: var(--transition); font-family: var(--font-body); font-size: 1rem; }
 a:hover { color: var(--gold); }
 img, video { max-width: 100%; display: block; border-radius: 6px; }
-section { padding: 8rem 2rem; max-width: 1000px; margin: 0 auto; }
+section { padding: 7rem 2rem; max-width: 1100px; margin: 0 auto; }
 
 /* 🖋️ Typography Helper Classes */
-.font-title-en { font-family: var(--font-eng-title); font-size: 1.35rem; }
-.font-title-cn { font-family: var(--font-chn-title); font-weight: normal; font-size: 1.4rem; }
-.font-body-en  { font-family: var(--font-eng-body); font-size: 1.15rem; }
-.font-body-cn  { font-family: var(--font-chn-body); font-size: 1.18rem; }
-.font-hand-en  { font-family: var(--font-hand-en); font-size: 1.25rem; }
-.font-hand-cn  { font-family: var(--font-hand-cn); font-size: 1.25rem; }
-.font-serif-cn { font-family: var(--font-serif-cn); font-size: 1.25rem; }
+.font-title-en { font-family: var(--font-eng-title); font-size: 1.35rem; font-weight: 600; }
+.font-title-cn { font-family: var(--font-chn-title); font-weight: 600; font-size: 1.4rem; }
+.font-body-en  { font-family: var(--font-eng-body); font-size: 1.05rem; }
+.font-body-cn  { font-family: var(--font-chn-body); font-size: 1.05rem; }
+.font-hand-en  { font-family: var(--font-eng-title); font-size: 1.15rem; letter-spacing: 2px; }
+.font-hand-cn  { font-family: var(--font-chn-title); font-size: 1.15rem; letter-spacing: 1.5px; }
+.font-serif-cn { font-family: var(--font-serif-cn); font-size: 1.15rem; }
 
 /* 🌾 Hand-drawn Badges / Tags */
 .hand-tag {
@@ -2095,15 +2095,16 @@ video::-webkit-media-controls-start-playback-button { display: none !important; 
 
 .dropdown-content a {
   color: #f5eee6 !important;
-  padding: 9px 18px;
+  padding: 10px 18px;
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-align: left;
-  font-family: var(--font-hand-cn), var(--font-hand-en), sans-serif !important;
-  font-size: 1.05rem !important;
-  border-radius: 0 !important;
+  font-family: var(--font-body) !important;
+  font-size: 0.98rem !important;
+  font-weight: 500;
+  border-radius: 8px !important;
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -2123,29 +2124,12 @@ video::-webkit-media-controls-start-playback-button { display: none !important; 
 
 .dropdown-content a:hover {
   color: var(--gold) !important;
-  background: rgba(246, 210, 138, 0.14) !important;
-  transform: none !important;
+  background: rgba(246, 210, 138, 0.12) !important;
+  transform: translateX(4px) !important;
 }
 
 .dropdown-content a:hover i {
-  transform: scale(1.2);
-}
-
-/* Light Gallery Mode Navigation Dropdown Override */
-body.gallery-mode .dropdown-content {
-  background: rgba(255, 255, 255, 0.98) !important;
-  border: 1.5px solid rgba(0, 0, 0, 0.12) !important;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
-}
-body.gallery-mode .dropdown-content a {
-  color: #2b2b2b !important;
-}
-body.gallery-mode .dropdown-content a i {
-  color: var(--accent) !important;
-}
-body.gallery-mode .dropdown-content a:hover {
-  color: var(--accent) !important;
-  background: rgba(201, 147, 59, 0.08) !important;
+  transform: scale(1.15);
 }
 
 /* Mobile Dropdown styles */
