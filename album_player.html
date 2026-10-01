@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="h-full bg-[#12141a] text-slate-100 antialiased selection:bg-teal-500 selection:text-white">
+<html lang="zh-CN" class="h-full bg-[#0d0f14] text-slate-100 antialiased selection:bg-teal-500 selection:text-white">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MANGO JUMP // 沉浸式音乐唱片馆 & 播放器</title>
+  <title>MANGO JUMP // 3D 唱片展架 & 沉浸式播放器</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -52,34 +52,229 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <style>
-    /* 3D Rack & Cover Perspective */
-    .perspective-container {
+    /* ================= 3D COVERFLOW RACK SYSTEM ================= */
+    .coverflow-stage-3d {
+      position: relative;
+      width: 100%;
+      height: 480px;
       perspective: 1200px;
-      perspective-origin: 50% 50%;
-    }
-
-    .album-card-3d {
+      -webkit-perspective: 1200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       transform-style: preserve-3d;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+      user-select: none;
+      cursor: grab;
+    }
+    .coverflow-stage-3d:active {
+      cursor: grabbing;
     }
 
-    .album-card-3d:hover {
-      transform: translateY(-16px) scale(1.04) rotateY(-8deg) rotateX(4deg);
+    /* 3D Box Container (Slides & Rotates as One Solid Unit) */
+    .album-3d-box {
+      position: absolute;
+      width: 250px;
+      height: 330px;
+      transform-style: preserve-3d;
+      cursor: pointer;
+      will-change: transform, opacity, z-index;
+      transition: filter 0.3s ease;
     }
 
-    .spine-3d {
-      transform: rotateY(-90deg) translateZ(0px);
-      transform-origin: left;
+    .album-cube {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+    }
+
+    .cube-face {
+      position: absolute;
+      box-sizing: border-box;
+      backface-visibility: visible;
+      -webkit-backface-visibility: visible;
+    }
+
+    /* 1. Front Cover Face */
+    .cube-face.cube-front {
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 330px;
+      transform: translateZ(12px);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #181411;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.85);
+    }
+    .cube-face.cube-front img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .album-glass-sheen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.04) 40%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .album-inner-border {
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      pointer-events: none;
+      border-radius: 5px;
+    }
+
+    /* 2. Left Spine (High-End Tactile CD Jewel Case Spine) */
+    .cube-face.cube-spine-left {
+      top: 0;
+      left: -12px;
+      width: 24px;
+      height: 330px;
+      transform: rotateY(-90deg);
+      transform-origin: center center;
+      border-left: 1px solid rgba(255, 255, 255, 0.45);
+      border-right: 1px solid rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.35), inset -2px 0 6px rgba(0, 0, 0, 0.75);
+      background-image: linear-gradient(to right, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 35%, rgba(0,0,0,0.35) 100%);
+    }
+
+    /* Spine Inner Text (Upright Top-to-Bottom Typography) */
+    .spine-inner-text {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 300px;
+      transform: rotate(90deg);
+      transform-origin: center center;
+      white-space: nowrap;
+      user-select: none;
+      font-family: 'Noto Serif SC', serif;
+      padding: 0 10px;
+    }
+
+    .spine-catalog {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.75);
+      font-weight: 600;
+    }
+
+    .spine-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #ffffff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    }
+
+    .spine-artist {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.75rem;
+      color: #f6d28a;
+      letter-spacing: 1px;
+    }
+
+    /* 3. Right Spine Edge */
+    .cube-face.cube-spine-right {
+      top: 0;
+      right: -12px;
+      width: 24px;
+      height: 330px;
+      transform: rotateY(90deg);
+      transform-origin: center center;
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+      border-left: 1px solid rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
+    }
+
+    /* 4. Top Thickness Face */
+    .cube-face.cube-top {
+      top: -12px;
+      left: 0;
+      width: 250px;
+      height: 24px;
+      transform: rotateX(90deg);
+      transform-origin: center center;
+      border-top: 1px solid rgba(255, 255, 255, 0.45);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.65);
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 5. Bottom Thickness Face */
+    .cube-face.cube-bottom {
+      bottom: -12px;
+      left: 0;
+      width: 250px;
+      height: 24px;
+      transform: rotateX(-90deg);
+      transform-origin: center center;
+      background: #0d0b09;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.9);
+    }
+
+    /* 6. Back Cover Face */
+    .cube-face.cube-back {
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 330px;
+      transform: rotateY(180deg) translateZ(12px);
+      background: #14110e;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1.2rem;
+      box-sizing: border-box;
+    }
+
+    /* 3D Ground Shadow */
+    .album-shadow-3d {
+      position: absolute;
+      bottom: -32px;
+      left: 10%;
+      width: 80%;
+      height: 24px;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 75%);
+      filter: blur(8px);
+      transform: rotateX(90deg) translateZ(-10px);
+      pointer-events: none;
+    }
+
+    /* Active Highlight */
+    .album-3d-box.active .cube-face.cube-front {
+      border-color: rgba(78, 205, 196, 0.85);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(78, 205, 196, 0.35);
+    }
+
+    .album-3d-box:not(.active):hover {
+      filter: brightness(1.15) drop-shadow(0 0 15px rgba(78, 205, 196, 0.3));
     }
 
     /* Sticker & Collage Aesthetic */
     .sticker-badge {
       box-shadow: 0 4px 14px rgba(0,0,0,0.35);
       transform: rotate(var(--rot, -3deg));
-    }
-
-    .torn-edge {
-      mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
     }
 
     /* Custom Scrollbar */
@@ -118,21 +313,12 @@
     .wave-bar:nth-child(2) { animation: barWave 0.8s ease-in-out infinite 0.2s; }
     .wave-bar:nth-child(3) { animation: barWave 1.4s ease-in-out infinite 0.4s; }
     .wave-bar:nth-child(4) { animation: barWave 0.9s ease-in-out infinite 0.1s; }
-
-    /* Hide Scrollbar for Horizontal Carousel */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
   </style>
 </head>
 <body class="h-full bg-[#0d0f14] text-slate-100 flex flex-col overflow-hidden select-none font-sans">
 
   <!-- Top Global Navigation Header -->
-  <header class="h-16 w-full px-6 md:px-10 flex items-center justify-between z-40 bg-[#0d0f14]/80 backdrop-blur-md border-b border-white/10 shrink-0">
+  <header class="h-16 w-full px-6 md:px-10 flex items-center justify-between z-40 bg-[#0d0f14]/85 backdrop-blur-md border-b border-white/10 shrink-0">
     <div class="flex items-center space-x-4 cursor-pointer" onclick="switchView('rack')">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-500 to-amber-400 flex items-center justify-center shadow-lg shadow-teal-500/20">
         <i class="fa-solid fa-compact-disc text-black text-xl animate-spin" style="animation-duration: 8s;"></i>
@@ -141,7 +327,7 @@
         <h1 class="font-display tracking-wider text-2xl font-bold uppercase bg-clip-text text-transparent bg-gradient-to-r from-teal-400 via-amber-200 to-rose-400">
           MANGO JUMP
         </h1>
-        <p class="text-[10px] text-slate-400 tracking-widest uppercase font-mono -mt-1">AUDIO ARCHIVE &bull; VOL. 2026</p>
+        <p class="text-[10px] text-slate-400 tracking-widest uppercase font-mono -mt-1">HARVESTER AUDIO ARCHIVE &bull; 3D CD RACK</p>
       </div>
     </div>
 
@@ -149,9 +335,9 @@
     <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
       <button onclick="switchView('rack')" id="nav-rack-btn" class="text-teal-400 hover:text-white transition flex items-center space-x-2">
         <i class="fa-solid fa-layer-group"></i>
-        <span>唱片展架 (Rack)</span>
+        <span>3D 唱片展架 (3D Rack)</span>
       </button>
-      <button onclick="openDetailView(currentAlbumIndex)" id="nav-detail-btn" class="text-slate-400 hover:text-white transition flex items-center space-x-2">
+      <button onclick="openDetailView(currentIndex)" id="nav-detail-btn" class="text-slate-400 hover:text-white transition flex items-center space-x-2">
         <i class="fa-solid fa-record-vinyl"></i>
         <span>专辑详情 (Detail)</span>
       </button>
@@ -177,22 +363,22 @@
   <main id="app-main" class="relative flex-1 w-full overflow-hidden">
 
     <!-- ======================================================== -->
-    <!-- VIEW 1: 首页 - 全屏横向 3D 专辑陈列展架 (Shelf Rack)       -->
+    <!-- VIEW 1: 首页 - 3D 唱片展架 (Spine & Cover Slide Together)  -->
     <!-- ======================================================== -->
-    <section id="view-rack" class="absolute inset-0 flex flex-col justify-between py-6 md:py-10 transition-all duration-700 ease-out transform opacity-100 scale-100 z-10">
+    <section id="view-rack" class="absolute inset-0 flex flex-col justify-between py-4 md:py-8 transition-all duration-700 ease-out transform opacity-100 scale-100 z-10">
       
-      <!-- Top Title & Vintage Stickers Overlay -->
+      <!-- Top Title & Vintage Stickers -->
       <div class="px-6 md:px-14 flex flex-col md:flex-row md:items-end justify-between gap-4 shrink-0">
         <div>
           <div class="inline-flex items-center space-x-2 text-xs font-mono tracking-widest text-teal-400 bg-teal-950/60 border border-teal-500/30 px-3 py-1 rounded-md mb-2">
             <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
-            <span>SELECT ALBUM &bull; DRAG OR SCROLL</span>
+            <span>3D CD JEWEL CASE RACK &bull; DRAG &amp; SWIPE</span>
           </div>
-          <h2 class="text-4xl md:text-6xl font-display font-black tracking-tight text-white uppercase drop-shadow-md">
+          <h2 class="text-3xl md:text-5xl font-display font-black tracking-tight text-white uppercase drop-shadow-md">
             VINYL &amp; ALBUM COLLECTION
           </h2>
-          <p class="text-slate-400 text-sm max-w-xl mt-1">
-            横向拖拽滑动唱片架，探索复古涂鸦、手绘色彩与高保真流媒体声效。点击任意专辑进入完整曲目与歌词详情。
+          <p class="text-slate-400 text-xs md:text-sm max-w-xl mt-1">
+            书脊与封面在 3D 空间中紧密结合，随鼠标拖拽与滚轮丝滑滑动。点击唱片可翻开单曲歌词与歌谱。
           </p>
         </div>
 
@@ -210,32 +396,35 @@
         </div>
       </div>
 
-      <!-- Horizontal 3D Momentum Rack Slider -->
-      <div class="relative w-full flex-1 flex items-center my-4 overflow-hidden perspective-container">
+      <!-- Center 3D Coverflow Stage (Spine + Cover Move as 1 Unit) -->
+      <div class="relative w-full flex-1 flex items-center justify-center my-2 overflow-hidden">
         
-        <!-- Left / Right Navigation Arrow Buttons -->
-        <button onclick="scrollRack(-1)" class="absolute left-4 md:left-8 z-30 w-12 h-12 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-white hover:bg-teal-500 hover:text-black hover:scale-110 flex items-center justify-center transition shadow-2xl">
+        <!-- Left / Right Nav Arrows -->
+        <button onclick="navigateRack(-1)" class="absolute left-4 md:left-10 z-40 w-12 h-12 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-white hover:bg-teal-500 hover:text-black hover:scale-110 flex items-center justify-center transition shadow-2xl">
           <i class="fa-solid fa-arrow-left text-lg"></i>
         </button>
-        <button onclick="scrollRack(1)" class="absolute right-4 md:right-8 z-30 w-12 h-12 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-white hover:bg-teal-500 hover:text-black hover:scale-110 flex items-center justify-center transition shadow-2xl">
+        <button onclick="navigateRack(1)" class="absolute right-4 md:right-10 z-40 w-12 h-12 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-white hover:bg-teal-500 hover:text-black hover:scale-110 flex items-center justify-center transition shadow-2xl">
           <i class="fa-solid fa-arrow-right text-lg"></i>
         </button>
 
-        <!-- The Scrollable Track -->
-        <div id="rack-scroll-track" class="w-full h-full flex items-center gap-8 md:gap-12 px-12 md:px-24 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing scroll-smooth py-6">
-          <!-- Album cards dynamically injected by JavaScript -->
+        <!-- The 3D Coverflow Carousel Container -->
+        <div id="coverflowCarousel" class="coverflow-stage-3d">
+          <!-- Dynamically populated 3D album cubes with spine and cover -->
         </div>
       </div>
 
-      <!-- Bottom Hint Bar -->
-      <div class="px-6 md:px-14 flex items-center justify-between text-xs text-slate-500 font-mono shrink-0">
+      <!-- Bottom Meta Caption & Indicator -->
+      <div class="px-6 md:px-14 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 font-mono gap-3 shrink-0">
         <div class="flex items-center space-x-3">
-          <span><i class="fa-solid fa-arrows-left-right mr-1"></i> 按住鼠标拖拽或滑动滚轮浏览</span>
+          <span><i class="fa-solid fa-arrows-left-right text-teal-400 mr-1"></i> 鼠标拖拽 / 滚轮滑动</span>
           <span class="text-slate-700">|</span>
-          <span><i class="fa-solid fa-hand-pointer mr-1"></i> 点击唱片打开专辑大碟</span>
+          <button onclick="openDetailView(currentIndex)" class="text-teal-300 hover:text-white underline underline-offset-4 flex items-center space-x-1.5 font-bold">
+            <i class="fa-solid fa-music"></i>
+            <span>翻开单曲与歌谱 (View Song &amp; Scores)</span>
+          </button>
         </div>
-        <div id="rack-indicator" class="hidden sm:flex items-center space-x-2 font-mono text-slate-400">
-          <!-- Dot indicators -->
+        <div id="rack-indicator" class="flex items-center space-x-2 font-mono">
+          <!-- Indicators -->
         </div>
       </div>
     </section>
@@ -250,7 +439,7 @@
       <div class="w-full px-6 md:px-12 pt-6 flex items-center justify-between shrink-0">
         <button onclick="switchView('rack')" class="px-4 py-2 rounded-full bg-black/40 border border-white/20 text-slate-200 hover:text-white hover:bg-white/10 backdrop-blur-md font-medium text-xs tracking-wider uppercase transition flex items-center space-x-2">
           <i class="fa-solid fa-arrow-left"></i>
-          <span>返回唱片架 (Back to Rack)</span>
+          <span>返回 3D 展台 (Back to Rack)</span>
         </button>
 
         <!-- Current Album Switcher Pill -->
@@ -285,8 +474,8 @@
 
             <!-- Front Jacket Card -->
             <div class="relative w-full h-full rounded-2xl overflow-hidden bg-slate-900 border border-white/20 shadow-2xl z-10 transform group-hover:scale-[1.02] transition duration-500">
-              <img id="detail-cover-img" src="https://placehold.co/600x600/133535/4ecdc4?text=Mission+Heartbeat" alt="Album Cover" class="w-full h-full object-cover" />
-              <!-- Gloss / Sheen overlay -->
+              <img id="detail-cover-img" src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=900&auto=format&fit=crop&q=80" alt="Album Cover" class="w-full h-full object-cover" />
+              <!-- Gloss overlay -->
               <div class="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/15 pointer-events-none"></div>
               
               <!-- Quick Play Overlay Button -->
@@ -323,21 +512,21 @@
 
           <!-- Action Buttons / Links -->
           <div class="w-full flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
-            <a href="javascript:void(0)" onclick="alert('歌谱 PDF 下载已启动（演示样例）')" class="px-5 py-2.5 rounded-full bg-amber-400 text-black hover:bg-amber-300 font-bold text-xs tracking-wider uppercase transition flex items-center space-x-2 shadow-lg shadow-amber-400/20">
+            <a href="javascript:void(0)" onclick="alert('歌谱 PDF 下载已启动（样例）')" class="px-5 py-2.5 rounded-full bg-amber-400 text-black hover:bg-amber-300 font-bold text-xs tracking-wider uppercase transition flex items-center space-x-2 shadow-lg shadow-amber-400/20">
               <i class="fa-solid fa-file-arrow-down text-sm"></i>
               <span>下载歌谱 (PDF)</span>
             </a>
-            <a href="https://www.youtube.com" target="_blank" class="px-5 py-2.5 rounded-full bg-rose-600/30 border border-rose-500/50 text-rose-200 hover:bg-rose-600 hover:text-white font-semibold text-xs tracking-wider uppercase transition flex items-center space-x-2">
+            <a href="https://www.youtube.com/@harvestermusic.production" target="_blank" class="px-5 py-2.5 rounded-full bg-rose-600/30 border border-rose-500/50 text-rose-200 hover:bg-rose-600 hover:text-white font-semibold text-xs tracking-wider uppercase transition flex items-center space-x-2">
               <i class="fa-brands fa-youtube text-sm text-rose-400"></i>
               <span>YouTube 播放</span>
             </a>
-            <a href="https://spotify.com" target="_blank" class="px-5 py-2.5 rounded-full bg-emerald-600/30 border border-emerald-500/50 text-emerald-200 hover:bg-emerald-600 hover:text-white font-semibold text-xs tracking-wider uppercase transition flex items-center space-x-2">
+            <a href="https://open.spotify.com" target="_blank" class="px-5 py-2.5 rounded-full bg-emerald-600/30 border border-emerald-500/50 text-emerald-200 hover:bg-emerald-600 hover:text-white font-semibold text-xs tracking-wider uppercase transition flex items-center space-x-2">
               <i class="fa-brands fa-spotify text-sm text-emerald-400"></i>
               <span>Spotify 聆听</span>
             </a>
           </div>
 
-          <!-- Band Collage / Member Polaroids (Mango Jump Aesthetic) -->
+          <!-- Band Collage / Member Polaroids -->
           <div class="w-full pt-4 border-t border-white/10 flex flex-col items-center lg:items-start space-y-3">
             <div class="text-[11px] font-mono tracking-widest text-slate-400 uppercase flex items-center space-x-2">
               <i class="fa-solid fa-camera-retro text-amber-400"></i>
@@ -345,19 +534,19 @@
             </div>
             <div class="flex items-center space-x-3 overflow-x-auto py-2">
               <div class="w-16 h-20 bg-white p-1 rounded shadow-md transform -rotate-6 hover:rotate-0 transition shrink-0">
-                <img src="https://placehold.co/100x120/1e293b/ffffff?text=Vocal" class="w-full h-14 object-cover grayscale contrast-125" />
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" class="w-full h-14 object-cover grayscale contrast-125" />
                 <div class="text-[8px] font-bold text-slate-800 text-center mt-0.5">主唱 / Lead</div>
               </div>
               <div class="w-16 h-20 bg-white p-1 rounded shadow-md transform rotate-3 hover:rotate-0 transition shrink-0">
-                <img src="https://placehold.co/100x120/334155/ffffff?text=Guitar" class="w-full h-14 object-cover grayscale contrast-125" />
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" class="w-full h-14 object-cover grayscale contrast-125" />
                 <div class="text-[8px] font-bold text-slate-800 text-center mt-0.5">吉他 / Riff</div>
               </div>
               <div class="w-16 h-20 bg-white p-1 rounded shadow-md transform -rotate-3 hover:rotate-0 transition shrink-0">
-                <img src="https://placehold.co/100x120/475569/ffffff?text=Bass" class="w-full h-14 object-cover grayscale contrast-125" />
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" class="w-full h-14 object-cover grayscale contrast-125" />
                 <div class="text-[8px] font-bold text-slate-800 text-center mt-0.5">贝斯 / Groove</div>
               </div>
               <div class="w-16 h-20 bg-white p-1 rounded shadow-md transform rotate-6 hover:rotate-0 transition shrink-0">
-                <img src="https://placehold.co/100x120/64748b/ffffff?text=Drums" class="w-full h-14 object-cover grayscale contrast-125" />
+                <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300&auto=format&fit=crop&q=80" class="w-full h-14 object-cover grayscale contrast-125" />
                 <div class="text-[8px] font-bold text-slate-800 text-center mt-0.5">鼓手 / Beat</div>
               </div>
             </div>
@@ -395,7 +584,7 @@
             <div class="pt-6 mt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-400 gap-2">
               <div class="flex items-center space-x-2">
                 <i class="fa-solid fa-circle-check text-teal-400"></i>
-                <span id="detail-summary-count">11 SONGS, 38 MIN, 24 SEC</span>
+                <span id="detail-summary-count">1 TRACK &bull; 04:18</span>
               </div>
               <span class="text-slate-500">© 2026 HARVESTER MUSIC / ALL RIGHTS RESERVED</span>
             </div>
@@ -407,7 +596,7 @@
               <div class="flex items-center space-x-3">
                 <div class="w-3 h-3 rounded-full bg-amber-400"></div>
                 <h4 class="font-display text-lg tracking-wider uppercase text-amber-200">
-                  LYRICS &amp; PRODUCTION NOTES // 创作故事与歌词
+                  LYRICS &amp; WORSHIP NOTES // 歌词与敬拜信息
                 </h4>
               </div>
               <span class="text-[11px] font-mono text-slate-400 uppercase">SONGTI / SERIF</span>
@@ -415,9 +604,7 @@
 
             <!-- Lyrics Text -->
             <div id="detail-lyrics-content" class="font-serif text-sand-100/90 text-base leading-loose whitespace-pre-line py-2 select-text">
-              [创作背景]
-              在喧嚣的时代节拍中，我们以纯净的心灵守卫内心的每一次跳动。
-              每一段旋律都是从心底涌流出的真实敬拜与生命印记。
+              <!-- Lyrics loaded dynamically -->
             </div>
           </div>
 
@@ -433,7 +620,7 @@
   <!-- GLOBAL COMPONENT: 底部固定悬浮音乐播放控制条 (Bottom Player Bar) -->
   <!-- ======================================================== -->
   <footer class="w-full px-4 sm:px-8 pb-4 pt-1 z-50 shrink-0">
-    <div class="max-w-7xl mx-auto rounded-2xl bg-black/80 border border-white/15 backdrop-blur-2xl shadow-2xl px-4 sm:px-6 py-3 flex flex-col gap-2">
+    <div class="max-w-7xl mx-auto rounded-2xl bg-black/85 border border-white/15 backdrop-blur-2xl shadow-2xl px-4 sm:px-6 py-3 flex flex-col gap-2">
       
       <!-- Top Progress Bar with Time Tooltip -->
       <div class="w-full flex items-center space-x-3 group">
@@ -441,7 +628,7 @@
         <div id="player-progress-container" class="relative flex-1 h-2 bg-white/10 rounded-full cursor-pointer overflow-hidden group-hover:h-3 transition-all">
           <div id="player-progress-bar" class="h-full bg-gradient-to-r from-teal-400 via-amber-300 to-rose-400 rounded-full w-0 transition-all duration-100"></div>
         </div>
-        <span id="player-time-dur" class="text-[11px] font-mono text-slate-400 w-10">03:45</span>
+        <span id="player-time-dur" class="text-[11px] font-mono text-slate-400 w-10">04:18</span>
       </div>
 
       <!-- Main Controls Row -->
@@ -450,14 +637,14 @@
         <!-- LEFT: Mini Artwork + Title + Artist + Equalizer -->
         <div class="flex items-center space-x-3 w-1/3 min-w-[160px]">
           <div class="relative w-12 h-12 rounded-lg overflow-hidden border border-white/20 bg-slate-800 shrink-0 shadow-md">
-            <img id="player-mini-cover" src="https://placehold.co/100x100/133535/4ecdc4?text=Track" alt="Mini Cover" class="w-full h-full object-cover" />
+            <img id="player-mini-cover" src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=900&auto=format&fit=crop&q=80" alt="Mini Cover" class="w-full h-full object-cover" />
           </div>
           <div class="flex flex-col min-w-0">
-            <h5 id="player-mini-title" class="text-sm font-bold text-white truncate hover:text-teal-300 cursor-pointer" onclick="openDetailView(currentAlbumIndex)">
-              一天一天疼爱我 (Love Me Day by Day)
+            <h5 id="player-mini-title" class="text-sm font-bold text-white truncate hover:text-teal-300 cursor-pointer" onclick="openDetailView(currentIndex)">
+              更新敬拜
             </h5>
             <p id="player-mini-artist" class="text-xs text-slate-400 truncate">
-              Mango Jump &amp; Harvester Worship
+              Harvester Worship
             </p>
           </div>
           <!-- Waveform Equalizer -->
@@ -501,7 +688,7 @@
             <input id="player-volume" type="range" min="0" max="100" value="85" class="w-16 md:w-24 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-teal-400" />
           </div>
           <!-- Playlist / Queue -->
-          <button onclick="openDetailView(currentAlbumIndex)" class="text-slate-400 hover:text-white transition p-1.5" title="打开曲目单">
+          <button onclick="openDetailView(currentIndex)" class="text-slate-400 hover:text-white transition p-1.5" title="打开单曲详情">
             <i class="fa-solid fa-list-music text-base"></i>
           </button>
           <!-- Share / Info -->
@@ -517,162 +704,206 @@
 
 
   <!-- ======================================================== -->
-  <!-- NATIVE JAVASCRIPT LOGIC                                  -->
+  <!-- NATIVE JAVASCRIPT & 3D PHYSICS ENGINE                    -->
   <!-- ======================================================== -->
   <script>
-    /* ================= DATA REPOSITORY ================= */
+    /* ================= CHILDLIKE DOODLE ART COLLECTION ================= */
+    const childlikeDoodles = [
+      "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=900&auto=format&fit=crop&q=80"
+    ];
+
+    /* ================= DATA REPOSITORY (1 ALBUM = 1 SINGLE TRACK) ================= */
     const albumsData = [
       {
-        id: "album-1",
-        title: "MISSION: HEARTBEAT DEFENSE",
-        titleCn: "心跳守卫战",
-        artist: "Mango Jump & Harvester",
-        year: "2026",
-        genre: "Alternative Punk / Rock",
+        id: "song_renew",
+        title: "更新敬拜",
+        titleEn: "Renewed Worship",
+        artist: "Harvester Worship",
+        year: "2025",
+        genre: "Worship / CCM · 2025",
         theme: "teal",
         bgColor: "#163842",
         accentColor: "#3b9c9c",
-        cover: "https://placehold.co/600x600/133535/4ecdc4?text=Mission+Heartbeat",
-        spineColor: "#2d7d7d",
-        description: "用强劲的心跳脉动守望音乐的纯粹与自由。融合了复古朋克、激昂贝斯与现代敬拜旋律的先锋大碟。",
-        lyrics: `【01. 一天一天疼爱我】
-词/曲：Harvester Music
-编曲：Mango Jump Band
+        spineBg: "#1877F2",
+        spineColor: "#ffffff",
+        cover: childlikeDoodles[0],
+        description: "在祢的光中我们得见光，圣灵的火燃烧我们心房。愿祢国度降临，愿祢旨意成全，更新我们的敬拜生命。",
+        lyrics: `【更新敬拜】
+词曲：Harvester Music Production
 
-[Verse 1]
-晨光穿透了微凉的晨雾
-每一声心跳都由祢守护
-漫漫旅途若偶有荒芜
-祢的恩典总如甘露降注
+在祢的光中 我们得见光
+圣灵的火 燃烧我们心房
+愿祢国度降临 愿祢旨意成全
+在这里 更新我们敬拜
 
-[Chorus]
-一天一天 祢依然疼爱我
-风浪再大 祢双手紧握
-不再彷徨 在这爱里停泊
-生命因祢 燃烧闪烁
+主祢的名 在全地何其美
+祢的慈爱 存到永远
+我们要歌唱 赞美祢的作为
+从今时 直到永永远远
 
-[Bridge]
-哈利路亚 赞美不住
-心跳防线 永远坚固！`,
+（副歌）
+更新我们 燃烧我们
+以真理和圣灵敬拜祢
+生命献上 作活祭
+一生跟随 荣耀主名
+
+（桥段）
+哈利路亚 荣耀归于全能神
+哈利路亚 配得万民称颂
+万膝要跪拜 万口要承认
+耶稣基督是主！`,
         tracks: [
-          { title: "一天一天疼爱我 (Day by Day)", duration: "03:45", sec: 225 },
-          { title: "Heartbeat Defense (心跳守卫战)", duration: "04:12", sec: 252 },
-          { title: "Neon Skyline (霓虹天际)", duration: "03:18", sec: 198 },
-          { title: "Velvet Groove (天鹅绒节奏)", duration: "03:52", sec: 232 },
-          { title: "Morning Dew (晨露之约)", duration: "04:30", sec: 270 },
-          { title: "Wildfire in Soul (灵火燃烧)", duration: "03:36", sec: 216 }
+          { title: "更新敬拜 (Renewed Worship)", duration: "04:18", sec: 258 }
         ]
       },
       {
-        id: "album-2",
-        title: "RENEWAL & WORSHIP",
-        titleCn: "更新敬拜现场",
+        id: "song_fire",
+        title: "灵火 Awakening",
+        titleEn: "Spiritual Fire",
+        artist: "Harvester Creative Team",
+        year: "2024",
+        genre: "Acoustic Worship · 2024",
+        theme: "teal",
+        bgColor: "#133535",
+        accentColor: "#00b894",
+        spineBg: "#00b894",
+        spineColor: "#ffffff",
+        cover: childlikeDoodles[1],
+        description: "灵火降下，照明我心中的每一个角落。愿圣灵的烈火洁净心思，在祢爱中重获自由与新生。",
+        lyrics: `【灵火 Awakening】
+词曲：Harvester Music Production
+
+灵火 降下 在这安静时刻
+照明我心中的每一个角落
+我们若认自己的罪
+神是信实的 必然赦免我
+
+（副歌）
+愿圣灵的烈火 洁净我心思
+让我的敬拜 单单归于祢
+放下一切重担 紧随祢脚踪
+在祢爱中 重获自由与新生`,
+        tracks: [
+          { title: "灵火 Awakening (Spiritual Fire)", duration: "04:52", sec: 292 }
+        ]
+      },
+      {
+        id: "song_because_god",
+        title: "因为祢 上帝",
+        titleEn: "Because of You God",
         artist: "Harvester Worship",
         year: "2025",
-        genre: "Modern Worship / Acoustic",
-        theme: "burgundy",
-        bgColor: "#3d1320",
-        accentColor: "#7e243e",
-        cover: "https://placehold.co/600x600/3d1320/ff85a1?text=Renewal+Worship",
-        spineColor: "#5c172b",
-        description: "凝聚全场敬拜者心声的灵性之作。清澈木吉他与温暖大提琴交织，带领听众进入至圣之所。",
-        lyrics: `【01. 灵火从天降】
-词/曲：Harvester Worship
-
-[Verse 1]
-当我们同心合意俯伏在此
-渴慕圣灵圣火全然降临
-焚烧一切不合祢心意的事
-洁净我们作祢荣耀器皿
-
-[Chorus]
-灵火从天降 燃烧我心房
-更新这世代 彰显祢荣光！`,
-        tracks: [
-          { title: "灵火从天降 (Heavenly Fire)", duration: "05:14", sec: 314 },
-          { title: "更新我心 (Renew My Soul)", duration: "04:48", sec: 288 },
-          { title: "如鹿切慕溪水 (As the Deer)", duration: "04:02", sec: 242 },
-          { title: "祢是我避难所 (My Refuge)", duration: "05:30", sec: 330 },
-          { title: "永恒颂歌 (Eternal Praise)", duration: "06:12", sec: 372 }
-        ]
-      },
-      {
-        id: "album-3",
-        title: "RIVERS IN THE DESERT",
-        titleCn: "沙漠开江河",
-        artist: "Mango Jump Collective",
-        year: "2025",
-        genre: "Indie Pop / Funk",
+        genre: "Praise & Worship · 2025",
         theme: "sand",
         bgColor: "#382e1c",
-        accentColor: "#c79d4c",
-        cover: "https://placehold.co/600x600/382e1c/ffd166?text=Rivers+Desert",
-        spineColor: "#594828",
-        description: "在荒漠之地奏响生机勃勃的复古铜管与跳跃Funk节奏。绝望中开出希望之花。",
-        lyrics: `【01. 沙漠开江河】
-看哪，我要做一件新事！
-在旷野开道路，在沙漠开江河！
-跃动的步伐踩碎忧郁的泥沼，
-金色日光普照全地！`,
+        accentColor: "#f39c12",
+        spineBg: "#f39c12",
+        spineColor: "#111111",
+        cover: childlikeDoodles[2],
+        description: "因为祢上帝赐下丰盛恩典，在旷野开道路，在沙漠开江河。从日出之地到日落之处，祢的名当受称颂。",
+        lyrics: `【因为祢 上帝】
+词曲：Harvester Music Production
+
+因为祢 上帝 赐下丰盛恩典
+在旷野开道路 在沙漠开江河
+祢是我坚固台 是我避难所
+我心单单仰望祢
+
+（副歌）
+哈利路亚 赞美归于宝座上的羔羊
+哈利路亚 祢配得万民尊崇
+从日出之地 到日落之处
+祢的名当受称颂`,
         tracks: [
-          { title: "沙漠开江河 (Rivers in Desert)", duration: "03:58", sec: 238 },
-          { title: "Golden Sunshine (金色黎明)", duration: "03:22", sec: 202 },
-          { title: "Brass Celebration (铜管庆典)", duration: "04:05", sec: 245 },
-          { title: "Oasis Dance (绿洲起舞)", duration: "03:40", sec: 220 }
+          { title: "因为祢 上帝 (Because of You God)", duration: "05:10", sec: 310 }
         ]
       },
       {
-        id: "album-4",
-        title: "CELESTIAL HARVEST",
-        titleCn: "星芒丰收季",
-        artist: "Harvester Collective",
+        id: "song_alive",
+        title: "Im Alive",
+        titleEn: "Im Alive in Love",
+        artist: "Harvester Praise",
+        year: "2025",
+        genre: "Pop Praise · 2025",
+        theme: "burgundy",
+        bgColor: "#3d1320",
+        accentColor: "#ea8676",
+        spineBg: "#ea8676",
+        spineColor: "#ffffff",
+        cover: childlikeDoodles[3],
+        description: "I'm alive in Your love, Jesus! Every breath I take is by Your grace. 从黑暗进入奇妙光明。",
+        lyrics: `【Im Alive】
+Lyrics & Music: Harvester Praise
+
+I'm alive in Your love, Jesus
+Every breath I take is by Your grace
+From the darkness into Your glorious light
+You have set my feet upon the rock!`,
+        tracks: [
+          { title: "Im Alive (活在爱中)", duration: "03:45", sec: 225 }
+        ]
+      },
+      {
+        id: "song_harvest_call",
+        title: "收割的呼召",
+        titleEn: "Call to Harvest",
+        artist: "Gospel Collective",
         year: "2024",
-        genre: "Synthwave / Ambient",
+        genre: "Gospel / CCM · 2024",
         theme: "navy",
         bgColor: "#132338",
-        accentColor: "#3a86ff",
-        cover: "https://placehold.co/600x600/132338/60a5fa?text=Celestial+Harvest",
-        spineColor: "#1d3557",
-        description: "深邃的宇宙声景与80年代模拟合成器碰撞，勾勒出辽阔无垠的星空丰收画卷。",
-        lyrics: `【01. 星芒之光】
-夜空闪烁无数誓约的信实，
-每一颗星辰都在低语赞美。
-穿越时空的声音，
-带我们归向永恒。`,
+        accentColor: "#0984e3",
+        spineBg: "#0984e3",
+        spineColor: "#ffffff",
+        cover: childlikeDoodles[4],
+        description: "庄稼已经熟了，求庄稼的主打发工人出去收祂的庄稼！愿每一首写给神的歌都被听见。",
+        lyrics: `【收割的呼召】
+词曲：Harvester Gospel Collective
+
+「那人撒种，这人收割」
+庄稼已经熟了，求庄稼的主打发工人出去收祂的庄稼！
+愿每一首写给神的歌都被听见，
+在各处传扬救恩的喜讯。`,
         tracks: [
-          { title: "Starlight Harvest (星芒丰收)", duration: "04:45", sec: 285 },
-          { title: "Cosmic Odyssey (宇宙航行)", duration: "05:20", sec: 320 },
-          { title: "Midnight Whisper (子夜微声)", duration: "03:50", sec: 230 }
+          { title: "收割的呼召 (Call to Harvest)", duration: "04:15", sec: 255 }
         ]
       },
       {
-        id: "album-5",
-        title: "BECAUSE OF YOUR LOVE",
-        titleCn: "因祢的爱",
-        artist: "Harvester Voices",
+        id: "song_you_are_all",
+        title: "祢是唯一",
+        titleEn: "You Are My All",
+        artist: "Harvester Acoustic",
         year: "2024",
-        genre: "Chamber Folk / Soul",
-        theme: "violet",
-        bgColor: "#281533",
-        accentColor: "#9d4edd",
-        cover: "https://placehold.co/600x600/281533/c77dff?text=Because+Of+Love",
-        spineColor: "#3c1642",
-        description: "纯净人声三重唱与原声大提琴，如冬日壁炉旁的低语，温暖每一颗疲惫的心灵。",
-        lyrics: `【01. 因祢的爱】
-因祢的爱，我得享安息；
-因祢的爱，黑夜变光明。
-无所保留的倾倒，
-换我一生跟随。`,
+        genre: "Piano Devotional · 2024",
+        theme: "navy",
+        bgColor: "#182736",
+        accentColor: "#255977",
+        spineBg: "#2d3436",
+        spineColor: "#ffffff",
+        cover: childlikeDoodles[5],
+        description: "在天地之间，唯有祢是我心所慕；在黑暗深夜，祢是我唯一的亮光。",
+        lyrics: `【祢是唯一】
+词曲：Harvester Acoustic
+
+在天地之间，唯有祢是我心所慕，
+在黑暗深夜，祢是我唯一的亮光。
+主啊，我将我的一切向祢倾心吐意，
+因为祢是我永远的福分。`,
         tracks: [
-          { title: "因祢的爱 (Because of Love)", duration: "04:15", sec: 255 },
-          { title: "Rest in Grace (恩典安歇)", duration: "03:48", sec: 228 },
-          { title: "Acoustic Prayer (晨祷之弦)", duration: "04:32", sec: 272 }
+          { title: "祢是唯一 (You Are My All)", duration: "04:40", sec: 280 }
         ]
       }
     ];
 
-    /* ================= STATE ================= */
-    let currentAlbumIndex = 0;
+    /* ================= STATE & CONTINUOUS PHYSICS ================= */
+    let currentIndex = 0;
     let currentTrackIndex = 0;
     let isPlaying = false;
     let isShuffle = false;
@@ -680,120 +911,290 @@
     let currentPlaybackSeconds = 0;
     let playbackInterval = null;
 
+    // Physics Engine State
+    let currentProgress = 0; // Floating index for silky 60fps/120fps motion
+    let targetProgress = 0;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartProgress = 0;
+    let lastDragX = 0;
+    let lastDragTime = 0;
+    let dragVelocity = 0;
+    let hasMovedFar = false;
+
     /* ================= INITIALIZATION ================= */
     document.addEventListener("DOMContentLoaded", () => {
-      renderRack();
-      setupRackDrag();
+      render3DCoverflowDOM();
+      setupInteractiveDrag();
+      startPhysicsLoop();
       loadAlbumDetail(0);
       setupProgressBar();
       setupVolumeControl();
     });
 
-    /* ================= VIEW 1: RACK RENDERING ================= */
-    function renderRack() {
-      const track = document.getElementById("rack-scroll-track");
+    /* ================= VIEW 1: 3D CUBE DOM GENERATION ================= */
+    function render3DCoverflowDOM() {
+      const carousel = document.getElementById("coverflowCarousel");
       const indicator = document.getElementById("rack-indicator");
-      track.innerHTML = "";
+      carousel.innerHTML = "";
       indicator.innerHTML = "";
 
       albumsData.forEach((album, idx) => {
-        // Create Album 3D Card
-        const card = document.createElement("div");
-        card.className = `album-card-3d relative flex-shrink-0 w-64 sm:w-72 md:w-80 cursor-pointer group`;
-        card.innerHTML = `
-          <!-- Vinyl Jacket Structure -->
-          <div class="relative w-full aspect-square rounded-2xl overflow-hidden bg-slate-900 border border-white/20 shadow-2xl transition-all duration-500 group-hover:border-teal-400 group-hover:shadow-[0_20px_50px_rgba(59,156,156,0.3)]">
-            <img src="${album.cover}" alt="${album.title}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" />
-            <!-- Sheen Layer -->
-            <div class="absolute inset-0 bg-gradient-to-tr from-black/60 via-transparent to-white/10 pointer-events-none"></div>
+        const box = document.createElement("div");
+        box.className = `album-3d-box ${idx === 0 ? 'active' : ''}`;
+        box.setAttribute("data-index", idx);
 
-            <!-- Left 3D Spine Simulation -->
-            <div class="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-black/80 to-transparent border-r border-white/10"></div>
+        box.innerHTML = `
+          <div class="album-cube">
+            <!-- 1. Front Cover Face -->
+            <div class="cube-face cube-front">
+              <img src="${album.cover}" alt="${album.title}" draggable="false" />
+              <div class="album-glass-sheen"></div>
+              <div class="album-inner-border"></div>
+              
+              <!-- Quick Play Overlay on Hover -->
+              <div class="absolute inset-0 bg-black/40 backdrop-blur-[1px] opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                <button onclick="event.stopPropagation(); quickPlay(${idx})" class="w-14 h-14 rounded-full bg-teal-400 text-black flex items-center justify-center text-xl shadow-2xl transform scale-90 hover:scale-105 transition">
+                  <i class="fa-solid fa-play ml-0.5"></i>
+                </button>
+              </div>
 
-            <!-- Hover Play Button Overlay -->
-            <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-              <button onclick="event.stopPropagation(); quickPlayAlbum(${idx})" class="w-16 h-16 rounded-full bg-teal-400 text-black flex items-center justify-center text-2xl shadow-2xl transform scale-75 group-hover:scale-100 transition">
-                <i class="fa-solid fa-play ml-1"></i>
-              </button>
+              <!-- Top Left Corner Badge -->
+              <div class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-black/75 backdrop-blur-md border border-white/20 text-[9px] font-mono text-teal-300 uppercase">
+                VOL. 0${idx + 1}
+              </div>
             </div>
 
-            <!-- Top Corner Badge -->
-            <div class="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/70 backdrop-blur-md border border-white/20 text-[10px] font-mono text-teal-300 uppercase">
-              ${album.genre.split('/')[0]}
+            <!-- 2. Left Spine (CD Jewel Case Spine rigidly bound to Front Cover) -->
+            <div class="cube-face cube-spine-left" style="background: ${album.spineBg};">
+              <div class="spine-inner-text">
+                <span class="spine-catalog">HMP-${String(idx + 1).padStart(3, '0')}</span>
+                <span class="spine-title">${album.title}</span>
+                <span class="spine-artist">${album.artist}</span>
+              </div>
+            </div>
+
+            <!-- 3. Right Spine Edge -->
+            <div class="cube-face cube-spine-right" style="background: ${album.spineBg};">
+            </div>
+
+            <!-- 4. Top Thickness Face -->
+            <div class="cube-face cube-top" style="background: ${album.spineBg}; filter: brightness(1.2);"></div>
+
+            <!-- 5. Bottom Thickness Face -->
+            <div class="cube-face cube-bottom"></div>
+
+            <!-- 6. Back Cover Face -->
+            <div class="cube-face cube-back">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <span class="font-serif text-sm font-bold text-amber-200">${album.title}</span>
+                <span class="font-display text-xs tracking-widest text-teal-400">HARVESTER</span>
+              </div>
+              <div class="py-2 text-[11px] text-slate-300 font-sans space-y-1">
+                <div class="font-bold text-white">01. ${album.title}</div>
+                <div class="text-slate-400">${album.artist} &bull; ${album.year}</div>
+                <div class="text-[10px] text-teal-300 mt-2">Hi-Res Audio &bull; 24-Bit / 96kHz</div>
+              </div>
+              <div class="flex items-center justify-between pt-2 border-t border-white/10 text-[9px] font-mono text-slate-500">
+                <span>© ${album.year} HARVESTER</span>
+                <i class="fa-solid fa-barcode text-slate-400 text-sm"></i>
+              </div>
             </div>
           </div>
 
-          <!-- Bottom Card Typography -->
-          <div class="pt-4 space-y-1">
-            <div class="flex items-center justify-between text-xs font-mono text-slate-400">
-              <span>VOL. 0${idx + 1}</span>
-              <span class="text-teal-400 font-semibold">${album.tracks.length} TRACKS</span>
-            </div>
-            <h3 class="text-xl font-display font-bold uppercase text-white group-hover:text-teal-300 transition truncate">
-              ${album.title}
-            </h3>
-            <p class="text-xs text-slate-400 truncate">${album.artist} &bull; ${album.year}</p>
-          </div>
+          <!-- 3D Ground Shadow -->
+          <div class="album-shadow-3d"></div>
         `;
 
-        card.addEventListener("click", () => {
-          openDetailView(idx);
+        box.addEventListener("click", () => {
+          if (hasMovedFar) return;
+          if (idx === Math.round(currentProgress)) {
+            openDetailView(idx);
+          } else {
+            targetProgress = idx;
+          }
         });
 
-        track.appendChild(card);
+        carousel.appendChild(box);
 
-        // Indicator dot
+        // Indicator Dot
         const dot = document.createElement("button");
-        dot.className = `w-2.5 h-2.5 rounded-full transition-all ${idx === 0 ? 'bg-teal-400 w-6' : 'bg-white/20'}`;
+        dot.className = `w-2 h-2 rounded-full transition-all ${idx === 0 ? 'bg-teal-400 w-6' : 'bg-white/20'}`;
         dot.addEventListener("click", () => {
-          scrollToCard(idx);
+          targetProgress = idx;
         });
         indicator.appendChild(dot);
       });
+
+      render3DTransforms();
     }
 
-    /* ================= RACK HORIZONTAL DRAG & SCROLL ================= */
-    let isDown = false;
-    let startX, scrollLeft;
+    /* ================= 3D CONTINUOUS PHYSICS LOOP (60FPS/120FPS) ================= */
+    function startPhysicsLoop() {
+      function tick() {
+        if (!isDragging) {
+          const diff = targetProgress - currentProgress;
+          if (Math.abs(diff) > 0.0004) {
+            currentProgress += diff * 0.135;
+            render3DTransforms();
+          } else if (currentProgress !== targetProgress) {
+            currentProgress = targetProgress;
+            render3DTransforms();
+            updateActiveMeta();
+          }
+        } else {
+          currentProgress += (targetProgress - currentProgress) * 0.38;
+          render3DTransforms();
+        }
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
 
-    function setupRackDrag() {
-      const slider = document.getElementById("rack-scroll-track");
+    /* ================= 3D TRANSFORM CALCULATIONS (SPINE & COVER SLIDE TOGETHER) ================= */
+    function render3DTransforms() {
+      const boxes = document.querySelectorAll(".album-3d-box");
+      if (!boxes.length) return;
 
-      slider.addEventListener("mousedown", (e) => {
-        isDown = true;
-        startX = e.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
+      const isMobile = window.innerWidth <= 768;
+      const stepX = isMobile ? 95 : 135;
+      const centerGap = isMobile ? 35 : 60;
+      const activeIntIdx = Math.round(currentProgress);
+
+      boxes.forEach((box, i) => {
+        const offset = i - currentProgress;
+        const absOffset = Math.abs(offset);
+
+        // Angled perspective (-46deg to -36deg) so that both the spine and cover are always visibly coupled
+        const pActive = Math.max(0, 1 - absOffset);
+        const rotY = -48 + 12 * pActive;
+
+        let x = offset * stepX;
+        if (offset < 0) x -= centerGap * (1 - pActive);
+        else if (offset > 0) x += centerGap * (1 - pActive);
+
+        const z = 90 * pActive - absOffset * 35;
+        const scale = 0.90 + 0.22 * pActive;
+        const opacity = Math.max(0.25, 1 - absOffset * 0.12);
+
+        let zIndex = 500 + i * 10;
+        if (absOffset < 0.6) {
+          zIndex = 1000 + Math.round((0.6 - absOffset) * 200);
+        }
+
+        box.classList.toggle("active", i === activeIntIdx);
+        box.style.transform = `translateX(${x.toFixed(2)}px) translateZ(${z.toFixed(2)}px) rotateY(${rotY.toFixed(2)}deg) scale(${Math.max(0.5, scale).toFixed(3)})`;
+        box.style.zIndex = zIndex;
+        box.style.opacity = Math.max(0, Math.min(1, opacity)).toFixed(3);
       });
 
-      slider.addEventListener("mouseleave", () => { isDown = false; });
-      slider.addEventListener("mouseup", () => { isDown = false; });
+      // Update indicator dots
+      const dots = document.querySelectorAll("#rack-indicator button");
+      dots.forEach((dot, idx) => {
+        if (idx === activeIntIdx) {
+          dot.className = "w-6 h-2 rounded-full bg-teal-400 transition-all";
+        } else {
+          dot.className = "w-2 h-2 rounded-full bg-white/20 transition-all";
+        }
+      });
+    }
 
-      slider.addEventListener("mousemove", (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - slider.offsetLeft;
-        const walk = (x - startX) * 1.8;
-        slider.scrollLeft = scrollLeft - walk;
+    function updateActiveMeta() {
+      const activeIdx = Math.max(0, Math.min(albumsData.length - 1, Math.round(currentProgress)));
+      currentIndex = activeIdx;
+    }
+
+    /* ================= INTERACTIVE MOUSE DRAG & TOUCH ENGINE ================= */
+    function setupInteractiveDrag() {
+      const carousel = document.getElementById("coverflowCarousel");
+      if (!carousel) return;
+
+      function handleDragStart(clientX) {
+        isDragging = true;
+        hasMovedFar = false;
+        dragStartX = clientX;
+        dragStartProgress = currentProgress;
+        lastDragX = clientX;
+        lastDragTime = performance.now();
+        dragVelocity = 0;
+      }
+
+      function handleDragMove(clientX) {
+        if (!isDragging) return;
+        const dx = clientX - dragStartX;
+        if (Math.abs(dx) > 6) hasMovedFar = true;
+
+        const now = performance.now();
+        const dt = Math.max(1, now - lastDragTime);
+        dragVelocity = (clientX - lastDragX) / dt;
+        lastDragX = clientX;
+        lastDragTime = now;
+
+        const pxPerAlbum = window.innerWidth <= 768 ? 120 : 160;
+        let newTarget = dragStartProgress - (dx / pxPerAlbum);
+
+        if (newTarget < 0) newTarget *= 0.3;
+        else if (newTarget > albumsData.length - 1) {
+          const max = albumsData.length - 1;
+          newTarget = max + (newTarget - max) * 0.3;
+        }
+
+        targetProgress = newTarget;
+      }
+
+      function handleDragEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+
+        const momentum = -dragVelocity * 14;
+        let finalTarget = Math.round(targetProgress + momentum);
+        finalTarget = Math.max(0, Math.min(albumsData.length - 1, finalTarget));
+        targetProgress = finalTarget;
+        updateActiveMeta();
+      }
+
+      // Mouse Events
+      carousel.addEventListener("mousedown", (e) => {
+        if (e.button !== 0) return;
+        handleDragStart(e.clientX);
       });
 
-      // Mouse Wheel to Horizontal Scroll
-      slider.addEventListener("wheel", (e) => {
-        if (e.deltaY !== 0) {
+      window.addEventListener("mousemove", (e) => {
+        if (isDragging) handleDragMove(e.clientX);
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (isDragging) handleDragEnd();
+      });
+
+      // Mouse Wheel to Horizontal Carousel Navigation
+      carousel.addEventListener("wheel", (e) => {
+        if (e.deltaY !== 0 || e.deltaX !== 0) {
           e.preventDefault();
-          slider.scrollLeft += e.deltaY * 1.5;
+          const delta = (e.deltaY || e.deltaX) > 0 ? 1 : -1;
+          navigateRack(delta);
         }
       }, { passive: false });
+
+      // Touch Events
+      carousel.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 1) handleDragStart(e.touches[0].clientX);
+      }, { passive: true });
+
+      window.addEventListener("touchmove", (e) => {
+        if (isDragging && e.touches.length === 1) handleDragMove(e.touches[0].clientX);
+      }, { passive: true });
+
+      window.addEventListener("touchend", () => {
+        if (isDragging) handleDragEnd();
+      });
     }
 
-    function scrollRack(direction) {
-      const slider = document.getElementById("rack-scroll-track");
-      slider.scrollBy({ left: direction * 360, behavior: 'smooth' });
-    }
-
-    function scrollToCard(index) {
-      const slider = document.getElementById("rack-scroll-track");
-      const cardWidth = 320;
-      slider.scrollTo({ left: index * cardWidth, behavior: 'smooth' });
+    function navigateRack(dir) {
+      let nextIdx = Math.round(targetProgress) + dir;
+      nextIdx = Math.max(0, Math.min(albumsData.length - 1, nextIdx));
+      targetProgress = nextIdx;
+      updateActiveMeta();
     }
 
     /* ================= VIEW SWITCHER ================= */
@@ -829,19 +1230,20 @@
       switchView("detail");
     }
 
-    /* ================= LOAD ALBUM DETAIL (VIEW 2) ================= */
+    /* ================= VIEW 2: LOAD DETAIL VIEW ================= */
     function loadAlbumDetail(albumIdx) {
-      currentAlbumIndex = albumIdx;
+      currentIndex = albumIdx;
+      targetProgress = albumIdx;
       const album = albumsData[albumIdx];
 
-      // Dynamic Theme Color on View Detail Container
+      // Dynamic Theme Color
       const viewDetail = document.getElementById("view-detail");
       viewDetail.style.backgroundColor = album.bgColor || "#0d0f14";
 
       // Meta elements
       document.getElementById("detail-title").innerText = album.title;
       document.getElementById("detail-artist").innerText = album.artist;
-      document.getElementById("detail-genre-year").innerText = `${album.genre} • ${album.year}`;
+      document.getElementById("detail-genre-year").innerText = `${album.genre}`;
       document.getElementById("detail-description").innerText = album.description;
       document.getElementById("detail-cover-img").src = album.cover;
       document.getElementById("detail-vinyl-center").style.backgroundImage = `url('${album.cover}')`;
@@ -850,10 +1252,10 @@
       document.getElementById("detail-album-counter").innerText = `0${albumIdx + 1} / 0${albumsData.length}`;
 
       // Calculate runtime
-      const totalSeconds = album.tracks.reduce((sum, t) => sum + (t.sec || 200), 0);
+      const totalSeconds = album.tracks.reduce((sum, t) => sum + (t.sec || 240), 0);
       const mins = Math.floor(totalSeconds / 60);
       const secs = totalSeconds % 60;
-      document.getElementById("detail-summary-count").innerText = `${album.tracks.length} SONGS, ${mins} MIN, ${secs} SEC`;
+      document.getElementById("detail-summary-count").innerText = `${album.tracks.length} TRACK &bull; ${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
 
       // Render Tracks List
       const tracklist = document.getElementById("detail-tracklist");
@@ -862,12 +1264,11 @@
       album.tracks.forEach((track, tIdx) => {
         const row = document.createElement("div");
         row.className = `group flex items-center justify-between p-3.5 sm:p-4 rounded-xl hover:bg-white/10 transition cursor-pointer ${
-          currentAlbumIndex === albumIdx && currentTrackIndex === tIdx ? 'bg-white/10 border-l-4 border-teal-400' : ''
+          currentIndex === albumIdx && currentTrackIndex === tIdx ? 'bg-white/10 border-l-4 border-teal-400' : ''
         }`;
         
         row.innerHTML = `
           <div class="flex items-center space-x-4 min-w-0">
-            <!-- Track Number or Play Icon -->
             <div class="w-8 h-8 rounded-full flex items-center justify-center font-mono text-sm text-slate-400 group-hover:bg-teal-400 group-hover:text-black transition">
               <span class="group-hover:hidden">0${tIdx + 1}</span>
               <i class="fa-solid fa-play text-xs hidden group-hover:block ml-0.5"></i>
@@ -881,7 +1282,7 @@
           </div>
           
           <div class="flex items-center space-x-4 shrink-0 font-mono text-xs text-slate-400">
-            <span class="hidden sm:inline-block px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] text-teal-300">HQ FLAC</span>
+            <span class="hidden sm:inline-block px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] text-teal-300">HQ 24-BIT</span>
             <span>${track.duration}</span>
             <button onclick="event.stopPropagation(); alert('已加入播放收藏列表')" class="opacity-0 group-hover:opacity-100 hover:text-white transition p-1">
               <i class="fa-regular fa-heart"></i>
@@ -898,19 +1299,19 @@
     }
 
     function prevAlbum() {
-      const prevIdx = (currentAlbumIndex - 1 + albumsData.length) % albumsData.length;
+      const prevIdx = (currentIndex - 1 + albumsData.length) % albumsData.length;
       openDetailView(prevIdx);
     }
 
     function nextAlbum() {
-      const nextIdx = (currentAlbumIndex + 1) % albumsData.length;
+      const nextIdx = (currentIndex + 1) % albumsData.length;
       openDetailView(nextIdx);
     }
 
-    /* ================= PLAYBACK ENGINE (SIMULATED & INTERACTIVE) ================= */
+    /* ================= PLAYBACK ENGINE (SIMULATED & SYNCHRONIZED) ================= */
     function playTrack(trackIdx) {
       currentTrackIndex = trackIdx;
-      const album = albumsData[currentAlbumIndex];
+      const album = albumsData[currentIndex];
       const track = album.tracks[trackIdx];
 
       // Update Mini Player UI
@@ -923,14 +1324,15 @@
       currentPlaybackSeconds = 0;
       isPlaying = true;
       updatePlayPauseButton();
-      startPlaybackTimer(track.sec || 225);
+      startPlaybackTimer(track.sec || 240);
 
       // Re-render tracklist highlight
-      loadAlbumDetail(currentAlbumIndex);
+      loadAlbumDetail(currentIndex);
     }
 
-    function quickPlayAlbum(albumIdx) {
-      currentAlbumIndex = albumIdx;
+    function quickPlay(albumIdx) {
+      currentIndex = albumIdx;
+      targetProgress = albumIdx;
       playTrack(0);
     }
 
@@ -940,20 +1342,20 @@
 
     function randomPlay() {
       const randAlbum = Math.floor(Math.random() * albumsData.length);
-      const randTrack = Math.floor(Math.random() * albumsData[randAlbum].tracks.length);
-      currentAlbumIndex = randAlbum;
-      playTrack(randTrack);
+      currentIndex = randAlbum;
+      targetProgress = randAlbum;
+      playTrack(0);
     }
 
     function togglePlay() {
       isPlaying = !isPlaying;
       updatePlayPauseButton();
 
-      const album = albumsData[currentAlbumIndex];
+      const album = albumsData[currentIndex];
       const track = album.tracks[currentTrackIndex];
 
       if (isPlaying) {
-        startPlaybackTimer(track.sec || 225);
+        startPlaybackTimer(track.sec || 240);
       } else {
         clearInterval(playbackInterval);
       }
@@ -975,33 +1377,24 @@
     }
 
     function prevTrack() {
-      const album = albumsData[currentAlbumIndex];
-      if (currentTrackIndex > 0) {
-        playTrack(currentTrackIndex - 1);
+      if (currentIndex > 0) {
+        currentIndex--;
       } else {
-        playTrack(album.tracks.length - 1);
+        currentIndex = albumsData.length - 1;
       }
+      targetProgress = currentIndex;
+      playTrack(0);
     }
 
     function nextTrack() {
-      const album = albumsData[currentAlbumIndex];
       if (isShuffle) {
-        const rand = Math.floor(Math.random() * album.tracks.length);
-        playTrack(rand);
-        return;
-      }
-
-      if (currentTrackIndex < album.tracks.length - 1) {
-        playTrack(currentTrackIndex + 1);
+        const rand = Math.floor(Math.random() * albumsData.length);
+        currentIndex = rand;
       } else {
-        if (isLoop) {
-          playTrack(0);
-        } else {
-          // Next album
-          currentAlbumIndex = (currentAlbumIndex + 1) % albumsData.length;
-          playTrack(0);
-        }
+        currentIndex = (currentIndex + 1) % albumsData.length;
       }
+      targetProgress = currentIndex;
+      playTrack(0);
     }
 
     function toggleShuffle() {
@@ -1023,16 +1416,18 @@
         currentPlaybackSeconds++;
         
         if (currentPlaybackSeconds >= totalSec) {
-          nextTrack();
-          return;
+          if (isLoop) {
+            currentPlaybackSeconds = 0;
+          } else {
+            nextTrack();
+            return;
+          }
         }
 
-        // Format cur time
         const m = Math.floor(currentPlaybackSeconds / 60);
         const s = currentPlaybackSeconds % 60;
         document.getElementById("player-time-cur").innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
 
-        // Update progress bar width
         const pct = (currentPlaybackSeconds / totalSec) * 100;
         document.getElementById("player-progress-bar").style.width = `${pct}%`;
       }, 1000);
@@ -1045,9 +1440,9 @@
         const clickX = e.clientX - rect.left;
         const pct = Math.max(0, Math.min(1, clickX / rect.width));
         
-        const album = albumsData[currentAlbumIndex];
+        const album = albumsData[currentIndex];
         const track = album.tracks[currentTrackIndex];
-        const totalSec = track.sec || 225;
+        const totalSec = track.sec || 240;
 
         currentPlaybackSeconds = Math.floor(pct * totalSec);
         document.getElementById("player-progress-bar").style.width = `${pct * 100}%`;
@@ -1061,16 +1456,16 @@
     function setupVolumeControl() {
       const vol = document.getElementById("player-volume");
       vol.addEventListener("input", (e) => {
-        // Simulated volume adjustment
+        // Volume adjustment simulation
       });
     }
 
     function shareSong() {
-      const album = albumsData[currentAlbumIndex];
+      const album = albumsData[currentIndex];
       const track = album.tracks[currentTrackIndex];
       if (navigator.clipboard) {
         navigator.clipboard.writeText(window.location.href);
-        alert(`已复制歌曲分享链接：${track.title} - ${album.artist}`);
+        alert(`已复制分享链接：${track.title} - ${album.artist}`);
       } else {
         alert(`分享：${track.title} - ${album.artist}`);
       }
