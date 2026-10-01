@@ -559,19 +559,14 @@ You have set my feet upon the rock!`
           <!-- Bottom Thickness Edge -->
           <div class="cube-face cube-bottom"></div>
 
-          <!-- Back Cover Face -->
+          <!-- Back Cover Face (Unified with Front Cover Artwork) -->
           <div class="cube-face cube-back">
-            <div class="cube-back-header">
-              <span class="cube-back-title">${album.title}</span>
-              <span class="cube-back-logo">HARVESTER</span>
-            </div>
-            <div class="cube-back-tracks">
-              <div style="color:var(--gold); font-weight:bold; margin-bottom:6px;">01. ${album.title}</div>
-              <div style="font-size:0.75rem; color:#aaa; line-height:1.4;">${album.artist} · ${album.year || '2025'}</div>
-            </div>
-            <div class="cube-back-footer">
-              <span>© ${album.year || '2025'} HARVESTER</span>
-              <span><i class="fas fa-barcode"></i></span>
+            <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
+            <div class="album-glass-sheen"></div>
+            <div class="album-inner-border"></div>
+            <!-- Top Right Year Badge -->
+            <div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.65); backdrop-filter:blur(6px); border:1px solid rgba(246,210,138,0.3); color:var(--gold); font-size:0.65rem; font-family:var(--font-eng-title); padding:2px 8px; border-radius:50px; z-index:5;">
+              ${album.year || '2025'}
             </div>
           </div>
         </div>

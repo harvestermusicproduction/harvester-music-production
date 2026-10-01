@@ -1177,20 +1177,14 @@
             <!-- 5. Bottom Thickness Face -->
             <div class="cube-face cube-bottom"></div>
 
-            <!-- 6. Back Cover Face -->
+            <!-- 6. Back Cover Face (Unified with Front Cover Artwork) -->
             <div class="cube-face cube-back">
-              <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                <span class="font-serif text-sm font-bold text-amber-200">${album.title}</span>
-                <span class="font-display text-xs tracking-widest text-teal-400">HARVESTER</span>
-              </div>
-              <div class="py-2 text-[11px] text-slate-300 font-sans space-y-1">
-                <div class="font-bold text-white">01. ${album.title}</div>
-                <div class="text-slate-400">${album.artist} &bull; ${album.year}</div>
-                <div class="text-[10px] text-teal-300 mt-2">Hi-Res Audio &bull; 24-Bit / 96kHz</div>
-              </div>
-              <div class="flex items-center justify-between pt-2 border-t border-white/10 text-[9px] font-mono text-slate-500">
-                <span>© ${album.year} HARVESTER</span>
-                <i class="fa-solid fa-barcode text-slate-400 text-sm"></i>
+              <img src="${album.cover}" alt="${album.title}" draggable="false" />
+              <div class="album-glass-sheen"></div>
+              <div class="album-inner-border"></div>
+              <!-- Top Right Corner Badge -->
+              <div class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded bg-black/75 backdrop-blur-md border border-white/20 text-[9px] font-mono text-teal-300 uppercase">
+                ${album.year}
               </div>
             </div>
           </div>
