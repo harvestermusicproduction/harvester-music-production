@@ -548,14 +548,14 @@ You have set my feet upon the rock!`
     requestAnimationFrame(tick);
   }
 
-  // Continuous 3D Transform Rendering for All Slabs (Flawless Coverflow with Always-Visible Spines)
+  // Continuous 3D Transform Rendering for All Slabs (Unified 3D Shelf with Visible Spines)
   function render3DCoverflow() {
     const boxes = document.querySelectorAll('.album-3d-box');
     if (!boxes.length) return;
 
     const isMobile = window.innerWidth <= 768;
-    const stepX = isMobile ? 120 : 180;
-    const centerGap = isMobile ? 45 : 75;
+    const stepX = isMobile ? 85 : 125;
+    const centerGap = isMobile ? 35 : 55;
 
     const activeIntIdx = Math.round(currentProgress);
 
@@ -563,39 +563,26 @@ You have set my feet upon the rock!`
       const offset = i - currentProgress;
       const absOffset = Math.abs(offset);
 
-      let x = 0;
-      let z = 0;
-      let rotY = 0;
-      let scale = 1;
-      let opacity = 1;
-      
-      if (offset < 0) {
-        // Left side slabs (face slightly to the right, showing front cover & right edge)
-        const p = Math.min(1, -offset);
-        rotY = 56 * p;
-        x = offset * stepX - centerGap * p;
-        z = -absOffset * 50;
-        scale = 1.15 - p * 0.15 - Math.max(0, absOffset - 1) * 0.05;
-        opacity = Math.max(0.12, 1 - absOffset * 0.12);
-      } else if (offset > 0) {
-        // Right side slabs (face to the left, showing left spine & front cover)
-        const p = Math.min(1, offset);
-        rotY = -56 * p;
-        x = offset * stepX + centerGap * p;
-        z = -absOffset * 50;
-        scale = 1.15 - p * 0.15 - Math.max(0, absOffset - 1) * 0.05;
-        opacity = Math.max(0.12, 1 - absOffset * 0.12);
-      } else {
-        // Center Active Spotlight
-        rotY = 0;
-        x = 0;
-        z = 60;
-        scale = 1.15;
-        opacity = 1;
-      }
+      // Consistent angled perspective: all albums consistently show their thick left spine
+      // Center active album is at -44deg (showing both cover & spine clearly in spotlight)
+      // Side albums are at -56deg (neatly stacked along the 3D rack)
+      const pActive = Math.max(0, 1 - absOffset);
+      const rotY = -56 + 12 * pActive; // -56deg on sides -> -44deg at center
 
-      // Center album has highest zIndex, farther albums cascade backward
-      let zIndex = 1000 - Math.round(absOffset * 30);
+      let x = offset * stepX;
+      if (offset < 0) x -= centerGap * (1 - pActive);
+      else if (offset > 0) x += centerGap * (1 - pActive);
+
+      const z = 80 * pActive - absOffset * 35;
+      const scale = 0.92 + 0.23 * pActive; // 0.92 on sides -> 1.15 at center
+      const opacity = Math.max(0.18, 1 - absOffset * 0.1);
+
+      // Stacking order: albums stack from left to right along the rack perspective,
+      // with the active spotlight album at the highest priority
+      let zIndex = 500 + i * 10;
+      if (absOffset < 0.6) {
+        zIndex = 1000 + Math.round((0.6 - absOffset) * 200);
+      }
 
       box.classList.toggle('active', i === activeIntIdx);
       box.style.transform = `translateX(${x.toFixed(2)}px) translateZ(${z.toFixed(2)}px) rotateY(${rotY.toFixed(2)}deg) scale(${Math.max(0.5, scale).toFixed(3)})`;
