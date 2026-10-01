@@ -2869,173 +2869,11 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- 💽 板块 6: 版权分成结构与收入来源 (PROFIT SHARING & REVENUE) -->
-        <div class="cms-card" style="border-left: 4px solid #a55eea;">
-          <h3 style="color:#a55eea; margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>💽</span> 板块六：版权分成结构与收入来源 (Profit Sharing & Revenue)
-          </h3>
-          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑数字流媒体收入说明、配图及六大部门分成机制比例。</p>
-
-          <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap:25px; margin-bottom:20px;">
-            <!-- Revenue Source Info -->
-            <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222;">
-              <h4 style="color:var(--gold); margin-top:0; margin-bottom:12px;">🎹 收入来源 (Revenue Sources)</h4>
-              <div style="margin-bottom:10px;">
-                <label style="font-size:0.75rem; color:#aaa;">来源标题</label>
-                <input type="text" id="in_about_rev_title" value="${d('about_rev_title', 'REVENUE 收入来源')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
-              </div>
-              <div style="margin-bottom:10px;">
-                <label style="font-size:0.75rem; color:#aaa;">中文说明</label>
-                <textarea id="in_about_rev_desc" style="width:100%; height:45px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_rev_desc', '主要来自 YouTube 或其他数字音乐平台的收益。')}</textarea>
-              </div>
-              <div style="margin-bottom:10px;">
-                <label style="font-size:0.75rem; color:#aaa;">英文说明</label>
-                <input type="text" id="in_about_rev_desc_en" value="${d('about_rev_desc_en', 'Mainly from YouTube or other digital streaming platforms.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
-              </div>
-            </div>
-
-            <!-- Revenue Source Image -->
-            <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
-              <label style="font-size:0.8rem; color:var(--gold); font-weight:bold; display:block; margin-bottom:8px;">收入来源配图 (Piano / Audio)</label>
-              <img id="prev_about_rev_img" src="${d('about_rev_img', 'https://images.unsplash.com/photo-1520523839898-50712509e37b?auto=format&fit=crop&w=800&q=80')}" style="width:100%; height:120px; object-fit:cover; border-radius:6px; margin-bottom:8px; border:1px solid #333;">
-              <input type="file" id="f_about_rev_img" style="font-size:0.75rem; width:100%; margin-bottom:5px;">
-              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_rev_img', 'in_about_rev_img', 'prev_about_rev_img')">📤 上传配图</button>
-              <input type="hidden" id="in_about_rev_img" value="${d('about_rev_img', 'https://images.unsplash.com/photo-1520523839898-50712509e37b?auto=format&fit=crop&w=800&q=80')}">
-            </div>
-          </div>
-
-          <!-- Profit Percentages -->
-          <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px dashed #333; padding-bottom:10px;">
-              <h4 style="color:#a55eea; margin:0;">📊 盈利按比例分配设置 (Profit Sharing Breakdown)</h4>
-              <div style="display:flex; gap:10px;">
-                <input type="text" id="in_about_cps_title" value="${d('about_cps_title', '盈利按比例分配')}" style="background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:6px 10px; border-radius:4px; font-size:0.8rem;">
-                <input type="text" id="in_about_cps_subtitle" value="${d('about_cps_subtitle', 'Profits will be distributed as follows')}" style="background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:6px 10px; border-radius:4px; font-size:0.8rem;">
-              </div>
-            </div>
-
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
-              <!-- 1 -->
-              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
-                <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">01 词曲 (20%)</label>
-                <input type="text" id="in_about_cps_r1_t" value="${d('about_cps_r1_t', '词曲')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
-                <input type="text" id="in_about_cps_r1_d" value="${d('about_cps_r1_d', '创作部门 · Creation')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
-              </div>
-              <!-- 2 -->
-              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
-                <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">02 制作 (20%)</label>
-                <input type="text" id="in_about_cps_r2_t" value="${d('about_cps_r2_t', '制作')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
-                <input type="text" id="in_about_cps_r2_d" value="${d('about_cps_r2_d', '制作部门 · Production')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
-              </div>
-              <!-- 3 -->
-              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
-                <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">03 影片 (20%)</label>
-                <input type="text" id="in_about_cps_r3_t" value="${d('about_cps_r3_t', '影片')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
-                <input type="text" id="in_about_cps_r3_d" value="${d('about_cps_r3_d', '影片部门 · Film')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
-              </div>
-              <!-- 4 -->
-              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
-                <label style="font-size:0.7rem; color:var(--gold); font-weight:bold;">04 推广 (20%)</label>
-                <input type="text" id="in_about_cps_r4_t" value="${d('about_cps_r4_t', '推广')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
-                <input type="text" id="in_about_cps_r4_d" value="${d('about_cps_r4_d', '宣传部门 · Promotion')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
-              </div>
-              <!-- 5 -->
-              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
-                <label style="font-size:0.7rem; color:#2ed573; font-weight:bold;">05 歌手 (10%)</label>
-                <input type="text" id="in_about_cps_r5_t" value="${d('about_cps_r5_t', '歌手')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
-                <input type="text" id="in_about_cps_r5_d" value="${d('about_cps_r5_d', '歌唱部门 · Singing')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
-              </div>
-              <!-- 6 -->
-              <div style="background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;">
-                <label style="font-size:0.7rem; color:#2ed573; font-weight:bold;">06 行政 (10%)</label>
-                <input type="text" id="in_about_cps_r6_t" value="${d('about_cps_r6_t', '行政')}" style="width:100%; background:#111; border:1px solid #444; color: #F6F4F0; padding:6px; margin:4px 0; border-radius:3px; font-size:0.8rem;">
-                <input type="text" id="in_about_cps_r6_d" value="${d('about_cps_r6_d', '行政部门 · Admin')}" style="width:100%; background:#111; border:1px solid #444; color:#aaa; padding:6px; border-radius:3px; font-size:0.75rem;">
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 🤝 板块 7: 合作方案与参与要求 (COLLABORATION & REQUIREMENTS) -->
-        <div class="cms-card" style="border-left: 4px solid #ff9f43;">
-          <h3 style="color:#ff9f43; margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>🤝</span> 板块七：合作方案与参与要求 (Collaboration & Requirements)
-          </h3>
-          <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑共分共享共赢理念、出品合作模式与参与准则。</p>
-
-          <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-bottom:20px;">
-            <!-- Left Info -->
-            <div style="background:#111; padding:20px; border-radius:10px; border:1px solid #222;">
-              <div style="margin-bottom:12px;">
-                <label style="font-size:0.75rem; color:#aaa;">主标题 (Main Title)</label>
-                <input type="text" id="in_about_coop_main_title" value="${d('about_coop_main_title', '收 割 机 和 独 立 创 作 人 的 合 作 方 案')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
-              </div>
-              <div style="margin-bottom:12px;">
-                <label style="font-size:0.75rem; color:#aaa;">副标题 (Subtitle EN)</label>
-                <input type="text" id="in_about_coop_subtitle" value="${d('about_coop_subtitle', 'Harvester Music & Independent Songwriters Proposal')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
-              </div>
-              <div style="margin-bottom:12px;">
-                <label style="font-size:0.75rem; color:#aaa;">标语宣告 (Tagline)</label>
-                <input type="text" id="in_about_coop_tagline" value="${d('about_coop_tagline', 'Support a fair and transparent model of shared rights and shared profits')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color:var(--gold); padding:8px; border-radius:4px;">
-              </div>
-              <div>
-                <label style="font-size:0.75rem; color:#aaa;">核心共赢理念阐述 (Core Concept)</label>
-                <textarea id="in_about_coop_core_concept" style="width:100%; height:90px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_coop_core_concept', '共分共享，意指共同『为作品贡献个人的恩赐』，后续共同『分享』所得的工价。\n共赢，意指在这个过程里，一同『赢得』未信之人、未得之民的灵魂，为复兴神的国度效力！')}</textarea>
-              </div>
-            </div>
-
-            <!-- Right Photo -->
-            <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
-              <label style="font-size:0.8rem; color:var(--gold); font-weight:bold; display:block; margin-bottom:8px;">合作方案展示图 (Studio Mic Photo)</label>
-              <img id="prev_about_coop_img_mic" src="${d('about_coop_img_mic', 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80')}" style="width:100%; height:160px; object-fit:cover; border-radius:6px; margin-bottom:8px; border:1px solid #333;">
-              <input type="file" id="f_about_coop_img_mic" style="font-size:0.75rem; width:100%; margin-bottom:5px;">
-              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_coop_img_mic', 'in_about_coop_img_mic', 'prev_about_coop_img_mic')">📤 上传展示图</button>
-              <input type="hidden" id="in_about_coop_img_mic" value="${d('about_coop_img_mic', 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80')}">
-            </div>
-          </div>
-
-          <!-- Dual Cards Configuration -->
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-            <!-- Model -->
-            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
-              <h4 style="color:var(--gold); margin-top:0; margin-bottom:12px;">🏢 合作模式 (Model)</h4>
-              <div style="margin-bottom:8px;">
-                <label style="font-size:0.75rem; color:#aaa;">出品公司条款</label>
-                <input type="text" id="in_about_coop_model_p1" value="${d('about_coop_model_p1', 'Harvester Music Production')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
-              </div>
-              <div style="margin-bottom:8px;">
-                <label style="font-size:0.75rem; color:#aaa;">包含项目条款</label>
-                <input type="text" id="in_about_coop_model_p2" value="${d('about_coop_model_p2', '词曲、制作、拍摄、宣发、演唱')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
-              </div>
-              <div>
-                <label style="font-size:0.75rem; color:#aaa;">版权说明条款 (100%永久持有)</label>
-                <textarea id="in_about_coop_model_p3" style="width:100%; height:55px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_coop_model_p3', '所有版权（词曲OP 与 母带）100% 由 Harvester 永久持有')}</textarea>
-              </div>
-            </div>
-
-            <!-- Requirements -->
-            <div style="background:#111; padding:18px; border-radius:10px; border:1px solid #222;">
-              <h4 style="color:#ff9f43; margin-top:0; margin-bottom:12px;">⚖️ 参与要求 (Requirements)</h4>
-              <div style="margin-bottom:8px;">
-                <label style="font-size:0.75rem; color:#aaa;">版权分成机制</label>
-                <input type="text" id="in_about_coop_req_p1" value="${d('about_coop_req_p1', '按既定比例分配，确保公平透明')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
-              </div>
-              <div style="margin-bottom:8px;">
-                <label style="font-size:0.75rem; color:#aaa;">加入平台要求</label>
-                <input type="text" id="in_about_coop_req_p2" value="${d('about_coop_req_p2', '加入者须同意版权分成方案')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">
-              </div>
-              <div>
-                <label style="font-size:0.75rem; color:#aaa;">自由选择声明</label>
-                <textarea id="in_about_coop_req_p3" style="width:100%; height:55px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:8px; border-radius:4px;">${d('about_coop_req_p3', '不同意者可选择不参与')}</textarea>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 👥 板块 8: 主要同工 (KEY CO-WORKERS POLAROIDS) -->
+        <!-- 👥 板块 6: 主要同工 (KEY CO-WORKERS POLAROIDS) -->
         <div class="cms-card" style="border-left: 4px solid #1dd1a1;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
             <h3 style="color:#1dd1a1; margin:0; display:flex; align-items:center; gap:8px;">
-              <span>👥</span> 板块八：主要同工拍立得画廊 (Key Co-workers Polaroids)
+              <span>👥</span> 板块六：主要同工拍立得画廊 (Key Co-workers Polaroids)
             </h3>
             <button class="btn btn-tiny" style="background:#1dd1a1; color:#000; font-weight:bold; border:none; padding:8px 18px;" onclick="switchModule('singers'); switchSingerTab('core');">
               👥 前往主要同工管理页面编辑 (+/- 自由增减)
@@ -3097,10 +2935,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- 🎯 板块 9: 平台定位 (POSITIONING) -->
+        <!-- 🎯 板块 7: 平台定位 (POSITIONING) -->
         <div class="cms-card" style="border-left: 4px solid #2ed573;">
           <h3 style="color:#2ed573; margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>🎯</span> 板块九：平台定位 (Brand Positioning)
+            <span>🎯</span> 板块七：平台定位 (Brand Positioning)
           </h3>
           <p style="font-size:0.8rem; color:#888; margin-bottom:1.5rem;">编辑定位口号、大标题及两大核心支柱。</p>
 
@@ -3136,10 +2974,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- 🎬 板块 10: 视听故事与品牌媒体 (MEDIA & FOOTER TEXT) -->
+        <!-- 🎬 板块 8: 视听故事与品牌媒体 (MEDIA & FOOTER TEXT) -->
         <div class="cms-card" style="border-left: 4px solid var(--gold);">
           <h3 style="color:var(--gold); margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>🎬</span> 板块十：品牌视听与结语 (Media Showcase & Closing Words)
+            <span>🎬</span> 板块八：品牌视听与结语 (Media Showcase & Closing Words)
           </h3>
 
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:25px; margin-bottom:20px;">
@@ -3216,19 +3054,6 @@ document.addEventListener('DOMContentLoaded', () => {
       'about_cat3_t', 'about_cat3_te', 'about_cat3_d1', 'about_cat3_d2', 'about_cat3_d3', 'about_cat3_img',
       'about_cat4_t', 'about_cat4_te', 'about_cat4_d1', 'about_cat4_d2', 'about_cat4_img',
 
-      'about_rev_title', 'about_rev_desc', 'about_rev_desc_en', 'about_rev_img',
-      'about_cps_title', 'about_cps_subtitle',
-      'about_cps_r1_t', 'about_cps_r1_d',
-      'about_cps_r2_t', 'about_cps_r2_d',
-      'about_cps_r3_t', 'about_cps_r3_d',
-      'about_cps_r4_t', 'about_cps_r4_d',
-      'about_cps_r5_t', 'about_cps_r5_d',
-      'about_cps_r6_t', 'about_cps_r6_d',
-
-      'about_coop_main_title', 'about_coop_subtitle', 'about_coop_tagline', 'about_coop_core_concept', 'about_coop_img_mic',
-      'about_coop_model_title', 'about_coop_model_p1', 'about_coop_model_p2', 'about_coop_model_p3',
-      'about_coop_req_title', 'about_coop_req_p1', 'about_coop_req_p2', 'about_coop_req_p3',
-
       'about_team_main_title', 'about_team_subtitle',
       'about_team_r1_t', 'about_team_r1_te', 'about_team_r1_names', 'about_team_r1_img',
       'about_team_r2_t', 'about_team_r2_te', 'about_team_r2_names', 'about_team_r2_img',
@@ -3240,7 +3065,6 @@ document.addEventListener('DOMContentLoaded', () => {
       'about_pastoral_title', 'about_pastoral_subtitle', 'about_pastoral_img',
       'about_pastoral_adv_title', 'about_pastoral_adv_desc', 'about_pastoral_adv_desc_en',
       'about_pastoral_sup_title', 'about_pastoral_sup_r1', 'about_pastoral_sup_r2', 'about_pastoral_sup_r3', 'about_pastoral_sup_en',
-
       'about_pos_tagline',
       'about_pos_title',
       'about_pos_p1_t', 'about_pos_p1_d', 'about_pos_p1_de',
