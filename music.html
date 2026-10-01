@@ -109,65 +109,12 @@
     <p class="ppt-subtitle">OUR WORSHIP & DIGITAL SCORE COLLECTION</p>
   </div>
 
-  <!-- 💿 3D Album Cover Flow Stage (图一) -->
-  <section class="coverflow-section fade-in" style="padding-top: 0;">
+  <!-- 💿 3D Album Stage & Immersive App Engine (Video Demo Replica) -->
+  <section class="coverflow-section fade-in" style="padding-top: 0; min-height: 80vh;">
     <div id="coverflowStage">
-      <!-- Injected by coverflow_engine.js -->
+      <!-- Dynamically injected by coverflow_engine.js -->
     </div>
   </section>
-
-  <!-- 📖 Album & Song Booklet Modal (图二) -->
-  <div id="albumBookletModal" class="album-booklet-modal">
-    <div class="booklet-container">
-      <!-- Top Navigation -->
-      <button class="booklet-back-btn" onclick="closeAlbumBooklet()"><i class="fas fa-arrow-left"></i> 返回专辑库</button>
-      <button class="booklet-close-btn" onclick="closeAlbumBooklet()">&times;</button>
-
-      <!-- 1. Left Artwork Panel -->
-      <div class="booklet-artwork-panel">
-        <div class="booklet-cover-wrap">
-          <img id="bookletCoverImg" src="assets/logo.png" alt="Album Cover">
-        </div>
-        <h2 class="booklet-album-h2" id="bookletAlbumTitle">更新敬拜</h2>
-        <p class="booklet-album-p" id="bookletAlbumArtist">Harvester Music Production</p>
-        <button class="btn-booklet-play" onclick="toggleAudioPlay()">
-          <i id="playPauseIcon" class="fas fa-play"></i> PLAY
-        </button>
-      </div>
-
-      <!-- 2. Middle Tracklist Panel -->
-      <div class="booklet-tracklist-panel">
-        <span class="booklet-panel-heading">TRACKLIST / 歌曲列表</span>
-        <div id="bookletTrackList">
-          <!-- Injected dynamically -->
-        </div>
-      </div>
-
-      <!-- 3. Right Lyrics & Action Panel -->
-      <div class="booklet-lyrics-panel">
-        <span class="booklet-panel-heading">LYRICS & DIGITAL SCORES / 歌词与歌谱</span>
-        <h3 class="lyrics-track-title" id="bookletTrackTitle">更新敬拜</h3>
-        
-        <!-- Action Buttons (下载歌谱 / YouTube / Spotify) -->
-        <div class="song-actions-row">
-          <a id="btnActionScore" href="#" target="_blank" class="btn-song-act btn-act-score">
-            <i class="fas fa-file-pdf"></i> 下载歌谱 (PDF)
-          </a>
-          <a id="btnActionYT" href="#" target="_blank" class="btn-song-act btn-act-yt">
-            <i class="fab fa-youtube"></i> YouTube 播放
-          </a>
-          <a id="btnActionSpotify" href="#" target="_blank" class="btn-song-act btn-act-spotify">
-            <i class="fab fa-spotify"></i> Spotify 聆听
-          </a>
-        </div>
-
-        <!-- Full Lyrics Box -->
-        <div class="booklet-lyrics-content" id="bookletLyricsBox">
-          <!-- Lyrics injected here -->
-        </div>
-      </div>
-    </div>
-  </div>
 
   <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
