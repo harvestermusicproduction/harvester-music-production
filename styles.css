@@ -3028,34 +3028,57 @@ body.immersive-modal-active header {
    📖 MORANDI ACCORDION FOLD (风琴折) BOOKLET STAGE
    ========================================================= */
 .accordion-booklet-stage {
+  position: relative;
   display: flex;
-  align-items: stretch;
-  gap: 0;
-  width: 100%;
-  min-width: 0;
-  height: 100%;
+  width: 840px;
+  max-width: 840px;
+  min-height: 520px;
   perspective: 2500px !important;
   -webkit-perspective: 2500px !important;
   transform-style: preserve-3d !important;
   overflow: visible !important;
+  margin: 0 auto;
 }
 
 .accordion-panel {
   position: relative;
-  flex: 1 1 0;
-  min-width: 0;
-  width: 100%;
-  max-width: 295px;
+  width: 280px;
+  min-width: 280px;
+  max-width: 280px;
   min-height: 520px;
   box-sizing: border-box;
   border-radius: 0 !important;
-  box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35), inset 1px 0 0 rgba(255, 255, 255, 0.12);
-  transform-origin: left center;
-  transform-style: preserve-3d;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.25), inset 1px 0 0 rgba(255, 255, 255, 0.12);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transform-style: preserve-3d;
   will-change: transform, opacity;
+}
+
+.unfold-panel-1 {
+  position: relative;
+  width: 280px;
+  z-index: 3;
+}
+
+.accordion-hinge-wrapper {
+  position: absolute;
+  top: 0;
+  left: 280px;
+  width: 280px;
+  height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.accordion-hinge-wrapper.hinge-2 {
+  z-index: 2;
+}
+
+.accordion-hinge-wrapper.hinge-3 {
+  z-index: 1;
 }
 
 /* Sharp Paper Crease Hinge Line between folds */
@@ -3080,16 +3103,6 @@ body.immersive-modal-active header {
   background: linear-gradient(to left, rgba(0,0,0,0.22), transparent);
   pointer-events: none;
   z-index: 10;
-}
-
-.unfold-panel-1,
-.unfold-panel-2,
-.unfold-panel-3 {
-  transform-origin: left center;
-  border-radius: 0 !important;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
 
 .cutout-sticker {

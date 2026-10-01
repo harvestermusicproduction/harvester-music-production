@@ -304,72 +304,80 @@
     }
 
     /* 📜 Authentic 3D Paper Accordion Unfold (Z-Fold Leaflet) */
-    @keyframes accordionPaperUnfold1 {
-      0% { 
-        opacity: 0; 
-        transform: perspective(2200px) rotateY(-88deg) scaleX(0.04); 
-        box-shadow: -20px 0 40px rgba(0, 0, 0, 0.7);
-      }
-      30% {
-        opacity: 0.95;
-      }
-      100% { 
-        opacity: 1; 
-        transform: perspective(2200px) rotateY(0deg) scaleX(1); 
-        box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35);
-      }
+    .accordion-booklet-stage {
+      position: relative;
+      display: flex;
+      width: 840px;
+      max-width: 840px;
+      min-height: 520px;
+      perspective: 2500px !important;
+      -webkit-perspective: 2500px !important;
+      transform-style: preserve-3d !important;
+      overflow: visible !important;
     }
 
-    @keyframes accordionPaperUnfold2 {
-      0% { 
-        opacity: 0; 
-        transform: perspective(2200px) rotateY(88deg) scaleX(0.04); 
-        box-shadow: -20px 0 40px rgba(0, 0, 0, 0.7);
-      }
-      30% {
-        opacity: 0.95;
-      }
-      100% { 
-        opacity: 1; 
-        transform: perspective(2200px) rotateY(0deg) scaleX(1); 
-        box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35);
-      }
+    .accordion-panel {
+      position: relative;
+      width: 280px;
+      min-width: 280px;
+      max-width: 280px;
+      min-height: 520px;
+      box-sizing: border-box;
+      border-radius: 0 !important;
+      box-shadow: -4px 0 16px rgba(0, 0, 0, 0.25);
+      transform-style: preserve-3d;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    @keyframes accordionPaperUnfold3 {
-      0% { 
-        opacity: 0; 
-        transform: perspective(2200px) rotateY(-88deg) scaleX(0.04); 
-        box-shadow: -20px 0 40px rgba(0, 0, 0, 0.7);
-      }
-      30% {
-        opacity: 0.95;
-      }
-      100% { 
-        opacity: 1; 
-        transform: perspective(2200px) rotateY(0deg) scaleX(1); 
-        box-shadow: -6px 0 20px rgba(0, 0, 0, 0.35);
-      }
-    }
-
-    /* Staggered Sequential Paper Unfolding (Page by Page: Fold 1 -> Fold 2 -> Fold 3) */
     .unfold-panel-1 {
-      opacity: 0;
-      transform-origin: left center;
-      border-radius: 0 !important;
-      animation: accordionPaperUnfold1 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
+      position: relative;
+      width: 280px;
+      z-index: 3;
     }
-    .unfold-panel-2 {
-      opacity: 0;
+
+    .accordion-hinge-wrapper {
+      position: absolute;
+      top: 0;
+      left: 280px;
+      width: 280px;
+      height: 100%;
       transform-origin: left center;
-      border-radius: 0 !important;
-      animation: accordionPaperUnfold2 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.24s forwards;
+      transform-style: preserve-3d;
+      will-change: transform;
     }
-    .unfold-panel-3 {
-      opacity: 0;
-      transform-origin: left center;
-      border-radius: 0 !important;
-      animation: accordionPaperUnfold3 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.44s forwards;
+
+    .accordion-hinge-wrapper.hinge-2 {
+      z-index: 2;
+      animation: hingeUnfold2 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.08s forwards;
+    }
+
+    .accordion-hinge-wrapper.hinge-3 {
+      z-index: 1;
+      animation: hingeUnfold3 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.28s forwards;
+    }
+
+    @keyframes hingeUnfold2 {
+      0% {
+        opacity: 0.2;
+        transform: rotateY(-179deg);
+      }
+      100% {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
+    }
+
+    @keyframes hingeUnfold3 {
+      0% {
+        opacity: 0.1;
+        transform: rotateY(179deg);
+      }
+      100% {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
     }
 
     /* Sticker Cut-out with White Border */
@@ -656,7 +664,7 @@
             <!-- ---------------------------------------------------- -->
             <!-- FOLD PANEL 1: 沙色莫兰迪 (WARM KRAFT SAND CREAM)      -->
             <!-- ---------------------------------------------------- -->
-            <div class="accordion-panel unfold-panel-1 bg-[#dfd5c4] text-[#2c241c] p-5 sm:p-6 flex flex-col justify-between paper-texture border-r border-[#c9bda8]">
+            <div class="accordion-panel unfold-panel-1 bg-[#dfd5c4] text-[#2c241c] p-5 sm:p-6 flex flex-col justify-between paper-texture border-r border-[#c9bda8]" id="albumPanel1">
               
               <div class="space-y-4">
                 <!-- Top Polaroid Photo (Reference Image: Top Photo Box with '01' Badge) -->
@@ -716,99 +724,97 @@
 
             </div>
 
+            <!-- HINGE 2: 勃艮第红莫兰迪 (MUTED BURGUNDY / WINE) -->
+            <div class="accordion-hinge-wrapper hinge-2" id="albumHinge2">
+              <div class="accordion-panel unfold-panel-2 bg-[#5c2734] text-[#fae8ec] p-6 sm:p-7 flex flex-col justify-between paper-texture border-r border-[#451c27]" id="albumPanel2">
+                
+                <div class="space-y-4">
+                  <!-- Panel 2 Header -->
+                  <div class="border-b border-white/15 pb-2">
+                    <span class="text-[10px] font-mono uppercase tracking-widest text-[#f1c882] font-bold">FOLD 02 &bull; WORSHIP INSPIRATION</span>
+                    <h3 class="text-xl font-display font-bold uppercase tracking-wider text-white">
+                      创作心得与经文 (NOTES)
+                    </h3>
+                  </div>
 
-            <!-- ---------------------------------------------------- -->
-            <!-- FOLD PANEL 2: 勃艮第红莫兰迪 (MUTED BURGUNDY / WINE)   -->
-            <!-- ---------------------------------------------------- -->
-            <div class="accordion-panel unfold-panel-2 bg-[#5c2734] text-[#fae8ec] p-6 sm:p-7 flex flex-col justify-between paper-texture border-r border-[#451c27]">
-              
-              <div class="space-y-4">
-                <!-- Panel 2 Header -->
-                <div class="border-b border-white/15 pb-2">
-                  <span class="text-[10px] font-mono uppercase tracking-widest text-[#f1c882] font-bold">FOLD 02 &bull; WORSHIP INSPIRATION</span>
-                  <h3 class="text-xl font-display font-bold uppercase tracking-wider text-white">
-                    创作心得与经文 (NOTES)
-                  </h3>
+                  <!-- Spiritual Inspiration Text -->
+                  <div id="detail-notes-panel2" class="font-serif text-sm leading-relaxed space-y-3 text-[#f3d7df] select-text">
+                    <p class="italic text-xs text-[#f1c882] bg-black/20 p-2.5 border-l-2 border-[#f1c882]">
+                      「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24
+                    </p>
+                    <p class="pt-1">
+                      这首诗歌诞生于清晨的安静祷告中。在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。
+                    </p>
+                    <p>
+                      无论行过高山或低谷，神的爱总如晨曦般恒常守护。
+                    </p>
+                  </div>
                 </div>
 
-                <!-- Spiritual Inspiration Text -->
-                <div id="detail-notes-panel2" class="font-serif text-sm leading-relaxed space-y-3 text-[#f3d7df] select-text">
-                  <p class="italic text-xs text-[#f1c882] bg-black/20 p-2.5 border-l-2 border-[#f1c882]">
-                    「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24
-                  </p>
-                  <p class="pt-1">
-                    这首诗歌诞生于清晨的安静祷告中。在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。
-                  </p>
-                  <p>
-                    无论行过高山或低谷，神的爱总如晨曦般恒常守护。
-                  </p>
+                <!-- Bottom Polaroid Photo (Reference Image: Bottom Box) -->
+                <div class="relative w-full aspect-[16/9] overflow-hidden border border-white/20 bg-black/40 shadow-md mt-4">
+                  <img id="panel2-photo" src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=600&auto=format&fit=crop&q=80" alt="Art 02" class="w-full h-full object-cover contrast-125 opacity-90" />
+                  <div class="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md text-[#f1c882] text-[10px] font-mono px-2 py-0.5">
+                    WORSHIP HEART &bull; 02
+                  </div>
                 </div>
+
               </div>
 
-              <!-- Bottom Polaroid Photo (Reference Image: Bottom Box) -->
-              <div class="relative w-full aspect-[16/9] overflow-hidden border border-white/20 bg-black/40 shadow-md mt-4">
-                <img id="panel2-photo" src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=600&auto=format&fit=crop&q=80" alt="Art 02" class="w-full h-full object-cover contrast-125 opacity-90" />
-                <div class="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md text-[#f1c882] text-[10px] font-mono px-2 py-0.5">
-                  WORSHIP HEART &bull; 02
+              <!-- HINGE 3: 浅灰麻布莫兰迪 (MUTED LINEN / STONE GREY) -->
+              <div class="accordion-hinge-wrapper hinge-3" id="albumHinge3">
+                <div class="accordion-panel unfold-panel-3 bg-[#dedad4] text-[#26221f] p-6 sm:p-7 flex flex-col justify-between paper-texture" id="albumPanel3">
+                  
+                  <div class="space-y-4">
+                    <!-- Top Artwork -->
+                    <div class="relative w-full aspect-[4/3] overflow-hidden border border-[#c6c0b6] bg-[#c6c0b6] shadow-md">
+                      <img id="panel3-photo" src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80" alt="Art 03" class="w-full h-full object-cover grayscale contrast-125" />
+                      <div class="absolute bottom-2 right-2 bg-black text-white text-[10px] font-mono px-2 py-0.5 font-bold">
+                        03
+                      </div>
+                    </div>
+
+                    <!-- Panel 3 Header -->
+                    <div class="border-b border-[#26221f]/15 pb-2">
+                      <span class="text-[10px] font-mono uppercase tracking-widest text-[#665e56] font-bold">FOLD 03 &bull; CREDITS &amp; MUSICIANS</span>
+                      <h3 class="text-xl font-display font-bold uppercase tracking-wider text-[#26221f]">
+                        同工团队 (CREDITS)
+                      </h3>
+                    </div>
+
+                    <!-- Credits List -->
+                    <div id="detail-credits-panel3" class="font-sans text-xs space-y-2.5 text-[#423b35]">
+                      <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+                        <span class="text-[#756a60]">词曲创作：</span>
+                        <span class="font-semibold text-[#1c1815]">Harvester Worship</span>
+                      </div>
+                      <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+                        <span class="text-[#756a60]">编曲制作：</span>
+                        <span class="font-semibold text-[#1c1815]">Harvester Music Production</span>
+                      </div>
+                      <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+                        <span class="text-[#756a60]">人声主唱：</span>
+                        <span class="font-semibold text-[#1c1815]">Creative Vocalists</span>
+                      </div>
+                      <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
+                        <span class="text-[#756a60]">混音母带：</span>
+                        <span class="font-semibold text-[#1c1815]">Harvester Studio HQ</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Bottom Score Download Callout -->
+                  <div class="pt-4 border-t border-[#26221f]/15 flex items-center justify-between">
+                    <div class="text-[11px] font-mono text-[#665e56]">
+                      <span>PDF 歌谱已就绪</span>
+                    </div>
+                    <button onclick="showMorandiToast('🎼 正在调取 PDF 歌谱预览...')" class="px-3 py-1.5 rounded-md bg-[#26221f] text-[#dedad4] hover:bg-black font-mono text-xs transition">
+                      <i class="fa-solid fa-file-pdf mr-1 text-amber-400"></i> 查看歌谱
+                    </button>
+                  </div>
+
                 </div>
               </div>
-
-            </div>
-
-
-            <!-- ---------------------------------------------------- -->
-            <!-- FOLD PANEL 3: 浅灰麻布莫兰迪 (MUTED LINEN / STONE GREY)-->
-            <!-- ---------------------------------------------------- -->
-            <div class="accordion-panel unfold-panel-3 bg-[#dedad4] text-[#26221f] p-6 sm:p-7 flex flex-col justify-between paper-texture">
-              
-              <div class="space-y-4">
-                <!-- Top Artwork -->
-                <div class="relative w-full aspect-[4/3] overflow-hidden border border-[#c6c0b6] bg-[#c6c0b6] shadow-md">
-                  <img id="panel3-photo" src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80" alt="Art 03" class="w-full h-full object-cover grayscale contrast-125" />
-                  <div class="absolute bottom-2 right-2 bg-black text-white text-[10px] font-mono px-2 py-0.5 font-bold">
-                    03
-                  </div>
-                </div>
-
-                <!-- Panel 3 Header -->
-                <div class="border-b border-[#26221f]/15 pb-2">
-                  <span class="text-[10px] font-mono uppercase tracking-widest text-[#665e56] font-bold">FOLD 03 &bull; CREDITS &amp; MUSICIANS</span>
-                  <h3 class="text-xl font-display font-bold uppercase tracking-wider text-[#26221f]">
-                    同工团队 (CREDITS)
-                  </h3>
-                </div>
-
-                <!-- Credits List -->
-                <div id="detail-credits-panel3" class="font-sans text-xs space-y-2.5 text-[#423b35]">
-                  <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
-                    <span class="text-[#756a60]">词曲创作：</span>
-                    <span class="font-semibold text-[#1c1815]">Harvester Worship</span>
-                  </div>
-                  <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
-                    <span class="text-[#756a60]">编曲制作：</span>
-                    <span class="font-semibold text-[#1c1815]">Harvester Music Production</span>
-                  </div>
-                  <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
-                    <span class="text-[#756a60]">人声主唱：</span>
-                    <span class="font-semibold text-[#1c1815]">Creative Vocalists</span>
-                  </div>
-                  <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
-                    <span class="text-[#756a60]">混音母带：</span>
-                    <span class="font-semibold text-[#1c1815]">Harvester Studio HQ</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Bottom Score Download Callout -->
-              <div class="pt-4 border-t border-[#26221f]/15 flex items-center justify-between">
-                <div class="text-[11px] font-mono text-[#665e56]">
-                  <span>PDF 歌谱已就绪</span>
-                </div>
-                <button onclick="showMorandiToast('🎼 正在调取 PDF 歌谱预览...')" class="px-3 py-1.5 rounded-md bg-[#26221f] text-[#dedad4] hover:bg-black font-mono text-xs transition">
-                  <i class="fa-solid fa-file-pdf mr-1 text-amber-400"></i> 查看歌谱
-                </button>
-              </div>
-
             </div>
 
           </div>
@@ -1420,11 +1426,11 @@
     }
 
     function triggerAccordionUnfoldAnimation() {
-      const panels = document.querySelectorAll(".accordion-panel");
-      panels.forEach((p, idx) => {
-        p.style.animation = 'none';
-        p.offsetHeight; // Trigger reflow
-        p.style.animation = '';
+      const hinges = document.querySelectorAll(".accordion-hinge-wrapper");
+      hinges.forEach((h) => {
+        h.style.animation = 'none';
+        h.offsetHeight; // Trigger reflow
+        h.style.animation = '';
       });
     }
 
