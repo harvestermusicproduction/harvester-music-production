@@ -458,22 +458,18 @@ You have set my feet upon the rock!`
     const years = getAvailableYears();
 
     stage.innerHTML = `
-      <!-- 1. Top App Navigation Bar with Year Filters -->
-      <div class="video-app-header">
-        <div class="header-left">
-          <div class="sound-bars">
-            <span class="bar bar-1"></span>
-            <span class="bar bar-2"></span>
-            <span class="bar bar-3"></span>
-            <span class="bar bar-4"></span>
-          </div>
-          <span class="app-time font-eng-title">HARVESTER WORSHIP</span>
+      <!-- 1. Unified Parallel Header (Title + Dynamic Year Filters + Search) -->
+      <div class="music-unified-header fade-in">
+        <div class="unified-header-left">
+          <div class="ppt-line"></div>
+          <h1 class="ppt-title">音乐与歌谱集</h1>
+          <p class="ppt-subtitle">OUR WORSHIP & DIGITAL SCORE COLLECTION</p>
         </div>
 
-        <div class="header-center">
+        <div class="unified-header-right">
           <div class="pill-segmented-control" id="yearFilterControl">
             <button class="pill-btn ${currentYearFilter === 'ALL' ? 'active' : ''}" onclick="window.filterByYear('ALL')">
-              <span>🎵 全部 (All)</span>
+              <span>全部 (All)</span>
             </button>
             ${years.map(yr => `
               <button class="pill-btn ${currentYearFilter === yr ? 'active' : ''}" onclick="window.filterByYear('${yr}')">
@@ -481,9 +477,7 @@ You have set my feet upon the rock!`
               </button>
             `).join('')}
           </div>
-        </div>
 
-        <div class="header-right">
           <button class="icon-btn search-trigger" onclick="toggleSearch()" title="搜索歌曲"><i class="fas fa-search"></i></button>
         </div>
       </div>
@@ -920,7 +914,7 @@ You have set my feet upon the rock!`
     const isMobile = window.innerWidth <= 768;
     
     // Spacing: comfortable, breathable distance like a real physical display shelf
-    const stepX = isSmallMobile ? 62 : (isMobile ? 80 : 118);
+    const stepX = isSmallMobile ? 54 : (isMobile ? 70 : 106);
     const activeRealIdx = ((Math.round(currentProgress) % M) + M) % M;
 
     if (activeRealIdx !== lastReportedActiveIdx) {

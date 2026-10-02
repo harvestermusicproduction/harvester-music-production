@@ -2953,80 +2953,72 @@ section[id], div[id^="section-"] {
 
 .coverflow-section {
   position: relative;
-  max-width: 1300px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 1rem 1.5rem 5rem;
+  padding: 0.2rem 1.5rem 1rem;
   overflow: hidden;
   perspective: 1400px;
   perspective-origin: 50% 45%;
-}
-
-.coverflow-carousel {
-  position: relative;
-  width: 100%;
-  height: 480px;
-  margin: 2rem auto 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform-style: preserve-3d;
-  user-select: none;
 }
 
 /* =========================================================
    💿 3D Realistic Album Stage & Immersive App System (Video Replica)
    ========================================================= */
 
-/* Top App Navigation Bar */
-.video-app-header {
+/* 🎵 Unified Parallel Header (音乐与歌谱集 + 年份筛选 + 搜索按钮 并行排布) */
+.music-unified-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto 2.5rem;
-  padding: 0 1.5rem;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.sound-bars {
-  display: flex;
   align-items: flex-end;
-  gap: 3px;
-  height: 18px;
-}
-.sound-bars .bar {
-  width: 3px;
-  background: var(--gold);
-  border-radius: 2px;
-  animation: soundBarPulse 1.2s infinite ease-in-out alternate;
-}
-.sound-bars .bar-1 { height: 60%; animation-delay: 0.1s; }
-.sound-bars .bar-2 { height: 100%; animation-delay: 0.3s; }
-.sound-bars .bar-3 { height: 40%; animation-delay: 0.2s; }
-.sound-bars .bar-4 { height: 80%; animation-delay: 0.4s; }
-
-@keyframes soundBarPulse {
-  0% { transform: scaleY(0.3); }
-  100% { transform: scaleY(1); }
+  max-width: 1280px;
+  margin: 0.2rem auto 0.6rem;
+  padding: 0 1.2rem;
+  position: relative;
+  z-index: 10;
+  gap: 15px;
 }
 
-.app-time {
-  font-size: 0.85rem;
+.unified-header-left {
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.unified-header-left .ppt-line {
+  width: 100px;
+  height: 1.5px;
+  background: linear-gradient(to right, var(--gold), transparent);
+  margin-bottom: 5px;
+}
+
+.unified-header-left .ppt-title {
+  font-family: var(--font-gaoduanhei), sans-serif;
+  font-size: 1.65rem;
+  color: #F6F4F0;
+  margin: 0;
   letter-spacing: 2px;
+  line-height: 1.15;
+}
+
+.unified-header-left .ppt-subtitle {
+  font-family: var(--font-times), serif;
+  font-size: 0.68rem;
   color: var(--gold);
-  font-weight: 600;
+  letter-spacing: 2.5px;
+  margin: 3px 0 0 0;
+  opacity: 0.85;
+}
+
+.unified-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .pill-segmented-control {
   background: rgba(20, 26, 32, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
-  padding: 4px;
+  padding: 3px 5px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -3043,11 +3035,11 @@ section[id], div[id^="section-"] {
 
 .pill-btn {
   background: transparent;
-  color: rgba(240, 235, 225, 0.7);
+  color: rgba(240, 235, 225, 0.75);
   border: 1px solid transparent;
-  padding: 7px 18px;
+  padding: 5px 14px;
   border-radius: 9999px;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
   font-weight: 500;
   letter-spacing: 0.5px;
@@ -3056,7 +3048,7 @@ section[id], div[id^="section-"] {
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   user-select: none;
 }
 
@@ -3078,22 +3070,25 @@ section[id], div[id^="section-"] {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.header-right .icon-btn {
+.unified-header-right .search-trigger {
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(246, 210, 138, 0.25);
+  border: 1px solid rgba(246, 210, 138, 0.28);
   color: var(--gold);
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.82rem;
   transition: 0.3s;
 }
-.header-right .icon-btn:hover {
+
+.unified-header-right .search-trigger:hover {
   background: var(--gold);
   color: #111;
+  transform: scale(1.06);
 }
 
 /* =========================================================================
@@ -3104,6 +3099,10 @@ section[id], div[id^="section-"] {
 body.page-music {
   background-color: var(--active-album-theme, #182222);
   transition: background-color 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+body.page-music footer {
+  display: none !important;
 }
 
 .coverflow-section {
@@ -3159,7 +3158,7 @@ body.page-music {
 .coverflow-carousel {
   position: relative;
   width: 100%;
-  height: 500px;
+  height: clamp(320px, 38vh, 360px);
   perspective: 1300px;
   -webkit-perspective: 1300px;
   display: flex;
@@ -3168,6 +3167,7 @@ body.page-music {
   transform-style: preserve-3d;
   user-select: none;
   cursor: grab;
+  margin: 0.2rem auto 0;
 }
 .coverflow-carousel:active {
   cursor: grabbing;
@@ -3177,11 +3177,11 @@ body.page-music {
    💿 SLIM-SPINE ELONGATED 3D ARTBOOK ALBUM ENGINE (修长纤细书脊现代画册专辑)
    ========================================================================= */
 
-/* 3D Elongated Modern Art Album Box (248px x 355px, 16px Slim Spine) */
+/* 3D Elongated Modern Art Album Box (216px x 310px, 14px Slim Spine) */
 .album-3d-box {
   position: absolute;
-  width: 248px;
-  height: 355px;
+  width: 216px;
+  height: 310px;
   transform-style: preserve-3d;
   cursor: pointer;
   will-change: transform, opacity;
@@ -3206,16 +3206,16 @@ body.page-music {
 .cube-face.cube-front.sleeve-outer-front {
   top: 0;
   left: 0;
-  width: 248px;
-  height: 355px;
-  transform: translateZ(8px);
+  width: 216px;
+  height: 310px;
+  transform: translateZ(7px);
   border-radius: 6px;
   overflow: hidden;
   background: #151a21;
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: 
-    0 25px 55px rgba(0, 0, 0, 0.85),
-    0 6px 16px rgba(0, 0, 0, 0.45),
+    0 20px 45px rgba(0, 0, 0, 0.85),
+    0 5px 14px rgba(0, 0, 0, 0.45),
     inset 0 1px 1px rgba(255, 255, 255, 0.35),
     inset 0 -1px 2px rgba(0, 0, 0, 0.5);
   transition: box-shadow 0.4s ease, border-color 0.4s ease;
@@ -3322,12 +3322,12 @@ body.page-music {
   z-index: 9;
 }
 
-/* 2. Left Spine (Slim 16px Refined Spine - 纤细修长优雅书脊，纯色无字高级质感) */
+/* 2. Left Spine (Slim 14px Refined Spine - 纤细修长优雅书脊，纯色无字高级质感) */
 .cube-face.cube-spine-left {
   top: 0;
-  left: -8px;
-  width: 16px;
-  height: 355px;
+  left: -7px;
+  width: 14px;
+  height: 310px;
   transform: rotateY(-90deg) translateZ(0);
   border: none !important;
   display: block !important;
@@ -3359,10 +3359,10 @@ body.page-music {
 
 /* 4. Top Thickness Edge */
 .cube-face.cube-top {
-  top: -8px;
+  top: -7px;
   left: 0;
-  width: 248px;
-  height: 16px;
+  width: 216px;
+  height: 14px;
   transform: rotateX(90deg);
   border: none !important;
   box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2) !important;
@@ -3370,10 +3370,10 @@ body.page-music {
 
 /* 5. Bottom Thickness Edge */
 .cube-face.cube-bottom {
-  bottom: -8px;
+  bottom: -7px;
   left: 0;
-  width: 248px;
-  height: 16px;
+  width: 216px;
+  height: 14px;
   transform: rotateX(-90deg);
   background: #080a0c;
   border: none !important;
@@ -3384,14 +3384,14 @@ body.page-music {
 .cube-face.cube-back.sleeve-outer-back {
   top: 0;
   left: 0;
-  width: 248px;
-  height: 355px;
-  transform: rotateY(180deg) translateZ(8px);
+  width: 216px;
+  height: 310px;
+  transform: rotateY(180deg) translateZ(7px);
   border-radius: 6px;
   overflow: hidden;
   background: #151a21;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 25px 55px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
   backface-visibility: hidden !important;
   -webkit-backface-visibility: hidden !important;
 }
@@ -3406,16 +3406,16 @@ body.page-music {
 /* 🌟 Floor Contact Shadow & Ambient Diffusion */
 .album-shadow-3d {
   position: absolute;
-  bottom: -32px;
+  bottom: -22px;
   left: 0%;
   width: 100%;
-  height: 28px;
+  height: 22px;
   background: radial-gradient(ellipse at center, 
     rgba(0, 0, 0, 0.95) 0%, 
     rgba(0, 0, 0, 0.5) 45%, 
     transparent 75%);
-  transform: rotateX(90deg) translateZ(-12px);
-  filter: blur(8px);
+  transform: rotateX(90deg) translateZ(-8px);
+  filter: blur(7px);
   pointer-events: none;
   transition: all 0.4s ease;
 }
@@ -3424,13 +3424,13 @@ body.page-music {
   filter: brightness(1.08) contrast(1.02);
 }
 .album-3d-box:not(.active):hover .cube-face.cube-front {
-  box-shadow: 0 28px 65px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 24px 55px rgba(0, 0, 0, 0.9);
 }
 
 .album-3d-box.active .cube-face.cube-front {
   box-shadow: 
-    0 32px 75px rgba(0, 0, 0, 0.95),
-    0 0 40px var(--active-album-glow, rgba(104, 166, 189, 0.38)),
+    0 26px 60px rgba(0, 0, 0, 0.95),
+    0 0 35px var(--active-album-glow, rgba(104, 166, 189, 0.38)),
     inset 0 1px 1px rgba(255, 255, 255, 0.45);
 }
 
@@ -3441,7 +3441,7 @@ body.page-music {
     rgba(0, 0, 0, 0.95) 0%, 
     var(--active-album-glow, rgba(104, 166, 189, 0.25)) 30%, 
     transparent 75%);
-  filter: blur(12px);
+  filter: blur(10px);
 }
 
 /* 3D Coverflow Meta Bar (随中心专辑自适应主题色) */
@@ -3449,9 +3449,9 @@ body.page-music {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2.5rem;
+  gap: 1.8rem;
   max-width: 800px;
-  margin: 3rem auto 1rem;
+  margin: 0.4rem auto 0;
   text-align: center;
   position: relative;
   z-index: 5;
@@ -3461,10 +3461,10 @@ body.page-music {
   background: rgba(255, 255, 255, 0.06);
   border: 1.5px solid var(--active-album-accent, var(--gold));
   color: var(--active-album-accent, var(--gold));
-  width: 50px;
-  height: 50px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  font-size: 1.2rem;
+  font-size: 0.95rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -3477,8 +3477,8 @@ body.page-music {
 .cf-nav-btn:hover {
   background: var(--active-album-accent, var(--gold));
   color: #111;
-  transform: scale(1.1);
-  box-shadow: 0 0 24px var(--active-album-glow, rgba(246, 210, 138, 0.5));
+  transform: scale(1.08);
+  box-shadow: 0 0 20px var(--active-album-glow, rgba(246, 210, 138, 0.5));
 }
 
 .active-album-info {
@@ -3486,127 +3486,184 @@ body.page-music {
 }
 
 .cf-tag {
-  font-size: 0.85rem;
+  font-size: 0.72rem;
   color: var(--active-album-accent, var(--gold));
-  letter-spacing: 3px;
+  letter-spacing: 2.5px;
   display: inline-block;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
   transition: color 0.5s ease;
 }
 
 .cf-album-title {
-  font-family: var(--font-puploop), -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 2.2rem;
+  font-family: var(--font-gaoduanhei), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1.65rem;
   color: #F6F4F0;
-  margin: 0 0 6px;
+  margin: 0 0 2px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
+  line-height: 1.2;
 }
 
 .cf-album-artist {
-  font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-family: var(--font-songti), serif;
+  font-size: 0.85rem;
   color: var(--text-muted);
-  margin: 0 0 1.5rem;
+  margin: 0 0 8px;
 }
 
 .btn-open-booklet {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: rgba(246, 210, 138, 0.12);
   border: 1.5px solid rgba(246, 210, 138, 0.4);
   color: var(--gold);
-  padding: 12px 30px;
+  padding: 8px 24px;
   border-radius: 50px;
-  font-family: var(--font-body);
-  font-size: 1rem;
+  font-family: var(--font-songti), serif;
+  font-size: 0.88rem;
   cursor: pointer;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   transition: all 0.35s ease;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.45);
 }
 
 .btn-open-booklet:hover {
   background: var(--gold);
   color: #12100e;
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 15px 35px rgba(246, 210, 138, 0.4);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(246, 210, 138, 0.4);
 }
 
 @media (max-width: 768px) {
+  .coverflow-carousel {
+    height: clamp(215px, 28vh, 240px) !important;
+    margin: 0.2rem auto 0 !important;
+  }
   .album-3d-box {
-    width: 210px !important;
-    height: 300px !important;
+    width: 150px !important;
+    height: 215px !important;
   }
   .cube-face.cube-front.sleeve-outer-front {
-    width: 210px !important;
-    height: 300px !important;
+    width: 150px !important;
+    height: 215px !important;
+    transform: translateZ(5px) !important;
   }
   .cube-face.cube-spine-left {
-    height: 300px !important;
+    width: 10px !important;
+    height: 215px !important;
+    left: -5px !important;
   }
   .cube-face.cube-top {
-    width: 210px !important;
+    width: 150px !important;
+    height: 10px !important;
+    top: -5px !important;
   }
-  .coverflow-carousel {
-    height: 360px !important;
-    margin: 0.8rem auto 0.4rem;
+  .cube-face.cube-bottom {
+    width: 150px !important;
+    height: 10px !important;
+    bottom: -5px !important;
+  }
+  .cube-face.cube-back.sleeve-outer-back {
+    width: 150px !important;
+    height: 215px !important;
+    transform: rotateY(180deg) translateZ(5px) !important;
   }
   .coverflow-meta-bar {
-    gap: 1rem;
-    margin: 1.2rem auto 0.6rem;
-    padding: 0 0.8rem;
+    gap: 0.8rem !important;
+    margin: 0.3rem auto 0 !important;
+    padding: 0 0.6rem !important;
+  }
+  .cf-tag {
+    font-size: 0.65rem !important;
+    margin-bottom: 2px !important;
   }
   .cf-album-title {
-    font-size: 1.5rem !important;
+    font-size: 1.2rem !important;
+    margin: 0 0 2px !important;
+  }
+  .cf-album-artist {
+    font-size: 0.75rem !important;
+    margin: 0 0 6px !important;
   }
   .cf-nav-btn {
-    width: 42px;
-    height: 42px;
-    font-size: 1rem;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.8rem !important;
   }
   .btn-open-booklet {
-    padding: 10px 22px;
-    font-size: 0.9rem;
+    padding: 6px 16px !important;
+    font-size: 0.78rem !important;
+    gap: 6px !important;
   }
 }
 
 @media (max-width: 480px) {
+  .coverflow-carousel {
+    height: clamp(195px, 26vh, 215px) !important;
+    margin: 0.1rem auto 0 !important;
+  }
   .album-3d-box {
-    width: 175px !important;
-    height: 250px !important;
+    width: 135px !important;
+    height: 194px !important;
   }
   .cube-face.cube-front.sleeve-outer-front {
-    width: 175px !important;
-    height: 250px !important;
+    width: 135px !important;
+    height: 194px !important;
+    transform: translateZ(4.5px) !important;
   }
   .cube-face.cube-spine-left {
-    height: 250px !important;
+    width: 9px !important;
+    height: 194px !important;
+    left: -4.5px !important;
   }
   .cube-face.cube-top {
-    width: 175px !important;
+    width: 135px !important;
+    height: 9px !important;
+    top: -4.5px !important;
   }
-  .coverflow-carousel {
-    height: 290px !important;
+  .cube-face.cube-bottom {
+    width: 135px !important;
+    height: 9px !important;
+    bottom: -4.5px !important;
+  }
+  .cube-face.cube-back.sleeve-outer-back {
+    width: 135px !important;
+    height: 194px !important;
+    transform: rotateY(180deg) translateZ(4.5px) !important;
+  }
+  .vinyl-hype-sticker {
+    top: 6px !important;
+    left: 6px !important;
+    padding: 2px 5px !important;
+  }
+  .sleeve-barcode-badge {
+    bottom: 6px !important;
+    right: 6px !important;
+    font-size: 0.45rem !important;
+    padding: 2px 5px !important;
   }
   .coverflow-meta-bar {
-    gap: 0.6rem;
-    padding: 0 0.5rem;
-    margin: 0.8rem auto 0.4rem;
+    gap: 0.5rem !important;
+    padding: 0 0.4rem !important;
+    margin: 0.2rem auto 0 !important;
   }
   .cf-album-title {
-    font-size: 1.25rem !important;
+    font-size: 1.05rem !important;
+  }
+  .cf-album-artist {
+    font-size: 0.7rem !important;
+    margin: 0 0 5px !important;
   }
   .cf-nav-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 0.85rem;
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.72rem !important;
   }
   .btn-open-booklet {
-    padding: 8px 16px;
-    font-size: 0.82rem;
-    letter-spacing: 1px;
+    padding: 5px 12px !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.5px !important;
   }
 }
 
@@ -4018,22 +4075,22 @@ body.immersive-modal-active header {
 
 .floating-mini-player {
   position: fixed;
-  bottom: 25px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(20, 20, 20, 0.85);
+  background: rgba(20, 20, 20, 0.88);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 50px;
-  padding: 8px 18px 8px 12px;
+  padding: 6px 16px 6px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  width: min(520px, 92vw);
+  gap: 16px;
+  width: min(480px, 92vw);
   z-index: 100000;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -4221,27 +4278,58 @@ body.immersive-modal-active header {
 }
 
 @media (max-width: 768px) {
-  .video-app-header {
-    flex-direction: column;
-    gap: 12px;
-    padding: 0 1rem;
-    margin-bottom: 1.2rem;
+  .music-unified-header {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.8rem;
+    margin: 0.2rem auto 0.4rem;
+    gap: 8px;
   }
-  .header-left {
-    justify-content: center;
+  .unified-header-left .ppt-line {
+    width: 60px;
   }
-  .header-center {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+  .unified-header-left .ppt-title {
+    font-size: 1.25rem;
+  }
+  .unified-header-left .ppt-subtitle {
+    font-size: 0.58rem;
+    letter-spacing: 1.5px;
   }
   .pill-segmented-control {
-    max-width: 95vw;
-    padding: 3px;
+    padding: 2px 4px;
+    gap: 3px;
   }
   .pill-btn {
-    padding: 5px 12px;
+    padding: 4px 9px;
+    font-size: 0.72rem;
+  }
+  .unified-header-right .search-trigger {
+    width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
+  }
+  .floating-mini-player {
+    bottom: 8px;
+    padding: 4px 10px 4px 8px;
+    gap: 10px;
+    width: calc(100% - 20px);
+    max-width: 420px;
+  }
+  .mini-left img {
+    width: 30px;
+    height: 30px;
+  }
+  .mini-track-name {
     font-size: 0.78rem;
+  }
+  .mini-track-artist {
+    font-size: 0.65rem;
+  }
+  .mini-play-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.72rem;
   }
   .immersive-content-stage {
     padding: 10px 12px 90px;
