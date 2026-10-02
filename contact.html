@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=43.0.0">
+  <link rel="stylesheet" href="styles.css?v=45.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* --- 📏 Compact Header Explicit (超精致小巧导航栏) --- */
@@ -97,17 +97,20 @@
       position: absolute;
       top: 14px;
       right: 80px;
-      background: rgba(255, 255, 255, 0.98);
+      background: #1a1816 !important;
       padding: 6px 14px;
       border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.35);
       transform: rotate(5deg);
-      border: 1.5px dashed rgba(204, 160, 82, 0.8);
+      border: 1.5px dashed var(--gold, #d4af37);
       z-index: 10;
       pointer-events: none;
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    .paper-logo-sticker img {
+      filter: brightness(1.2);
     }
 
     /* Top Paper Header */
@@ -429,6 +432,67 @@
       box-shadow: 0 0 18px rgba(246, 210, 138, 0.35), inset 0 0 8px rgba(246, 210, 138, 0.15);
       transform: scale(1.008) rotate(-0.3deg);
     }
+
+    /* 📱 Tablet & iPad Responsive (600px ~ 960px) */
+    @media (max-width: 960px) {
+      .res-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+      .paper-dossier-wrap {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+    }
+
+    /* 📱 Mobile Phones Responsive ( < 600px ) */
+    @media (max-width: 600px) {
+      .paper-dossier-card {
+        padding: 2.2rem 1.4rem 1.8rem !important;
+        transform: rotate(0deg);
+      }
+      .paper-title-main {
+        font-size: 1.85rem !important;
+      }
+      .paper-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .paper-row-label {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+      .paper-row-input {
+        width: 100%;
+      }
+      .paper-footer-block {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        text-align: center;
+      }
+      .btn-rubber-stamp {
+        width: 100%;
+        justify-content: center;
+      }
+      .paperclip-holder {
+        top: -16px;
+        right: 18px;
+        width: 34px;
+        height: 70px;
+      }
+      .paper-logo-sticker {
+        right: 55px;
+        top: 10px;
+        padding: 4px 10px;
+      }
+      .paper-logo-sticker img {
+        height: 18px;
+      }
+    }
   </style>
 </head>
 <body style="position: relative;" class="page-contact">
@@ -515,9 +579,14 @@
 
   <!-- 1. 联系我们板块 (原有内容完整保留) -->
   <div class="ppt-header fade-in">
+    <div style="margin-bottom: 0.8rem; text-align: center;">
+      <a href="index.html" style="display:inline-block; text-decoration:none;">
+        <img src="assets/logo.png" alt="Harvester Logo" style="height: 32px; width: auto; object-fit: contain; opacity: 0.95;">
+      </a>
+    </div>
     <div class="ppt-line"></div>
-    <h1 class="ppt-title font-hand-cn">与我们同工共建</h1>
-    <p class="ppt-subtitle font-hand-en">TELL US YOUR STORY OR PARTNER WITH US</p>
+    <h1 class="ppt-title font-hand-cn">联系我们</h1>
+    <p class="ppt-subtitle font-hand-en">CONTACT US · 与我们同工共建</p>
   </div>
 
   <section class="fade-in" style="min-height: 70vh; padding: 0 2rem; max-width: 1200px; margin: 0 auto 4rem;">
@@ -570,7 +639,12 @@
             
             <!-- Top Paper Header Block -->
             <div class="paper-header-block">
-              <span class="paper-top-tag">GET IN TOUCH ✉️</span>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <div class="paper-logo-badge" style="display: inline-flex; align-items: center; background: #1a1816; padding: 5px 12px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                  <img src="assets/logo.png" alt="Harvester Logo" style="height: 20px; width: auto; object-fit: contain; filter: brightness(1.2);">
+                </div>
+                <span class="paper-top-tag">GET IN TOUCH ✉️</span>
+              </div>
               <h2 class="paper-title-main">联系我们</h2>
               <div class="paper-title-sub">
                 <span>CONTACT US</span>
@@ -717,7 +791,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=16.0.0"></script>
-  <script src="app.js?v=25.0.0"></script>
+  <script src="app.js?v=27.0.0"></script>
   <script>
     // --- 📨 Contact Form Handler ---
     document.getElementById('contactForm')?.addEventListener('submit', async (e) => {

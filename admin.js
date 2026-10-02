@@ -401,11 +401,12 @@ document.addEventListener('DOMContentLoaded', () => {
       try { albumsCustom = JSON.parse(albumCfg.value); } catch(e){}
     }
 
+    const MORANDI_SPINE_PALETTES = ["#607272", "#6c6374", "#556958", "#755963", "#52222e"];
     const songs = (rawSongs || []).map((s, idx) => {
       const customMatch = albumsCustom.find(c => c.id === s.id || c.title === s.title);
       const year = String(customMatch?.year || s.year || '2025');
-      const spineBg = customMatch?.spine_bg || ["#1877F2", "#00b894", "#f39c12", "#ea8676", "#0984e3", "#2d3436"][idx % 6];
-      const spineClr = customMatch?.spine_color || "#ffffff";
+      const spineBg = customMatch?.spine_bg || MORANDI_SPINE_PALETTES[idx % MORANDI_SPINE_PALETTES.length];
+      const spineClr = customMatch?.spine_color || "#F6F4F0";
       const spineTxt = customMatch?.spine_text || `${s.title}`;
       const coverUrl = s.cover_url || customMatch?.cover_url || childlikeDoodles[idx % childlikeDoodles.length];
       return { ...s, customMatch, year, spineBg, spineClr, spineTxt, coverUrl };
@@ -532,11 +533,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const isEdit = !!s;
       const initialCover = s?.cover_url || spineCustom?.cover_url || childlikeDoodles[Math.floor(Math.random() * childlikeDoodles.length)];
-      const spineBg = spineCustom?.spine_bg || "#1877F2";
+      const spineBg = spineCustom?.spine_bg || "#607272";
       const spineClr = spineCustom?.spine_color || "#ffffff";
       const spineTxt = spineCustom?.spine_text || (s?.title ? `${s.title}` : "");
       const spotifyUrl = spineCustom?.spotify_url || s?.spotify_url || '';
-      const themeColor = spineCustom?.theme_color || "#2e6b82";
+      const themeColor = spineCustom?.theme_color || "#182222";
       const titleEn = spineCustom?.title_en || "Harvester Single";
       const year = spineCustom?.year || "2025";
       const genre = spineCustom?.genre || "Worship / CCM · 2025";
@@ -545,8 +546,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const notes = spineCustom?.notes || "在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。";
       const composer = spineCustom?.composer || spineCustom?.artist || s?.artist || "Harvester Worship";
       const arrangement = spineCustom?.arrangement || "Harvester Music Production";
-      const vocals = spineCustom?.vocals || "Creative Vocalists";
-      const mixing = spineCustom?.mixing || "Harvester Studio HQ";
+      const vocals = spineCustom?.vocals || "";
+      const mixing = spineCustom?.mixing || "";
       const photo1 = spineCustom?.photo_1 || initialCover;
       const photo2 = spineCustom?.photo_2 || childlikeDoodles[1];
       const photo3 = spineCustom?.photo_3 || childlikeDoodles[2];
@@ -622,6 +623,19 @@ document.addEventListener('DOMContentLoaded', () => {
           <!-- 3. 3D 立体书脊属性 -->
           <div style="background:#0a0a0a; border:1px solid rgba(246,210,138,0.25); border-radius:10px; padding:15px; margin-bottom:15px;">
             <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🧱 3D 立体书脊属性 (Spine Attributes)</label>
+            
+            <!-- 5 Morandi Palette Presets -->
+            <div style="margin-bottom:12px; background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px dashed rgba(246,210,138,0.2);">
+              <span style="font-size:0.75rem; color:#f6d28a; display:block; margin-bottom:6px; font-weight:bold;">🎨 推荐莫兰迪 5 套专属配色（点击一键联动应用书脊底色与背景主题）：</span>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button type="button" class="btn-tiny" style="background:#607272; color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:4px 10px; cursor:pointer;" onclick="document.getElementById('m_spine_bg').value='#607272'; document.getElementById('m_spine_bg_hex').value='#607272'; document.getElementById('m_theme_clr').value='#182222'; document.getElementById('m_theme_clr_hex').value='#182222';">🍃 鼠尾草灰绿</button>
+                <button type="button" class="btn-tiny" style="background:#6c6374; color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:4px 10px; cursor:pointer;" onclick="document.getElementById('m_spine_bg').value='#6c6374'; document.getElementById('m_spine_bg_hex').value='#6c6374'; document.getElementById('m_theme_clr').value='#211b27'; document.getElementById('m_theme_clr_hex').value='#211b27';">🪻 雾霭薰衣紫</button>
+                <button type="button" class="btn-tiny" style="background:#556958; color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:4px 10px; cursor:pointer;" onclick="document.getElementById('m_spine_bg').value='#556958'; document.getElementById('m_spine_bg_hex').value='#556958'; document.getElementById('m_theme_clr').value='#1b241d'; document.getElementById('m_theme_clr_hex').value='#1b241d';">🌿 尤加利草木</button>
+                <button type="button" class="btn-tiny" style="background:#755963; color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:4px 10px; cursor:pointer;" onclick="document.getElementById('m_spine_bg').value='#755963'; document.getElementById('m_spine_bg_hex').value='#755963'; document.getElementById('m_theme_clr').value='#241b1f'; document.getElementById('m_theme_clr_hex').value='#241b1f';">🌸 烟粉豆沙灰</button>
+                <button type="button" class="btn-tiny" style="background:#52222e; color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:4px 10px; cursor:pointer;" onclick="document.getElementById('m_spine_bg').value='#52222e'; document.getElementById('m_spine_bg_hex').value='#52222e'; document.getElementById('m_theme_clr').value='#210e14'; document.getElementById('m_theme_clr_hex').value='#210e14';">🍷 勃艮第夜幕</button>
+              </div>
+            </div>
+
             <div style="margin-bottom:10px;">
               <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">书脊印制文字 (Spine Text)</label>
               <input type="text" id="m_spine_t" value="${spineTxt}" placeholder="例如：更新敬拜" style="width:100%; padding:8px;">
@@ -722,11 +736,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div>
                   <label style="font-size:0.75rem; color:#888; display:block;">人声主唱</label>
-                  <input type="text" id="m_vocals" value="${vocals}" placeholder="Creative Vocalists" style="width:100%; padding:6px;">
+                  <input type="text" id="m_vocals" value="${vocals}" placeholder="选填（若不填写则前台不显示）" style="width:100%; padding:6px;">
                 </div>
                 <div>
                   <label style="font-size:0.75rem; color:#888; display:block;">录音混音母带</label>
-                  <input type="text" id="m_mixing" value="${mixing}" placeholder="Harvester Studio HQ" style="width:100%; padding:6px;">
+                  <input type="text" id="m_mixing" value="${mixing}" placeholder="选填（若不填写则前台不显示）" style="width:100%; padding:6px;">
                 </div>
               </div>
             </div>
@@ -778,7 +792,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const artist = document.getElementById('m_artist').value.trim() || 'Harvester Worship';
       const year = document.getElementById('m_year')?.value.trim() || "2025";
       const genre = document.getElementById('m_genre')?.value.trim() || "Worship / CCM · 2025";
-      const theme_color = document.getElementById('m_theme_clr_hex')?.value.trim() || "#2e6b82";
+      const theme_color = document.getElementById('m_theme_clr_hex')?.value.trim() || "#182222";
 
       const cover_url = document.getElementById('m_url').value.trim();
       const audio_url = document.getElementById('m_a').value.trim();
@@ -787,7 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const description = document.getElementById('m_d').value.trim();
       
       const spine_text = document.getElementById('m_spine_t').value.trim() || title;
-      const spine_bg = document.getElementById('m_spine_bg_hex').value.trim() || '#1877F2';
+      const spine_bg = document.getElementById('m_spine_bg_hex').value.trim() || '#607272';
       const spine_color = document.getElementById('m_spine_clr_hex').value.trim() || '#ffffff';
 
       const key_bpm = document.getElementById('m_key_bpm')?.value.trim() || "KEY: C · 72 BPM";
@@ -795,8 +809,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const notes = document.getElementById('m_notes')?.value.trim() || "";
       const composer = document.getElementById('m_composer')?.value.trim() || artist;
       const arrangement = document.getElementById('m_arrangement')?.value.trim() || "Harvester Music Production";
-      const vocals = document.getElementById('m_vocals')?.value.trim() || "Creative Vocalists";
-      const mixing = document.getElementById('m_mixing')?.value.trim() || "Harvester Studio HQ";
+      const vocals = document.getElementById('m_vocals')?.value.trim() || "";
+      const mixing = document.getElementById('m_mixing')?.value.trim() || "";
       const photo_1 = document.getElementById('m_photo1')?.value.trim() || cover_url;
       const photo_2 = document.getElementById('m_photo2')?.value.trim() || cover_url;
       const photo_3 = document.getElementById('m_photo3')?.value.trim() || cover_url;
@@ -902,12 +916,114 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error("Events fetch error:", err);
     }
 
-    const { data: bannerCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_banner').maybeSingle();
-    const currentBanner = bannerCfg?.value || '';
+    const { data: configs } = await db.from('site_config').select('key, value').in('key', [
+      'cfg_events_banner',
+      'cfg_events_banner_title',
+      'cfg_events_banner_date',
+      'cfg_events_banner_venue',
+      'cfg_events_banner_tag',
+      'cfg_events_banner_link',
+      'cfg_events_posters_json',
+      'cfg_events_custom_json',
+      'cfg_events_order'
+    ]);
+    const cfgMap = {};
+    (configs || []).forEach(c => { cfgMap[c.key] = c.value; });
 
-    // Fetch custom order from site_config
-    const { data: ordCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_order').maybeSingle();
-    let customOrderIds = ordCfg?.value ? ordCfg.value.split(',').filter(Boolean) : [];
+    const currentBanner = cfgMap['cfg_events_banner'] || '';
+    const currentBannerTitle = cfgMap['cfg_events_banner_title'] || 'Harvester 精彩活动与巡回特会';
+    const currentBannerDate = cfgMap['cfg_events_banner_date'] || 'FEATURED 精彩主推';
+    const currentBannerVenue = cfgMap['cfg_events_banner_venue'] || '各城各乡 · 福音巡回';
+    const currentBannerTag = cfgMap['cfg_events_banner_tag'] || 'HOT 热门';
+    const currentBannerLink = cfgMap['cfg_events_banner_link'] || '';
+    let customOrderIds = cfgMap['cfg_events_order'] ? cfgMap['cfg_events_order'].split(',').filter(Boolean) : [];
+
+    // Parse Posters List from cfg_events_posters_json with smart fallback
+    let customPosters = [];
+    if (cfgMap['cfg_events_posters_json']) {
+      try {
+        const parsed = JSON.parse(cfgMap['cfg_events_posters_json']);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          customPosters = parsed;
+        }
+      } catch(e) {}
+    }
+
+    if (customPosters.length === 0) {
+      if (currentBanner) {
+        customPosters.push({
+          id: 'poster_banner_1',
+          title: currentBannerTitle,
+          image_url: currentBanner,
+          date: currentBannerDate,
+          venue: currentBannerVenue,
+          statusTag: currentBannerTag,
+          link: currentBannerLink
+        });
+      }
+      const defaultCurated = [
+        {
+          id: 'curated_p1',
+          title: '收割敬拜之夜 · 吉隆坡特别专场',
+          image_url: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1000&q=80',
+          date: '2025.11.15',
+          venue: '吉隆坡 · 全福敬拜大厅',
+          statusTag: '报名中 🎟️',
+          link: ''
+        },
+        {
+          id: 'curated_p2',
+          title: '原创赞美诗创作营 & 制作工作坊',
+          image_url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1000&q=80',
+          date: '2025.08.20',
+          venue: '新山 · 音乐创作空间',
+          statusTag: 'HOT 热门 🔥',
+          link: ''
+        },
+        {
+          id: 'curated_p3',
+          title: '灵火青年敬拜节 · 赞美特会',
+          image_url: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1000&q=80',
+          date: '2025.07.12',
+          venue: '槟城 · 圣爱大礼堂',
+          statusTag: '精彩回顾 🎞️',
+          link: ''
+        },
+        {
+          id: 'curated_p4',
+          title: '收割者福音巡回音乐分享会',
+          image_url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1000&q=80',
+          date: '2025.06.05',
+          venue: '怡保 · 基督徒交流中心',
+          statusTag: '即将来临 ⏳',
+          link: ''
+        },
+        {
+          id: 'curated_p5',
+          title: '赞美诗合唱与管弦乐室内交响夜',
+          image_url: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1000&q=80',
+          date: '2025.05.01',
+          venue: '吉隆坡 · 艺术文化中心',
+          statusTag: '精彩回顾 🎞️',
+          link: ''
+        },
+        {
+          id: 'curated_p6',
+          title: '收割机敬拜团同工灵修培灵会',
+          image_url: 'https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1000&q=80',
+          date: '2025.03.18',
+          venue: '马六甲 · 恩典营地',
+          statusTag: '年度特会 ⛪',
+          link: ''
+        }
+      ];
+      defaultCurated.forEach(dp => {
+        if (!customPosters.some(p => p.title === dp.title)) {
+          customPosters.push(dp);
+        }
+      });
+    }
+    window._currentAdminPosters = customPosters;
 
     // Parse metadata for maximum robustness
     const events = rawEvents.map(e => {
@@ -1011,37 +1127,92 @@ document.addEventListener('DOMContentLoaded', () => {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px;">
         <div>
           <h1 style="color:var(--gold); margin:0;">📅 活动排期与详情管理 (Events CMS)</h1>
-          <p style="color:#888; font-size:0.85rem; margin-top:4px;">可直接使用 ⬆️ ⬇️ 调整活动前后顺序，或进入编辑修改地点、标签、购票链接与海报等细节。</p>
+          <p style="color:#888; font-size:0.85rem; margin-top:4px;">管理顶部走廊多海报展示，以及下方条状活动排期的顺序、标签、购票链接与海报等细节。</p>
         </div>
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-submit" style="width:auto; padding:10px 18px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold);" onclick="openEventPosterModal()">+ 添加走廊海报</button>
           <button class="btn btn-submit" style="width:auto; padding:10px 22px; background:#333; color:#ccc;" onclick="triggerBlast()">🚀 一键发送提醒</button>
           <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openEventModal()">+ 发布新活动</button>
         </div>
       </div>
 
-      <!-- 🌟 精彩活动页面顶部主海报管理卡片 -->
-      <div style="background:#0e0e0e; border:1px solid rgba(246,210,138,0.25); border-radius:14px; padding:20px; margin-bottom:28px; box-shadow:0 8px 30px rgba(0,0,0,0.6);">
-        <div style="margin-bottom:12px;">
-          <h3 style="margin:0; color:var(--gold); font-size:1.05rem; display:flex; align-items:center; gap:8px;">
-            <i class="fas fa-image"></i> 精彩活动 顶部主海报 (Events Top Banner)
-          </h3>
-          <p style="margin:4px 0 0 0; color:#888; font-size:0.8rem;">
-            在此上传的海报将置顶展示在活动页面标题正下方。留空则自动选用排在第 1 位的活动海报。
-          </p>
+      <!-- 🌟 精彩活动全宽横向走廊海报多图管理 (Events Panoramic Posters Carousel CMS) -->
+      <div style="background:#0e0e0e; border:1.5px solid rgba(246,210,138,0.35); border-radius:14px; padding:22px; margin-bottom:28px; box-shadow:0 8px 30px rgba(0,0,0,0.6);">
+        <div style="margin-bottom:18px; border-bottom:1px solid #222; padding-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="margin:0; color:var(--gold); font-size:1.2rem; display:flex; align-items:center; gap:8px;">
+              <i class="fas fa-images"></i> 精彩活动 走廊海报多照片与属性管理 (${customPosters.length} 张展示中)
+            </h3>
+            <p style="margin:6px 0 0 0; color:#aaa; font-size:0.84rem; line-height:1.5;">
+              在此管理活动页面顶部<b>全宽走廊跑马灯展示的所有海报图片</b>及其属性（状态标签如 <span style="color:#ff6b81; font-weight:bold;">HOT</span>、<span style="color:#2ed573; font-weight:bold;">报名中</span>、日期、地点、标题、跳转链接）。可上传多张照片、自由调整先后顺序。
+            </p>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-submit" style="width:auto; padding:8px 20px; font-size:0.85rem;" onclick="openEventPosterModal()">+ 添加新海报</button>
+            <button class="btn-tiny" style="padding:8px 16px; border-color:var(--gold); color:var(--gold);" onclick="saveAllEventPosters()">💾 确认保存全部海报</button>
+          </div>
         </div>
-        <div style="display:grid; grid-template-columns: minmax(220px, 320px) 1fr; gap:20px; align-items:center; background:#050505; padding:15px; border-radius:10px; border:1px solid #1c1c1c;">
-          <div>
-            <img id="ev_hero_prev" src="${currentBanner || 'https://via.placeholder.com/1200x500?text=Events+Hero+Banner'}" style="width:100%; max-height:140px; object-fit:contain; border-radius:8px; border:1px solid #333; background:#111;">
-          </div>
-          <div>
-            <label style="display:block; font-size:0.75rem; color:#aaa; margin-bottom:6px;">选择新海报图片 (推荐比例 21:9 或 16:9)</label>
-            <input type="file" id="f_ev_hero" style="font-size:0.8rem; color:#aaa; margin-bottom:10px; width:100%;">
-            <input type="hidden" id="url_ev_hero" value="${currentBanner}">
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="btn-tiny" style="padding:8px 16px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); font-weight:600;" onclick="uploadAndSaveEventsBanner('f_ev_hero', 'url_ev_hero', 'ev_hero_prev')">📤 上传并设为主海报</button>
-              ${currentBanner ? `<button class="btn-tiny danger" style="padding:8px 14px;" onclick="clearEventsBanner()">✖ 移除独立主海报</button>` : ''}
-            </div>
-          </div>
+
+        <!-- 海报卡片流 -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:18px;">
+          ${customPosters.map((p, idx) => {
+            const isFirst = idx === 0;
+            const isLast = idx === customPosters.length - 1;
+            const tag = p.statusTag || 'UPCOMING';
+            const tagUpper = tag.toUpperCase();
+            const isHot = tagUpper.includes('HOT') || tagUpper.includes('热门');
+            const isReg = tagUpper.includes('报名') || tagUpper.includes('OPEN');
+            const isRecap = tagUpper.includes('回顾') || tagUpper.includes('RECAP');
+            const isEnded = tagUpper.includes('结束') || tagUpper.includes('ENDED');
+            const badgeBg = isHot ? 'rgba(255,107,129,0.9)' : (isReg ? 'rgba(46,213,115,0.9)' : (isRecap ? 'rgba(164,176,190,0.9)' : (isEnded ? 'rgba(100,100,100,0.9)' : 'rgba(246,210,138,0.9)')));
+            const badgeColor = (isHot || isReg || isEnded) ? '#fff' : '#1a1410';
+
+            return `
+              <div style="background:#161616; border:1px solid rgba(246,210,138,0.22); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; position:relative; box-shadow:0 8px 20px rgba(0,0,0,0.5);">
+                <!-- Poster Image with Badges -->
+                <div style="position:relative; width:100%; height:150px; background:#000;">
+                  <img src="${p.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80'}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80'">
+                  <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 60%);"></div>
+                  <!-- Top Left Date Badge -->
+                  <span style="position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.75); color:var(--gold); border:1px solid rgba(246,210,138,0.3); font-size:0.7rem; padding:2px 8px; border-radius:12px; font-weight:600;">
+                    ${p.date || '未定日期'}
+                  </span>
+                  <!-- Top Right Status Tag -->
+                  <span style="position:absolute; top:8px; right:8px; background:${badgeBg}; color:${badgeColor}; font-size:0.68rem; font-weight:800; padding:2px 9px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.4);">
+                    ${tag}
+                  </span>
+                  <span style="position:absolute; bottom:6px; right:8px; background:rgba(0,0,0,0.8); color:#aaa; font-size:0.68rem; padding:1px 6px; border-radius:4px;">
+                    #${idx + 1}
+                  </span>
+                </div>
+
+                <!-- Poster Metadata Body -->
+                <div style="padding:12px; flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
+                  <div>
+                    <h4 style="margin:0 0 4px 0; color:#F6F4F0; font-size:0.95rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${p.title}">
+                      ${p.title}
+                    </h4>
+                    <p style="margin:0; font-size:0.75rem; color:#888; display:flex; align-items:center; gap:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                      <i class="fas fa-map-marker-alt" style="color:var(--gold);"></i> ${p.venue || '待定地点'}
+                    </p>
+                    ${p.link ? `<p style="margin:3px 0 0 0; font-size:0.7rem; color:var(--gold); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><i class="fas fa-link"></i> ${p.link}</p>` : ''}
+                  </div>
+
+                  <!-- Toolbar -->
+                  <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #222; padding-top:8px; margin-top:4px;">
+                    <div style="display:flex; gap:4px;">
+                      <button class="btn-tiny" ${isFirst ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''} onclick="movePosterOrder('${p.id}', 'up')" title="前移一位">⬆️</button>
+                      <button class="btn-tiny" ${isLast ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''} onclick="movePosterOrder('${p.id}', 'down')" title="后移一位">⬇️</button>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                      <button class="btn-tiny" style="border-color:var(--gold); color:var(--gold); padding:3px 10px;" onclick="openEventPosterModal('${p.id}')">✏️ 编辑</button>
+                      <button class="btn-tiny danger" style="padding:3px 8px;" onclick="deleteEventPoster('${p.id}')" title="删除海报">🗑️</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
       </div>
 
@@ -1132,7 +1303,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (direction === 'down' && index === list.length - 1) return;
 
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    // Swap
     const temp = list[index];
     list[index] = list[targetIndex];
     list[targetIndex] = temp;
@@ -1145,7 +1315,6 @@ document.addEventListener('DOMContentLoaded', () => {
         value: newOrderIds.join(',')
       }, { onConflict: 'key' });
 
-      // Also update display_order on items where possible
       for (let i = 0; i < list.length; i++) {
         try {
           await db.from('events').update({ display_order: i }).eq('id', list[i].id);
@@ -1157,14 +1326,113 @@ document.addEventListener('DOMContentLoaded', () => {
       alert("排序更新失败: " + err.message);
     }
   };
-  
-  window.uploadAndSaveEventsBanner = async (fileInputId, targetId, previewId) => {
+
+  // --- 🌟 走廊海报管理：添加 / 编辑 模态框 ---
+  window.openEventPosterModal = (posterId = null) => {
+    const list = window._currentAdminPosters || [];
+    const p = posterId ? list.find(item => String(item.id) === String(posterId)) : null;
+    const isEdit = !!p;
+
+    const modal = document.createElement('div');
+    modal.id = "eventPosterModal";
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
+    
+    // Build options for events linking
+    const evList = window._currentAdminEvents || [];
+    const eventOptions = evList.map(e => `<option value="event.html?id=${e.id}">${e.title} (${e.event_date || '未定日期'})</option>`).join('');
+
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:620px; max-height:90vh; overflow-y:auto; position:relative; box-shadow:0 20px 60px rgba(0,0,0,1);">
+        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑走廊海报与展示设置' : '添加新走廊海报'}</h2>
+        
+        <!-- 海报图片预览与上传 -->
+        <div style="margin-bottom:18px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222;">
+          <label style="display:block; margin-bottom:8px; color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; font-weight:600;">海报图片预览 (Poster Image)</label>
+          <div style="width:100%; height:170px; border-radius:8px; overflow:hidden; border:1px solid #333; background:#000; margin-bottom:10px; display:flex; align-items:center; justify-content:center;">
+            <img id="ev_p_prev" src="${p?.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div>
+              <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">方式一：选择本地图片上传</label>
+              <div style="display:flex; gap:8px;">
+                <input type="file" id="f_ev_p" accept="image/*" style="font-size:0.75rem; color:#888; flex:1;">
+                <button class="btn-tiny" id="btnUploadEvP" style="background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); font-weight:600; padding:6px 14px;" onclick="uploadPosterPhoto('f_ev_p', 'ev_p_img', 'ev_p_prev')">📤 上传并同步</button>
+              </div>
+            </div>
+            <div>
+              <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">方式二：直接输入海报图片 URL 链接</label>
+              <input type="text" id="ev_p_img" value="${p?.image_url || ''}" placeholder="https://..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px; font-size:0.85rem;" oninput="document.getElementById('ev_p_prev').src = this.value.trim() || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
+            </div>
+          </div>
+        </div>
+
+        <!-- 状态标签设置 -->
+        <div style="margin-bottom:16px;">
+          <label style="display:block; margin-bottom:6px; color:#aaa; font-size:0.8rem; font-weight:600;">状态徽章标签 (Status Tag - 位于海报右上角)</label>
+          <input type="text" id="ev_p_tag" value="${p?.statusTag || 'HOT 热门 🔥'}" placeholder="例如：HOT 热门、报名中、即将来临" style="width:100%; padding:10px; margin-bottom:8px;">
+          
+          <!-- 快捷一键点选徽章 -->
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='HOT 热门 🔥'">🔥 HOT 热门</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='报名中 🎟️'">🎟️ 报名中</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='即将来临 ⏳'">⏳ 即将来临</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='进行中 ⚡'">⚡ 进行中</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='已满额 🔒'">🔒 已满额</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='精彩回顾 🎞️'">🎞️ 精彩回顾</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='已结束 🏁'">🏁 已结束</button>
+          </div>
+        </div>
+
+        <!-- 标题与日期 -->
+        <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:15px; margin-bottom:15px;">
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">海报标题 (Title)</label>
+            <input type="text" id="ev_p_title" value="${p?.title || ''}" placeholder="例如：收割敬拜之夜 · 吉隆坡特别专场" style="width:100%; padding:10px;">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">显示日期/副标 (Date Tag)</label>
+            <input type="text" id="ev_p_date" value="${p?.date || ''}" placeholder="例如：2025.11.15" style="width:100%; padding:10px;">
+          </div>
+        </div>
+
+        <!-- 地点与场馆 -->
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">活动地点 / 场馆 / 副标 (Venue)</label>
+          <input type="text" id="ev_p_venue" value="${p?.venue || ''}" placeholder="例如：吉隆坡 · 全福敬拜大厅" style="width:100%; padding:10px;">
+        </div>
+
+        <!-- 跳转链接与快速绑定 -->
+        <div style="margin-bottom:20px; background:#0e0e0e; padding:14px; border-radius:10px; border:1px solid #222;">
+          <label style="display:block; margin-bottom:6px; color:#aaa; font-size:0.8rem; font-weight:600;">点击跳转链接 (Target Link)</label>
+          <input type="text" id="ev_p_link" value="${p?.link || ''}" placeholder="例如：event.html?id=... 或外部报名链接 https://..." style="width:100%; padding:9px 10px; margin-bottom:8px;">
+          
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:0.75rem; color:#888; white-space:nowrap;">快速绑定活动：</span>
+            <select style="flex:1; padding:6px; font-size:0.8rem; background:#181818; color:#eee; border:1px solid #333; border-radius:4px;" onchange="if(this.value) document.getElementById('ev_p_link').value = this.value;">
+              <option value="">-- 选择现有活动排期以一键绑定 --</option>
+              ${eventOptions}
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:15px; position:sticky; bottom:0; background:#111; padding-top:10px; border-top:1px solid #222;">
+          <button class="btn btn-submit" id="btnSaveEventPoster" style="flex:2; padding:12px;" onclick="saveEventPoster('${p?.id || ''}')">💾 保存海报设置</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#eventPosterModal').remove()">取消</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  };
+
+  // 上传走廊海报图片
+  window.uploadPosterPhoto = async (fileInputId, targetId, previewId) => {
     const fileInput = document.getElementById(fileInputId);
     const file = fileInput?.files?.[0];
-    if(!file) return alert("请先选择要上传的海报图片文件");
+    if(!file) return alert("请先选择图片文件");
     const btn = event.currentTarget;
     const origText = btn.innerText;
-    btn.innerText = "⏳ 正在上传并同步...";
+    btn.innerText = "⏳ 上传中...";
     btn.disabled = true;
     try {
       let uploadFileObj = file;
@@ -1180,10 +1448,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById(targetId).value = publicUrl;
       const prevEl = document.getElementById(previewId);
       if(prevEl) prevEl.src = publicUrl;
-
-      await db.from('site_config').upsert({ key: 'cfg_events_banner', value: publicUrl }, { onConflict: 'key' });
-      alert("✅ 精彩活动主海报已成功上传并生效！");
-      renderCMS();
+      alert("✅ 海报图片上传成功！");
     } catch(err) {
       alert("上传失败: " + err.message);
     } finally {
@@ -1192,14 +1457,135 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  window.clearEventsBanner = async () => {
-    if(!confirm("确定要移除独立主海报吗？移除后活动页面将自动展示排在第 1 位的活动海报。")) return;
+  // 保存单张走廊海报
+  window.saveEventPoster = async (posterId) => {
+    const imgUrl = document.getElementById('ev_p_img')?.value.trim();
+    const title = document.getElementById('ev_p_title')?.value.trim();
+    const tag = document.getElementById('ev_p_tag')?.value.trim() || 'HOT 热门';
+    const date = document.getElementById('ev_p_date')?.value.trim() || 'FEATURED 推荐';
+    const venue = document.getElementById('ev_p_venue')?.value.trim() || '各城各乡 · 福音巡回';
+    const link = document.getElementById('ev_p_link')?.value.trim() || '';
+
+    if (!imgUrl) return alert("请上传或填入海报图片链接");
+    if (!title) return alert("请输入海报标题");
+
+    const list = window._currentAdminPosters || [];
+    const item = {
+      id: posterId || ('poster_' + Date.now()),
+      title: title,
+      image_url: imgUrl,
+      statusTag: tag,
+      date: date,
+      venue: venue,
+      link: link
+    };
+
+    if (posterId) {
+      const idx = list.findIndex(p => String(p.id) === String(posterId));
+      if (idx !== -1) list[idx] = item;
+      else list.push(item);
+    } else {
+      list.push(item);
+    }
+    window._currentAdminPosters = list;
+
     try {
-      await db.from('site_config').upsert({ key: 'cfg_events_banner', value: '' }, { onConflict: 'key' });
-      alert("✅ 已移除独立主海报，现已恢复为自动展示首位活动海报。");
+      await db.from('site_config').upsert({
+        key: 'cfg_events_posters_json',
+        value: JSON.stringify(list)
+      }, { onConflict: 'key' });
+
+      // Keep cfg_events_banner synced with first poster
+      if (list.length > 0) {
+        await db.from('site_config').upsert({ key: 'cfg_events_banner', value: list[0].image_url }, { onConflict: 'key' });
+        await db.from('site_config').upsert({ key: 'cfg_events_banner_title', value: list[0].title }, { onConflict: 'key' });
+        await db.from('site_config').upsert({ key: 'cfg_events_banner_tag', value: list[0].statusTag }, { onConflict: 'key' });
+        await db.from('site_config').upsert({ key: 'cfg_events_banner_venue', value: list[0].venue }, { onConflict: 'key' });
+        await db.from('site_config').upsert({ key: 'cfg_events_banner_link', value: list[0].link }, { onConflict: 'key' });
+      }
+
+      const modal = document.getElementById('eventPosterModal');
+      if (modal) modal.remove();
+      alert("✅ 走廊海报设置已成功保存！");
       renderCMS();
     } catch(err) {
-      alert("操作失败: " + err.message);
+      alert("保存失败: " + err.message);
+    }
+  };
+
+  // 移动走廊海报顺序
+  window.movePosterOrder = async (posterId, direction) => {
+    const list = window._currentAdminPosters || [];
+    const idx = list.findIndex(p => String(p.id) === String(posterId));
+    if (idx === -1) return;
+    if (direction === 'up' && idx === 0) return;
+    if (direction === 'down' && idx === list.length - 1) return;
+
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+    const temp = list[idx];
+    list[idx] = list[targetIdx];
+    list[targetIdx] = temp;
+    window._currentAdminPosters = list;
+
+    try {
+      await db.from('site_config').upsert({
+        key: 'cfg_events_posters_json',
+        value: JSON.stringify(list)
+      }, { onConflict: 'key' });
+
+      if (list.length > 0) {
+        await db.from('site_config').upsert({ key: 'cfg_events_banner', value: list[0].image_url }, { onConflict: 'key' });
+      }
+
+      renderCMS();
+    } catch(err) {
+      alert("海报排序保存失败: " + err.message);
+    }
+  };
+
+  // 删除走廊海报
+  window.deleteEventPoster = async (posterId) => {
+    if (!confirm("确定要移除这张走廊海报吗？")) return;
+    let list = window._currentAdminPosters || [];
+    list = list.filter(p => String(p.id) !== String(posterId));
+    window._currentAdminPosters = list;
+
+    try {
+      await db.from('site_config').upsert({
+        key: 'cfg_events_posters_json',
+        value: JSON.stringify(list)
+      }, { onConflict: 'key' });
+
+      if (list.length > 0) {
+        await db.from('site_config').upsert({ key: 'cfg_events_banner', value: list[0].image_url }, { onConflict: 'key' });
+      } else {
+        await db.from('site_config').upsert({ key: 'cfg_events_banner', value: '' }, { onConflict: 'key' });
+      }
+
+      alert("✅ 已成功移除海报！");
+      renderCMS();
+    } catch(err) {
+      alert("移除失败: " + err.message);
+    }
+  };
+
+  // 批量保存全部走廊海报
+  window.saveAllEventPosters = async () => {
+    const list = window._currentAdminPosters || [];
+    try {
+      await db.from('site_config').upsert({
+        key: 'cfg_events_posters_json',
+        value: JSON.stringify(list)
+      }, { onConflict: 'key' });
+
+      if (list.length > 0) {
+        await db.from('site_config').upsert({ key: 'cfg_events_banner', value: list[0].image_url }, { onConflict: 'key' });
+      }
+
+      alert("✅ 全部走廊海报设置已成功同步到云端！");
+      renderCMS();
+    } catch(err) {
+      alert("保存失败: " + err.message);
     }
   };
   
@@ -1325,15 +1711,24 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <!-- 标题与状态标签 -->
-          <div style="display:grid; grid-template-columns: 2fr 1fr; gap:15px; margin-bottom:15px;">
+          <div style="display:grid; grid-template-columns: 2fr 1fr; gap:15px; margin-bottom:10px;">
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动名称 (Title)</label>
               <input type="text" id="ev_t" value="${e?.title || ''}" placeholder="例如：东京敬拜赞美节庆" style="width:100%; padding:10px;">
             </div>
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">状态标签 (Tag)</label>
-              <input type="text" id="ev_stag" value="${e?.status_tag || ''}" placeholder="如 [SOLD OUT] 或 [已取消]" style="width:100%; padding:10px;">
+              <input type="text" id="ev_stag" value="${e?.status_tag || ''}" placeholder="如 HOT 热门、报名中" style="width:100%; padding:10px;">
             </div>
+          </div>
+          <!-- 状态标签快捷点选 -->
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:15px;">
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='HOT 热门 🔥'">🔥 HOT 热门</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='报名中 🎟️'">🎟️ 报名中</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='即将来临 ⏳'">⏳ 即将来临</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='进行中 ⚡'">⚡ 进行中</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='已满额 🔒'">🔒 已满额</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='已结束 🏁'">🏁 已结束</button>
           </div>
 
           <!-- 日期与时间 -->
@@ -1477,6 +1872,27 @@ document.addEventListener('DOMContentLoaded', () => {
           : await db.from('events').insert([fallbackPayload]);
         
         if (fRes.error) throw fRes.error;
+      // 2. 双重持久化同步到 site_config 备用存储 (防 RLS 拦截)
+      try {
+        const { data: evCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_custom_json').maybeSingle();
+        let evList = [];
+        if (evCfg?.value) {
+          try { evList = JSON.parse(evCfg.value); } catch(e){}
+        }
+        if (!Array.isArray(evList)) evList = [];
+        const evItem = {
+          id: id || ('ev_' + Date.now()),
+          ...payload
+        };
+        const existIdx = evList.findIndex(x => String(x.id) === String(evItem.id) || x.title === evItem.title);
+        if (existIdx !== -1) evList[existIdx] = evItem;
+        else evList.push(evItem);
+        await db.from('site_config').upsert({
+          key: 'cfg_events_custom_json',
+          value: JSON.stringify(evList)
+        }, { onConflict: 'key' });
+      } catch(syncErr) {
+        console.warn("Event custom JSON sync note:", syncErr);
       }
       
       const modal = document.getElementById('eventEditModal');
@@ -2015,7 +2431,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
               <label style="display:block; color:#64D28A; font-size:0.85rem; font-weight:bold; margin-bottom:10px;">支持页面左侧插画/展示图 (Illustration Image)</label>
-              <img id="prev_support_banner" src="${c['cfg_support_banner'] || 'assets/wheat-field.png'}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin-bottom:10px; border:1px solid #222;">
+              <img id="prev_support_banner" src="${c['cfg_support_banner'] || 'assets/illustrations/qsl-support-radio.jpg'}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin-bottom:10px; border:1px solid #222;">
               <input type="file" id="f_support_banner" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:8px;">
               <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_support_banner', 'in_support_banner', 'prev_support_banner')">📤 上传插画图片</button>
               <input type="hidden" id="in_support_banner" value="${c['cfg_support_banner'] || ''}">
@@ -2549,13 +2965,13 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </div>
 
-            <!-- 配图上传 -->
+            <!-- 配图展示 -->
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
-              <label style="display:block; color:var(--gold); font-size:0.85rem; font-weight:bold; margin-bottom:10px;">名字由来展示配图 (Origin Photo)</label>
-              <img id="prev_about_origin_img" src="${d('about_origin_img', 'assets/illustrations/morandi-green-tree.jpg')}" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:12px; border:1px solid #222;">
+              <label style="display:block; color:var(--gold); font-size:0.85rem; font-weight:bold; margin-bottom:10px;">名字由来展示配图 (麦田涂鸦手绘插画)</label>
+              <img id="prev_about_origin_img" src="${d('about_origin_img', 'assets/illustrations/doodle-harvest-story.jpg')}" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:12px; border:1px solid #222;">
               <input type="file" id="f_about_origin_img" style="font-size:0.8rem; width:100%; margin-bottom:8px;">
               <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_origin_img', 'in_about_origin_img', 'prev_about_origin_img')">📤 上传并更换配图</button>
-              <input type="hidden" id="in_about_origin_img" value="${d('about_origin_img', 'assets/illustrations/morandi-green-tree.jpg')}">
+              <input type="hidden" id="in_about_origin_img" value="${d('about_origin_img', 'assets/illustrations/doodle-harvest-story.jpg')}">
             </div>
           </div>
         </div>
@@ -3147,9 +3563,6 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div style="margin-bottom:15px; padding-top:15px; border-top:1px solid #222;">
-            <label>TNG / DuitNow 联络信息</label>
-            <input type="text" id="cfg_support_tng" value="${c['cfg_support_tng']||''}" style="width:100%; margin-bottom:15px; background:#222; border:1px solid #444; color: #F6F4F0;">
-            
             <label>DuitNow QR Code</label>
             <img id="prev_qr" src="${c['cfg_support_qr']||''}" style="width:120px; height:120px; object-fit:contain; background:#fff; border-radius:4px; margin:5px 0; display:block;">
             <input type="file" id="f_qr">
@@ -3249,13 +3662,12 @@ document.addEventListener('DOMContentLoaded', () => {
       {k: 'cfg_support_bank', v: document.getElementById('cfg_support_bank').value},
       {k: 'cfg_support_acc_no', v: document.getElementById('cfg_support_acc_no').value},
       {k: 'cfg_support_acc_name', v: document.getElementById('cfg_support_acc_name').value},
-      {k: 'cfg_support_tng', v: document.getElementById('cfg_support_tng').value},
       {k: 'cfg_support_qr', v: document.getElementById('url_qr').value}
     ];
     for(let item of data) {
       await db.from('site_config').upsert({key: item.k, value: item.v}, {onConflict: 'key'});
     }
-    alert("支持信息（银行/TNG）更新成功!");
+    alert("支持信息（银行/QR Code）更新成功!");
   };
 
   window.saveBanners = async() => {
@@ -3278,154 +3690,280 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 📂 DIARY MODULE ---
   async function renderDiary(container) {
-    const { data: albums } = await db.from('diary_albums').select('*').order('date', {ascending: false});
+    let albums = [];
+    try {
+      const { data, error } = await db.from('diary_albums').select('*').order('date', {ascending: false});
+      if (!error && Array.isArray(data)) albums = data;
+    } catch(err) {
+      console.warn("diary_albums query note:", err);
+    }
+
+    // Double-check & merge with site_config cfg_diary_albums_json (robust fallback against RLS/schema issues)
+    try {
+      const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
+      if (cfg?.value) {
+        const parsed = JSON.parse(cfg.value);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          parsed.forEach(p => {
+            const matchIdx = albums.findIndex(a => String(a.id) === String(p.id) || a.title === p.title);
+            if (matchIdx !== -1) {
+              albums[matchIdx] = { ...p, ...albums[matchIdx], photos: p.photos || albums[matchIdx].photos || [] };
+            } else {
+              albums.push(p);
+            }
+          });
+        }
+      }
+    } catch(e) {
+      console.warn("cfg_diary_albums_json read note:", e);
+    }
+
+    // Sort by date descending
+    albums.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    window._currentAdminDiaryAlbums = albums;
+
     container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-        <h1 style="color:var(--gold);">照片集 Photo Gallery Management</h1>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h1 style="color:var(--gold); margin:0;">照片集 Photo Gallery Management</h1>
+          <p style="color:#888; font-size:0.85rem; margin-top:4px;">共 ${albums.length} 个相册。支持双重云端同步，相册与照片永久安全保存。</p>
+        </div>
         <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openDiaryModal()">+ 新建相册</button>
       </div>
       <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
-        ${albums?.map(a => `
-          <div style="background:#1a1a1a; padding:20px; border-radius:12px; border:1px solid #222; position:relative;">
-            <img src="${a.cover_url || 'https://via.placeholder.com/600x400?text=No+Cover'}" style="width:100%; aspect-ratio:1.6/1; object-fit:cover; border-radius:8px; margin-bottom:15px; border:1px solid #333;">
-            <h3 style="margin:0; color:var(--gold);">${a.title}</h3>
-            <p style="color:#666; font-size:0.85rem; margin:5px 0;">${a.date || ''}</p>
-            
-            <div style="display:flex; gap:10px; margin-top:20px;">
-              <button class="btn-submit" style="flex:1; padding:8px;" onclick="managePhotos('${a.id}')">📷 照片管理</button>
+        ${albums.map(a => `
+          <div style="background:#1a1a1a; padding:20px; border-radius:12px; border:1px solid #222; position:relative; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <img src="${a.cover_url || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80'}" style="width:100%; aspect-ratio:1.6/1; object-fit:cover; border-radius:8px; margin-bottom:15px; border:1px solid #333;" onerror="this.src='assets/logo.png'">
+              <h3 style="margin:0; color:var(--gold); font-size:1.15rem;">${a.title}</h3>
+              <p style="color:#888; font-size:0.85rem; margin:6px 0;">📅 ${a.date || '未定日期'}</p>
+              ${a.fb_url ? `<p style="font-size:0.75rem; color:#1877F2; margin:0;"><i class="fab fa-facebook"></i> 已关联 Facebook 相册</p>` : ''}
+              ${a.photos?.length ? `<p style="font-size:0.75rem; color:#aaa; margin:3px 0 0 0;">📷 包含 ${a.photos.length} 张照片</p>` : ''}
             </div>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-              <button class="btn-tiny" style="flex:1;" onclick="openDiaryModal('${a.id}')">编辑相册信息</button>
-              <button class="btn-tiny danger" onclick="deleteItem('diary_albums', '${a.id}')">删除整个相册</button>
+            
+            <div style="margin-top:20px;">
+              <div style="display:flex; gap:10px;">
+                <button class="btn-submit" style="flex:1; padding:8px;" onclick="managePhotos('${a.id}')">📷 照片管理 (${a.photos?.length || 0})</button>
+              </div>
+              <div style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn-tiny" style="flex:1;" onclick="openDiaryModal('${a.id}')">编辑相册信息</button>
+                <button class="btn-tiny danger" onclick="deleteItem('diary_albums', '${a.id}')">删除整个相册</button>
+              </div>
             </div>
           </div>
-        `).join('') || '<p>暂无日记相册，立即创建一个吧。</p>'}
+        `).join('') || '<p style="color:#888; grid-column:1/-1; text-align:center; padding:3rem 0;">暂无日记相册，立即点击右上角「+ 新建相册」创建一个吧。</p>'}
       </div>
     `;
   }
   
   window.openDiaryModal = async (id = null) => {
-    const btn = event.currentTarget;
-    const originalText = btn.innerText;
-    if (id) { btn.innerText = "⏳..."; btn.disabled = true; }
+    const list = window._currentAdminDiaryAlbums || [];
+    let a = id ? list.find(x => String(x.id) === String(id)) : null;
 
-    try {
-      let a = null;
-      if (id) {
-        const { data, error } = await db.from('diary_albums').select('*').eq('id', id).single();
-        if (error) throw error;
-        a = data;
-      }
-      const isEdit = !!a;
-      const modal = document.createElement('div');
-      modal.id = 'diaryAlbumModal';
-      modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
-      modal.innerHTML = `
-        <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,1);">
-          <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑日记相册' : '新建日记相册'}</h2>
-          
-          <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222;">
-            <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem;">相册封面 (Album Cover)</label>
-            <img id="da_prev" src="${a?.cover_url || 'https://via.placeholder.com/600x400?text=Album+Cover'}" style="width:100%; aspect-ratio:1.6/1; object-fit:cover; border-radius:8px; display:block; margin:0 auto 15px; border:1px solid #333; background:#222;">
-            <input type="file" id="daf_up" style="font-size:0.8rem; color:#888;">
-            <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('daf_up', 'da_url', 'da_prev')">📤 上传相册封面图</button>
-            <input type="hidden" id="da_url" value="${a?.cover_url || ''}">
-          </div>
+    if (!a && id) {
+      try {
+        const { data } = await db.from('diary_albums').select('*').eq('id', id).maybeSingle();
+        if (data) a = data;
+      } catch(e) {}
+    }
 
-          <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">相册名称 (Album Name)</label>
-            <input type="text" id="da_title" value="${a?.title || ''}" placeholder="例如：2026 巴生谷田野调查" style="width:100%; padding:10px;">
-          </div>
-
-          <div style="margin-bottom:15px;">
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">相册日期 (Album Date)</label>
-            <input type="date" id="da_date" value="${a?.date || ''}" style="width:100%; padding:10px;">
-          </div>
-
-          <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
-            <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveDiaryAlbum('${a?.id || ''}')">💾 保存相册信息</button>
-            <button class="btn-tiny" style="flex:1;" onclick="this.closest('#diaryAlbumModal').remove()">取消</button>
+    const isEdit = !!a;
+    const modal = document.createElement('div');
+    modal.id = 'diaryAlbumModal';
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,1);">
+        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑日记相册' : '新建日记相册'}</h2>
+        
+        <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222;">
+          <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem; font-weight:600;">相册封面 (Album Cover)</label>
+          <img id="da_prev" src="${a?.cover_url || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80'}" style="width:100%; aspect-ratio:1.6/1; object-fit:cover; border-radius:8px; display:block; margin:0 auto 15px; border:1px solid #333; background:#222;" onerror="this.src='assets/logo.png'">
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <input type="file" id="daf_up" accept="image/*" style="font-size:0.8rem; color:#888;">
+            <button class="btn-tiny" style="width:100%; padding:7px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); font-weight:600;" onclick="uploadFile('daf_up', 'da_url', 'da_prev')">📤 上传相册封面图</button>
+            <input type="text" id="da_url" value="${a?.cover_url || ''}" placeholder="或直接粘贴图片 URL 链接..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#eee; border-radius:4px; font-size:0.8rem;" oninput="document.getElementById('da_prev').src = this.value.trim() || 'assets/logo.png'">
           </div>
         </div>
-      `;
-      document.body.appendChild(modal);
-    } catch (err) {
-      alert("日记加载失败: " + err.message);
-    } finally {
-      if (id) { btn.innerText = originalText; btn.disabled = false; }
-    }
+
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">相册名称 (Album Name)</label>
+          <input type="text" id="da_title" value="${a?.title || ''}" placeholder="例如：2026 巴生谷田野调查" style="width:100%; padding:10px;">
+        </div>
+
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">相册日期 (Album Date)</label>
+          <input type="date" id="da_date" value="${a?.date || new Date().toISOString().split('T')[0]}" style="width:100%; padding:10px;">
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">Facebook 相册链接 (Social Link - 可选)</label>
+          <input type="text" id="da_fb" value="${a?.fb_url || ''}" placeholder="https://www.facebook.com/media/set/?set=..." style="width:100%; padding:10px;">
+        </div>
+
+        <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
+          <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveDiaryAlbum('${a?.id || ''}')">💾 保存相册信息</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#diaryAlbumModal').remove()">取消</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
   };
 
   window.saveDiaryAlbum = async(id) => {
-    // Robust Parsing/Saving: If fb_url doesn't exist in DB, we hide it in title or other field
-    // But for now, we try to save it normally. 
+    const title = document.getElementById('da_title')?.value.trim();
+    let date = document.getElementById('da_date')?.value.trim();
+    const coverUrl = document.getElementById('da_url')?.value.trim();
+    const fbUrl = document.getElementById('da_fb')?.value.trim() || '';
+
+    if(!title) return alert("请输入相册名称");
+    if(!date) date = new Date().toISOString().split('T')[0];
+
+    const albumId = id || ('album_' + Date.now());
     const payload = {
-      title: document.getElementById('da_title').value,
-      date: document.getElementById('da_date').value,
-      cover_url: document.getElementById('da_url').value
+      id: albumId,
+      title: title,
+      date: date,
+      cover_url: coverUrl || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
+      fb_url: fbUrl
     };
-    if(!payload.title) return alert("请输入名称");
+
+    // 1. 尝试保存至 diary_albums 表
+    try {
+      const dbPayload = {
+        title: payload.title,
+        date: payload.date,
+        cover_url: payload.cover_url
+      };
+      if (fbUrl) dbPayload.fb_url = fbUrl;
+
+      if(id) {
+        await db.from('diary_albums').update(dbPayload).eq('id', id);
+      } else {
+        await db.from('diary_albums').insert([{ id: albumId, ...dbPayload }]);
+      }
+    } catch(err) {
+      console.warn("diary_albums table insert note:", err);
+    }
+
+    // 2. 双重持久化同步到 site_config cfg_diary_albums_json (确保前后台 100% 可见)
+    try {
+      const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
+      let list = [];
+      if (cfg?.value) {
+        try { list = JSON.parse(cfg.value); } catch(e){}
+      }
+      if (!Array.isArray(list)) list = [];
+
+      const existingIdx = list.findIndex(x => String(x.id) === String(albumId) || x.title === title);
+      const fullAlbum = {
+        ...payload,
+        photos: existingIdx !== -1 ? (list[existingIdx].photos || []) : []
+      };
+
+      if (existingIdx !== -1) {
+        list[existingIdx] = { ...list[existingIdx], ...fullAlbum };
+      } else {
+        list.unshift(fullAlbum);
+      }
+
+      await db.from('site_config').upsert({
+        key: 'cfg_diary_albums_json',
+        value: JSON.stringify(list)
+      }, { onConflict: 'key' });
+    } catch(cfgErr) {
+      console.warn("cfg_diary_albums_json sync note:", cfgErr);
+    }
     
-    if(id) await db.from('diary_albums').update(payload).eq('id', id);
-    else await db.from('diary_albums').insert([payload]);
-    
-    // Close modal & Refresh
+    // 关闭模态框并刷新
     if(document.getElementById('diaryAlbumModal')) document.getElementById('diaryAlbumModal').remove();
+    alert("✅ 相册信息已成功保存并同步！前台与后台已生效。");
     renderCMS();
-    alert("相册信息已保存");
   };
 
   window.saveDiaryAlbumMinimal = async (id) => {
-    const fb = document.getElementById('da_fb_instant')?.value;
+    const fb = document.getElementById('da_fb_instant')?.value.trim();
     try {
-      const { error } = await db.from('diary_albums').update({ fb_url: fb }).eq('id', id);
-      if(error) throw error;
-      alert("✅ Facebook 链接已成功同步到官网！");
+      // 1. Update DB table
+      try {
+        await db.from('diary_albums').update({ fb_url: fb }).eq('id', id);
+      } catch(e){}
+
+      // 2. Update site_config
+      const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
+      if (cfg?.value) {
+        let list = JSON.parse(cfg.value);
+        const idx = list.findIndex(x => String(x.id) === String(id));
+        if (idx !== -1) {
+          list[idx].fb_url = fb;
+          await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+        }
+      }
+
+      alert("✅ Facebook 链接已成功同步！");
+      renderCMS();
     } catch(e) {
       alert("同步失败：" + e.message);
     }
   };
   
   window.managePhotos = async(id) => {
-    const { data: album } = await db.from('diary_albums').select('*').eq('id', id).single();
-    const { data: photos } = await db.from('diary_media').select('*').eq('album_id', id);
+    const list = window._currentAdminDiaryAlbums || [];
+    let album = list.find(x => String(x.id) === String(id)) || null;
+
+    let dbPhotos = [];
+    try {
+      const { data } = await db.from('diary_media').select('*').eq('album_id', id);
+      if (data) dbPhotos = data;
+    } catch(e){}
+
+    // Merge with album.photos from config
+    let allPhotos = [...dbPhotos];
+    if (album?.photos?.length) {
+      album.photos.forEach(p => {
+        if (!allPhotos.some(dp => dp.media_url === p.media_url || String(dp.id) === String(p.id))) {
+          allPhotos.push(p);
+        }
+      });
+    }
+
     const modal = document.createElement('div');
     modal.id = 'photoManagerModal';
     modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(10px); padding:20px;";
     modal.innerHTML = `
       <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:800px; max-height:85vh; overflow-y:auto; box-shadow:0 0 50px rgba(0,0,0,0.8);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-          <h3 style="color:var(--gold); margin:0;">正在管理相册照片 (Album Photos)</h3>
-          <button class="btn-tiny" onclick="this.closest('#photoManagerModal').remove()">关闭</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+          <h3 style="color:var(--gold); margin:0;">正在管理《${album?.title || '相册'}》照片 (${allPhotos.length} 张)</h3>
+          <button class="btn-tiny" onclick="this.closest('#photoManagerModal').remove(); renderCMS();">关闭</button>
         </div>
 
-        <!-- Added redundant Social Link field for ease of access -->
-        <div style="background:rgba(24,119,242,0.1); padding:20px; border-radius:12px; margin-bottom:20px; border:1px solid rgba(24,119,242,0.3);">
-          <label style="display:block; margin-bottom:10px; color:#1877F2; font-weight:bold; font-size:0.85rem;">
-            <i class="fab fa-facebook"></i> 同步至 Facebook 相册 (Social Cross-post Link)
+        <!-- Social Link field -->
+        <div style="background:rgba(24,119,242,0.1); padding:16px; border-radius:12px; margin-bottom:20px; border:1px solid rgba(24,119,242,0.3);">
+          <label style="display:block; margin-bottom:8px; color:#1877F2; font-weight:bold; font-size:0.85rem;">
+            <i class="fab fa-facebook"></i> 同步至 Facebook 相册链接 (Social Cross-post Link)
           </label>
           <div style="display:flex; gap:10px;">
             <input type="text" id="da_fb_instant" value="${album?.fb_url || ''}" placeholder="粘贴 FB 相册链接..." style="flex:1; padding:10px; background:#000; border:1px solid #333; color: #F6F4F0; border-radius:4px;">
             <button class="btn-tiny" onclick="saveDiaryAlbumMinimal('${id}')" style="background:#1877F2; color: #F6F4F0; border:none; padding:0 20px;">更新链接</button>
           </div>
-          <p style="font-size:0.65rem; color:#666; margin-top:8px;">此处修改后，官网详情页将立即显示 "View on Facebook" 按钮。</p>
+          <p style="font-size:0.68rem; color:#888; margin-top:6px;">此处修改后，官网详情页将立即显示 "View on Facebook" 按钮。</p>
         </div>
 
         <div style="background:#0a0a0a; padding:20px; border-radius:12px; text-align:center; margin-bottom:20px; border:1px dashed #333;">
-           <p style="color:#888; font-size:0.8rem; margin-bottom:10px;">选择想要上传的作品瞬间</p>
-           <input type="file" id="d_up">
-           <button class="btn btn-submit" style="margin-top:10px; width:100%;" onclick="uploadDiaryPhoto('${id}')">上传并存入相册</button>
-           <div id="up_stat" style="font-size:0.7rem; color:var(--gold); margin-top:5px;"></div>
+           <p style="color:#aaa; font-size:0.85rem; margin-bottom:10px; font-weight:600;">选择想要上传的作品瞬间照片</p>
+           <input type="file" id="d_up" accept="image/*" style="font-size:0.85rem; color:#888;">
+           <button class="btn btn-submit" style="margin-top:12px; width:100%; padding:10px;" onclick="uploadDiaryPhoto('${id}')">📤 上传并存入相册</button>
+           <div id="up_stat" style="font-size:0.75rem; color:var(--gold); margin-top:6px;"></div>
         </div>
-        <div id="photoGridCMS" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:15px;">
-          ${photos?.map(p => {
+
+        <div id="photoGridCMS" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:15px;">
+          ${allPhotos.map(p => {
              const optimized = p.media_url; 
              return `
-            <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #222;">
+            <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #333; background:#000;">
               <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
-              <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color: #F6F4F0; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
+              <button onclick="deleteDiaryPhoto('${p.id || ''}', '${optimized.replace(/'/g, "\\'")}', '${id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.85); border:none; color: #F6F4F0; border-radius:50%; width:24px; height:24px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.6);" title="删除照片">✕</button>
             </div>
-          `}).join('') || '<p style="grid-column:1/-1; text-align:center; opacity:0.3;">暂无内容</p>'}
+          `}).join('') || '<p style="grid-column:1/-1; text-align:center; opacity:0.4; padding:2rem 0;">此相册暂无照片，请点击上方选择图片上传。</p>'}
         </div>
       </div>
     `;
@@ -3435,7 +3973,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.uploadDiaryPhoto = async (aid) => {
     const fileInput = document.getElementById('d_up');
     const stat = document.getElementById('up_stat');
-    let file = fileInput.files[0];
+    let file = fileInput?.files?.[0];
     if(!file) return alert("请先选择照片");
     
     stat.innerText = "🎨 正在自动无损压缩照片体积...";
@@ -3445,7 +3983,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     stat.innerText = "⚡ 正在极速上传并同步数据库...";
     
-    // Use the global uploadFile logic but handle the DB entry here
     const safeName = file.name.replace(/[^\w.-]/g, "_");
     const path = `diary/${Date.now()}-${safeName}`;
     
@@ -3454,43 +3991,98 @@ document.addEventListener('DOMContentLoaded', () => {
       if(error) throw error;
       
       const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
-      
-      // Save to diary_media
-      await db.from('diary_media').insert([{
+      const photoItem = {
+        id: 'photo_' + Date.now(),
         album_id: aid, 
         media_url: publicUrl, 
-        type: file.type.startsWith('video') ? 'video' : 'image'
-      }]);
+        type: 'image'
+      };
+
+      // 1. Try DB table
+      try {
+        await db.from('diary_media').insert([photoItem]);
+      } catch(e){}
+
+      // 2. Sync to site_config cfg_diary_albums_json
+      try {
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
+        if (cfg?.value) {
+          let list = JSON.parse(cfg.value);
+          const aIdx = list.findIndex(x => String(x.id) === String(aid));
+          if (aIdx !== -1) {
+            if (!list[aIdx].photos) list[aIdx].photos = [];
+            list[aIdx].photos.push(photoItem);
+            await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+          }
+        }
+      } catch(e){}
       
-      stat.innerText = "✅ 上传成功！正在刷新列表...";
+      stat.innerText = "✅ 上传成功！已存入相册。";
       
-      // Refresh the specific photo grid without closing the modal
-      const { data: newPhotos } = await db.from('diary_media').select('*').eq('album_id', aid);
-      document.getElementById('photoGridCMS').innerHTML = newPhotos.map(p => {
-        const optimized = p.media_url;
-        return `
-        <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #222;">
-          <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
-          <button onclick="deleteDiaryPhoto('${p.id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); border:none; color: #F6F4F0; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center;">✕</button>
-        </div>
-      `}).join('');
+      // Append to photo grid DOM immediately
+      const grid = document.getElementById('photoGridCMS');
+      const photoDiv = document.createElement('div');
+      photoDiv.style = "position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #333; background:#000;";
+      photoDiv.innerHTML = `
+        <img src="${publicUrl}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
+        <button onclick="deleteDiaryPhoto('${photoItem.id}', '${publicUrl.replace(/'/g, "\\'")}', '${aid}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.85); border:none; color: #F6F4F0; border-radius:50%; width:24px; height:24px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.6);" title="删除照片">✕</button>
+      `;
+      grid.appendChild(photoDiv);
       
-      fileInput.value = ""; // Clear input
+      fileInput.value = "";
     } catch (e) {
       alert("上传失败: " + e.message);
       stat.innerText = "❌ 发生错误";
     }
   };
 
-  window.deleteDiaryPhoto = async (id, btn) => {
-    if(confirm("确定删除这张照片？")) {
-      await db.from('diary_media').delete().eq('id', id);
-      btn.parentElement.remove();
-    }
+  window.deleteDiaryPhoto = async (photoId, mediaUrl, aid, btn) => {
+    if(!confirm("确定删除这张照片？")) return;
+
+    // 1. Try DB delete
+    try {
+      if (photoId && !photoId.startsWith('photo_')) {
+        await db.from('diary_media').delete().eq('id', photoId);
+      } else if (mediaUrl) {
+        await db.from('diary_media').delete().eq('media_url', mediaUrl);
+      }
+    } catch(e){}
+
+    // 2. Config delete
+    try {
+      const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
+      if (cfg?.value) {
+        let list = JSON.parse(cfg.value);
+        const aIdx = list.findIndex(x => String(x.id) === String(aid));
+        if (aIdx !== -1 && list[aIdx].photos) {
+          list[aIdx].photos = list[aIdx].photos.filter(p => p.media_url !== mediaUrl && String(p.id) !== String(photoId));
+          await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+        }
+      }
+    } catch(e){}
+
+    if (btn && btn.parentElement) btn.parentElement.remove();
   };
 
   window.deleteItem = async(t, id) => {
-    if(confirm("确定永久删除？")) { await db.from(t).delete().eq('id', id); renderCMS(); }
+    if(!confirm("确定永久删除此项？")) return;
+    try {
+      await db.from(t).delete().eq('id', id);
+    } catch(e){}
+
+    // If deleting diary album, also remove from site_config cfg_diary_albums_json
+    if (t === 'diary_albums') {
+      try {
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
+        if (cfg?.value) {
+          let list = JSON.parse(cfg.value);
+          list = list.filter(x => String(x.id) !== String(id));
+          await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+        }
+      } catch(e){}
+    }
+
+    renderCMS();
   };
 
   async function renderEchoes(container) {

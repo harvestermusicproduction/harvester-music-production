@@ -134,13 +134,18 @@ document.addEventListener('DOMContentLoaded', () => {
               }
               gridWrap.innerHTML = aboutData.about_team_list.map((m, idx) => `
                 <div class="polaroid-card">
-                  <div class="polaroid-tape"></div>
-                  <div class="polaroid-img-box">
-                    <img src="${m.image_url || m.img || 'assets/logo.png'}" alt="${m.role || '同工'}" onerror="this.src='assets/logo.png'">
+                  <div class="team-card-upper">
+                    <div class="team-card-spine">
+                      <span class="team-spine-name">${m.names || m.name || '主要同工'}</span>
+                    </div>
+                    <div class="polaroid-img-box">
+                      <img src="${m.image_url || m.img || 'assets/logo.png'}" alt="${m.role || '同工'}" onerror="this.src='assets/logo.png'">
+                    </div>
                   </div>
-                  <div class="polaroid-role-badge">${m.role || '主要服事同工'}</div>
-                  ${m.role_en ? `<div class="polaroid-role-en">${m.role_en}</div>` : ''}
-                  <div class="polaroid-names" style="white-space:pre-line;">${m.names || m.name || ''}</div>
+                  <div class="team-card-bottom">
+                    <span class="team-bottom-role">${m.role || '主要服事同工'}</span>
+                    <span class="team-bottom-sub">${m.role_en || 'Team —'}</span>
+                  </div>
                 </div>
               `).join('');
             }
@@ -611,13 +616,32 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     ];
 
-    // Combine DB events with images + custom banner + fallback items to ensure a rich multi-card strip
+    // Combine custom CMS posters + DB events with images + custom banner + fallback items
     let galleryItems = [];
+
+    // 1. Primary: Custom posters configured from Admin CMS
+    const cfgPosters = siteConfigs['cfg_events_posters_json'];
+    if (cfgPosters) {
+      try {
+        const parsed = typeof cfgPosters === 'string' ? JSON.parse(cfgPosters) : cfgPosters;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          galleryItems = parsed.map(p => ({
+            id: p.id || 'poster_' + Math.random(),
+            title: p.title || 'Harvester 精彩活动',
+            image_url: p.image_url,
+            date: p.date || 'UPCOMING',
+            venue: p.venue || '各大展演空间',
+            statusTag: p.statusTag || 'HOT 热门',
+            link: p.link || 'javascript:void(0)'
+          }));
+        }
+      } catch(e){}
+    }
     
-    // 1. Add database events that have images
+    // 2. Add database events that have images (if not already included)
     if (events && events.length > 0) {
       events.forEach(e => {
-        if (e.image_url) {
+        if (e.image_url && !galleryItems.some(item => item.image_url === e.image_url || item.title === e.title)) {
           galleryItems.push({
             id: e.id,
             title: e.title,
@@ -631,21 +655,27 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // 2. Add custom banner if present
+    // 3. Add custom banner if present and not yet in list
     const customBanner = siteConfigs['cfg_events_banner'];
+    const customBannerTitle = siteConfigs['cfg_events_banner_title'] || 'Harvester 精彩活动与巡回特会';
+    const customBannerDate = siteConfigs['cfg_events_banner_date'] || 'FEATURED 精彩主推';
+    const customBannerVenue = siteConfigs['cfg_events_banner_venue'] || '各城各乡 · 福音巡回';
+    const customBannerTag = siteConfigs['cfg_events_banner_tag'] || 'HOT 热门';
+    const customBannerLink = siteConfigs['cfg_events_banner_link'] || 'javascript:void(0)';
+
     if (customBanner && !galleryItems.some(item => item.image_url === customBanner)) {
       galleryItems.unshift({
         id: 'banner_custom',
-        title: 'Harvester 精彩活动与巡回特会',
+        title: customBannerTitle,
         image_url: customBanner,
-        date: 'FEATURED 精彩主推',
-        venue: '各城各乡 · 福音巡回',
-        statusTag: 'FEATURED 推荐',
-        link: 'javascript:void(0)'
+        date: customBannerDate,
+        venue: customBannerVenue,
+        statusTag: customBannerTag,
+        link: customBannerLink
       });
     }
 
-    // 3. If gallery has fewer than 6 items, append fallback items
+    // 4. If gallery has fewer than 6 items, append fallback items
     if (galleryItems.length < 6) {
       fallbackPhotos.forEach(fb => {
         if (galleryItems.length < 8 && !galleryItems.some(item => item.title === fb.title)) {
@@ -773,17 +803,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('diaryContainer');
     if (!container) return;
     try {
-      const { data: albums } = await db.from('diary_albums').select('*, diary_media(media_url)').order('date', { ascending: false });
+      let albums = [];
+      // 1. Try diary_albums table safely (without complex foreign key join)
+      try {
+        const { data, error } = await db.from('diary_albums').select('*').order('date', { ascending: false });
+        if (!error && Array.isArray(data)) albums = data;
+      } catch(err) {
+        console.warn("fetchDiary DB note:", err);
+      }
+
+      // 2. Double-check & merge with site_config cfg_diary_albums_json
+      const cfgAlbums = siteConfigs['cfg_diary_albums_json'];
+      if (cfgAlbums) {
+        try {
+          const parsed = typeof cfgAlbums === 'string' ? JSON.parse(cfgAlbums) : cfgAlbums;
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            parsed.forEach(p => {
+              const matchIdx = albums.findIndex(a => String(a.id) === String(p.id) || a.title === p.title);
+              if (matchIdx !== -1) {
+                albums[matchIdx] = { ...p, ...albums[matchIdx] };
+              } else {
+                albums.push(p);
+              }
+            });
+          }
+        } catch(e){}
+      }
+
+      if (!albums || albums.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: #888;">
+          <p style="font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--gold);">📷 暂无相册记录</p>
+          <p style="font-size: 0.85rem; opacity: 0.7;">请进入管理后台添加精彩照片集与瞬间回忆。</p>
+        </div>`;
+        return;
+      }
+
+      // Sort by date descending
+      albums.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
       const globalFb = siteConfigs['cfg_diary_fb'];
       container.innerHTML = albums.map(d => {
-        const coverImg = d.cover_url || (d.diary_media[0] ? d.diary_media[0].media_url : 'assets/logo.png');
+        const coverImg = d.cover_url || (d.photos && d.photos[0] ? d.photos[0].media_url : 'assets/logo.png');
         const finalFb = d.fb_url || globalFb;
         return `
           <div class="folder-card fade-in" onclick="location.href='event.html?id=${d.id}'">
             <div class="folder-main">
-              <img src="${coverImg}" class="folder-cover">
+              <img src="${coverImg}" class="folder-cover" onerror="this.src='assets/logo.png'">
               <div class="folder-info">
-                <p class="folder-date">${d.date}</p>
+                <p class="folder-date">📅 ${d.date || '未定日期'}</p>
                 <h3 class="folder-title">${d.title}</h3>
                 ${finalFb ? `<a href="${finalFb}" target="_blank" class="btn-social-fb" onclick="event.stopPropagation()"><i class="fab fa-facebook"></i> View on Facebook</a>` : ''}
               </div>
@@ -791,7 +858,9 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>`;
       }).join('');
       refreshObserver();
-    } catch (e) {}
+    } catch (e) {
+      console.warn("fetchDiary Error:", e);
+    }
   }
 
   // --- 4. Detail Page Logic (event.html) ---
@@ -810,17 +879,46 @@ document.addEventListener('DOMContentLoaded', () => {
       let album = null;
       let isEvent = false;
 
-      // 1. Try diary_albums first
-      const { data: diaryData } = await db.from('diary_albums').select('*, diary_media(*)').eq('id', id).maybeSingle();
-      if (diaryData) {
-        album = diaryData;
-      } else {
-        // 2. Fallback to events table
-        const { data: eventData } = await db.from('events').select('*').eq('id', id).maybeSingle();
-        if (eventData) {
-          album = eventData;
-          isEvent = true;
-        }
+      // 1. Try diary_albums table
+      try {
+        const { data: diaryData } = await db.from('diary_albums').select('*').eq('id', id).maybeSingle();
+        if (diaryData) album = diaryData;
+      } catch(e){}
+
+      // 2. Try site_config cfg_diary_albums_json
+      if (!album && siteConfigs['cfg_diary_albums_json']) {
+        try {
+          const list = typeof siteConfigs['cfg_diary_albums_json'] === 'string' ? JSON.parse(siteConfigs['cfg_diary_albums_json']) : siteConfigs['cfg_diary_albums_json'];
+          if (Array.isArray(list)) {
+            const found = list.find(x => String(x.id) === String(id));
+            if (found) album = found;
+          }
+        } catch(e){}
+      }
+
+      // 3. Fallback to events table
+      if (!album) {
+        try {
+          const { data: eventData } = await db.from('events').select('*').eq('id', id).maybeSingle();
+          if (eventData) {
+            album = eventData;
+            isEvent = true;
+          }
+        } catch(e){}
+      }
+
+      // 4. Fallback to site_config cfg_events_custom_json
+      if (!album && siteConfigs['cfg_events_custom_json']) {
+        try {
+          const evList = typeof siteConfigs['cfg_events_custom_json'] === 'string' ? JSON.parse(siteConfigs['cfg_events_custom_json']) : siteConfigs['cfg_events_custom_json'];
+          if (Array.isArray(evList)) {
+            const foundEv = evList.find(x => String(x.id) === String(id));
+            if (foundEv) {
+              album = foundEv;
+              isEvent = true;
+            }
+          }
+        } catch(e){}
       }
 
       if (!album) {

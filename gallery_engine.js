@@ -169,13 +169,20 @@ function renderGrid(data) {
 
   container.innerHTML = data.map((artist) => `
     <div class="artist-card" onclick="showOverlay(${JSON.stringify(artist).replace(/"/g, '&quot;')})">
-      <div class="img-wrapper">
-        <img src="${artist.image_url || 'assets/logo.png'}" alt="${artist.name}" loading="lazy" onerror="this.src='assets/logo.png'">
+      <div class="card-upper-row">
+        <!-- 竖排姓名像书脊 (Vertical Spine-style Name) -->
+        <div class="card-spine-name">
+          <span class="spine-name-text">${artist.name}</span>
+        </div>
+        <!-- 肖像大图 (Portrait Photo) -->
+        <div class="img-wrapper">
+          <img src="${artist.image_url || 'assets/logo.png'}" alt="${artist.name}" loading="lazy" onerror="this.src='assets/logo.png'">
+        </div>
       </div>
-      <div class="artist-meta">
-        <span class="tag">${getTagLabel(artist.category)}</span>
-        <h3>${artist.name}</h3>
-        <p class="statement">${artist.role || '主要服事同工'}</p>
+      <!-- 底部双栏极简信息 (Minimalist Bottom Bar) -->
+      <div class="card-bottom-bar">
+        <span class="bottom-role">${artist.role || '主要服事同工'}</span>
+        <span class="bottom-category">${getTagCategoryLabel(artist.category)} —</span>
       </div>
     </div>
   `).join('');
@@ -189,6 +196,13 @@ function renderGrid(data) {
       ease: "power3.out"
     });
   }
+}
+
+function getTagCategoryLabel(cat) {
+  if (cat === 'core' || cat === '同工') return 'Key Co-worker';
+  if (cat === 'gospel' || cat === '福音') return 'Gospel Singer';
+  if (cat === 'worship' || cat === '敬拜') return 'Worship Leader';
+  return 'Harvester Music';
 }
 
 function getTagLabel(cat) {

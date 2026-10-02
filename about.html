@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=43.0.0">
+  <link rel="stylesheet" href="styles.css?v=45.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* ========================================================
@@ -70,22 +70,29 @@
       align-items: center;
     }
     .origin-photo-frame {
-      border: 1.5px solid rgba(246, 210, 138, 0.35);
-      border-radius: var(--hand-radius-soft);
+      border: none;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-      background: #000;
+      box-shadow: none;
+      background: transparent;
       position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .origin-photo-frame img {
       width: 100%;
-      height: 280px;
-      object-fit: cover;
+      max-height: 360px;
+      object-fit: contain;
       display: block;
-      transition: transform 0.5s ease;
+      border-radius: 16px;
+      -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 64%, rgba(0,0,0,0) 100%);
+      mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 64%, rgba(0,0,0,0) 100%);
+      filter: drop-shadow(0 12px 28px rgba(0,0,0,0.45));
+      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
-    .origin-photo-frame:hover img {
-      transform: scale(1.04);
+    .origin-hero-card:hover .origin-photo-frame img {
+      transform: scale(1.03);
     }
 
     .origin-quote-box {
@@ -571,92 +578,113 @@
       margin-bottom: 2.5rem;
     }
     .polaroid-card {
-      background: #fbf9f4;
-      border-radius: 4px;
-      padding: 14px 14px 22px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3);
-      position: relative;
-      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-      color: #1a1a1a;
-      text-align: center;
+      background: #ffffff;
+      color: #1a1816;
+      border: 1px solid #e2ddd3;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
       display: flex;
       flex-direction: column;
+      padding: 14px 14px 10px;
+      transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease, border-color 0.3s ease;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+      position: relative;
     }
     .polaroid-card:nth-child(odd) {
-      transform: rotate(-1.5deg);
+      transform: rotate(-0.5deg);
     }
     .polaroid-card:nth-child(even) {
-      transform: rotate(1.2deg);
+      transform: rotate(0.5deg);
     }
     .polaroid-card:hover {
-      transform: translateY(-10px) rotate(0deg) scale(1.03);
-      box-shadow: 0 25px 50px rgba(0,0,0,0.7), 0 0 25px rgba(246, 210, 138, 0.2);
+      transform: translateY(-8px) rotate(0deg) scale(1.02);
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.65);
+      border-color: #c4b5a2;
       z-index: 5;
     }
-    .polaroid-tape {
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90px;
-      height: 24px;
-      background: rgba(246, 210, 138, 0.45);
-      backdrop-filter: blur(4px);
-      border-left: 2px dashed rgba(200, 160, 90, 0.4);
-      border-right: 2px dashed rgba(200, 160, 90, 0.4);
-      z-index: 2;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    
+    .team-card-upper {
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+      min-height: 180px;
     }
-    .polaroid-img-box {
-      width: 100%;
-      aspect-ratio: 16 / 11;
-      background: #111;
-      border-radius: 2px;
+
+    .team-card-spine {
+      width: 40px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 2px;
+    }
+
+    .team-spine-name {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      font-family: var(--font-chenyuluoyan), var(--font-wenkai), 'Noto Serif SC', serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #151311;
+      letter-spacing: 2px;
+      line-height: 1.15;
+      white-space: pre-line;
+      text-align: center;
+      max-height: 180px;
       overflow: hidden;
-      margin-bottom: 14px;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .polaroid-img-box {
+      flex: 1;
+      width: 100%;
+      height: 180px;
+      background: #f0ede6;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      margin-bottom: 0;
     }
     .polaroid-img-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.5s ease, filter 0.5s ease;
-      filter: grayscale(15%) contrast(105%);
+      transition: transform 0.6s ease, filter 0.5s ease;
+      filter: grayscale(12%) contrast(102%);
     }
     .polaroid-card:hover .polaroid-img-box img {
       transform: scale(1.05);
       filter: grayscale(0%) contrast(105%);
     }
-    .polaroid-role-badge {
-      font-family: var(--font-hand-cn);
-      font-size: 1.15rem;
-      color: #c9933b;
-      letter-spacing: 2px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    .polaroid-role-en {
-      font-family: var(--font-hand-en);
+
+    .team-card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #eee9e0;
+      padding-top: 8px;
+      margin-top: 10px;
       font-size: 0.78rem;
-      color: #777;
-      letter-spacing: 1.5px;
-      margin-bottom: 8px;
-    }
-    .polaroid-names {
-      font-family: var(--font-hand-cn);
-      font-size: 1.35rem;
-      color: #222;
-      letter-spacing: 2px;
-      margin: 4px 0 2px;
-      line-height: 1.4;
-      white-space: pre-line;
-    }
-    .polaroid-names-sub {
-      font-family: var(--font-hand-en);
-      font-size: 0.85rem;
       color: #555;
+    }
+    .team-card-bottom .team-bottom-role {
+      font-family: var(--font-wenkai), 'Noto Serif SC', serif;
+      font-weight: 600;
+      color: #222;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 60%;
+    }
+    .team-card-bottom .team-bottom-sub {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.72rem;
+      color: #888;
       letter-spacing: 1px;
-      margin-top: 2px;
+      white-space: nowrap;
+      text-transform: uppercase;
     }
 
     /* 🕊️ Pastoral Advisory Team Card (牧师顾问团 / 属灵遮盖与监督) */
@@ -763,8 +791,45 @@
       }
     }
     @media (max-width: 600px) {
+      .about-page-wrapper {
+        padding: 0 1rem 3.5rem;
+      }
+      .origin-hero-card {
+        padding: 1.8rem 1.2rem;
+        border-radius: 18px;
+        margin-bottom: 3rem;
+      }
+      #about_origin_main_title {
+        font-size: 2rem !important;
+        letter-spacing: 2px !important;
+      }
+      .origin-quote-box {
+        padding-left: 1rem;
+      }
+      .origin-scripture {
+        font-size: 1.35rem;
+        line-height: 1.6;
+      }
+      .origin-meaning {
+        font-size: 1.15rem;
+      }
+      .team-grid-top,
       .team-grid-bottom {
         grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .team-card-upper {
+        min-height: 160px;
+      }
+      .team-card-spine {
+        width: 36px;
+      }
+      .team-spine-name {
+        font-size: 1.2rem;
+        max-height: 160px;
+      }
+      .polaroid-img-box {
+        height: 160px;
       }
     }
   </style>
@@ -906,9 +971,9 @@
           </div>
         </div>
 
-        <!-- 名字由来配图 -->
+        <!-- 名字由来配图：麦田手绘涂鸦风景插画 -->
         <div class="origin-photo-frame">
-          <img id="about_origin_img" src="assets/illustrations/morandi-green-tree.jpg" alt="收割与田野">
+          <img id="about_origin_img" src="assets/illustrations/doodle-harvest-story.jpg" onerror="this.src='assets/illustrations/qsl-wheat-tractor.jpg'" alt="麦田手绘涂鸦风景插画">
         </div>
       </div>
     </section>
@@ -1165,92 +1230,121 @@
         <p id="about_team_subtitle">The Servants & Co-workers behind Harvester Music Production</p>
       </div>
 
-      <!-- Top Row: 3 Founder / Creative / Production Polaroids -->
+      <!-- Top Row: 3 Founder / Creative / Production Cards -->
       <div class="team-grid-top">
         <!-- 1. 创办启发人 -->
         <div class="polaroid-card">
-          <div class="polaroid-tape"></div>
-          <div class="polaroid-img-box">
-            <img id="about_team_r1_img" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80" alt="创办启发人">
+          <div class="team-card-upper">
+            <div class="team-card-spine">
+              <span class="team-spine-name" id="about_team_r1_names">汤小康 & Warren</span>
+            </div>
+            <div class="polaroid-img-box">
+              <img id="about_team_r1_img" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80" alt="创办启发人">
+            </div>
           </div>
-          <div class="polaroid-role-badge" id="about_team_r1_t">创作平台创办启发人</div>
-          <div class="polaroid-role-en" id="about_team_r1_te">Founder of Creative Platform</div>
-          <div class="polaroid-names" id="about_team_r1_names">汤小康
-Warren 沈自强</div>
+          <div class="team-card-bottom">
+            <span class="team-bottom-role" id="about_team_r1_t">创作平台创办启发人</span>
+            <span class="team-bottom-sub">Founder —</span>
+          </div>
         </div>
 
         <!-- 2. 创作 -->
         <div class="polaroid-card">
-          <div class="polaroid-tape"></div>
-          <div class="polaroid-img-box">
-            <img id="about_team_r2_img" src="https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80" alt="创作">
+          <div class="team-card-upper">
+            <div class="team-card-spine">
+              <span class="team-spine-name" id="about_team_r2_names">Warren & 创作组</span>
+            </div>
+            <div class="polaroid-img-box">
+              <img id="about_team_r2_img" src="https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80" alt="创作">
+            </div>
           </div>
-          <div class="polaroid-role-badge" id="about_team_r2_t">创作</div>
-          <div class="polaroid-role-en" id="about_team_r2_te">Creative</div>
-          <div class="polaroid-names" id="about_team_r2_names">Warren 沈自强
-汤小康
-Natasha</div>
+          <div class="team-card-bottom">
+            <span class="team-bottom-role" id="about_team_r2_t">创作</span>
+            <span class="team-bottom-sub">Creative —</span>
+          </div>
         </div>
 
         <!-- 3. 制作 -->
         <div class="polaroid-card">
-          <div class="polaroid-tape"></div>
-          <div class="polaroid-img-box">
-            <img id="about_team_r3_img" src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80" alt="制作">
+          <div class="team-card-upper">
+            <div class="team-card-spine">
+              <span class="team-spine-name" id="about_team_r3_names">汤小康 & 制作团队</span>
+            </div>
+            <div class="polaroid-img-box">
+              <img id="about_team_r3_img" src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80" alt="制作">
+            </div>
           </div>
-          <div class="polaroid-role-badge" id="about_team_r3_t">制作</div>
-          <div class="polaroid-role-en" id="about_team_r3_te">Production</div>
-          <div class="polaroid-names" id="about_team_r3_names">汤小康
-Warren 沈自强
-Edward</div>
+          <div class="team-card-bottom">
+            <span class="team-bottom-role" id="about_team_r3_t">制作</span>
+            <span class="team-bottom-sub">Production —</span>
+          </div>
         </div>
       </div>
 
-      <!-- Bottom Row: 4 Filming / Promotion / Admin / Singers Polaroids -->
+      <!-- Bottom Row: 4 Filming / Promotion / Admin / Singers Cards -->
       <div class="team-grid-bottom">
         <!-- 4. 拍摄 -->
         <div class="polaroid-card">
-          <div class="polaroid-tape"></div>
-          <div class="polaroid-img-box">
-            <img id="about_team_r4_img" src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80" alt="拍摄">
+          <div class="team-card-upper">
+            <div class="team-card-spine">
+              <span class="team-spine-name" id="about_team_r4_names">陈宏亮</span>
+            </div>
+            <div class="polaroid-img-box">
+              <img id="about_team_r4_img" src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80" alt="拍摄">
+            </div>
           </div>
-          <div class="polaroid-role-badge" id="about_team_r4_t">拍摄</div>
-          <div class="polaroid-role-en" id="about_team_r4_te">Filming</div>
-          <div class="polaroid-names" id="about_team_r4_names">陈宏亮</div>
+          <div class="team-card-bottom">
+            <span class="team-bottom-role" id="about_team_r4_t">拍摄 / 影视</span>
+            <span class="team-bottom-sub">Filming —</span>
+          </div>
         </div>
 
         <!-- 5. 宣传 -->
         <div class="polaroid-card">
-          <div class="polaroid-tape"></div>
-          <div class="polaroid-img-box">
-            <img id="about_team_r5_img" src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80" alt="宣传">
+          <div class="team-card-upper">
+            <div class="team-card-spine">
+              <span class="team-spine-name" id="about_team_r5_names">Sherlyn</span>
+            </div>
+            <div class="polaroid-img-box">
+              <img id="about_team_r5_img" src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80" alt="宣传">
+            </div>
           </div>
-          <div class="polaroid-role-badge" id="about_team_r5_t">宣传</div>
-          <div class="polaroid-role-en" id="about_team_r5_te">Promotion</div>
-          <div class="polaroid-names" id="about_team_r5_names">Sherlyn</div>
+          <div class="team-card-bottom">
+            <span class="team-bottom-role" id="about_team_r5_t">宣传 / 企划</span>
+            <span class="team-bottom-sub">Promotion —</span>
+          </div>
         </div>
 
         <!-- 6. 行政 -->
         <div class="polaroid-card">
-          <div class="polaroid-tape"></div>
-          <div class="polaroid-img-box">
-            <img id="about_team_r6_img" src="https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80" alt="行政">
+          <div class="team-card-upper">
+            <div class="team-card-spine">
+              <span class="team-spine-name" id="about_team_r6_names">梁苡乐</span>
+            </div>
+            <div class="polaroid-img-box">
+              <img id="about_team_r6_img" src="https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80" alt="行政">
+            </div>
           </div>
-          <div class="polaroid-role-badge" id="about_team_r6_t">行政</div>
-          <div class="polaroid-role-en" id="about_team_r6_te">Admin</div>
-          <div class="polaroid-names" id="about_team_r6_names">梁苡乐</div>
+          <div class="team-card-bottom">
+            <span class="team-bottom-role" id="about_team_r6_t">行政</span>
+            <span class="team-bottom-sub">Admin —</span>
+          </div>
         </div>
 
         <!-- 7. 歌手 -->
         <div class="polaroid-card">
-          <div class="polaroid-tape"></div>
-          <div class="polaroid-img-box">
-            <img id="about_team_r7_img" src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80" alt="歌手">
+          <div class="team-card-upper">
+            <div class="team-card-spine">
+              <span class="team-spine-name" id="about_team_r7_names">歌手与主领</span>
+            </div>
+            <div class="polaroid-img-box">
+              <img id="about_team_r7_img" src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80" alt="歌手">
+            </div>
           </div>
-          <div class="polaroid-role-badge" id="about_team_r7_t">歌手与主领</div>
-          <div class="polaroid-role-en" id="about_team_r7_te">Singers & Worship Leaders</div>
-          <div class="polaroid-names" id="about_team_r7_names" style="font-size:1.15rem;">依歌曲需求而定</div>
-          <div class="polaroid-names-sub" id="about_team_r7_names_en">Selected based on song requirements</div>
+          <div class="team-card-bottom">
+            <span class="team-bottom-role" id="about_team_r7_t">依歌曲而定</span>
+            <span class="team-bottom-sub">Singers —</span>
+          </div>
         </div>
       </div>
 
@@ -1422,7 +1516,7 @@ Edward</div>
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=16.3.0"></script>
-  <script src="app.js?v=25.0.0"></script>
+  <script src="app.js?v=27.0.0"></script>
   <script>
     // Fail-safe for About Video Autoplay
     window.addEventListener('DOMContentLoaded', () => {

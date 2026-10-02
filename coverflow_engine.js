@@ -35,8 +35,8 @@
       artist: "Harvester Worship",
       genre: "Worship / CCM · 2025",
       year: "2025",
-      theme_color: "#1c2b36",
-      spine_bg: "#3b5a5b",
+      theme_color: "#182222",
+      spine_bg: "#607272",
       spine_color: "#F6F4F0",
       spine_text: "更新敬拜",
       cover_url: morandiPhotos[0],
@@ -77,8 +77,8 @@
       artist: "Harvester Creative Team",
       genre: "Acoustic Worship · 2024",
       year: "2024",
-      theme_color: "#1a242f",
-      spine_bg: "#52796f",
+      theme_color: "#211b27",
+      spine_bg: "#6c6374",
       spine_color: "#F6F4F0",
       spine_text: "灵火 Awakening",
       cover_url: morandiPhotos[1],
@@ -108,8 +108,8 @@
       artist: "Harvester Worship",
       genre: "Praise & Worship · 2025",
       year: "2025",
-      theme_color: "#2a2421",
-      spine_bg: "#b06d60",
+      theme_color: "#210e14",
+      spine_bg: "#52222e",
       spine_color: "#F6F4F0",
       spine_text: "因为祢 上帝",
       cover_url: morandiPhotos[2],
@@ -139,8 +139,8 @@
       artist: "Harvester Praise",
       genre: "Pop Praise · 2025",
       year: "2025",
-      theme_color: "#242f3a",
-      spine_bg: "#2d3748",
+      theme_color: "#1b241d",
+      spine_bg: "#556958",
       spine_color: "#F6F4F0",
       spine_text: "Im Alive",
       cover_url: morandiPhotos[3],
@@ -164,8 +164,8 @@ You have set my feet upon the rock!`
       artist: "Gospel Collective",
       genre: "Gospel / CCM · 2024",
       year: "2024",
-      theme_color: "#202933",
-      spine_bg: "#c47b6a",
+      theme_color: "#241b1f",
+      spine_bg: "#755963",
       spine_color: "#F6F4F0",
       spine_text: "收割的呼召",
       cover_url: morandiPhotos[4],
@@ -189,8 +189,8 @@ You have set my feet upon the rock!`
       artist: "Harvester Acoustic",
       genre: "Piano Devotional · 2024",
       year: "2024",
-      theme_color: "#1c242d",
-      spine_bg: "#4a5568",
+      theme_color: "#182222",
+      spine_bg: "#607272",
       spine_color: "#F6F4F0",
       spine_text: "祢是唯一",
       cover_url: morandiPhotos[5],
@@ -214,8 +214,8 @@ You have set my feet upon the rock!`
       artist: "Strings Ensemble",
       genre: "Strings Devotional · 2025",
       year: "2025",
-      theme_color: "#2b2a27",
-      spine_bg: "#8c7b75",
+      theme_color: "#211b27",
+      spine_bg: "#6c6374",
       spine_color: "#F6F4F0",
       spine_text: "我心所愿",
       cover_url: morandiPhotos[6],
@@ -239,8 +239,8 @@ You have set my feet upon the rock!`
       artist: "Harvester Chamber Choir",
       genre: "Choral Hymn · 2024",
       year: "2024",
-      theme_color: "#161d24",
-      spine_bg: "#3d5a80",
+      theme_color: "#210e14",
+      spine_bg: "#52222e",
       spine_color: "#F6F4F0",
       spine_text: "在祢圣所中",
       cover_url: morandiPhotos[7],
@@ -263,8 +263,8 @@ You have set my feet upon the rock!`
       artist: "Harvester Ensemble",
       genre: "Contemporary Worship · 2025",
       year: "2025",
-      theme_color: "#1e2229",
-      spine_bg: "#6b705c",
+      theme_color: "#1b241d",
+      spine_bg: "#556958",
       spine_color: "#F6F4F0",
       spine_text: "晨光破晓",
       cover_url: morandiPhotos[8],
@@ -397,8 +397,8 @@ You have set my feet upon the rock!`
               notes: customMatch?.notes || "在瞬息万变、充满喧嚣的世界里，愿我们每一次开口赞美，都是心灵与圣灵的真实对话。",
               composer: customMatch?.composer || customMatch?.artist || s.artist || "Harvester Worship",
               arrangement: customMatch?.arrangement || "Harvester Music Production",
-              vocals: customMatch?.vocals || "Creative Vocalists",
-              mixing: customMatch?.mixing || "Harvester Studio HQ",
+              vocals: (customMatch?.vocals !== undefined ? customMatch.vocals : (s.vocals || "")).trim(),
+              mixing: (customMatch?.mixing !== undefined ? customMatch.mixing : (s.mixing || "")).trim(),
               photo_1: customMatch?.photo_1 || s.cover_url || doodleFallback,
               photo_2: customMatch?.photo_2 || childlikeDoodles[1],
               photo_3: customMatch?.photo_3 || childlikeDoodles[2]
@@ -528,20 +528,27 @@ You have set my feet upon the rock!`
   // 4. 烟粉豆沙灰 (#CFB7BC, #858479, #D6DAEB, #FDF9EE)
   // 5. 勃艮第夜幕 (#5c2734, #dfd5c4, #dedad4, #FDF9EE)
   // =========================================================================
+  // 🎨 5 SPECIFIC MORANDI HARMONIC PALETTES (5 套严格莫兰迪专属色彩方案)
+  // 1. 鼠尾草灰绿 (Spine: #607272, Theme: #182222)
+  // 2. 雾霭薰衣紫 (Spine: #6c6374, Theme: #211b27)
+  // 3. 尤加利草木 (Spine: #556958, Theme: #1b241d)
+  // 4. 烟粉豆沙灰 (Spine: #755963, Theme: #241b1f)
+  // 5. 勃艮第夜幕 (Spine: #52222e, Theme: #210e14)
+  // =========================================================================
   const MORANDI_FIVE_PALETTES = [
     {
       id: "palette_1_sage",
       name: "时光密语 · 鼠尾草灰绿",
-      primary: "#778585", // 冷青石灰
-      accent: "#C1C2A7",  // 鼠尾草浅灰绿
-      soft: "#EBD6CE",    // 柔粉砂色
-      cream: "#FDF9EE",   // 暖象牙白
+      primary: "#778585",
+      accent: "#C1C2A7",
+      soft: "#EBD6CE",
+      cream: "#FDF9EE",
       spine_bg: "#607272",
       theme_color: "#182222",
-      bg_center: "#384a4a",
-      bg_mid: "#222e2e",
-      bg_outer: "#131b1b",
-      glow: "rgba(193, 194, 167, 0.45)",
+      bg_center: "#2c3d3d",
+      bg_mid: "#182222",
+      bg_outer: "#0e1414",
+      glow: "rgba(96, 114, 114, 0.75)",
       fold1_bg: "#EBD6CE",
       fold1_text: "#2c3434",
       fold2_bg: "#687676",
@@ -552,16 +559,16 @@ You have set my feet upon the rock!`
     {
       id: "palette_2_lavender",
       name: "时光密语 · 雾霭薰衣紫",
-      primary: "#7C7582", // 暗灰紫
-      accent: "#C6B7CF",  // 雾紫灰
-      soft: "#D5DEDD",    // 薄荷雾白
-      cream: "#FDF9EE",   // 暖象牙白
+      primary: "#7C7582",
+      accent: "#C6B7CF",
+      soft: "#D5DEDD",
+      cream: "#FDF9EE",
       spine_bg: "#6c6374",
       theme_color: "#211b27",
-      glow: "rgba(198, 183, 207, 0.45)",
-      bg_center: "#42374b",
-      bg_mid: "#2a2231",
-      bg_outer: "#17121b",
+      glow: "rgba(108, 99, 116, 0.75)",
+      bg_center: "#3b2e46",
+      bg_mid: "#211b27",
+      bg_outer: "#120e16",
       fold1_bg: "#D5DEDD",
       fold1_text: "#2a2330",
       fold2_bg: "#6c6473",
@@ -572,16 +579,16 @@ You have set my feet upon the rock!`
     {
       id: "palette_3_eucalyptus",
       name: "时光密语 · 尤加利草木",
-      primary: "#857979", // 暖木灰褐
-      accent: "#B4C2B6",  // 尤加利浅绿
-      soft: "#E0CEE0",    // 柔淡紫
-      cream: "#FDF9EE",   // 暖象牙白
+      primary: "#857979",
+      accent: "#B4C2B6",
+      soft: "#E0CEE0",
+      cream: "#FDF9EE",
       spine_bg: "#556958",
       theme_color: "#1b241d",
-      glow: "rgba(180, 194, 182, 0.45)",
-      bg_center: "#37493b",
-      bg_mid: "#233026",
-      bg_outer: "#141c16",
+      glow: "rgba(85, 105, 88, 0.75)",
+      bg_center: "#2c3e30",
+      bg_mid: "#1b241d",
+      bg_outer: "#0e140f",
       fold1_bg: "#E0CEE0",
       fold1_text: "#2a2323",
       fold2_bg: "#7a6d6d",
@@ -592,16 +599,16 @@ You have set my feet upon the rock!`
     {
       id: "palette_4_dusty_rose",
       name: "时光密语 · 烟粉豆沙灰",
-      primary: "#858479", // 橄榄褐灰
-      accent: "#CFB7BC",  // 烟粉豆沙
-      soft: "#D6DAEB",    // 雾蓝紫
-      cream: "#FDF9EE",   // 暖象牙白
+      primary: "#858479",
+      accent: "#CFB7BC",
+      soft: "#D6DAEB",
+      cream: "#FDF9EE",
       spine_bg: "#755963",
       theme_color: "#241b1f",
-      glow: "rgba(207, 183, 188, 0.45)",
-      bg_center: "#48343b",
-      bg_mid: "#2d2025",
-      bg_outer: "#191114",
+      glow: "rgba(117, 89, 99, 0.75)",
+      bg_center: "#452a34",
+      bg_mid: "#241b1f",
+      bg_outer: "#140e11",
       fold1_bg: "#D6DAEB",
       fold1_text: "#2b2326",
       fold2_bg: "#79786d",
@@ -612,16 +619,16 @@ You have set my feet upon the rock!`
     {
       id: "palette_5_burgundy_wine",
       name: "时光密语 · 勃艮第夜幕",
-      primary: "#5c2734", // 勃艮第酒红
-      accent: "#dfd5c4",  // 暖砂陶土
-      soft: "#dedad4",    // 亚麻草木灰
-      cream: "#FDF9EE",   // 暖象牙白
+      primary: "#5c2734",
+      accent: "#dfd5c4",
+      soft: "#dedad4",
+      cream: "#FDF9EE",
       spine_bg: "#52222e",
       theme_color: "#210e14",
-      glow: "rgba(180, 70, 95, 0.45)",
-      bg_center: "#481a25",
-      bg_mid: "#2d0f17",
-      bg_outer: "#19080d",
+      glow: "rgba(82, 34, 46, 0.75)",
+      bg_center: "#481220",
+      bg_mid: "#210e14",
+      bg_outer: "#120609",
       fold1_bg: "#dfd5c4",
       fold1_text: "#2c241c",
       fold2_bg: "#5c2734",
@@ -631,8 +638,18 @@ You have set my feet upon the rock!`
     }
   ];
 
-  // 🎲 Deterministic Pseudo-Random Assignment for All Current & Future Singles
+  // 🎲 Deterministic Assignment Matching Spine Color or Theme Color First
   function getMorandiFivePalette(song, index = 0) {
+    const spine = (song?.spine_bg || '').trim().toLowerCase();
+    const theme = (song?.theme_color || '').trim().toLowerCase();
+    if (spine) {
+      const match = MORANDI_FIVE_PALETTES.find(p => p.spine_bg.toLowerCase() === spine);
+      if (match) return match;
+    }
+    if (theme) {
+      const match = MORANDI_FIVE_PALETTES.find(p => p.theme_color.toLowerCase() === theme);
+      if (match) return match;
+    }
     const key = String(song?.id || song?.title || index);
     let hash = 0;
     for (let i = 0; i < key.length; i++) {
@@ -642,8 +659,13 @@ You have set my feet upon the rock!`
     return MORANDI_FIVE_PALETTES[palIdx];
   }
 
-  function getAlbumPalette(album, idx) {
-    if (album && album.palette) return album.palette;
+  function getAlbumPalette(album, idx = 0) {
+    if (album) {
+      if (album.spine_bg || album.theme_color) {
+        return getMorandiFivePalette(album, idx);
+      }
+      if (album.palette) return album.palette;
+    }
     return getMorandiFivePalette(album, idx);
   }
 
@@ -657,9 +679,18 @@ You have set my feet upon the rock!`
     lastActiveSongId = albumKey;
 
     const pal = getAlbumPalette(album, idx);
-    const grad = `radial-gradient(ellipse at 50% 32%, ${pal.bg_center} 0%, ${pal.bg_mid} 50%, ${pal.bg_outer} 100%)`;
+    const grad = `radial-gradient(ellipse 95% 75% at 50% 36%, ${pal.bg_center} 0%, ${pal.theme_color} 65%, ${pal.bg_outer} 100%)`;
 
-    // Ensure ambient container exists in DOM
+    // 1. Direct Page & HTML Background Transition (Forced !important override)
+    document.body.style.setProperty('background', pal.theme_color, 'important');
+    document.body.style.setProperty('background-color', pal.theme_color, 'important');
+    document.body.style.setProperty('background-image', 'none', 'important');
+    document.body.style.transition = 'background-color 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
+    document.documentElement.style.setProperty('background', pal.theme_color, 'important');
+    document.documentElement.style.setProperty('background-color', pal.theme_color, 'important');
+    document.documentElement.style.transition = 'background-color 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
+
+    // 2. Ensure ambient container exists in DOM
     let ambientEl = document.getElementById('coverflowDynamicAmbient');
     if (!ambientEl) {
       ambientEl = document.createElement('div');
@@ -690,11 +721,20 @@ You have set my feet upon the rock!`
       }
     }
 
+    const cfSection = document.querySelector('.coverflow-section');
+    if (cfSection) {
+      cfSection.style.background = 'transparent';
+    }
+
     // Set CSS custom variables on root / body for synchronized accents
     document.documentElement.style.setProperty('--active-album-accent', pal.accent);
     document.documentElement.style.setProperty('--active-album-glow', pal.glow);
+    document.documentElement.style.setProperty('--active-album-theme', pal.theme_color);
+    document.documentElement.style.setProperty('--active-album-spine', pal.spine_bg);
     document.body.style.setProperty('--active-album-accent', pal.accent);
     document.body.style.setProperty('--active-album-glow', pal.glow);
+    document.body.style.setProperty('--active-album-theme', pal.theme_color);
+    document.body.style.setProperty('--active-album-spine', pal.spine_bg);
   }
 
   // Render the virtual 3D boxes for the currently active album list
@@ -711,7 +751,10 @@ You have set my feet upon the rock!`
       });
     }
 
-    carousel.innerHTML = virtualList.map(({ album, origIdx, vIdx }) => `
+    carousel.innerHTML = virtualList.map(({ album, origIdx, vIdx }) => {
+      const pal = getAlbumPalette(album, origIdx);
+      const spineColor = pal.spine_bg;
+      return `
       <div class="album-3d-box ${origIdx === currentIndex && vIdx === 0 ? 'active' : ''}" data-vindex="${vIdx}" data-real-index="${origIdx}">
         <div class="album-cube">
           
@@ -738,8 +781,8 @@ You have set my feet upon the rock!`
             </div>
           </div>
 
-          <!-- 2. Left Spine (Slim Refined 16px Spine - 纤细修长优雅书脊) -->
-          <div class="cube-face cube-spine-left" style="background: ${album.spine_bg || '#242f3a'};">
+          <!-- 2. Left Spine (Slim Refined 16px Spine - 纤细修长优雅书脊，严格对应5套莫兰迪色系) -->
+          <div class="cube-face cube-spine-left" style="background: ${spineColor} !important;">
             <span class="spine-top-stamp">${album.year || '2025'}</span>
             <div class="spine-inner-text">
               <span class="spine-title">${album.spine_text || album.title}</span>
@@ -748,7 +791,7 @@ You have set my feet upon the rock!`
           </div>
 
           <!-- Top Sealed Edge -->
-          <div class="cube-face cube-top" style="background: ${album.spine_bg || '#242f3a'}; filter: brightness(1.2);"></div>
+          <div class="cube-face cube-top" style="background: ${spineColor} !important; filter: brightness(1.2);"></div>
 
           <!-- Bottom Sealed Edge -->
           <div class="cube-face cube-bottom"></div>
@@ -767,7 +810,7 @@ You have set my feet upon the rock!`
         <!-- 🌟 Multi-Stage Physical Floor Shadow -->
         <div class="album-shadow-3d"></div>
       </div>
-    `).join('');
+    `}).join('');
   }
 
   // Filter 3D Albums by Year
@@ -844,10 +887,11 @@ You have set my feet upon the rock!`
 
     const N = boxes.length;
     const M = albums.length;
+    const isSmallMobile = window.innerWidth <= 480;
     const isMobile = window.innerWidth <= 768;
     
     // Spacing: comfortable, breathable distance like a real physical display shelf
-    const stepX = isMobile ? 84 : 118;
+    const stepX = isSmallMobile ? 62 : (isMobile ? 80 : 118);
     const activeRealIdx = ((Math.round(currentProgress) % M) + M) % M;
 
     if (activeRealIdx !== lastReportedActiveIdx) {
@@ -1278,7 +1322,7 @@ You have set my feet upon the rock!`
             
             <!-- FOLD 1: 莫兰迪一折页 (LYRICS) -->
             <div class="accordion-panel unfold-panel-1" style="background:${pal.fold1_bg}; color:${pal.fold1_text}; border-radius:0; padding:24px 26px; border-right:1px solid rgba(0,0,0,0.1);">
-              <div style="width:288px; min-width:288px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+              <div style="width:100%; max-width:100%; box-sizing:border-box; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <!-- Top Polaroid Photo (01 badge) -->
                   <div style="width:100%; height:140px; border-radius:0; overflow:hidden; border:1px solid rgba(0,0,0,0.15); position:relative; margin-bottom:14px; background:${pal.fold3_bg};">
@@ -1305,7 +1349,7 @@ ${activeSong.lyrics}
 
             <!-- FOLD 2: 莫兰迪二折页 (WORSHIP INSPIRATION / NOTES) -->
             <div class="accordion-panel unfold-panel-2" style="background:${pal.fold2_bg}; color:${pal.fold2_text}; border-radius:0; padding:24px 26px; border-right:1px solid rgba(0,0,0,0.18);">
-              <div style="width:288px; min-width:288px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+              <div style="width:100%; max-width:100%; box-sizing:border-box; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; margin-bottom:14px;">
                     <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:${pal.cream};">FOLD 02 · WORSHIP INSPIRATION</span>
@@ -1336,7 +1380,7 @@ ${activeSong.lyrics}
 
             <!-- FOLD 3: 莫兰迪三折页 (PRODUCTION CREDITS) -->
             <div class="accordion-panel unfold-panel-3" style="background:${pal.fold3_bg}; color:${pal.fold3_text}; border-radius:0; padding:24px 26px;">
-              <div style="width:288px; min-width:288px; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+              <div style="width:100%; max-width:100%; box-sizing:border-box; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
                 <div>
                   <div style="width:100%; height:150px; border-radius:0; overflow:hidden; border:1px solid rgba(0,0,0,0.12); position:relative; margin-bottom:16px; background:${pal.fold1_bg};">
                     <img src="${photo3}" alt="Art 03" style="width:100%; height:100%; object-fit:cover; filter:grayscale(80%);" onerror="this.onerror=null; this.src='${childlikeDoodles[2]}'">
@@ -1349,24 +1393,27 @@ ${activeSong.lyrics}
                   </div>
 
                   <div style="font-size:0.88rem; space-y:8px; color:${pal.fold3_text}; font-family:var(--font-body);">
+                    ${(activeSong.composer || activeSong.artist) ? `
                     <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
                       <span style="opacity:0.75;">词曲创作：</span>
                       <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.composer || activeSong.artist}</span>
-                    </div>
+                    </div>` : ''}
+                    ${(activeSong.arrangement && activeSong.arrangement.trim() !== '') ? `
                     <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
                       <span style="opacity:0.75;">编曲制作：</span>
-                      <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.arrangement || 'Harvester Music Production'}</span>
-                    </div>
-                    ${activeSong.vocals ? `
+                      <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.arrangement}</span>
+                    </div>` : ''}
+                    ${(activeSong.vocals && activeSong.vocals.trim() !== '') ? `
                       <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
                         <span style="opacity:0.75;">人声主唱：</span>
-                        <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.vocals}</span>
+                        <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.vocals.trim()}</span>
                       </div>
                     ` : ''}
+                    ${(activeSong.mixing && activeSong.mixing.trim() !== '') ? `
                     <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
-                      <span style="opacity:0.75;">录音母带：</span>
-                      <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.mixing || 'Harvester Studio HQ'}</span>
-                    </div>
+                      <span style="opacity:0.75;">录音混音母带：</span>
+                      <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.mixing.trim()}</span>
+                    </div>` : ''}
                   </div>
                 </div>
 

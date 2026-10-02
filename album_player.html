@@ -808,14 +808,6 @@
                     <span class="text-[#756a60]">编曲制作：</span>
                     <span class="font-semibold text-[#1c1815]">Harvester Music Production</span>
                   </div>
-                  <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
-                    <span class="text-[#756a60]">人声主唱：</span>
-                    <span class="font-semibold text-[#1c1815]">Creative Vocalists</span>
-                  </div>
-                  <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
-                    <span class="text-[#756a60]">混音母带：</span>
-                    <span class="font-semibold text-[#1c1815]">Harvester Studio HQ</span>
-                  </div>
                 </div>
               </div>
 
@@ -1493,22 +1485,26 @@
       // Panel 3: Credits & Production
       document.getElementById("panel3-photo").src = panel1Photos[2] || album.cover;
       document.getElementById("detail-credits-panel3").innerHTML = `
+        ${album.credits?.composer ? `
         <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
           <span class="text-[#756a60]">词曲创作：</span>
           <span class="font-semibold text-[#1c1815]">${album.credits.composer}</span>
-        </div>
+        </div>` : ''}
+        ${album.credits?.arrangement ? `
         <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
           <span class="text-[#756a60]">编曲制作：</span>
           <span class="font-semibold text-[#1c1815]">${album.credits.arrangement}</span>
-        </div>
+        </div>` : ''}
+        ${(album.credits?.vocals && album.credits.vocals.trim() !== '') ? `
         <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
           <span class="text-[#756a60]">人声主唱：</span>
-          <span class="font-semibold text-[#1c1815]">${album.credits.vocals}</span>
-        </div>
+          <span class="font-semibold text-[#1c1815]">${album.credits.vocals.trim()}</span>
+        </div>` : ''}
+        ${(album.credits?.mixing && album.credits.mixing.trim() !== '') ? `
         <div class="flex justify-between border-b border-[#26221f]/10 pb-1.5">
-          <span class="text-[#756a60]">混音母带：</span>
-          <span class="font-semibold text-[#1c1815]">${album.credits.mixing}</span>
-        </div>
+          <span class="text-[#756a60]">录音混音母带：</span>
+          <span class="font-semibold text-[#1c1815]">${album.credits.mixing.trim()}</span>
+        </div>` : ''}
       `;
     }
 

@@ -3,6 +3,7 @@
 <head>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.1.0/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+  <link rel="preload" href="assets/fonts/ChenYuluoyan-SC.woff2" as="font" type="font/woff2" crossorigin>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>我要投稿与合作方案 Submissions & Cooperation | Harvester Music Production 收割机创作工作坊</title>
@@ -16,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=43.0.0">
+  <link rel="stylesheet" href="styles.css?v=45.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .submit-hero-card {
@@ -56,10 +57,88 @@
       box-shadow: 0 5px 20px rgba(246, 210, 138, 0.35);
       transform: translateY(-2px);
     }
-    @media (max-width: 768px) {
-      .submit-hero-card { padding: 1.5rem; }
-      .submit-nav-pills { gap: 10px; }
-      .submit-nav-pill { font-size: 0.85rem; padding: 8px 16px; }
+    
+    .submit-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3.5rem;
+      align-items: center;
+    }
+    .profit-hero-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 2.5rem;
+      align-items: stretch;
+    }
+    .coop-vision-banner {
+      background: rgba(28, 36, 45, 0.78);
+      border: 1.5px solid rgba(246, 210, 138, 0.3);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .coop-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 960px) {
+      .submit-form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+      }
+      .profit-hero-layout {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+      }
+      .coop-vision-banner {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+        padding: 2rem !important;
+      }
+      .coop-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+      }
+      .submit-hero-card {
+        padding: 2rem !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .submit-hero-card { 
+        padding: 1.5rem 1.2rem !important; 
+        border-radius: 16px !important;
+      }
+      .submit-nav-pills { 
+        gap: 8px !important; 
+        margin: 1rem auto 2rem !important;
+      }
+      .submit-nav-pill { 
+        font-size: 0.82rem !important; 
+        padding: 7px 14px !important; 
+      }
+      .section-sketch-header h2 {
+        font-size: 1.6rem !important;
+        letter-spacing: 1px !important;
+      }
+      .sharing-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.8rem !important;
+      }
+      .revenue-card, .sharing-table-card {
+        padding: 1.4rem !important;
+        border-radius: 16px !important;
+      }
+      .coop-vision-banner {
+        padding: 1.4rem !important;
+        border-radius: 16px !important;
+      }
     }
   </style>
 </head>
@@ -179,7 +258,7 @@
         </p>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center;">
+      <div class="submit-form-grid">
         <!-- Left: Requirements & Process -->
         <div id="cfg_submit_text" style="line-height: 2.2; color: #e2d9cd; font-size: 1.1rem;">
           <p style="margin-bottom: 1.5rem; font-weight: 600; color: #F6F4F0; font-size: 1.2rem; border-left: 3px solid var(--gold); padding-left: 12px;">
@@ -225,7 +304,7 @@
         </p>
       </div>
 
-      <div class="profit-hero-layout" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem; align-items: stretch;">
+      <div class="profit-hero-layout">
         <!-- 收入来源 -->
         <div class="revenue-card" style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
@@ -261,7 +340,7 @@
             <i class="fas fa-compact-disc" style="font-size: 2rem; color: var(--gold); opacity: 0.7;"></i>
           </div>
 
-          <div class="sharing-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+          <div class="sharing-grid">
             <!-- 01 词曲 -->
             <div class="sharing-item-box" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(246,210,138,0.2); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
               <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">20%</div>
@@ -323,7 +402,7 @@
       </div>
 
       <!-- Shared Vision Top Banner -->
-      <div style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.5rem; margin-bottom: 2.5rem; display: grid; grid-template-columns: 1.2fr 1fr; gap: 2.5rem; align-items: center;">
+      <div class="coop-vision-banner">
         <div>
           <span class="sketch-pill" style="margin-bottom:1rem; font-size:0.95rem;">✦ 认可共分共享共赢的分成制</span>
           <p style="font-family: var(--font-eng-title); color: var(--gold); font-size: 1rem; letter-spacing: 2px; margin-bottom: 1.2rem; text-transform: uppercase;">
@@ -342,7 +421,7 @@
       </div>
 
       <!-- Bottom Dual Cards: Model & Requirements -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+      <div class="coop-cards-grid">
         <!-- Card A: 合作模式 -->
         <div style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem;">
           <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px dashed rgba(246,210,138,0.25); padding-bottom:1rem; margin-bottom:1.5rem;">
@@ -429,6 +508,6 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=2.6.0"></script>
-  <script src="app.js?v=25.0.0"></script>
+  <script src="app.js?v=27.0.0"></script>
 </body>
 </html>
