@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=55.0.0">
+  <link rel="stylesheet" href="styles.css?v=57.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* --- 🌟 Full-Width Panoramic Multi-Photo Running Gallery (横向尽头多照片轮播画廊) --- */
@@ -561,29 +561,131 @@
     }
 
     @media (max-width: 768px) {
-      .events-poster-section { margin-bottom: 1.8rem; }
-      .event-strip-row {
-        flex-direction: column;
-        align-items: flex-start;
+      .events-poster-section { margin-bottom: 1.5rem; }
+      .events-section-header {
+        margin: 0 auto 1.2rem;
+        padding: 0 1rem;
         gap: 0.8rem;
-        padding: 1.4rem 1rem;
+      }
+      .events-section-title {
+        font-size: 1.15rem;
+      }
+      .events-section-sub {
+        font-size: 0.78rem;
+        line-height: 1.35;
+      }
+      #eventsContainer.events-strip-container {
+        margin: 0 auto 2.5rem;
+        padding: 0 0.8rem;
+      }
+      .event-strip-row {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0.95rem 0.5rem;
+      }
+      .event-date-block {
+        min-width: auto;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .event-day {
+        font-size: 2.1rem;
+        letter-spacing: 0;
+        line-height: 1;
+      }
+      .event-month-year {
+        line-height: 1.15;
+      }
+      .event-month {
+        font-size: 0.82rem;
+      }
+      .event-year {
+        font-size: 0.7rem;
       }
       .event-info-block {
-        width: 100%;
+        flex: 1;
+        gap: 3px;
+        min-width: 0;
+      }
+      .event-strip-title {
+        font-size: 1.05rem;
+        line-height: 1.3;
       }
       .event-strip-venue {
-        white-space: normal;
+        font-size: 0.78rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .event-tag-badge-wrap {
+        margin-bottom: 2px;
+      }
+      .event-strip-badge {
+        font-size: 0.62rem;
+        padding: 1px 6px;
       }
       .event-action-block {
-        width: 100%;
-        justify-content: flex-end;
-        gap: 16px;
-        padding-top: 6px;
         min-width: auto;
+        flex-shrink: 0;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        padding-top: 0;
+        justify-content: flex-end;
       }
-      .event-action-block .event-strip-link,
-      .event-action-block .event-strip-disabled {
-        margin-right: auto;
+      .event-strip-link,
+      .event-strip-disabled {
+        font-size: 0.75rem;
+      }
+      .btn-strip-remind {
+        width: 34px;
+        height: 34px;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .events-section-header {
+        margin: 0 auto 1rem;
+        padding: 0 0.6rem;
+      }
+      .events-section-title {
+        font-size: 1.08rem;
+      }
+      .events-section-sub {
+        font-size: 0.72rem;
+      }
+      #eventsContainer.events-strip-container {
+        padding: 0 0.4rem;
+      }
+      .event-strip-row {
+        gap: 10px;
+        padding: 0.85rem 0.3rem;
+      }
+      .event-date-block {
+        gap: 6px;
+      }
+      .event-day {
+        font-size: 1.85rem;
+      }
+      .event-month {
+        font-size: 0.76rem;
+      }
+      .event-year {
+        font-size: 0.65rem;
+      }
+      .event-strip-title {
+        font-size: 0.98rem;
+      }
+      .event-strip-venue {
+        font-size: 0.72rem;
+      }
+      .btn-strip-remind {
+        width: 32px;
+        height: 32px;
+        font-size: 0.75rem;
       }
     }
   </style>
