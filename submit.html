@@ -196,87 +196,6 @@
     .ratio-segment.seg-vocals      { width: 10%; background: #EBD6CE; color: #EBD6CE; }
     .ratio-segment.seg-admin       { width: 10%; background: #CFB7BC; color: #CFB7BC; }
 
-    /* 💡 Interactive Revenue Simulator */
-    .revenue-simulator-box {
-      background: rgba(0, 0, 0, 0.35);
-      border: 1.5px solid rgba(246, 210, 138, 0.25);
-      border-radius: 16px;
-      padding: 1.1rem 1.4rem;
-      margin-bottom: 1.4rem;
-      backdrop-filter: blur(10px);
-    }
-    .simulator-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.8rem;
-    }
-    .sim-readout-label {
-      font-size: 0.85rem;
-      color: #dedad4;
-      font-family: var(--font-songti), serif;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .sim-readout-amount {
-      font-family: var(--font-eng-title);
-      font-size: 1.45rem;
-      font-weight: 800;
-      color: var(--gold);
-      letter-spacing: 1px;
-      text-shadow: 0 0 12px rgba(246, 210, 138, 0.45);
-    }
-    .simulator-slider-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .sim-slider {
-      flex: 1;
-      -webkit-appearance: none;
-      height: 6px;
-      border-radius: 5px;
-      background: rgba(255, 255, 255, 0.18);
-      outline: none;
-      cursor: pointer;
-    }
-    .sim-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--gold);
-      cursor: pointer;
-      box-shadow: 0 0 12px rgba(246, 210, 138, 0.8);
-      transition: transform 0.2s ease;
-    }
-    .sim-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.25);
-    }
-    .sim-presets-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 0.8rem;
-      flex-wrap: wrap;
-    }
-    .sim-preset-btn {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #dedad4;
-      font-size: 0.75rem;
-      padding: 3px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-family: var(--font-eng-title);
-      transition: all 0.25s ease;
-    }
-    .sim-preset-btn:hover, .sim-preset-btn.active {
-      background: rgba(246, 210, 138, 0.25);
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
     /* 📐 Proportional Bento Grid (格子大小按分配比例) */
     .proportional-bento-grid {
       display: grid;
@@ -373,26 +292,6 @@
       margin: 6px 0 0;
       line-height: 1.4;
       font-family: var(--font-songti), serif;
-    }
-    .bento-payout-readout {
-      margin-top: 10px;
-      padding-top: 8px;
-      border-top: 1px dashed rgba(255, 255, 255, 0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .bento-payout-label {
-      font-size: 0.72rem;
-      color: rgba(255, 255, 255, 0.6);
-      font-family: var(--font-songti), serif;
-    }
-    .bento-payout-val {
-      font-family: var(--font-eng-title);
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: var(--card-accent, var(--gold));
-      letter-spacing: 0.5px;
     }
 
     /* Soundwave Mini Bars on Card Hover */
@@ -678,15 +577,6 @@
             <p style="font-family: var(--font-eng-title); font-size: 0.82rem; color: #9c9083; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 1rem 0;">
               Mainly from YouTube, Spotify, Apple Music and digital streaming platforms worldwide.
             </p>
-
-            <!-- 🎧 流媒体平台专属灵动药丸标签 -->
-            <div class="streaming-platforms-row">
-              <span class="stream-pill"><i class="fab fa-spotify" style="color:#1DB954;"></i> Spotify</span>
-              <span class="stream-pill"><i class="fab fa-apple" style="color:#FA2D48;"></i> Apple Music</span>
-              <span class="stream-pill"><i class="fab fa-youtube" style="color:#FF0000;"></i> YouTube</span>
-              <span class="stream-pill"><i class="fas fa-music" style="color:var(--gold);"></i> KKBOX</span>
-              <span class="stream-pill"><i class="fas fa-compact-disc" style="color:#89b4b5;"></i> Joox / Tidal</span>
-            </div>
           </div>
 
           <!-- 🎨 音乐与生命插画（无边框、无分割线框，纯自然径向柔和羽化融入背景） -->
@@ -701,7 +591,7 @@
           </div>
         </div>
 
-        <!-- 盈利分配比例表格（右侧：全景光带 + 收益测算模拟器 + 比例网格） -->
+        <!-- 盈利分配比例表格（右侧：全景光带 + 比例网格） -->
         <div class="sharing-table-card" style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem 2rem;">
           <div class="sharing-table-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(246,210,138,0.25); padding-bottom: 1rem; margin-bottom: 1.4rem;">
             <div>
@@ -716,7 +606,7 @@
           </div>
 
           <!-- 📊 全景 100% 动态光带 (分段悬停联动) -->
-          <div class="panoramic-ratio-bar-wrap">
+          <div class="panoramic-ratio-bar-wrap" style="margin-bottom: 1.5rem;">
             <div class="panoramic-ratio-header">
               <span>✦ 100% 闭环分配光带（悬停联动下方部门）</span>
               <span style="color:var(--gold); font-weight:700;">TOTAL 100%</span>
@@ -728,24 +618,6 @@
               <div class="ratio-segment seg-promotion" data-dept="promotion" title="推广 20%"></div>
               <div class="ratio-segment seg-vocals" data-dept="vocals" title="歌手 10%"></div>
               <div class="ratio-segment seg-admin" data-dept="admin" title="行政 10%"></div>
-            </div>
-          </div>
-
-          <!-- 💡 收益实时测算模拟器 (拖动滑块查看各部门所得) -->
-          <div class="revenue-simulator-box">
-            <div class="simulator-top-row">
-              <span class="sim-readout-label"><i class="fas fa-calculator" style="color:var(--gold);"></i> 模拟单曲流媒体收益：</span>
-              <span class="sim-readout-amount" id="simRevenueDisplay">RM 10,000</span>
-            </div>
-            <div class="simulator-slider-wrap">
-              <input type="range" class="sim-slider" id="revSimSlider" min="1000" max="100000" step="1000" value="10000">
-            </div>
-            <div class="sim-presets-row">
-              <button type="button" class="sim-preset-btn" data-val="5000" onclick="setSimRevenue(5000)">RM 5,000</button>
-              <button type="button" class="sim-preset-btn active" data-val="10000" onclick="setSimRevenue(10000)">RM 10,000</button>
-              <button type="button" class="sim-preset-btn" data-val="30000" onclick="setSimRevenue(30000)">RM 30,000</button>
-              <button type="button" class="sim-preset-btn" data-val="50000" onclick="setSimRevenue(50000)">RM 50,000</button>
-              <button type="button" class="sim-preset-btn" data-val="100000" onclick="setSimRevenue(100000)">RM 100,000</button>
             </div>
           </div>
 
@@ -764,10 +636,6 @@
                 </div>
               </div>
               <p class="bento-dept-desc">原创旋律与歌词灵魂，永久保留词曲著作署名</p>
-              <div class="bento-payout-readout">
-                <span class="bento-payout-label">模拟分润所得</span>
-                <span class="bento-payout-val" data-ratio="0.2">RM 2,000</span>
-              </div>
             </div>
 
             <!-- 02 制作 (20% - 2倍宽) -->
@@ -783,10 +651,6 @@
                 </div>
               </div>
               <p class="bento-dept-desc">专业音频工程打磨，打造现代高规格听觉盛宴</p>
-              <div class="bento-payout-readout">
-                <span class="bento-payout-label">模拟分润所得</span>
-                <span class="bento-payout-val" data-ratio="0.2">RM 2,000</span>
-              </div>
             </div>
 
             <!-- 03 影片 (20% - 2倍宽) -->
@@ -802,10 +666,6 @@
                 </div>
               </div>
               <p class="bento-dept-desc">高清敬拜与剧情 MV 呈现，拓展全网视听广度</p>
-              <div class="bento-payout-readout">
-                <span class="bento-payout-label">模拟分润所得</span>
-                <span class="bento-payout-val" data-ratio="0.2">RM 2,000</span>
-              </div>
             </div>
 
             <!-- 04 推广 (20% - 2倍宽) -->
@@ -821,10 +681,6 @@
                 </div>
               </div>
               <p class="bento-dept-desc">全域社媒与教会宣发，让赞美触达未得之民</p>
-              <div class="bento-payout-readout">
-                <span class="bento-payout-label">模拟分润所得</span>
-                <span class="bento-payout-val" data-ratio="0.2">RM 2,000</span>
-              </div>
             </div>
 
             <!-- 05 歌手 (10% - 1倍宽，正好是20%的一半体积) -->
@@ -838,10 +694,6 @@
                 <i class="fas fa-microphone-alt" style="color:var(--card-accent); font-size:1.1rem; opacity:0.8;"></i>
               </div>
               <p class="bento-dept-desc">开声赞美神恩</p>
-              <div class="bento-payout-readout">
-                <span class="bento-payout-label">所得</span>
-                <span class="bento-payout-val" data-ratio="0.1">RM 1,000</span>
-              </div>
             </div>
 
             <!-- 06 行政 (10% - 1倍宽，正好是20%的一半体积) -->
@@ -855,10 +707,6 @@
                 <i class="fas fa-file-contract" style="color:var(--card-accent); font-size:1.1rem; opacity:0.8;"></i>
               </div>
               <p class="bento-dept-desc">合规透明守护</p>
-              <div class="bento-payout-readout">
-                <span class="bento-payout-label">所得</span>
-                <span class="bento-payout-val" data-ratio="0.1">RM 1,000</span>
-              </div>
             </div>
 
             <!-- 07 100% 完整闭环总览 (2倍宽，与下方形成完美闭环) -->
@@ -871,10 +719,6 @@
                 <i class="fas fa-seedling" style="color:var(--gold); font-size:1.4rem;"></i>
               </div>
               <p class="bento-dept-desc" style="color:#dedad4;">扣除第三方流媒体发行必要成本后，收益百分之百全部分配予创作同工，不留任何平台私利！</p>
-              <div class="bento-payout-readout">
-                <span class="bento-payout-label" style="color:var(--gold);">模拟总分发金额</span>
-                <span class="bento-payout-val" id="simTotalDisplay" style="color:#fff; font-size:1.15rem;">RM 10,000</span>
-              </div>
             </div>
           </div>
         </div>
@@ -1004,50 +848,11 @@
   <script src="config.js?v=2.6.0"></script>
   <script src="app.js?v=27.0.0"></script>
 
-  <!-- 💽 Interactive Revenue Calculator & Proportional Grid Script -->
+  <!-- 💽 Interactive Ratio Bar & Proportional Grid Linkage Script -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const slider = document.getElementById('revSimSlider');
-      const amountDisplay = document.getElementById('simRevenueDisplay');
-      const totalDisplay = document.getElementById('simTotalDisplay');
-      const payoutElements = document.querySelectorAll('.bento-payout-val');
-      const presetButtons = document.querySelectorAll('.sim-preset-btn');
       const ratioSegments = document.querySelectorAll('.ratio-segment');
       const bentoCards = document.querySelectorAll('.bento-card-proportional[data-dept]');
-
-      function formatRM(val) {
-        return 'RM ' + Math.round(val).toLocaleString();
-      }
-
-      function updateSimulation(totalVal) {
-        if (amountDisplay) amountDisplay.innerText = formatRM(totalVal);
-        if (totalDisplay) totalDisplay.innerText = formatRM(totalVal);
-
-        payoutElements.forEach(el => {
-          const ratio = parseFloat(el.getAttribute('data-ratio') || '0');
-          if (ratio > 0) {
-            const calculated = totalVal * ratio;
-            el.innerText = formatRM(calculated);
-          }
-        });
-
-        // Update preset active class
-        presetButtons.forEach(btn => {
-          const btnVal = parseInt(btn.getAttribute('data-val'), 10);
-          btn.classList.toggle('active', btnVal === totalVal);
-        });
-      }
-
-      if (slider) {
-        slider.addEventListener('input', (e) => {
-          updateSimulation(parseInt(e.target.value, 10));
-        });
-      }
-
-      window.setSimRevenue = (val) => {
-        if (slider) slider.value = val;
-        updateSimulation(val);
-      };
 
       // Bidirectional Hover Linkage between 100% Bar and Bento Cards
       bentoCards.forEach(card => {
@@ -1080,9 +885,6 @@
           }
         });
       });
-
-      // Initialize with default RM 10,000
-      updateSimulation(10000);
     });
   </script>
 </body>
