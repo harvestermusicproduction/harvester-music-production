@@ -489,8 +489,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
 
                     <!-- 3D Spine Preview Bar -->
-                    <div style="background:${s.spineBg}; color:${s.spineClr}; padding:6px 12px; border-radius:6px; font-size:0.75rem; font-weight:bold; letter-spacing:1px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 2px rgba(0,0,0,0.8);">
-                      🧱 书脊: ${s.spineTxt}
+                    <div style="background:${s.spineBg}; color:#fff; padding:6px 12px; border-radius:6px; font-size:0.75rem; font-weight:bold; letter-spacing:1px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.15); display:flex; align-items:center; gap:8px; text-shadow:0 1px 2px rgba(0,0,0,0.8);">
+                      <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#fff; box-shadow:0 0 4px rgba(255,255,255,0.8);"></span>
+                      <span>3D 书脊色调（极简无字）：${s.spineBg}</span>
                     </div>
                   </div>
 
@@ -637,8 +638,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div style="margin-bottom:10px;">
-              <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">书脊印制文字 (Spine Text)</label>
-              <input type="text" id="m_spine_t" value="${spineTxt}" placeholder="例如：更新敬拜" style="width:100%; padding:8px;">
+              <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">书脊印制文字 (Spine Text) <span style="color:var(--gold); font-size:0.7rem;">（前台 3D 展架书脊已统一为无文字纯净极简硬壳质感）</span></label>
+              <input type="text" id="m_spine_t" value="${spineTxt}" placeholder="前台书脊默认无字展示纯粹色调" style="width:100%; padding:8px;">
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
               <div>

@@ -168,28 +168,12 @@
       background-image: linear-gradient(to right, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 35%, rgba(0,0,0,0.35) 100%);
     }
 
-    /* Spine Inner Text (Upright Top-to-Bottom Typography - Handwriting) */
-    .spine-inner-text {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 300px;
-      transform: rotate(90deg);
-      transform-origin: center center;
-      white-space: nowrap;
-      user-select: none;
-      font-family: 'Apple Chancery', 'Snell Roundhand', 'ChenYuluoyan', '辰宇落雁体', 'Yozai', '悠哉体', 'Caveat', 'Dancing Script', 'Kalam', cursive, serif !important;
-      padding: 0 10px;
-      text-align: center;
-    }
-
+    /* Spine Inner Text (Hidden - 无文字纯色极简) */
+    .spine-inner-text,
     .spine-title {
-      font-family: 'Apple Chancery', 'Snell Roundhand', 'ChenYuluoyan', '辰宇落雁体', 'Yozai', '悠哉体', 'Caveat', 'Dancing Script', 'Kalam', cursive, serif !important;
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: #F6F4F0;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.95);
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
     }
 
     /* 3. Right Spine Edge (Hidden) */
@@ -1155,12 +1139,8 @@
               </div>
             </div>
 
-            <!-- 2. Left Spine (CD Jewel Case Spine rigidly bound to Front Cover) -->
-            <div class="cube-face cube-spine-left" style="background: ${album.spineBg};">
-              <div class="spine-inner-text">
-                <span class="spine-title">${album.title}</span>
-              </div>
-            </div>
+            <!-- 2. Left Spine (CD Jewel Case Spine rigidly bound to Front Cover, 无文字纯色极简) -->
+            <div class="cube-face cube-spine-left" style="background: ${album.spineBg};"></div>
 
             <!-- 4. Top Thickness Face -->
             <div class="cube-face cube-top" style="background: ${album.spineBg}; filter: brightness(1.2);"></div>

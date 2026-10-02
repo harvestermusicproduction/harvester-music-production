@@ -3322,7 +3322,7 @@ body.page-music {
   z-index: 9;
 }
 
-/* 2. Left Spine (Slim 16px Refined Spine - 纤细修长优雅书脊) */
+/* 2. Left Spine (Slim 16px Refined Spine - 纤细修长优雅书脊，纯色无字高级质感) */
 .cube-face.cube-spine-left {
   top: 0;
   left: -8px;
@@ -3330,52 +3330,26 @@ body.page-music {
   height: 355px;
   transform: rotateY(-90deg) translateZ(0);
   border: none !important;
-  display: flex !important;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+  display: block !important;
   overflow: hidden;
   box-shadow: 
     inset 1.5px 0 2px rgba(255, 255, 255, 0.22),
     inset -1.5px 0 4px rgba(0, 0, 0, 0.65) !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: geometricPrecision;
   backface-visibility: visible !important;
   -webkit-backface-visibility: visible !important;
   z-index: 10;
-  padding: 12px 0;
 }
 
-.spine-top-stamp, .spine-bottom-stamp {
-  font-size: 0.44rem;
-  font-family: 'Apple Chancery', 'Snell Roundhand', 'Dancing Script', 'Caveat', cursive, serif;
-  color: rgba(246, 210, 138, 0.9);
-  letter-spacing: 1.5px;
-  transform: rotate(90deg);
-  white-space: nowrap;
-}
-
-.spine-inner-text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 270px;
-  transform: rotate(90deg) translateZ(0);
-  transform-origin: center center;
-  white-space: nowrap;
-  user-select: none;
-  padding: 0 4px;
-  text-align: center;
-}
-
+/* 书脊不印任何文字，保持纯粹极简硬壳质感 */
+.spine-top-stamp, 
+.spine-bottom-stamp, 
+.spine-inner-text, 
 .spine-title {
-  font-family: 'Apple Chancery', 'Snell Roundhand', 'ChenYuluoyan', '辰宇落雁体', 'Yozai', '悠哉体', 'Caveat', 'Dancing Script', 'Kalam', cursive, serif !important;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: 2px;
-  color: #F6F4F0;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.3);
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 /* 3. Right Spine */

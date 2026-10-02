@@ -781,14 +781,8 @@ You have set my feet upon the rock!`
             </div>
           </div>
 
-          <!-- 2. Left Spine (Slim Refined 16px Spine - 纤细修长优雅书脊，严格对应5套莫兰迪色系) -->
-          <div class="cube-face cube-spine-left" style="background: ${spineColor} !important;">
-            <span class="spine-top-stamp">${album.year || '2025'}</span>
-            <div class="spine-inner-text">
-              <span class="spine-title">${album.spine_text || album.title}</span>
-            </div>
-            <span class="spine-bottom-stamp">VOL.${(origIdx + 1).toString().padStart(2, '0')}</span>
-          </div>
+          <!-- 2. Left Spine (Slim Refined 16px Spine - 纤细修长优雅书脊，严格对应5套莫兰迪色系，无文字纯色极简设计) -->
+          <div class="cube-face cube-spine-left" style="background: ${spineColor} !important;"></div>
 
           <!-- Top Sealed Edge -->
           <div class="cube-face cube-top" style="background: ${spineColor} !important; filter: brightness(1.2);"></div>
