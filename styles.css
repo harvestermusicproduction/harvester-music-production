@@ -5023,6 +5023,17 @@ body.immersive-modal-active header {
 }
 
 @media (max-width: 768px) {
+  body.page-music {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-top: 0 !important;
+  }
+  .coverflow-section {
+    padding: calc(58px + 1.2rem) 1rem 5.5rem !important;
+    min-height: 100vh;
+    min-height: 100dvh;
+    box-sizing: border-box;
+  }
   .music-unified-header {
     flex-wrap: wrap;
     justify-content: space-between;
@@ -5086,6 +5097,15 @@ body.immersive-modal-active header {
   .page-2, .page-3 {
     flex-direction: column;
     overflow-y: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .coverflow-section {
+    padding: calc(60px + 1.5rem) 0.75rem 5.5rem !important;
+  }
+  .unified-header-left .ppt-title {
+    font-size: 1.2rem !important;
   }
 }
 
