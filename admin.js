@@ -176,10 +176,89 @@ document.addEventListener('DOMContentLoaded', () => {
       const prevEl = document.getElementById(previewId);
       if(prevEl) {
         prevEl.src = publicUrl;
-        if(prevEl.tagName === 'VIDEO') prevEl.load();
+        if(prevEl.tagName === 'VIDEO' || prevEl.tagName === 'AUDIO') {
+          prevEl.style.display = 'block';
+          prevEl.load();
+        }
       }
     }
     btn.innerText = "✅ 上传成功";
+  };
+
+  // --- Dedicated 15s Audio Preview Uploader ---
+  window.uploadAudioFile = async (fileInputId, targetId, previewId) => {
+    const inputEl = document.getElementById(fileInputId);
+    const file = inputEl?.files?.[0];
+    if (!file) return alert("请先选择音频文件 (MP3, WAV, M4A, AAC, OGG, FLAC 等)");
+
+    const btn = event.currentTarget || event.target;
+    const originalText = btn ? btn.innerText : '📤 上传 15s 试听音频';
+    if (btn) {
+      btn.innerText = "⏳ 正在上传试听音频...";
+      btn.disabled = true;
+    }
+
+    try {
+      const ext = file.name.split('.').pop().toLowerCase();
+      const safeName = file.name.replace(/[^\w.-]/g, "_");
+      const path = `audio/${Date.now()}-${safeName}`;
+
+      let mime = file.type || 'audio/mpeg';
+      if (ext === 'mp3') mime = 'audio/mpeg';
+      else if (ext === 'wav') mime = 'audio/wav';
+      else if (ext === 'm4a') mime = 'audio/mp4';
+      else if (ext === 'ogg') mime = 'audio/ogg';
+      else if (ext === 'aac') mime = 'audio/aac';
+      else if (ext === 'flac') mime = 'audio/flac';
+
+      const { data, error } = await db.storage.from('harvester-media').upload(path, file, {
+        contentType: mime,
+        upsert: true
+      });
+      if (error) throw error;
+
+      const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
+      const targetInput = document.getElementById(targetId);
+      if (targetInput) targetInput.value = publicUrl;
+
+      if (previewId) {
+        const prevEl = document.getElementById(previewId);
+        if (prevEl) {
+          prevEl.src = publicUrl;
+          prevEl.style.display = 'block';
+          prevEl.load();
+        }
+      }
+
+      if (btn) btn.innerText = "✅ 试听音频上传成功";
+      setTimeout(() => {
+        if (btn) {
+          btn.innerText = originalText;
+          btn.disabled = false;
+        }
+      }, 2500);
+    } catch (err) {
+      console.error("Audio upload error:", err);
+      alert("❌ 音频上传失败: " + (err.message || err));
+      if (btn) {
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
+    }
+  };
+
+  window.updateAdminAudioPreview = (url) => {
+    const prevEl = document.getElementById('prev_audio_el');
+    if (!prevEl) return;
+    const cleanUrl = (url || '').trim();
+    if (cleanUrl) {
+      prevEl.src = cleanUrl;
+      prevEl.style.display = 'block';
+      prevEl.load();
+    } else {
+      prevEl.src = '';
+      prevEl.style.display = 'none';
+    }
   };
 
   async function renderDashboard(container) {
@@ -409,7 +488,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const spineClr = customMatch?.spine_color || "#F6F4F0";
       const spineTxt = customMatch?.spine_text || `${s.title}`;
       const coverUrl = s.cover_url || customMatch?.cover_url || childlikeDoodles[idx % childlikeDoodles.length];
-      return { ...s, customMatch, year, spineBg, spineClr, spineTxt, coverUrl };
+      
+      const rawAudio = customMatch?.preview_audio_url || (s.audio_url && !s.audio_url.includes('youtube.com') && !s.audio_url.includes('youtu.be') ? s.audio_url : '');
+      const previewAudio = rawAudio;
+      const youtubeUrl = customMatch?.youtube_url || (s.audio_url && (s.audio_url.includes('youtube.com') || s.audio_url.includes('youtu.be')) ? s.audio_url : '');
+      const spotifyUrl = customMatch?.spotify_url || s.spotify_url || '';
+
+      return { ...s, customMatch, year, spineBg, spineClr, spineTxt, coverUrl, previewAudio, youtubeUrl, spotifyUrl };
     });
 
     // Extract unique available years sorted descending
@@ -425,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; flex-wrap:wrap; gap:15px;">
         <div>
           <h1 style="color:var(--gold); margin:0; font-size:1.8rem;">🎵 音乐与歌谱集 (Music & Scores)</h1>
-          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理原创诗歌单曲、3D 展架唱片、PDF 歌谱、音频与风琴折档案（按年份归类管理）。</p>
+          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理原创诗歌单曲、3D 展架唱片、15秒试听音频、PDF 歌谱与风琴折档案（按年份归类管理）。</p>
         </div>
         <button class="btn btn-submit" style="width:auto; padding:12px 28px; font-weight:700;" onclick="openMusicModal()">+ 发布新单曲 / 歌谱</button>
       </div>
@@ -471,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <!-- Top Cover & Meta Row -->
                     <div style="display:flex; gap:16px; align-items:center; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #1a1a1a;">
                       <img src="${s.coverUrl}" 
-                           style="width:75px; height:75px; object-fit:cover; border-radius:10px; border:1px solid #333; background:#181818;"
+                           style="width:78px; height:78px; object-fit:cover; border-radius:10px; border:1px solid #333; background:#181818;"
                            onerror="this.src='${childlikeDoodles[0]}'">
                       <div style="flex:1; overflow:hidden;">
                         <h3 style="margin:0; color: #F6F4F0; font-size:1.1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:8px;">
@@ -480,13 +565,28 @@ document.addEventListener('DOMContentLoaded', () => {
                           ${s.id === latestId || s.is_latest ? '<span style="color:var(--gold); font-size:0.65rem; background:rgba(246,210,138,0.12); padding:2px 8px; border-radius:50px; border:1px solid rgba(246,210,138,0.3);">首推</span>' : ''}
                         </h3>
                         <p style="margin:4px 0 0; color:#888; font-size:0.8rem;">${s.customMatch?.artist || s.artist || 'Harvester Worship'}</p>
-                        <div style="display:flex; gap:10px; margin-top:6px;">
-                          <span style="font-size:0.75rem; color:${s.score_url ? '#2ed573' : '#555'};"><i class="fas fa-file-pdf"></i> ${s.score_url ? '歌谱就绪' : '无歌谱'}</span>
-                          <span style="font-size:0.75rem; color:${s.audio_url ? '#70a1ff' : '#555'};"><i class="fab fa-youtube"></i> ${s.audio_url ? 'YouTube' : '无链接'}</span>
-                          <span style="font-size:0.75rem; color:${s.customMatch?.spotify_url || s.spotify_url ? '#1db954' : '#555'};"><i class="fab fa-spotify"></i> ${s.customMatch?.spotify_url || s.spotify_url ? 'Spotify' : '无链接'}</span>
+                        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
+                          <span style="font-size:0.72rem; color:${s.previewAudio ? '#f6d28a' : '#666'}; background:${s.previewAudio ? 'rgba(246,210,138,0.12)' : 'rgba(255,255,255,0.04)'}; border:1px solid ${s.previewAudio ? 'rgba(246,210,138,0.3)' : 'rgba(255,255,255,0.08)'}; padding:2px 7px; border-radius:4px; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="fas fa-headphones"></i> ${s.previewAudio ? '15s 试听就绪' : '未传试听'}
+                          </span>
+                          <span style="font-size:0.72rem; color:${s.score_url ? '#2ed573' : '#666'}; background:${s.score_url ? 'rgba(46,213,115,0.1)' : 'rgba(255,255,255,0.04)'}; border:1px solid ${s.score_url ? 'rgba(46,213,115,0.3)' : 'rgba(255,255,255,0.08)'}; padding:2px 7px; border-radius:4px; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="fas fa-file-pdf"></i> ${s.score_url ? '歌谱就绪' : '无歌谱'}
+                          </span>
+                          <span style="font-size:0.72rem; color:${s.youtubeUrl ? '#ff4d4d' : '#666'}; background:${s.youtubeUrl ? 'rgba(255,77,77,0.1)' : 'rgba(255,255,255,0.04)'}; border:1px solid ${s.youtubeUrl ? 'rgba(255,77,77,0.3)' : 'rgba(255,255,255,0.08)'}; padding:2px 7px; border-radius:4px; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="fab fa-youtube"></i> ${s.youtubeUrl ? 'YouTube' : '无油管'}
+                          </span>
+                          <span style="font-size:0.72rem; color:${s.spotifyUrl ? '#1db954' : '#666'}; background:${s.spotifyUrl ? 'rgba(29,185,84,0.1)' : 'rgba(255,255,255,0.04)'}; border:1px solid ${s.spotifyUrl ? 'rgba(29,185,84,0.3)' : 'rgba(255,255,255,0.08)'}; padding:2px 7px; border-radius:4px; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="fab fa-spotify"></i> ${s.spotifyUrl ? 'Spotify' : '无Spotify'}
+                          </span>
                         </div>
                       </div>
                     </div>
+
+                    ${s.previewAudio ? `
+                      <div style="background:#141414; padding:6px 10px; border-radius:8px; border:1px solid #222; margin-bottom:10px;">
+                        <audio controls style="width:100%; height:30px;" src="${s.previewAudio}"></audio>
+                      </div>
+                    ` : ''}
 
                     <!-- 3D Spine Preview Bar -->
                     <div style="background:${s.spineBg}; color:#fff; padding:6px 12px; border-radius:6px; font-size:0.75rem; font-weight:bold; letter-spacing:1px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.15); display:flex; align-items:center; gap:8px; text-shadow:0 1px 2px rgba(0,0,0,0.8);">
@@ -538,6 +638,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const spineClr = spineCustom?.spine_color || "#ffffff";
       const spineTxt = spineCustom?.spine_text || (s?.title ? `${s.title}` : "");
       const spotifyUrl = spineCustom?.spotify_url || s?.spotify_url || '';
+      let previewAudio = spineCustom?.preview_audio_url || '';
+      let youtubeUrl = spineCustom?.youtube_url || '';
+      if (!previewAudio && s?.audio_url) {
+        if (s.audio_url.includes('youtube.com') || s.audio_url.includes('youtu.be')) {
+          if (!youtubeUrl) youtubeUrl = s.audio_url;
+        } else {
+          previewAudio = s.audio_url;
+        }
+      }
+      if (!youtubeUrl && s?.audio_url && (s.audio_url.includes('youtube.com') || s.audio_url.includes('youtu.be'))) {
+        youtubeUrl = s.audio_url;
+      }
       const themeColor = spineCustom?.theme_color || "#182222";
       const titleEn = spineCustom?.title_en || "Harvester Single";
       const year = spineCustom?.year || "2025";
@@ -659,25 +771,55 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
 
-          <!-- 4. 视听与外链 -->
-          <div style="background:#0a0a0a; border:1px solid #222; border-radius:10px; padding:15px; margin-bottom:15px;">
-            <label style="display:block; margin-bottom:12px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🔗 试听、外链与歌谱资源</label>
+          <!-- 4. 视听音频、外链与歌谱资源 -->
+          <div style="background:#0a0a0a; border:1.5px solid rgba(246,210,138,0.25); border-radius:12px; padding:18px; margin-bottom:15px;">
+            <label style="display:block; margin-bottom:12px; color:var(--gold); font-size:0.9rem; font-weight:bold;">🎧 15秒试听音频、外链与歌谱资源 (Audio & Media)</label>
 
-            <div style="margin-bottom:10px;">
-              <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">YouTube 播放链接 (Video / Audio URL)</label>
-              <input type="text" id="m_a" value="${s?.audio_url || ''}" placeholder="https://www.youtube.com/watch?v=..." style="width:100%; padding:8px;">
+            <!-- 15秒试听音频专属上传与设置 -->
+            <div style="background:#141414; border:1px solid rgba(246,210,138,0.2); border-radius:10px; padding:14px; margin-bottom:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+                <label style="color:#f6d28a; font-size:0.85rem; font-weight:bold;">🎵 15秒试听音频文件 (15s Preview Audio)</label>
+                <span style="font-size:0.72rem; color:#888;">供前台 3D 展架与浮动胶囊播放器直接调用</span>
+              </div>
+              <p style="font-size:0.75rem; color:#aaa; margin:0 0 10px 0; line-height:1.4;">
+                支持直接上传 MP3、WAV、M4A、AAC 等音频文件。上传后前台底部胶囊播放器即可直接播放 15 秒精选片段。
+              </p>
+              
+              <!-- Inline Audio Player Preview -->
+              <audio id="prev_audio_el" controls style="width:100%; height:36px; margin-bottom:10px; display:${previewAudio ? 'block' : 'none'}; background:#222; border-radius:6px;" src="${previewAudio}"></audio>
+
+              <div style="margin-bottom:8px;">
+                <input type="text" id="m_preview_audio" value="${previewAudio}" placeholder="上传音频后自动填入直链，或直接粘贴音频 .mp3/.wav 文件直链" style="width:100%; padding:9px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px; font-size:0.82rem;" oninput="updateAdminAudioPreview(this.value)">
+              </div>
+
+              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <input type="file" id="mf_audio" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac" style="font-size:0.78rem; color:#aaa; flex:1; min-width:200px;">
+                <button type="button" class="btn-tiny" style="background:rgba(246,210,138,0.18); border-color:var(--gold); color:var(--gold); font-weight:bold; padding:8px 16px; border-radius:6px;" onclick="uploadAudioFile('mf_audio', 'm_preview_audio', 'prev_audio_el')">
+                  📤 上传 15s 试听音频
+                </button>
+              </div>
             </div>
 
-            <div style="margin-bottom:10px;">
-              <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">Spotify 聆听链接 (Spotify URL)</label>
-              <input type="text" id="m_sp" value="${spotifyUrl}" placeholder="https://open.spotify.com/track/..." style="width:100%; padding:8px;">
+            <!-- YouTube Video Link -->
+            <div style="margin-bottom:12px;">
+              <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">▶️ YouTube 官方 MV / 完整音频链接 (YouTube URL)</label>
+              <input type="text" id="m_yt" value="${youtubeUrl}" placeholder="https://www.youtube.com/watch?v=..." style="width:100%; padding:8px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px;">
             </div>
 
-            <div style="margin-top:10px;">
+            <!-- Spotify Track Link -->
+            <div style="margin-bottom:12px;">
+              <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">🟢 Spotify 官方试听链接 (Spotify Track URL)</label>
+              <input type="text" id="m_sp" value="${spotifyUrl}" placeholder="https://open.spotify.com/track/..." style="width:100%; padding:8px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px;">
+            </div>
+
+            <!-- PDF Score Upload -->
+            <div style="margin-top:14px; padding-top:12px; border-top:1px solid #222;">
               <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">📄 PDF 歌谱链接 / 文件上传 (Score PDF)</label>
-              <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="可直接在下方上传 PDF 或粘贴链接" style="width:100%; padding:8px; margin-bottom:6px;">
-              <input type="file" id="mf_score" style="font-size:0.8rem; color:#aaa; margin-bottom:6px; width:100%;" accept=".pdf">
-              <button type="button" class="btn-tiny" style="width:100%; padding:6px;" onclick="uploadFile('mf_score', 'm_s')">📤 上传歌谱 PDF 文件</button>
+              <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="可直接在下方上传 PDF 或粘贴链接" style="width:100%; padding:8px; margin-bottom:8px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px;">
+              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <input type="file" id="mf_score" style="font-size:0.78rem; color:#aaa; flex:1; min-width:200px;" accept=".pdf">
+                <button type="button" class="btn-tiny" style="padding:8px 16px;" onclick="uploadFile('mf_score', 'm_s')">📤 上传歌谱 PDF 文件</button>
+              </div>
             </div>
           </div>
 
@@ -796,7 +938,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const theme_color = document.getElementById('m_theme_clr_hex')?.value.trim() || "#182222";
 
       const cover_url = document.getElementById('m_url').value.trim();
-      const audio_url = document.getElementById('m_a').value.trim();
+      const preview_audio_url = document.getElementById('m_preview_audio')?.value.trim() || '';
+      const youtube_url = document.getElementById('m_yt')?.value.trim() || '';
       const spotify_url = document.getElementById('m_sp')?.value.trim() || '';
       const score_url = document.getElementById('m_s').value.trim();
       const description = document.getElementById('m_d').value.trim();
@@ -817,6 +960,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const photo_3 = document.getElementById('m_photo3')?.value.trim() || cover_url;
 
       if (!title) throw new Error("请输入歌曲名称");
+
+      // Save playable audio URL if provided, otherwise YouTube link
+      const audio_url = preview_audio_url || youtube_url;
 
       const payload = {
         title,
@@ -857,8 +1003,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cover_url,
         description,
         score_url,
+        preview_audio_url,
         audio_url,
-        youtube_url: audio_url,
+        youtube_url,
         spotify_url,
         key_bpm,
         scripture,

@@ -303,8 +303,28 @@ You have set my feet upon the rock!`
   let hasMovedFar = false;
   let isPhysicsRunning = false;
 
-  // Audio Event Listeners
+  // Audio Event Listeners (15s Preview Limit & UI Lifecycle)
+  audioPlayer.addEventListener('timeupdate', () => {
+    // Exact 15-second preview cap as requested by user
+    if (isPlaying && audioPlayer.currentTime >= 15.5) {
+      audioPlayer.pause();
+      audioPlayer.currentTime = 0;
+      isPlaying = false;
+      updatePlayerUI();
+      if (typeof window.showMorandiToast === 'function') {
+        window.showMorandiToast('✨ 15 秒试听结束，欢迎翻开唱片内页查看完整作品与歌谱');
+      }
+    }
+  });
+
   audioPlayer.addEventListener('ended', () => {
+    isPlaying = false;
+    audioPlayer.currentTime = 0;
+    updatePlayerUI();
+  });
+
+  audioPlayer.addEventListener('error', (e) => {
+    console.warn("Audio playback error:", e);
     isPlaying = false;
     updatePlayerUI();
   });
@@ -387,8 +407,15 @@ You have set my feet upon the rock!`
               spine_text: customMatch?.spine_text || s.title,
               cover_url: s.cover_url || customMatch?.cover_url || doodleFallback,
               duration: "4'15\"",
-              audio_url: s.audio_url || "",
-              youtube_url: s.audio_url || s.youtube_url || "https://www.youtube.com/@harvestermusic.production",
+              audio_url: (function() {
+                const raw = customMatch?.preview_audio_url || customMatch?.audio_url || s.audio_url || "";
+                return (raw && !raw.includes('youtube.com') && !raw.includes('youtu.be')) ? raw : (customMatch?.preview_audio_url || "");
+              })(),
+              preview_audio_url: (function() {
+                const raw = customMatch?.preview_audio_url || customMatch?.audio_url || s.audio_url || "";
+                return (raw && !raw.includes('youtube.com') && !raw.includes('youtu.be')) ? raw : (customMatch?.preview_audio_url || "");
+              })(),
+              youtube_url: customMatch?.youtube_url || (s.audio_url && (s.audio_url.includes('youtube.com') || s.audio_url.includes('youtu.be')) ? s.audio_url : (s.youtube_url || "https://www.youtube.com/@harvestermusic.production")),
               spotify_url: customMatch?.spotify_url || s.spotify_url || "https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ",
               score_url: s.score_url || "assets/scores/sample.pdf",
               lyrics: s.description ? s.description : `【${s.title}】\n\n词曲：Harvester Music Production\n愿每一首写给神的歌都被听见。\n欢迎下载歌谱使用并在各处传唱。`,
@@ -407,7 +434,15 @@ You have set my feet upon the rock!`
 
           allAlbums = sortAlbumsByYear(mappedFromDb);
         } else if (customAlbums) {
-          allAlbums = sortAlbumsByYear(customAlbums);
+          allAlbums = sortAlbumsByYear(customAlbums.map(c => {
+            const raw = c.preview_audio_url || c.audio_url || "";
+            const isDirect = raw && !raw.includes('youtube.com') && !raw.includes('youtu.be');
+            return {
+              ...c,
+              audio_url: isDirect ? raw : (c.preview_audio_url || ""),
+              preview_audio_url: isDirect ? raw : (c.preview_audio_url || "")
+            };
+          }));
         }
       }
     } catch(e) {
@@ -504,7 +539,7 @@ You have set my feet upon the rock!`
           <img id="miniCover" src="${albums[0]?.cover_url || childlikeDoodles[0]}" alt="Cover">
           <div class="mini-meta">
             <span id="miniTrackTitle" class="mini-track-name">${albums[0]?.title || ''}</span>
-            <span id="miniTrackArtist" class="mini-track-artist">${albums[0]?.artist || ''} · 试听片段</span>
+            <span id="miniTrackArtist" class="mini-track-artist">${albums[0]?.artist || 'Harvester Worship'} · 15秒试听</span>
           </div>
         </div>
         <div class="mini-right">
@@ -955,6 +990,16 @@ You have set my feet upon the rock!`
 
       // 🌈 Dynamically transition ambient background color and glowing accents to match central album
       updateDynamicAmbientBackground(cur, activeIdx);
+
+      // Keep mini-player info synced to active album when not playing
+      if (!isPlaying) {
+        const miniCover = document.getElementById('miniCover');
+        const miniTitle = document.getElementById('miniTrackTitle');
+        const miniArtist = document.getElementById('miniTrackArtist');
+        if (miniCover) miniCover.src = cur.cover_url;
+        if (miniTitle) miniTitle.innerText = cur.title;
+        if (miniArtist) miniArtist.innerText = `${cur.artist || 'Harvester Worship'} · 15秒试听`;
+      }
     }
   }
 
@@ -1414,7 +1459,7 @@ ${activeSong.lyrics}
                 <div style="border-top:1px solid rgba(0,0,0,0.12); padding-top:14px; display:flex; justify-content:space-between; align-items:center;">
                   <span style="font-family:var(--font-times); font-size:0.75rem; color:${pal.fold3_text}; opacity:0.8;">PDF SCORES</span>
                   <button onclick="toggleAudioPlay()" class="imm-pill-btn" style="background:${pal.primary}; color:#F6F4F0; border:none; font-size:0.82rem; padding:7px 16px; font-family:var(--font-times); box-shadow:0 4px 12px rgba(0,0,0,0.25);">
-                    <i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '试听'}
+                    <i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停试听' : '15s 试听'}
                   </button>
                 </div>
               </div>
@@ -1426,20 +1471,50 @@ ${activeSong.lyrics}
     `;
   }
 
-  // Audio Playback Engine
+  // Audio Playback Engine (15s Preview Mode)
   window.toggleAudioPlay = function() {
+    if (!albums || albums.length === 0) return;
+    const M = albums.length;
+    const activeIdx = ((Math.round(currentProgress) % M) + M) % M;
+    const cur = activeSong || albums[activeIdx];
+
     if (isPlaying) {
       audioPlayer.pause();
       isPlaying = false;
+      updatePlayerUI();
     } else {
-      const cur = activeSong || albums[Math.round(currentProgress)];
-      if (cur?.audio_url) {
-        audioPlayer.src = cur.audio_url;
-        audioPlayer.play().catch(e => console.warn(e));
+      const audioSrc = cur?.preview_audio_url || cur?.audio_url;
+      const isValidAudio = audioSrc && !audioSrc.includes('youtube.com') && !audioSrc.includes('youtu.be');
+
+      if (isValidAudio) {
+        if (audioPlayer.src !== audioSrc) {
+          audioPlayer.src = audioSrc;
+          audioPlayer.currentTime = 0;
+        }
+        audioPlayer.play().then(() => {
+          isPlaying = true;
+          updatePlayerUI();
+          if (typeof window.showMorandiToast === 'function') {
+            window.showMorandiToast(`🎵 正在试听：《${cur.title}》（15秒精选片段）`);
+          }
+        }).catch(err => {
+          console.warn("Audio playback error:", err);
+          isPlaying = false;
+          updatePlayerUI();
+          if (typeof window.showMorandiToast === 'function') {
+            window.showMorandiToast('⚠️ 音频无法播放，请在后台确认试听音频格式');
+          }
+        });
+      } else {
+        isPlaying = false;
+        updatePlayerUI();
+        if (typeof window.showMorandiToast === 'function') {
+          window.showMorandiToast('🎵 该单曲暂未上传 15 秒试听音频，请在后台“音乐与歌谱集”上传');
+        } else {
+          alert('🎵 该单曲暂未上传 15 秒试听音频，请在后台“音乐与歌谱集”上传');
+        }
       }
-      isPlaying = true;
     }
-    updatePlayerUI();
   };
 
   function updatePlayerUI() {
@@ -1451,14 +1526,23 @@ ${activeSong.lyrics}
     const lyricsPlayBtnIcon = document.getElementById('lyricsPlayBtnIcon');
 
     if (miniPlayIcon) miniPlayIcon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
-    if (lyricsPlayBtnIcon) lyricsPlayBtnIcon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
+    if (lyricsPlayBtnIcon) {
+      lyricsPlayBtnIcon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
+      if (lyricsPlayBtnIcon.parentElement) {
+        lyricsPlayBtnIcon.parentElement.innerHTML = `<i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '15s 试听'}`;
+      }
+    }
     if (miniEqBars) miniEqBars.classList.toggle('playing', isPlaying);
 
-    const cur = activeSong || albums[Math.round(currentProgress)];
-    if (cur) {
-      if (miniCover) miniCover.src = cur.cover_url;
-      if (miniTitle) miniTitle.innerText = cur.title;
-      if (miniArtist) miniArtist.innerText = cur.artist;
+    if (albums && albums.length > 0) {
+      const M = albums.length;
+      const activeIdx = ((Math.round(currentProgress) % M) + M) % M;
+      const cur = activeSong || albums[activeIdx];
+      if (cur) {
+        if (miniCover) miniCover.src = cur.cover_url;
+        if (miniTitle) miniTitle.innerText = cur.title;
+        if (miniArtist) miniArtist.innerText = `${cur.artist || 'Harvester Worship'} · 15秒试听`;
+      }
     }
   }
 
