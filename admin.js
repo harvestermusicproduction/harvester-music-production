@@ -1302,18 +1302,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentBannerLink = cfgMap['cfg_events_banner_link'] || '';
     let customOrderIds = cfgMap['cfg_events_order'] ? cfgMap['cfg_events_order'].split(',').filter(Boolean) : [];
 
-    // Parse Posters List from cfg_events_posters_json with smart fallback
+    // Parse Posters List from cfg_events_posters_json with strict source of truth
     let customPosters = [];
-    if (cfgMap['cfg_events_posters_json']) {
+    let hasExplicitPostersConfig = false;
+    if (cfgMap['cfg_events_posters_json'] !== undefined && cfgMap['cfg_events_posters_json'] !== null) {
       try {
         const parsed = JSON.parse(cfgMap['cfg_events_posters_json']);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           customPosters = parsed;
+          hasExplicitPostersConfig = true;
         }
       } catch(e) {}
     }
 
-    if (customPosters.length === 0) {
+    // Only populate sample default posters if user has never configured site_config
+    if (!hasExplicitPostersConfig && customPosters.length === 0) {
       if (currentBanner) {
         customPosters.push({
           id: 'poster_banner_1',
@@ -4449,14 +4452,63 @@ document.addEventListener('DOMContentLoaded', () => {
       await db.from(t).delete().eq('id', id);
     } catch(e){}
 
-    // If deleting diary album, also remove from site_config cfg_diary_albums_json
+    // 1. If deleting event, also clean up from site_config fallback stores, orders, and posters
+    if (t === 'events') {
+      try {
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_custom_json').maybeSingle();
+        if (cfg?.value) {
+          let list = JSON.parse(cfg.value);
+          if (Array.isArray(list)) {
+            list = list.filter(x => String(x.id) !== String(id));
+            await db.from('site_config').upsert({ key: 'cfg_events_custom_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+          }
+        }
+      } catch(e){}
+
+      try {
+        const { data: ordCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_order').maybeSingle();
+        if (ordCfg?.value) {
+          let ordList = ordCfg.value.split(',').filter(x => String(x) !== String(id));
+          await db.from('site_config').upsert({ key: 'cfg_events_order', value: ordList.join(',') }, { onConflict: 'key' });
+        }
+      } catch(e){}
+
+      try {
+        const { data: pCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_posters_json').maybeSingle();
+        if (pCfg?.value) {
+          let plist = JSON.parse(pCfg.value);
+          if (Array.isArray(plist)) {
+            plist = plist.filter(p => String(p.id) !== String(id) && !(p.link && p.link.includes(String(id))));
+            await db.from('site_config').upsert({ key: 'cfg_events_posters_json', value: JSON.stringify(plist) }, { onConflict: 'key' });
+          }
+        }
+      } catch(e){}
+    }
+
+    // 2. If deleting diary album, also remove from site_config cfg_diary_albums_json
     if (t === 'diary_albums') {
       try {
         const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
         if (cfg?.value) {
           let list = JSON.parse(cfg.value);
-          list = list.filter(x => String(x.id) !== String(id));
-          await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+          if (Array.isArray(list)) {
+            list = list.filter(x => String(x.id) !== String(id));
+            await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+          }
+        }
+      } catch(e){}
+    }
+
+    // 3. If deleting music_works, also remove from site_config cfg_albums_custom_json
+    if (t === 'music_works') {
+      try {
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
+        if (cfg?.value) {
+          let list = JSON.parse(cfg.value);
+          if (Array.isArray(list)) {
+            list = list.filter(x => String(x.id) !== String(id));
+            await db.from('site_config').upsert({ key: 'cfg_albums_custom_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+          }
         }
       } catch(e){}
     }

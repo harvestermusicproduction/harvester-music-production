@@ -626,15 +626,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     ];
 
-    // Combine custom CMS posters + DB events with images + custom banner + fallback items
+    // 🌟 Strict Authoritative Custom Posters Resolution
     let galleryItems = [];
+    const cfgPostersRaw = siteConfigs['cfg_events_posters_json'];
 
-    // 1. Primary: Custom posters configured from Admin CMS
-    const cfgPosters = siteConfigs['cfg_events_posters_json'];
-    if (cfgPosters) {
+    if (cfgPostersRaw !== undefined && cfgPostersRaw !== null) {
+      // 1. User has configured posters in Admin CMS: this is the strict source of truth
       try {
-        const parsed = typeof cfgPosters === 'string' ? JSON.parse(cfgPosters) : cfgPosters;
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        const parsed = typeof cfgPostersRaw === 'string' ? JSON.parse(cfgPostersRaw) : cfgPostersRaw;
+        if (Array.isArray(parsed)) {
           galleryItems = parsed.map(p => ({
             id: p.id || 'poster_' + Math.random(),
             title: p.title || 'Harvester 精彩活动',
@@ -643,58 +643,37 @@ document.addEventListener('DOMContentLoaded', () => {
             venue: p.venue || '各大展演空间',
             statusTag: p.statusTag || 'HOT 热门',
             link: p.link || 'javascript:void(0)'
-          }));
+          })).filter(p => p.image_url);
         }
-      } catch(e){}
-    }
-    
-    // 2. Add database events that have images (if not already included)
-    if (events && events.length > 0) {
-      events.forEach(e => {
-        if (e.image_url && !galleryItems.some(item => item.image_url === e.image_url || item.title === e.title)) {
-          galleryItems.push({
-            id: e.id,
-            title: e.title,
-            image_url: e.image_url,
-            date: e.fullDateTime || `${e.year || '2025'}.${e.month || ''}.${e.day || ''}`,
-            venue: e.location || '线下敬拜现场',
-            statusTag: e.statusTag || 'UPCOMING',
-            link: `event.html?id=${e.id}`
-          });
-        }
-      });
-    }
-
-    // 3. Add custom banner if present and not yet in list
-    const customBanner = siteConfigs['cfg_events_banner'];
-    const customBannerTitle = siteConfigs['cfg_events_banner_title'] || 'Harvester 精彩活动与巡回特会';
-    const customBannerDate = siteConfigs['cfg_events_banner_date'] || 'FEATURED 精彩主推';
-    const customBannerVenue = siteConfigs['cfg_events_banner_venue'] || '各城各乡 · 福音巡回';
-    const customBannerTag = siteConfigs['cfg_events_banner_tag'] || 'HOT 热门';
-    const customBannerLink = siteConfigs['cfg_events_banner_link'] || 'javascript:void(0)';
-
-    if (customBanner && !galleryItems.some(item => item.image_url === customBanner)) {
-      galleryItems.unshift({
-        id: 'banner_custom',
-        title: customBannerTitle,
-        image_url: customBanner,
-        date: customBannerDate,
-        venue: customBannerVenue,
-        statusTag: customBannerTag,
-        link: customBannerLink
-      });
+      } catch(e) {
+        galleryItems = [];
+      }
+    } else {
+      // 2. Initial first-time database fallback only if cfg_events_posters_json was never initialized
+      if (events && events.length > 0) {
+        events.forEach(e => {
+          if (e.image_url && !galleryItems.some(item => item.image_url === e.image_url || item.title === e.title)) {
+            galleryItems.push({
+              id: e.id,
+              title: e.title,
+              image_url: e.image_url,
+              date: e.fullDateTime || `${e.year || '2025'}.${e.month || ''}.${e.day || ''}`,
+              venue: e.location || '线下敬拜现场',
+              statusTag: e.statusTag || 'UPCOMING',
+              link: `event.html?id=${e.id}`
+            });
+          }
+        });
+      }
+      if (galleryItems.length === 0) {
+        galleryItems = [...fallbackPhotos];
+      }
     }
 
-    // 4. If gallery has fewer than 6 items, append fallback items
-    if (galleryItems.length < 6) {
-      fallbackPhotos.forEach(fb => {
-        if (galleryItems.length < 8 && !galleryItems.some(item => item.title === fb.title)) {
-          galleryItems.push({
-            ...fb,
-            link: 'javascript:void(0)'
-          });
-        }
-      });
+    // If all posters were deleted or none exist, cleanly hide the panoramic section
+    if (galleryItems.length === 0) {
+      if (heroSec) heroSec.style.display = 'none';
+      return;
     }
 
     // Render cards
@@ -717,12 +696,21 @@ document.addEventListener('DOMContentLoaded', () => {
       </a>
     `;
 
-    // Repeat items 3 times to make a truly endless panoramic ribbon on any screen width
+    // Dynamic repeat count for seamless running loop without phantom mock items
+    let repeatCount = 1;
+    if (galleryItems.length === 1) repeatCount = 6;
+    else if (galleryItems.length === 2) repeatCount = 4;
+    else if (galleryItems.length >= 3) repeatCount = 3;
+
     const singleSet = galleryItems.map(renderCard).join('');
-    track.innerHTML = singleSet + singleSet + singleSet;
+    let repeatedHtml = '';
+    for (let r = 0; r < repeatCount; r++) {
+      repeatedHtml += singleSet;
+    }
+    track.innerHTML = repeatedHtml;
     if (heroSec) heroSec.style.display = 'block';
 
-    const oneSetWidth = () => track.scrollWidth / 3;
+    const oneSetWidth = () => track.scrollWidth / repeatCount;
 
     // 🏹 Setup Arrow Navigation
     window.scrollEventsGallery = function(direction) {
