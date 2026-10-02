@@ -976,17 +976,87 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e){}
       }
 
+      // 5. Fallback to site_config cfg_events_posters_json
+      if (!album && siteConfigs['cfg_events_posters_json']) {
+        try {
+          const pList = typeof siteConfigs['cfg_events_posters_json'] === 'string' ? JSON.parse(siteConfigs['cfg_events_posters_json']) : siteConfigs['cfg_events_posters_json'];
+          if (Array.isArray(pList)) {
+            const foundP = pList.find(x => String(x.id) === String(id));
+            if (foundP) {
+              album = foundP;
+              isEvent = true;
+            }
+          }
+        } catch(e){}
+      }
+
+      // 6. Curated fallback posters
       if (!album) {
-        container.innerHTML = "<p style='text-align:center; opacity:0.5; padding:3rem;'>暂无相关数据</p>";
+        const fallbackPosters = [
+          {
+            id: "curated_1",
+            title: "收割敬拜之夜 · 吉隆坡特别专场",
+            image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85",
+            date: "2025.11.15",
+            venue: "吉隆坡 · 全福敬拜大厅",
+            statusTag: "OPEN 报名中"
+          },
+          {
+            id: "curated_2",
+            title: "原创赞美诗创作营 & 制作工作坊",
+            image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=85",
+            date: "2025.08.20",
+            venue: "新山 · 音乐创作空间",
+            statusTag: "HOT 热门"
+          },
+          {
+            id: "curated_3",
+            title: "灵火青年敬拜节 · 赞美特会",
+            image_url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=85",
+            date: "2025.07.12",
+            venue: "槟城 · 圣爱大礼堂",
+            statusTag: "RECAP 精彩回顾"
+          },
+          {
+            id: "curated_4",
+            title: "收割者福音巡回音乐分享会",
+            image_url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=85",
+            date: "2025.06.05",
+            venue: "怡保 · 基督徒交流中心",
+            statusTag: "UPCOMING 即将开启"
+          },
+          {
+            id: "curated_5",
+            title: "赞美诗合唱与管弦乐室内交响夜",
+            image_url: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1200&q=85",
+            date: "2025.05.01",
+            venue: "吉隆坡 · 艺术文化中心",
+            statusTag: "RECAP 精彩回顾"
+          },
+          {
+            id: "curated_6",
+            title: "收割机敬拜团同工灵修培灵会",
+            image_url: "https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1200&q=85",
+            date: "2025.03.18",
+            venue: "马六甲 · 恩典营地",
+            statusTag: "ANNUAL 年度特会"
+          }
+        ];
+        const matchCur = fallbackPosters.find(x => String(x.id) === String(id));
+        if (matchCur) {
+          album = matchCur;
+          isEvent = true;
+        }
+      }
+
+      if (!album) {
+        container.innerHTML = "<p style='text-align:center; opacity:0.5; padding:3rem;'>暂无相关活动数据</p>";
         return;
       }
 
       const parsed = parseEventData(album);
-
-      const cleanT = parsed.cleanTitle || parsed.title || '';
-      if (cleanT) {
-        document.title = `${cleanT} | Harvester Music`;
-      }
+      const cleanT = parsed.cleanTitle || parsed.title || '活动详情';
+      document.title = `${cleanT} | Harvester Music`;
 
       const titleEl = document.getElementById('eventTitle');
       if (titleEl) titleEl.innerText = cleanT;
@@ -1031,22 +1101,22 @@ document.addEventListener('DOMContentLoaded', () => {
         dateEl.appendChild(link);
       }
 
-      // If it's an event (from events table), add reminder button
+      // If it's an event (from events table or poster), add reminder button
       const oldBtn = document.getElementById('event_remind_btn_wrap');
       if (oldBtn) oldBtn.remove();
-      if (isEvent) {
-        const cleanTitle = (parsed.title || "").replace(/'/g, "\\'");
+      if (isEvent || album.location || parsed.location || parsed.dateStr) {
+        const cleanTitle = (cleanT || "").replace(/'/g, "\\'");
         const btnWrap = document.createElement('div');
         btnWrap.id = 'event_remind_btn_wrap';
         btnWrap.style = "width:100%; display:flex; justify-content:center; margin-top:20px;";
         btnWrap.innerHTML = `
-          <button class="btn-frosted-gold" style="min-width:180px; max-width:260px; padding:12px 24px; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:50px; cursor:pointer; font-weight:600; font-size:0.95rem;" onclick="openReminderModal('${album.id}', '${cleanTitle}', '${parsed.fullDateTime}')"><i class="fas fa-bell"></i> 提醒我</button>
+          <button class="btn-frosted-gold" style="min-width:180px; max-width:260px; padding:12px 24px; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:50px; cursor:pointer; font-weight:600; font-size:0.95rem; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="openReminderModal('${album.id}', '${cleanTitle}', '${parsed.fullDateTime}')"><i class="fas fa-bell"></i> 提醒我</button>
         `;
         const eventHeader = document.getElementById('eventHeader');
         if (eventHeader) eventHeader.appendChild(btnWrap);
       }
 
-      // Gather and merge all photos from DB diary_media and cfg_diary_albums_json
+      // Gather photos
       let dbPhotos = [];
       try {
         const { data: mData, error: mErr } = await db.from('diary_media').select('*').eq('album_id', id);
@@ -1079,33 +1149,53 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // If no photos in album, fallback to album cover or image_url
-      if (list.length === 0) {
-        if (album.cover_url) list.push({ media_url: album.cover_url, is_cover: true });
-        if (parsed.image_url && parsed.image_url !== album.cover_url) list.push({ media_url: parsed.image_url, is_cover: true });
+      // Best poster URL resolution (自然尺寸放大高清呈现)
+      let posterUrl = parsed.image_url || album.cover_url || album.image_url || album.poster_url || "";
+      if (!posterUrl && list.length > 0) {
+        posterUrl = list[0].media_url;
+      }
+      if (!posterUrl) {
+        posterUrl = siteConfigs['cfg_events_banner'] || 'assets/illustrations/morandi-wheat-field.jpg';
       }
 
-      if (list.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:3rem; color:#aaa; max-width:600px; margin:0 auto;"><p style="line-height:1.8;">${parsed.description ? '' : '精彩照片整理中...'}</p></div>`;
-      } else if (list.length === 1) {
-        // Single featured poster presentation
-        container.innerHTML = `
-          <div style="max-width:680px; margin:2rem auto; text-align:center; padding:0 1rem;">
-            <div class="gallery-item" onclick="openLightbox('${list[0].media_url}')" style="cursor:pointer; display:inline-block; max-width:100%; border-radius:16px; overflow:hidden; border:1px solid rgba(246,210,138,0.25); box-shadow:0 15px 40px rgba(0,0,0,0.6); aspect-ratio:auto;">
-              <img src="${list[0].media_url}" class="gallery-img" style="max-height:550px; width:100%; object-fit:contain; display:block;" onerror="this.parentElement.style.display='none'">
+      // 🌟 Render Enlarged Natural-Size Poster (适合原本的尺寸，高清且无多余提示字)
+      let mainPosterHtml = `
+        <div class="event-single-poster-wrap">
+          <div class="event-poster-card" onclick="openLightbox('${posterUrl}')" title="点击查看高清海报">
+            <img src="${posterUrl}" class="event-poster-full-img" alt="${cleanT}" draggable="false" onerror="this.src='assets/illustrations/morandi-wheat-field.jpg'">
+            <div class="event-poster-hover-hint"><i class="fas fa-search-plus"></i> 点击查看高清原图</div>
+          </div>
+        </div>
+      `;
+
+      // If there are additional photos beyond the poster, render secondary gallery
+      let extraPhotos = list.filter(p => p.media_url !== posterUrl);
+      let extraGalleryHtml = '';
+      if (extraPhotos.length > 0) {
+        extraGalleryHtml = `
+          <div style="max-width:1100px; margin:2rem auto; padding:0 1.5rem;">
+            <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:1.5rem;">
+              <span style="height:1px; flex:1; background:rgba(246,210,138,0.25);"></span>
+              <h3 style="color:var(--gold); font-size:1.05rem; font-weight:600; margin:0; letter-spacing:1px;"><i class="fas fa-camera"></i> 现场照片记录</h3>
+              <span style="height:1px; flex:1; background:rgba(246,210,138,0.25);"></span>
+            </div>
+            <div class="photo-gallery">
+              ${extraPhotos.map(p => `
+                <div class="gallery-item" onclick="openLightbox('${p.media_url}')">
+                  <img src="${p.media_url}" class="gallery-img" loading="lazy" onerror="this.parentElement.style.display='none'">
+                </div>
+              `).join('')}
             </div>
           </div>
         `;
-      } else {
-        container.innerHTML = list.map(p => `
-          <div class="gallery-item" onclick="openLightbox('${p.media_url}')">
-            <img src="${p.media_url}" class="gallery-img" onerror="this.parentElement.style.display='none'">
-          </div>`).join('');
       }
+
+      container.className = 'event-poster-view-container';
+      container.innerHTML = mainPosterHtml + extraGalleryHtml;
 
     } catch (e) {
       console.error("initEventGallery Error:", e);
-      container.innerHTML = "<p style='text-align:center; opacity:0.5;'>加载失败。</p>";
+      container.innerHTML = "<p style='text-align:center; opacity:0.5; padding:3rem;'>加载失败。</p>";
     }
   }
 

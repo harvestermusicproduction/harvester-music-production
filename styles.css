@@ -2889,12 +2889,100 @@ body.harvest-active {
 .peek-photo:nth-child(2) { opacity: 1; transform: translate(50px, -110px) rotate(5deg); transition-delay: 0.1s; }
 .folder-card:hover .peek-photo:nth-child(3) { opacity: 1; transform: translate(110px, -70px) rotate(15deg); transition-delay: 0.15s; }
 
-/* Photo Gallery Detail */
+/* 🌟 Photo Gallery & Enlarged Event Poster Detail Showcase */
+.event-single-poster-wrap {
+  max-width: 820px;
+  width: 100%;
+  margin: 1.5rem auto 3.5rem;
+  padding: 0 1rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.event-poster-card {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(18, 22, 28, 0.7);
+  border: 1px solid rgba(246, 210, 138, 0.3);
+  box-shadow: 
+    0 25px 60px rgba(0, 0, 0, 0.75),
+    0 6px 18px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.event-poster-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(246, 210, 138, 0.65);
+  box-shadow: 
+    0 32px 75px rgba(0, 0, 0, 0.9), 
+    0 0 30px rgba(246, 210, 138, 0.22);
+}
+
+.event-poster-full-img {
+  width: 100%;
+  max-width: 100%;
+  max-height: 85vh;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 15px;
+}
+
+.event-poster-hover-hint {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background: rgba(14, 18, 23, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--gold);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 7px 16px;
+  border-radius: 50px;
+  border: 1px solid rgba(246, 210, 138, 0.35);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  opacity: 0.88;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+
+.event-poster-card:hover .event-poster-hover-hint {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .event-single-poster-wrap {
+    margin: 1rem auto 2.5rem;
+    padding: 0 0.8rem;
+  }
+  .event-poster-card {
+    border-radius: 12px;
+  }
+  .event-poster-full-img {
+    border-radius: 11px;
+    max-height: 75vh;
+  }
+  .event-poster-hover-hint {
+    font-size: 0.72rem;
+    padding: 5px 12px;
+    bottom: 10px;
+    right: 10px;
+  }
+}
+
+/* Photo Gallery Grid for Multi-Photo Albums */
 .photo-gallery {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
-  padding: 3rem 0;
+  padding: 2rem 0;
 }
 
 @media (max-width: 900px) { .photo-gallery { grid-template-columns: repeat(2, 1fr); } }
@@ -2906,10 +2994,12 @@ body.harvest-active {
   border-radius: 12px;
   cursor: pointer;
   background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .gallery-img {
   width: 100%; height: 100%; object-fit: cover;
+  display: block;
   transition: 0.5s ease;
 }
 
