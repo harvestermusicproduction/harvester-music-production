@@ -2457,13 +2457,110 @@ document.addEventListener('DOMContentLoaded', () => {
     if (list.length > 0) return list;
 
     return [
-      { id: "staff_1", role: "创作平台创办启发人", role_en: "Founding Inspirer", names: "汤小康\nWarren 沈自强", image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80" },
-      { id: "staff_2", role: "创作", role_en: "Music Creation", names: "Warren 沈自强\n汤小康\nNatasha", image_url: "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80" },
-      { id: "staff_3", role: "制作", role_en: "Music Production", names: "汤小康\nWarren 沈自强\nEdward", image_url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80" },
-      { id: "staff_4", role: "拍摄", role_en: "Visual & Video Design", names: "陈宏亮", image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80" },
-      { id: "staff_5", role: "宣传", role_en: "Marketing & Promotion", names: "Sherlyn", image_url: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80" },
-      { id: "staff_6", role: "行政", role_en: "Administration", names: "梁苡乐", image_url: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80" },
-      { id: "staff_7", role: "歌手与主领", role_en: "Singers & Worship Leaders", names: "依歌曲需求而定", image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80" }
+  // Dynamic co-worker team management helper
+  window.getCoworkerXPercent = function(posStr) {
+    if (!posStr) return 50;
+    const parts = String(posStr).trim().split(/\s+/);
+    if (parts.length >= 1) {
+      if (parts[0] === 'left') return 0;
+      if (parts[0] === 'center') return 50;
+      if (parts[0] === 'right') return 100;
+      const num = parseInt(parts[0], 10);
+      if (!isNaN(num)) return num;
+    }
+    return 50;
+  };
+
+  window.getCoworkerYPercent = function(posStr) {
+    if (!posStr) return 20;
+    const parts = String(posStr).trim().split(/\s+/);
+    if (parts.length >= 2) {
+      if (parts[1] === 'top') return 0;
+      if (parts[1] === 'center') return 50;
+      if (parts[1] === 'bottom') return 100;
+      const num = parseInt(parts[1], 10);
+      if (!isNaN(num)) return num;
+    } else if (parts.length === 1) {
+      if (parts[0] === 'top') return 0;
+      if (parts[0] === 'bottom') return 100;
+    }
+    return 20;
+  };
+
+  window.onCoworkerCropChange = function(idx) {
+    const sX = document.getElementById(`slider_x_${idx}`);
+    const sY = document.getElementById(`slider_y_${idx}`);
+    const sZ = document.getElementById(`slider_z_${idx}`);
+    const valX = sX ? parseInt(sX.value, 10) : 50;
+    const valY = sY ? parseInt(sY.value, 10) : 20;
+    const valZ = sZ ? (parseInt(sZ.value, 10) / 100) : 1.0;
+
+    const spanX = document.getElementById(`val_x_${idx}`);
+    const spanY = document.getElementById(`val_y_${idx}`);
+    const spanZ = document.getElementById(`val_z_${idx}`);
+    const label = document.getElementById(`pos_label_${idx}`);
+    const hiddenPos = document.getElementById(`in_cw_pos_${idx}`);
+    const hiddenZoom = document.getElementById(`in_cw_zoom_${idx}`);
+    const imgPrev = document.getElementById(`prev_cw_${idx}`);
+
+    if (spanX) spanX.innerText = `${valX}%`;
+    if (spanY) spanY.innerText = `${valY}%`;
+    if (spanZ) spanZ.innerText = `${Math.round(valZ * 100)}%`;
+    const posStr = `${valX}% ${valY}%`;
+    if (label) label.innerText = `${posStr}`;
+    if (hiddenPos) hiddenPos.value = posStr;
+    if (hiddenZoom) hiddenZoom.value = valZ;
+
+    if (imgPrev) {
+      imgPrev.style.objectPosition = posStr;
+      imgPrev.style.transform = `scale(${valZ})`;
+    }
+  };
+
+  window.setCoworkerCropPreset = function(idx, xVal, yVal, zVal) {
+    const sX = document.getElementById(`slider_x_${idx}`);
+    const sY = document.getElementById(`slider_y_${idx}`);
+    const sZ = document.getElementById(`slider_z_${idx}`);
+    if (sX) sX.value = xVal;
+    if (sY) sY.value = yVal;
+    if (sZ) sZ.value = Math.round(zVal * 100);
+    onCoworkerCropChange(idx);
+  };
+
+  window.getCoWorkersListFromConfig = function(aboutData) {
+    if (aboutData && Array.isArray(aboutData.about_team_list) && aboutData.about_team_list.length > 0) {
+      return aboutData.about_team_list;
+    }
+    const list = [];
+    for (let i = 1; i <= 20; i++) {
+      const role = aboutData[`about_team_r${i}_t`];
+      const role_en = aboutData[`about_team_r${i}_te`];
+      const names = aboutData[`about_team_r${i}_names`];
+      const img = aboutData[`about_team_r${i}_img`];
+      const pos = aboutData[`about_team_r${i}_pos`];
+      const zoom = aboutData[`about_team_r${i}_zoom`];
+      if (role || names || img) {
+        list.push({
+          id: `staff_${i}`,
+          role: role || `职务 ${i}`,
+          role_en: role_en || '',
+          names: names || '',
+          image_url: img || 'assets/logo.png',
+          img_pos: pos || '50% 20%',
+          img_zoom: zoom ? parseFloat(zoom) : 1.0
+        });
+      }
+    }
+    if (list.length > 0) return list;
+
+    return [
+      { id: "staff_1", role: "创作平台创办启发人", role_en: "Founding Inspirer", names: "汤小康\nWarren 沈自强", image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_2", role: "创作", role_en: "Music Creation", names: "Warren 沈自强\n汤小康\nNatasha", image_url: "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_3", role: "制作", role_en: "Music Production", names: "汤小康\nWarren 沈自强\nEdward", image_url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_4", role: "拍摄", role_en: "Visual & Video Design", names: "陈宏亮", image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_5", role: "宣传", role_en: "Marketing & Promotion", names: "Sherlyn", image_url: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_6", role: "行政", role_en: "Administration", names: "梁苡乐", image_url: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_7", role: "歌手与主领", role_en: "Singers & Worship Leaders", names: "依歌曲需求而定", image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 }
     ];
   };
 
@@ -2472,6 +2569,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const idx = index + 1;
       const numStr = idx < 10 ? '0' + idx : '' + idx;
       const itemId = item.id || `staff_${idx}`;
+      const imgPos = item.img_pos || '50% 20%';
+      const imgZoom = item.img_zoom ? parseFloat(item.img_zoom) : 1.0;
+      const posX = getCoworkerXPercent(imgPos);
+      const posY = getCoworkerYPercent(imgPos);
+      const zoomPct = Math.round(imgZoom * 100);
+
       return `
         <div class="coworker-item-card" data-id="${itemId}" style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222; position:relative; display:flex; flex-direction:column; justify-content:space-between;">
           <div>
@@ -2491,10 +2594,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <label style="font-size:0.75rem; color:#aaa;">拍立得相片 (Polaroid Photo)</label>
             <div style="margin-top:4px;">
-              <img id="prev_cw_${idx}" class="coworker-prev-img" src="${item.image_url || 'assets/logo.png'}" style="width:100%; height:110px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000; border:1px solid #333;" onerror="this.src='assets/logo.png'">
+              <!-- 实时预览框 (Exact Polaroid Aspect Ratio) -->
+              <div style="position:relative; width:100%; height:140px; overflow:hidden; border-radius:6px; background:#080808; border:1px solid #333; margin-bottom:6px;">
+                <img id="prev_cw_${idx}" class="coworker-prev-img" src="${item.image_url || 'assets/logo.png'}" 
+                     style="width:100%; height:100%; object-fit:cover; object-position:${imgPos}; transform:scale(${imgZoom}); transition:all 0.15s ease;" 
+                     onerror="this.src='assets/logo.png'">
+              </div>
+
               <input type="file" id="f_cw_${idx}" style="font-size:0.75rem; width:100%; color:#888;">
               <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_cw_${idx}', 'in_cw_${idx}', 'prev_cw_${idx}')">📤 更换相片</button>
               <input type="hidden" id="in_cw_${idx}" class="coworker-img-val" value="${item.image_url || ''}">
+
+              <!-- 🎚️ 裁剪显示区域与焦点调整 (Crop & Position Controller) -->
+              <div style="background:#161616; padding:10px 12px; border-radius:6px; border:1px solid #282828; margin-top:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span style="font-size:0.73rem; color:var(--gold); font-weight:bold;"><i class="fas fa-crop-alt"></i> 调整显示区域 (Crop Focus)</span>
+                  <span id="pos_label_${idx}" style="font-size:0.68rem; color:#888;">${imgPos}</span>
+                </div>
+
+                <!-- 快捷焦点预设 -->
+                <div style="display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap;">
+                  <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setCoworkerCropPreset('${idx}', 50, 0, ${imgZoom})" title="对齐头部/顶部">⬆️ 偏上(头部)</button>
+                  <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setCoworkerCropPreset('${idx}', 50, 50, ${imgZoom})" title="居中对齐">🎯 居中</button>
+                  <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setCoworkerCropPreset('${idx}', 50, 85, ${imgZoom})" title="对齐底部">⬇️ 偏下</button>
+                  <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setCoworkerCropPreset('${idx}', 15, 50, ${imgZoom})" title="偏左对齐">⬅️ 偏左</button>
+                  <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setCoworkerCropPreset('${idx}', 85, 50, ${imgZoom})" title="偏右对齐">➡️ 偏右</button>
+                </div>
+
+                <!-- 上下微调滑块 -->
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+                  <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">↕️ 上下:</span>
+                  <input type="range" min="0" max="100" value="${posY}" 
+                         id="slider_y_${idx}" class="cw-slider-y" 
+                         style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                         oninput="onCoworkerCropChange('${idx}')">
+                  <span id="val_y_${idx}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right;">${posY}%</span>
+                </div>
+
+                <!-- 左右微调滑块 -->
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+                  <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">↔️ 左右:</span>
+                  <input type="range" min="0" max="100" value="${posX}" 
+                         id="slider_x_${idx}" class="cw-slider-x" 
+                         style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                         oninput="onCoworkerCropChange('${idx}')">
+                  <span id="val_x_${idx}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right;">${posX}%</span>
+                </div>
+
+                <!-- 缩放放大滑块 -->
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">🔍 缩放:</span>
+                  <input type="range" min="100" max="200" value="${zoomPct}" 
+                         id="slider_z_${idx}" class="cw-slider-z" 
+                         style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                         oninput="onCoworkerCropChange('${idx}')">
+                  <span id="val_z_${idx}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right;">${zoomPct}%</span>
+                </div>
+
+                <input type="hidden" id="in_cw_pos_${idx}" class="coworker-pos-val" value="${imgPos}">
+                <input type="hidden" id="in_cw_zoom_${idx}" class="coworker-zoom-val" value="${imgZoom}">
+              </div>
             </div>
           </div>
         </div>
@@ -2530,10 +2689,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <label style="font-size:0.75rem; color:#aaa;">拍立得相片 (Polaroid Photo)</label>
         <div style="margin-top:4px;">
-          <img id="prev_cw_${uid}" class="coworker-prev-img" src="assets/logo.png" style="width:100%; height:110px; object-fit:cover; border-radius:6px; margin-bottom:6px; background:#000; border:1px solid #333;">
+          <div style="position:relative; width:100%; height:140px; overflow:hidden; border-radius:6px; background:#080808; border:1px solid #333; margin-bottom:6px;">
+            <img id="prev_cw_${uid}" class="coworker-prev-img" src="assets/logo.png" 
+                 style="width:100%; height:100%; object-fit:cover; object-position:50% 20%; transform:scale(1); transition:all 0.15s ease;">
+          </div>
           <input type="file" id="f_cw_${uid}" style="font-size:0.75rem; width:100%; color:#888;">
           <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_cw_${uid}', 'in_cw_${uid}', 'prev_cw_${uid}')">📤 上传相片</button>
           <input type="hidden" id="in_cw_${uid}" class="coworker-img-val" value="assets/logo.png">
+
+          <!-- 🎚️ 裁剪显示区域与焦点调整 -->
+          <div style="background:#161616; padding:10px 12px; border-radius:6px; border:1px solid #282828; margin-top:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:0.73rem; color:var(--gold); font-weight:bold;"><i class="fas fa-crop-alt"></i> 调整显示区域 (Crop Focus)</span>
+              <span id="pos_label_${uid}" style="font-size:0.68rem; color:#888;">50% 20%</span>
+            </div>
+
+            <div style="display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap;">
+              <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setCoworkerCropPreset('${uid}', 50, 0, 1.0)" title="对齐头部/顶部">⬆️ 偏上(头部)</button>
+              <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setCoworkerCropPreset('${uid}', 50, 50, 1.0)" title="居中对齐">🎯 居中</button>
+              <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setCoworkerCropPreset('${uid}', 50, 85, 1.0)" title="对齐底部">⬇️ 偏下</button>
+              <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setCoworkerCropPreset('${uid}', 15, 50, 1.0)" title="偏左对齐">⬅️ 偏左</button>
+              <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setCoworkerCropPreset('${uid}', 85, 50, 1.0)" title="偏右对齐">➡️ 偏右</button>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+              <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">↕️ 上下:</span>
+              <input type="range" min="0" max="100" value="20" 
+                     id="slider_y_${uid}" class="cw-slider-y" 
+                     style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                     oninput="onCoworkerCropChange('${uid}')">
+              <span id="val_y_${uid}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right;">20%</span>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+              <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">↔️ 左右:</span>
+              <input type="range" min="0" max="100" value="50" 
+                     id="slider_x_${uid}" class="cw-slider-x" 
+                     style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                     oninput="onCoworkerCropChange('${uid}')">
+              <span id="val_x_${uid}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right;">50%</span>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">🔍 缩放:</span>
+              <input type="range" min="100" max="200" value="100" 
+                     id="slider_z_${uid}" class="cw-slider-z" 
+                     style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                     oninput="onCoworkerCropChange('${uid}')">
+              <span id="val_z_${uid}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right;">100%</span>
+            </div>
+
+            <input type="hidden" id="in_cw_pos_${uid}" class="coworker-pos-val" value="50% 20%">
+            <input type="hidden" id="in_cw_zoom_${uid}" class="coworker-zoom-val" value="1.0">
+          </div>
         </div>
       </div>
     `;
@@ -2581,13 +2789,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const role_en = card.querySelector('.coworker-role-en-input')?.value || '';
       const names = card.querySelector('.coworker-names-input')?.value || '';
       const img = card.querySelector('.coworker-img-val')?.value || '';
+      const pos = card.querySelector('.coworker-pos-val')?.value || '50% 20%';
+      const zoom = parseFloat(card.querySelector('.coworker-zoom-val')?.value) || 1.0;
       const id = card.dataset.id || `staff_${i+1}`;
       teamList.push({
         id,
         role,
         role_en,
         names,
-        image_url: img
+        image_url: img,
+        img_pos: pos,
+        img_zoom: zoom
       });
 
       // Maintain backwards compatibility
@@ -2595,6 +2807,8 @@ document.addEventListener('DOMContentLoaded', () => {
       aboutData[`about_team_r${i+1}_te`] = role_en;
       aboutData[`about_team_r${i+1}_names`] = names;
       aboutData[`about_team_r${i+1}_img`] = img;
+      aboutData[`about_team_r${i+1}_pos`] = pos;
+      aboutData[`about_team_r${i+1}_zoom`] = zoom;
     });
 
     for (let k = teamList.length + 1; k <= 30; k++) {
@@ -2602,6 +2816,8 @@ document.addEventListener('DOMContentLoaded', () => {
       delete aboutData[`about_team_r${k}_te`];
       delete aboutData[`about_team_r${k}_names`];
       delete aboutData[`about_team_r${k}_img`];
+      delete aboutData[`about_team_r${k}_pos`];
+      delete aboutData[`about_team_r${k}_zoom`];
     }
 
     aboutData.about_team_list = teamList;
@@ -2612,7 +2828,7 @@ document.addEventListener('DOMContentLoaded', () => {
         value: JSON.stringify(aboutData)
       }, { onConflict: 'key' });
 
-      alert("🎉 主要服事同工与职务名册已成功保存并实时生效！");
+      alert("🎉 主要服事同工与职务名册（含照片裁剪焦点）已成功保存并实时生效！");
       renderCMS();
     } catch(err) {
       alert("保存失败: " + err.message);

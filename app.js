@@ -139,7 +139,10 @@ document.addEventListener('DOMContentLoaded', () => {
                       <span class="team-spine-name">${m.names || m.name || '主要同工'}</span>
                     </div>
                     <div class="polaroid-img-box">
-                      <img src="${m.image_url || m.img || 'assets/logo.png'}" alt="${m.role || '同工'}" onerror="this.src='assets/logo.png'">
+                      <img src="${m.image_url || m.img || 'assets/logo.png'}" 
+                           alt="${m.role || '同工'}" 
+                           style="object-position: ${m.img_pos || m.pos || '50% 20%'}; transform: scale(${m.img_zoom || m.zoom || 1.0});" 
+                           onerror="this.src='assets/logo.png'">
                     </div>
                   </div>
                   <div class="team-card-bottom">

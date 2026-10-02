@@ -89,6 +89,8 @@ async function fetchArtists() {
               category: "core",
               role: item.role || item.roleTitle || "主要服事同工",
               image_url: item.image_url || item.img || "assets/logo.png",
+              img_pos: item.img_pos || item.pos || "50% 20%",
+              img_zoom: item.img_zoom || item.zoom || 1.0,
               bio: `${item.role || '主要服事同工'}：${(item.names || item.name || '').replace(/\n/g, '、')}\n\n忠心服事神国度，将恩赐化为敬拜的赞美与见证。`
             }));
           } else if (customTeam) {
@@ -97,6 +99,8 @@ async function fetchArtists() {
               const roleTitle = customTeam[`about_team_r${i}_t`];
               const names = customTeam[`about_team_r${i}_names`];
               const img = customTeam[`about_team_r${i}_img`];
+              const pos = customTeam[`about_team_r${i}_pos`];
+              const zoom = customTeam[`about_team_r${i}_zoom`];
 
               if (roleTitle || names || img) {
                 dynamicCore.push({
@@ -105,6 +109,8 @@ async function fetchArtists() {
                   category: "core",
                   role: roleTitle || defaultCoreStaff[i-1]?.role || "主要服事同工",
                   image_url: img || defaultCoreStaff[i-1]?.image_url || "assets/logo.png",
+                  img_pos: pos || "50% 20%",
+                  img_zoom: zoom ? parseFloat(zoom) : 1.0,
                   bio: `${roleTitle || '主要服事同工'}：${names || ''}\n\n忠心服事神国度，将恩赐化为敬拜的赞美与见证。`
                 });
               } else if (i <= defaultCoreStaff.length && defaultCoreStaff[i-1]) {
@@ -132,7 +138,7 @@ async function fetchArtists() {
     const dbCore = remoteSingers.filter(s => s.category === 'core' || s.category === '同工');
     const dbGospelAndWorship = remoteSingers.filter(s => s.category !== 'core' && s.category !== '同工');
 
-    // Seamlessly combine 7 core staff from config with any extra coworkers added to singers table
+    // Seamlessly combine core staff from config with any extra coworkers added to singers table
     const combinedCore = [...coreStaffList];
     if (dbCore.length > 0) {
       dbCore.forEach(dbItem => {
@@ -174,9 +180,13 @@ function renderGrid(data) {
         <div class="card-spine-name">
           <span class="spine-name-text">${artist.name}</span>
         </div>
-        <!-- 肖像大图 (Portrait Photo) -->
+        <!-- 肖像大图 (Portrait Photo - 完美支持后台自定义裁剪区域与缩放) -->
         <div class="img-wrapper">
-          <img src="${artist.image_url || 'assets/logo.png'}" alt="${artist.name}" loading="lazy" onerror="this.src='assets/logo.png'">
+          <img src="${artist.image_url || 'assets/logo.png'}" 
+               alt="${artist.name}" 
+               loading="lazy" 
+               style="object-position: ${artist.img_pos || '50% 20%'}; transform: scale(${artist.img_zoom || 1.0});" 
+               onerror="this.src='assets/logo.png'">
         </div>
       </div>
       <!-- 底部双栏极简信息 (Minimalist Bottom Bar) -->
