@@ -41,7 +41,7 @@
     "genre": ["Christian", "Worship", "Gospel", "Pop"]
   }
   </script>
-  <link rel="stylesheet" href="styles.css?v=47.0.0">
+  <link rel="stylesheet" href="styles.css?v=48.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
     window.onerror = function(msg, url, line) {
@@ -181,12 +181,109 @@
       <div style="text-align: center;">
         <p class="section-subtitle font-hand-en" style="margin-top: 0; margin-bottom: 0.8rem; line-height: 1.4;">~ Latest Harvest Music ~</p>
         <h2 style="font-size: 2.5rem; color: #F6F4F0; margin-bottom: 2.5rem; margin-top: 0; line-height: 1.2; font-family: var(--font-chn-title);">最新歌曲</h2>
-        <div id="vinylWrapper" style="position: relative; width: 260px; height: 260px; margin: 0 auto 3rem; z-index: 20; pointer-events: auto;">
-          <div id="vinylDisc" style="width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle at center, #111 0%, #1a1a1a 28%, #222 30%, #1a1a1a 32%, #222 34%, #111 48%, #1a1a1a 50%, #222 52%, #111 58%, #1a1a1a 100%); display:flex; align-items:center; justify-content:center; box-shadow: 0 0 50px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.05);">
-             <img id="cfg_homeSongCover" 
-                  src="assets/logo.png" 
-                  style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #111; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);"
-                  onerror="this.src='assets/logo.png'">
+        <!-- 🤍 Modern White 3D Hi-Fi Turntable (白色 3D 唱片机 · 自动放臂试听15秒) -->
+        <div class="turntable-container" id="homeTurntable">
+          <div class="white-turntable-chassis" id="turntableChassis" onclick="toggleHomeTurntable(event)" title="点击播放 / 暂停 15 秒试听">
+            <!-- 4 Corner Precision Screws -->
+            <div class="chassis-screw screw-tl"></div>
+            <div class="chassis-screw screw-tr"></div>
+            <div class="chassis-screw screw-bl"></div>
+            <div class="chassis-screw screw-br"></div>
+
+            <!-- Top Header & Status -->
+            <div class="turntable-top-row">
+              <div class="turntable-brand-badge">
+                <span class="brand-name">HARVESTER</span>
+                <span class="brand-model">HI-FI AUDIO • TT-33</span>
+              </div>
+              <div class="turntable-top-actions">
+                <div class="speed-toggle-pill" title="33 1/3 转速">
+                  <span class="speed-dot active" id="ttSpeedDot"></span>
+                  <span>33 RPM</span>
+                </div>
+                <div class="power-led-wrap" title="电源与播放指示灯">
+                  <div class="turntable-led" id="ttPowerLed"></div>
+                  <span class="led-label">LIVE</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Main Deck Bay: Platter + Tonearm -->
+            <div class="turntable-deck-bay">
+              <!-- Left: Platter & Vinyl Disc -->
+              <div class="platter-recess">
+                <div class="platter-aluminum-rim">
+                  <div class="platter-felt-mat">
+                    <div class="vintage-vinyl-disc" id="vinylDisc">
+                      <div class="vinyl-groove-lines"></div>
+                      <div class="vinyl-light-sheen"></div>
+                      <!-- Center Album Art Label -->
+                      <div class="vinyl-center-label">
+                        <img id="cfg_homeSongCover" 
+                             src="assets/logo.png" 
+                             alt="Latest Song Cover"
+                             onerror="this.src='assets/logo.png'">
+                      </div>
+                      <!-- Center Brass Spindle -->
+                      <div class="spindle-brass-pin"></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Floating Music Notes Emitter -->
+                <div class="turntable-notes-emitter" id="ttNotesEmitter"></div>
+              </div>
+
+              <!-- Right: Tonearm Assembly ("读歌的支" · 机械落臂系统) -->
+              <div class="tonearm-deck-area">
+                <!-- Pivot Gimbal Base & Counterweight -->
+                <div class="tonearm-base-gimbal">
+                  <div class="counter-weight-cylinder" title="配重砝码"></div>
+                  <div class="gimbal-ring"></div>
+                  <div class="anti-skate-dial" title="侧滑补偿"></div>
+                </div>
+
+                <!-- Tonearm Resting Cradle -->
+                <div class="tonearm-cradle">
+                  <div class="cradle-notch"></div>
+                </div>
+
+                <!-- Movable Tonearm Wand (点击自动落臂 / 抬起) -->
+                <div class="tonearm-wand" id="ttTonearm">
+                  <div class="cueing-lift-peg"></div>
+                  <div class="arm-rod-main"></div>
+                  <!-- Cartridge Headshell & Needle -->
+                  <div class="cartridge-headshell">
+                    <div class="finger-lift-tang"></div>
+                    <div class="cartridge-body-box">
+                      <div class="stylus-needle"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 15-Second Dynamic Progress Strip -->
+            <div class="turntable-progress-track">
+              <div class="turntable-progress-bar" id="ttProgressBar"></div>
+            </div>
+
+            <!-- Bottom Operation Strip -->
+            <div class="turntable-bottom-strip">
+              <button type="button" class="turntable-action-btn" id="ttActionBtn" onclick="toggleHomeTurntable(event)">
+                <i class="fas fa-play" id="ttPlayIcon"></i>
+                <span id="ttBtnText">START 15s PREVIEW</span>
+              </button>
+              <div class="turntable-status-bubble">
+                <span class="status-pulse-dot" id="ttStatusDot"></span>
+                <span id="ttStatusText">点击放臂试听</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Turntable Rubber Vibration Feet -->
+          <div class="turntable-feet-chassis">
+            <div class="turntable-chassis-foot"></div>
+            <div class="turntable-chassis-foot"></div>
           </div>
         </div>
         
@@ -232,7 +329,7 @@
   <script src="water-material.js?v=4.0" defer></script>
   <script src="liquid-engine.js?v=12.0.0" defer></script>
   <script src="visualizer.js?v=4.0" defer></script>
-  <script src="app.js?v=27.0.0" defer></script>
+  <script src="app.js?v=28.0.0" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       console.log("💎 Harvester Diamond V1.7: Engine Active");
@@ -273,63 +370,274 @@
         setInterval(spawnAmbientNote, 1600);
       }
 
-      // --- Vinyl Note Interaction ---
-      const wrapper = document.getElementById('vinylWrapper');
-      const vinylDisc = document.getElementById('vinylDisc'); // Corrected selector
-      
-      if (wrapper) {
-        let lastSpawn = 0;
-        wrapper.addEventListener('mousemove', (e) => {
+      // --- 🤍 Modern White 3D Turntable Engine ---
+      const chassis = document.getElementById('turntableChassis');
+      if (chassis) {
+        let lastMove = 0;
+        chassis.addEventListener('mousemove', (e) => {
           const now = Date.now();
-          if (now - lastSpawn < 100) return; 
-          lastSpawn = now;
-          spawnNote(wrapper);
-        });
-
-        wrapper.addEventListener('mouseenter', () => {
-          // CSS handles rotation now for reliability and performance
-        });
-        wrapper.addEventListener('mouseleave', () => {
-          // CSS handles rotation now for reliability and performance
+          if (now - lastMove < 150) return;
+          lastMove = now;
+          if (isTtPlaying) {
+            spawnTurntableNote();
+          }
         });
       }
     });
 
-    const NOTES = ['♪', '♫', '♬'];
-    function spawnNote(parent) {
-      const note = document.createElement('div');
-      note.className = 'floating-note';
-      note.innerText = NOTES[Math.floor(Math.random() * NOTES.length)];
-      
-      const dx = (Math.random() - 0.5) * 100;
-      const rot = (Math.random() - 0.5) * 60;
-      
-      note.style.setProperty('--dx', `${dx}px`);
-      note.style.setProperty('--rot', `${rot}deg`);
-      note.style.left = `calc(50% + ${(Math.random() - 0.5) * 40}px)`;
-      note.style.top = `calc(50% + ${(Math.random() - 0.5) * 40}px)`;
-      
-      parent.appendChild(note);
-      // Fallback for missing CSS
-      note.style.color = "#f6d28a"; 
-      note.style.zIndex = "9999";
-      
-      setTimeout(() => note.remove(), 2500);
-    }
-    function toggleVinyl() {
-      const disc = document.getElementById('vinylDisc');
-      const audio = document.getElementById('homeAudioControls');
-      if (!audio) return;
-      if (audio.paused) {
-        audio.play(); disc.classList.add('playing');
-      } else {
-        audio.pause(); disc.classList.remove('playing');
+    // --- 🎵 Turntable Playback & Tonearm Drop Controller ---
+    let isTtPlaying = false;
+    let ttAudioElement = null;
+    let ttCountdownTimer = null;
+    let ttNotesInterval = null;
+    const TT_MAX_SECONDS = 15;
+    let currentPreviewUrl = '';
+    let currentSongTitle = '';
+    let audioCtx = null;
+    let synthPlaying = false;
+    let synthOscillators = [];
+
+    window.setHomeTurntableAudio = function(url, title) {
+      currentPreviewUrl = url || '';
+      currentSongTitle = title || '';
+      if (!ttAudioElement) {
+        ttAudioElement = new Audio();
+        ttAudioElement.preload = 'auto';
+        ttAudioElement.addEventListener('ended', () => {
+          stopTurntablePlayback(true);
+        });
+      }
+      if (currentPreviewUrl) {
+        ttAudioElement.src = currentPreviewUrl;
+      }
+    };
+
+    function playWorshipAcousticFallback() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        synthPlaying = true;
+        synthOscillators = [];
+
+        // Warm CCM worship arpeggios: Cadd9 -> G/B -> Am7 -> Fadd9
+        const chords = [
+          [130.81, 196.00, 293.66, 329.63, 392.00],
+          [123.47, 196.00, 293.66, 392.00],
+          [110.00, 164.81, 196.00, 261.63, 329.63],
+          [87.31, 130.81, 196.00, 220.00, 261.63]
+        ];
+
+        const masterGain = audioCtx.createGain();
+        masterGain.gain.setValueAtTime(0.16, audioCtx.currentTime);
+        masterGain.connect(audioCtx.destination);
+
+        let noteDelay = 0;
+        const noteDuration = 0.85;
+
+        for (let loop = 0; loop < 4; loop++) {
+          const chord = chords[loop % chords.length];
+          chord.forEach((freq, idx) => {
+            const time = audioCtx.currentTime + noteDelay + (idx * 0.22);
+            if (time - audioCtx.currentTime > TT_MAX_SECONDS) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+            osc.frequency.setValueAtTime(freq, time);
+
+            gain.gain.setValueAtTime(0.001, time);
+            gain.gain.exponentialRampToValueAtTime(0.14 / (idx + 1), time + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.0001, time + noteDuration + 0.45);
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+
+            osc.start(time);
+            osc.stop(time + noteDuration + 0.55);
+            synthOscillators.push(osc);
+          });
+          noteDelay += 3.6;
+        }
+      } catch (err) {
+        console.warn("Turntable Audio Synth note:", err);
       }
     }
+
+    function stopWorshipAcousticFallback() {
+      synthPlaying = false;
+      if (synthOscillators.length) {
+        synthOscillators.forEach(osc => {
+          try { osc.stop(); osc.disconnect(); } catch(e){}
+        });
+        synthOscillators = [];
+      }
+    }
+
+    function spawnTurntableNote() {
+      const emitter = document.getElementById('ttNotesEmitter');
+      if (!emitter) return;
+      const symbols = ['♪', '♫', '♬', '♩', '𝄞'];
+      const note = document.createElement('div');
+      note.className = 'tt-floating-note';
+      note.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+
+      const dx = (Math.random() - 0.5) * 80;
+      const rot = (Math.random() - 0.5) * 60;
+      note.style.setProperty('--tt-dx', `${dx}px`);
+      note.style.setProperty('--tt-rot', `${rot}deg`);
+      note.style.left = `${(Math.random() - 0.5) * 40}px`;
+      note.style.top = `${(Math.random() - 0.5) * 40}px`;
+
+      emitter.appendChild(note);
+      setTimeout(() => note.remove(), 2300);
+    }
+
+    function startTurntablePlayback() {
+      if (isTtPlaying) return;
+      isTtPlaying = true;
+
+      const tonearm = document.getElementById('ttTonearm');
+      const disc = document.getElementById('vinylDisc');
+      const actionBtn = document.getElementById('ttActionBtn');
+      const playIcon = document.getElementById('ttPlayIcon');
+      const btnText = document.getElementById('ttBtnText');
+      const powerLed = document.getElementById('ttPowerLed');
+      const statusDot = document.getElementById('ttStatusDot');
+      const statusText = document.getElementById('ttStatusText');
+      const progressBar = document.getElementById('ttProgressBar');
+
+      // 1. Lower Tonearm ("读歌的支放下来")
+      if (tonearm) tonearm.classList.add('playing');
+      if (powerLed) powerLed.classList.add('active');
+      if (statusDot) statusDot.classList.add('pulsing');
+      if (actionBtn) actionBtn.classList.add('playing');
+      if (playIcon) playIcon.className = 'fas fa-pause';
+      if (btnText) btnText.innerText = 'PAUSE (15s)';
+      if (statusText) statusText.innerText = '唱臂落针中...';
+
+      // 2. Needle lands on groove after mechanical swing (~380ms)
+      setTimeout(() => {
+        if (!isTtPlaying) return;
+
+        // Start vinyl rotation
+        if (disc) disc.classList.add('spinning');
+        if (statusText) statusText.innerText = '正在试听 15s...';
+
+        // Play real preview audio or graceful fallback
+        if (ttAudioElement && currentPreviewUrl) {
+          try {
+            ttAudioElement.currentTime = 0;
+            const playPromise = ttAudioElement.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(err => {
+                console.warn("HTML5 audio autoplay prevented, activating synth fallback:", err);
+                playWorshipAcousticFallback();
+              });
+            }
+          } catch(e) {
+            playWorshipAcousticFallback();
+          }
+        } else {
+          playWorshipAcousticFallback();
+        }
+
+        // Spawn musical notes floating up from turntable
+        spawnTurntableNote();
+        ttNotesInterval = setInterval(spawnTurntableNote, 650);
+
+        // 15-second countdown timer & progress bar
+        const intervalStep = 100;
+        const totalSteps = (TT_MAX_SECONDS * 1000) / intervalStep;
+        let stepCount = 0;
+
+        ttCountdownTimer = setInterval(() => {
+          stepCount++;
+          const progressPercent = Math.min(100, (stepCount / totalSteps) * 100);
+          if (progressBar) progressBar.style.width = `${progressPercent}%`;
+
+          const remaining = Math.max(0, Math.ceil(TT_MAX_SECONDS - (stepCount * intervalStep / 1000)));
+          if (statusText) statusText.innerText = `正在试听 ${remaining}s...`;
+
+          if (stepCount >= totalSteps) {
+            stopTurntablePlayback(true);
+          }
+        }, intervalStep);
+
+      }, 420);
+    }
+
+    function stopTurntablePlayback(isCompleted = false) {
+      if (!isTtPlaying) return;
+      isTtPlaying = false;
+
+      // Clear timers
+      if (ttCountdownTimer) {
+        clearInterval(ttCountdownTimer);
+        ttCountdownTimer = null;
+      }
+      if (ttNotesInterval) {
+        clearInterval(ttNotesInterval);
+        ttNotesInterval = null;
+      }
+
+      // Stop Audio
+      if (ttAudioElement) {
+        try {
+          ttAudioElement.pause();
+          ttAudioElement.currentTime = 0;
+        } catch(e){}
+      }
+      stopWorshipAcousticFallback();
+
+      // Mechanical reset: Tonearm lifts and returns to rest position
+      const tonearm = document.getElementById('ttTonearm');
+      const disc = document.getElementById('vinylDisc');
+      const actionBtn = document.getElementById('ttActionBtn');
+      const playIcon = document.getElementById('ttPlayIcon');
+      const btnText = document.getElementById('ttBtnText');
+      const powerLed = document.getElementById('ttPowerLed');
+      const statusDot = document.getElementById('ttStatusDot');
+      const statusText = document.getElementById('ttStatusText');
+      const progressBar = document.getElementById('ttProgressBar');
+
+      if (tonearm) tonearm.classList.remove('playing');
+      if (disc) disc.classList.remove('spinning');
+      if (powerLed) powerLed.classList.remove('active');
+      if (statusDot) statusDot.classList.remove('pulsing');
+      if (actionBtn) actionBtn.classList.remove('playing');
+      if (playIcon) playIcon.className = 'fas fa-play';
+      if (btnText) btnText.innerText = 'START 15s PREVIEW';
+
+      if (progressBar) {
+        progressBar.style.width = isCompleted ? '100%' : '0%';
+        if (isCompleted) {
+          setTimeout(() => { if (!isTtPlaying && progressBar) progressBar.style.width = '0%'; }, 1200);
+        }
+      }
+
+      if (statusText) {
+        statusText.innerText = isCompleted ? '试听完毕 · 点击重播' : '已暂停 · 点击试听';
+      }
+    }
+
+    function toggleHomeTurntable(event) {
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      if (isTtPlaying) {
+        stopTurntablePlayback(false);
+      } else {
+        startTurntablePlayback();
+      }
+    }
+
+    // Backwards compatibility for any legacy callers
+    window.toggleVinyl = toggleHomeTurntable;
   </script>
-  <style>
-    @keyframes vinylSpin { from {transform:rotate(0deg);} to {transform:rotate(360deg);} }
-    .playing { animation: vinylSpin 4s linear infinite; }
-  </style>
 </body>
 </html>

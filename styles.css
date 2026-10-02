@@ -712,16 +712,616 @@ header.scrolled {
   pointer-events: none;
 }
 
-/* 📀 Vinyl Record Dynamics */
-@keyframes vinylRotate {
+/* 🤍 Modern White 3D Hi-Fi Turntable (白色 3D 唱片机 · 自动放臂试听15秒) */
+.turntable-container {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto 2.5rem;
+  z-index: 20;
+  perspective: 1200px;
+}
+
+.white-turntable-chassis {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(145deg, #ffffff 0%, #f7f6f3 45%, #eeebe5 100%);
+  border-radius: 20px;
+  padding: 18px 20px 14px;
+  box-shadow: 
+    0 25px 50px -10px rgba(0, 0, 0, 0.6),
+    0 8px 0 #ded8ce,
+    0 12px 25px rgba(0, 0, 0, 0.35),
+    inset 0 2px 3px rgba(255, 255, 255, 0.95),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  transform: perspective(1000px) rotateX(4deg);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+  user-select: none;
+  cursor: pointer;
+}
+
+.white-turntable-chassis:hover {
+  transform: perspective(1000px) rotateX(1deg) translateY(-4px);
+  box-shadow: 
+    0 30px 60px -10px rgba(0, 0, 0, 0.7),
+    0 9px 0 #ded8ce,
+    0 16px 30px rgba(0, 0, 0, 0.4),
+    inset 0 2px 3px rgba(255, 255, 255, 0.95);
+}
+
+/* Corner Screws */
+.chassis-screw {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #e0deda 40%, #b8b4ad 100%);
+  border: 1px solid #d0ccc4;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.2), 0 1px 1px rgba(255,255,255,0.8);
+}
+.screw-tl { top: 10px; left: 10px; }
+.screw-tr { top: 10px; right: 10px; }
+.screw-bl { bottom: 10px; left: 10px; }
+.screw-br { bottom: 10px; right: 10px; }
+
+/* Top Header */
+.turntable-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.turntable-brand-badge {
+  text-align: left;
+}
+
+.brand-name {
+  display: block;
+  font-family: var(--font-brand), sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 3px;
+  font-weight: 800;
+  color: #b5a082;
+  text-shadow: 0 1px 0 #ffffff;
+  line-height: 1.1;
+}
+
+.brand-model {
+  display: block;
+  font-size: 0.55rem;
+  letter-spacing: 1.5px;
+  color: #9c9488;
+  font-family: monospace;
+  margin-top: 2px;
+}
+
+.turntable-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.speed-toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #eae6de;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: #6d665c;
+  border: 1px solid #dfd9ce;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.speed-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #a89f91;
+}
+
+.speed-dot.active {
+  background: #f6d28a;
+  box-shadow: 0 0 4px #f6d28a;
+}
+
+.power-led-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.turntable-led {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6e6456;
+  border: 1px solid #4a4338;
+  transition: all 0.3s ease;
+}
+
+.turntable-led.active {
+  background: #ffb834;
+  box-shadow: 0 0 10px #ffb834, 0 0 16px rgba(255, 184, 52, 0.8);
+  border-color: #ffe3a0;
+}
+
+.led-label {
+  font-size: 0.55rem;
+  color: #9c9488;
+  letter-spacing: 1px;
+  font-family: monospace;
+}
+
+/* Deck Main Bay */
+.turntable-deck-bay {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  position: relative;
+  min-height: 200px;
+}
+
+/* Platter Recess (Left) */
+.platter-recess {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #252422 60%, #151413 100%);
+  padding: 6px;
+  box-shadow: 
+    inset 0 6px 12px rgba(0, 0, 0, 0.7),
+    0 1px 2px rgba(255, 255, 255, 0.9);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.platter-aluminum-rim {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(from 45deg, #d4d0c7, #ffffff, #bbb5a8, #f0ede6, #d4d0c7);
+  padding: 3px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+}
+
+.platter-felt-mat {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #181716;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Vinyl Disc */
+.vintage-vinyl-disc {
+  width: 182px;
+  height: 182px;
+  border-radius: 50%;
+  background: 
+    radial-gradient(circle at center, 
+      #111 0%, 
+      #181818 20%, 
+      #0e0e0e 22%, 
+      #1c1c1c 26%, 
+      #121212 30%, 
+      #202020 36%, 
+      #141414 42%, 
+      #1a1a1a 48%, 
+      #111 54%, 
+      #1c1c1c 62%, 
+      #0d0d0d 72%, 
+      #171717 84%, 
+      #080808 100%);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8), inset 0 0 2px rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.5s ease-out;
+}
+
+.vintage-vinyl-disc.spinning {
+  animation: turntableSpin 3s linear infinite;
+}
+
+@keyframes turntableSpin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-.vinyl-rotating,
-#vinylWrapper:hover #vinylDisc {
-  animation: vinylRotate 8s linear infinite;
-  transform-origin: center center;
+/* Vinyl Grooves & Specular Sheen */
+.vinyl-groove-lines {
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.06);
+  box-shadow: 
+    inset 0 0 0 8px rgba(255,255,255,0.02),
+    inset 0 0 0 16px rgba(0,0,0,0.3),
+    inset 0 0 0 24px rgba(255,255,255,0.02),
+    inset 0 0 0 32px rgba(0,0,0,0.3);
+  pointer-events: none;
+}
+
+.vinyl-light-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from -35deg at 50% 50%,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.12) 35deg,
+    transparent 70deg,
+    transparent 180deg,
+    rgba(255, 255, 255, 0.12) 215deg,
+    transparent 250deg
+  );
+  pointer-events: none;
+}
+
+/* Center Album Label */
+.vinyl-center-label {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 6px rgba(0,0,0,0.8), inset 0 0 4px rgba(0,0,0,0.5);
+  border: 2px solid #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vinyl-center-label img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.spindle-brass-pin {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f6d28a 30%, #a67c38 80%, #594119 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+/* Tonearm Assembly ("读歌的支" / 唱臂系统) */
+.tonearm-deck-area {
+  position: relative;
+  width: 110px;
+  height: 200px;
+  flex-shrink: 0;
+}
+
+/* Tonearm Pivot Base */
+.tonearm-base-gimbal {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f0ede6 0%, #d8d3c8 60%, #b3aca0 100%);
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+  border: 1px solid #bfb8ab;
+  z-index: 10;
+}
+
+.gimbal-ring {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #d8d3c8, #ffffff, #a8a092, #ffffff, #d8d3c8);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.counter-weight-cylinder {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 14px;
+  background: linear-gradient(to right, #444, #777, #333);
+  border-radius: 3px;
+  border: 1px solid #222;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.anti-skate-dial {
+  position: absolute;
+  bottom: -4px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ded8ce;
+  border: 1px solid #9c9488;
+}
+
+/* Tonearm Rest Cradle */
+.tonearm-cradle {
+  position: absolute;
+  bottom: 22px;
+  right: 20px;
+  width: 16px;
+  height: 24px;
+  border-left: 2.5px solid #a39c91;
+  border-bottom: 2.5px solid #a39c91;
+  border-bottom-left-radius: 6px;
+  z-index: 5;
+}
+
+.cradle-notch {
+  position: absolute;
+  top: -2px;
+  left: -4px;
+  width: 8px;
+  height: 5px;
+  background: #2b2723;
+  border-radius: 2px;
+}
+
+/* Tonearm Movable Wand */
+.tonearm-wand {
+  position: absolute;
+  top: 32px;
+  right: 47px;
+  width: 4px;
+  height: 135px;
+  transform-origin: top center;
+  transform: rotate(0deg);
+  transition: transform 0.85s cubic-bezier(0.25, 1, 0.45, 1);
+  z-index: 15;
+  filter: drop-shadow(2px 5px 6px rgba(0,0,0,0.45));
+}
+
+/* Activated / Playing State: Tonearm swings onto vinyl record */
+.tonearm-wand.playing {
+  transform: rotate(31deg);
+}
+
+.arm-rod-main {
+  width: 4px;
+  height: 105px;
+  background: linear-gradient(to right, #e2dcd2, #ffffff, #b5ad9e);
+  border-radius: 2px;
+  box-shadow: inset 0 0 1px rgba(0,0,0,0.3);
+  margin: 0 auto;
+}
+
+.cueing-lift-peg {
+  position: absolute;
+  top: 35px;
+  left: -8px;
+  width: 8px;
+  height: 3px;
+  background: #f6d28a;
+  border-radius: 2px;
+}
+
+/* Cartridge & Needle */
+.cartridge-headshell {
+  position: absolute;
+  bottom: 0;
+  left: -9px;
+  width: 22px;
+  height: 30px;
+  transform: rotate(-18deg);
+  transform-origin: top center;
+}
+
+.cartridge-body-box {
+  width: 14px;
+  height: 24px;
+  background: linear-gradient(135deg, #1c1c1c 0%, #2f2f2f 60%, #151515 100%);
+  border-radius: 3px;
+  border: 1px solid #444;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  position: relative;
+}
+
+.cartridge-body-box::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 2px;
+  right: 2px;
+  height: 4px;
+  background: #f6d28a;
+  border-radius: 1px;
+}
+
+.finger-lift-tang {
+  position: absolute;
+  top: 2px;
+  right: -6px;
+  width: 8px;
+  height: 2.5px;
+  background: #ded8ce;
+  border-radius: 1px;
+}
+
+.stylus-needle {
+  position: absolute;
+  bottom: -4px;
+  left: 5px;
+  width: 3px;
+  height: 6px;
+  background: linear-gradient(to bottom, #f6d28a, #ffffff);
+  border-radius: 1px;
+  box-shadow: 0 0 5px rgba(246, 210, 138, 0.8);
+}
+
+/* Bottom Control Strip */
+.turntable-bottom-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.turntable-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(145deg, #2a2826, #141312);
+  color: #f6d28a;
+  border: 1px solid rgba(246, 210, 138, 0.4);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.76rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: all 0.25s ease;
+}
+
+.turntable-action-btn:hover {
+  background: linear-gradient(145deg, #383430, #1f1d1b);
+  border-color: #f6d28a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(246, 210, 138, 0.25);
+}
+
+.turntable-action-btn.playing {
+  background: linear-gradient(145deg, #7a3a22, #4d1c0c);
+  color: #ffffff;
+  border-color: #ff8555;
+}
+
+.turntable-status-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  color: #7d7568;
+}
+
+.status-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a39c91;
+  transition: all 0.3s ease;
+}
+
+.status-pulse-dot.pulsing {
+  background: #2ed573;
+  box-shadow: 0 0 8px #2ed573;
+  animation: dotPulse 1.2s infinite;
+}
+
+@keyframes dotPulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 15-Second Progress Strip */
+.turntable-progress-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 2px;
+  margin-top: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.turntable-progress-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(to right, #dfc285, #f6d28a, #ff9f43);
+  border-radius: 2px;
+  transition: width 0.2s linear;
+}
+
+/* 3D Feet */
+.turntable-feet-chassis {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 35px;
+  margin-top: -6px;
+  position: relative;
+  z-index: 1;
+}
+
+.turntable-chassis-foot {
+  width: 32px;
+  height: 10px;
+  background: linear-gradient(to bottom, #bdb6aa, #615a4f);
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Floating Music Notes */
+.turntable-notes-emitter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.tt-floating-note {
+  position: absolute;
+  color: #f6d28a;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(246, 210, 138, 0.8);
+  pointer-events: none;
+  animation: ttFloatUp 2.2s ease-out forwards;
+}
+
+@keyframes ttFloatUp {
+  0% {
+    transform: translate(0, 0) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: translate(var(--tt-dx), -30px) scale(1.1) rotate(var(--tt-rot));
+  }
+  100% {
+    transform: translate(calc(var(--tt-dx) * 1.8), -110px) scale(0.8) rotate(calc(var(--tt-rot) * 2));
+    opacity: 0;
+  }
 }
 
 .hero-content-layer {
@@ -2656,13 +3256,11 @@ body.harvest-active {
     margin-bottom: 2.5rem !important;
     padding: 0 0.5rem !important;
   }
-  #vinylWrapper, #vinylDisc {
-    width: 210px !important;
-    height: 210px !important;
-  }
-  #cfg_homeSongCover {
-    width: 85px !important;
-    height: 85px !important;
+  .turntable-container {
+    max-width: 340px !important;
+    transform: scale(0.95);
+    transform-origin: center top;
+    margin-bottom: 1.5rem !important;
   }
 }
 
@@ -2723,13 +3321,20 @@ body.harvest-active {
     padding: 1rem !important;
   }
 
-  #vinylWrapper, #vinylDisc {
-    width: 175px !important;
-    height: 175px !important;
+  .turntable-container {
+    max-width: 320px !important;
+    transform: scale(0.85);
+    transform-origin: center top;
+    margin-bottom: 1rem !important;
   }
-  #cfg_homeSongCover {
-    width: 70px !important;
-    height: 70px !important;
+}
+
+@media (max-width: 360px) {
+  .turntable-container {
+    max-width: 290px !important;
+    transform: scale(0.78);
+    transform-origin: center top;
+    margin-bottom: 0.5rem !important;
   }
 }
 

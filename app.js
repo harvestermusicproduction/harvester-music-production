@@ -205,6 +205,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const songCover = customMatch?.cover_url || featuredSong.cover_url || 'assets/logo.png';
         const songAudio = featuredSong.audio_url || customMatch?.youtube_url || customMatch?.audio_url || '';
 
+        // 15-second preview audio extraction for White 3D Turntable
+        const previewUrl = featuredSong.preview_audio_url || 
+          (featuredSong.audio_url && !featuredSong.audio_url.includes('youtube.com') && !featuredSong.audio_url.includes('youtu.be') ? featuredSong.audio_url : '') ||
+          customMatch?.preview_audio_url || 
+          (customMatch?.audio_url && !customMatch.audio_url.includes('youtube.com') && !customMatch.audio_url.includes('youtu.be') ? customMatch.audio_url : '') || '';
+
+        if (typeof window.setHomeTurntableAudio === 'function') {
+          window.setHomeTurntableAudio(previewUrl, songTitle);
+        }
+
         const titleEl = document.getElementById('cfg_homeSongTitle') || document.getElementById('latest_title');
         if (titleEl) {
           titleEl.innerHTML = `${songTitle} <span style="display:block; font-size:0.95rem; color:var(--gold); font-family:var(--font-serif); margin-top:6px; font-weight:normal; letter-spacing:1px;">${songArtist}</span>`;
