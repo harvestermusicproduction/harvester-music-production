@@ -1285,7 +1285,7 @@ You have set my feet upon the rock!`
             </div>
 
             <div style="margin-top:10px;">
-              <h2 style="font-family:var(--font-songti), serif; font-size:1.45rem; font-weight:700; color: #F6F4F0; margin:0 0 3px; text-shadow:0 2px 8px rgba(0,0,0,0.6);">
+              <h2 style="font-family:var(--font-gaoduanhei), sans-serif; font-size:1.45rem; font-weight:700; color: #F6F4F0; margin:0 0 3px; text-shadow:0 2px 8px rgba(0,0,0,0.6);">
                 ${activeSong.title}
               </h2>
               <p style="font-size:0.82rem; color:rgba(255,255,255,0.8); margin:0; font-family:var(--font-body);">
@@ -1332,7 +1332,7 @@ You have set my feet upon the rock!`
 
                   <div style="border-bottom:1px solid rgba(0,0,0,0.12); padding-bottom:8px; margin-bottom:12px;">
                     <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:${pal.primary};">FOLD 01 · LYRICS</span>
-                    <h3 style="margin:2px 0 0; color:${pal.fold1_text}; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">完整歌词 (LYRICS)</h3>
+                    <h3 style="margin:2px 0 0; color:${pal.fold1_text}; font-size:1.35rem; font-family:var(--font-gaoduanhei), var(--font-brand), sans-serif; font-weight:700;">完整歌词 (LYRICS)</h3>
                   </div>
 
                   <div style="font-family:var(--font-songti), serif; font-size:1rem; line-height:1.9; color:${pal.fold1_text}; white-space:pre-wrap; max-height:270px; overflow-y:auto; padding-right:6px;">
@@ -1353,7 +1353,7 @@ ${activeSong.lyrics}
                 <div>
                   <div style="border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; margin-bottom:14px;">
                     <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:${pal.cream};">FOLD 02 · WORSHIP INSPIRATION</span>
-                    <h3 style="margin:2px 0 0; color: #F6F4F0; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">创作心得与经文 (NOTES)</h3>
+                    <h3 style="margin:2px 0 0; color: #F6F4F0; font-size:1.35rem; font-family:var(--font-gaoduanhei), var(--font-brand), sans-serif; font-weight:700;">创作心得与经文 (NOTES)</h3>
                   </div>
 
                   <div style="font-family:var(--font-songti), serif; font-size:0.98rem; line-height:1.85; color:${pal.fold2_text}; space-y:10px;">
@@ -1389,7 +1389,7 @@ ${activeSong.lyrics}
 
                   <div style="border-bottom:1px solid rgba(0,0,0,0.12); padding-bottom:8px; margin-bottom:12px;">
                     <span style="font-family:var(--font-times); font-size:0.75rem; letter-spacing:2px; color:${pal.primary};">FOLD 03 · PRODUCTION CREDITS</span>
-                    <h3 style="margin:2px 0 0; color:${pal.fold3_text}; font-size:1.35rem; font-family:var(--font-eng-title); font-weight:700;">同工团队 (CREDITS)</h3>
+                    <h3 style="margin:2px 0 0; color:${pal.fold3_text}; font-size:1.35rem; font-family:var(--font-gaoduanhei), var(--font-brand), sans-serif; font-weight:700;">同工团队 (CREDITS)</h3>
                   </div>
 
                   <div style="font-size:0.88rem; space-y:8px; color:${pal.fold3_text}; font-family:var(--font-body);">

@@ -129,7 +129,7 @@
 
 @import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.1.0/style.css');
 @import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css');
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@300;400;500;600;700;900&display=swap');
 
 :root {
   --gold: #f6d28a;
@@ -163,43 +163,45 @@
   
   /* 🏛️ Unified Platform Typography Standard: 
      - 统一中文标题 (Chinese Titles/Headings): 站酷高端黑 (ZCOOL GaoDuanHei)
-     - 统一中文正文 (Chinese Body): 霞鹜文楷 (LXGW WenKai Screen / LXGW WenKai)
+     - 统一中文正文 (Chinese Body): 思源宋体 (Noto Serif SC / Source Han Serif)
      - 统一英文大标题 (Headings & Numbers): Syne / Montserrat / Archivo Black
      - 统一手写/书脊 (Handwritten & Spines): 辰宇落雁体 (ChenYuluoyan) / Apple Chancery
   */
   --font-gaoduanhei: '站酷高端黑', 'ZCOOL GaoDuanHei', 'ZCOOL-GaoDuanHei', 'ZCOOL_GaoDuanHei', 'ZcoolGaoDuanHei', 'GaoDuanHei', 'Syne', 'Montserrat', 'Archivo Black', 'SimHei', 'Heiti SC', sans-serif;
-  --font-wenkai: 'LXGW WenKai Screen', 'LXGW WenKai', '霞鹜文楷', 'LXGW WenKai Screen R', 'Noto Serif SC', 'Kaiti SC', STKaiti, serif;
-  --font-chenyuluoyan: 'ChenYuluoyan', '辰宇落雁体', 'Yozai', '悠哉体', cursive, var(--font-wenkai);
+  --font-songti: 'Noto Serif SC', 'Source Han Serif SC', 'Source Han Serif', '思源宋体', 'Songti SC', 'STSong', 'SimSun', serif;
+  --font-noto-serif-sc: var(--font-songti);
+  --font-wenkai: var(--font-songti);
+  --font-chenyuluoyan: 'ChenYuluoyan', '辰宇落雁体', 'Yozai', '悠哉体', cursive, var(--font-songti);
   --font-handwriting: var(--font-chenyuluoyan);
   
-  --font-times-new-roman: 'Times New Roman', Times, 'Baskerville', var(--font-wenkai), serif;
+  --font-times-new-roman: 'Times New Roman', Times, 'Baskerville', var(--font-songti), serif;
   --font-brand: 'Syne', 'Montserrat', 'Archivo Black', 'Anton', var(--font-gaoduanhei), sans-serif;
   --font-puploop: var(--font-brand);
   --font-chancery: 'Apple Chancery', 'Snell Roundhand', 'Dancing Script', 'Caveat', cursive, serif;
 
   --font-times: var(--font-times-new-roman);
-  --font-songti: var(--font-gaoduanhei);
   
   --font-eng-title: var(--font-brand);
   --font-eng-body:  var(--font-times-new-roman);
   --font-chn-title: var(--font-gaoduanhei);
-  --font-chn-body:  var(--font-wenkai);
+  --font-chn-body:  var(--font-songti);
   --font-hand-title: var(--font-gaoduanhei);
   --font-hand-en:    var(--font-chancery);
   --font-hand-cn:    var(--font-chenyuluoyan);
-  --font-serif-cn:   var(--font-wenkai);
-  --font-kaiti:      var(--font-wenkai);
-  --font-kai:        var(--font-wenkai);
-  --font-sans:       'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', var(--font-wenkai), sans-serif;
-  --font-serif:      var(--font-wenkai);
+  --font-serif-cn:   var(--font-songti);
+  --font-kaiti:      var(--font-songti);
+  --font-kai:        var(--font-songti);
+  --font-sans:       'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', var(--font-songti), sans-serif;
+  --font-serif:      var(--font-songti);
   
   /* Helper Assignments */
   --font-display-en: var(--font-brand);
   --font-display: var(--font-gaoduanhei);
   --font-title:   var(--font-gaoduanhei);
   --font-title-cn: var(--font-gaoduanhei);
-  --font-body:    var(--font-wenkai);
-  --font-body-text: var(--font-wenkai);
+  --font-body:    var(--font-songti);
+  --font-body-text: var(--font-songti);
+  --font-body-cn: var(--font-songti);
   
   --transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   --hand-radius: 14px;
@@ -389,7 +391,7 @@ body.page-contact, .page-contact {
 }
 
 .hero-chinese-title {
-  font-family: var(--font-songti), serif !important;
+  font-family: var(--font-gaoduanhei), sans-serif !important;
   font-size: clamp(2.1rem, 4.8vw, 3.4rem) !important;
   color: var(--gold) !important;
   letter-spacing: 12px !important;
@@ -414,7 +416,7 @@ body.page-contact, .page-contact {
 }
 
 h1, h2, h3, h4, h5, h6 { 
-  font-family: var(--font-brand), var(--font-gaoduanhei), sans-serif !important; 
+  font-family: var(--font-gaoduanhei), var(--font-brand), sans-serif !important; 
   font-weight: 850 !important; 
   line-height: 1.25; 
   letter-spacing: -0.3px;
@@ -437,10 +439,10 @@ section { padding: 7rem 2rem; max-width: 1100px; margin: 0 auto; }
 .font-title-en { font-family: var(--font-brand), sans-serif !important; font-size: 1.35rem; font-weight: 900; letter-spacing: -0.3px; }
 .font-title-cn { font-family: var(--font-gaoduanhei), sans-serif !important; font-weight: 700; font-size: 1.4rem; letter-spacing: 0.5px; }
 .font-body-en  { font-family: var(--font-times-new-roman), serif; font-size: 1.05rem; }
-.font-body-cn  { font-family: var(--font-wenkai), serif; font-size: 1.05rem; }
+.font-body-cn  { font-family: var(--font-songti), serif !important; font-size: 1.05rem; }
 .font-hand-en  { font-family: var(--font-chancery), cursive, serif !important; font-size: 1.15rem; letter-spacing: 1px; font-weight: 600; }
 .font-hand-cn  { font-family: var(--font-chenyuluoyan), cursive, serif !important; font-size: 1.15rem; letter-spacing: 1px; font-weight: 600; }
-.font-serif-cn { font-family: var(--font-wenkai), serif; font-size: 1.15rem; }
+.font-serif-cn { font-family: var(--font-songti), serif !important; font-size: 1.15rem; }
 
 /* 🌾 Hand-drawn Badges / Tags */
 .hand-tag {
@@ -1032,7 +1034,7 @@ header.scrolled {
   position: relative;
   transform: rotate(-1.2deg);
   transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.4s ease;
-  font-family: 'Times New Roman', Times, var(--font-wenkai), serif;
+  font-family: 'Times New Roman', Times, var(--font-songti), serif;
 }
 .paper-dossier-card:hover {
   transform: rotate(0deg) translateY(-4px);
@@ -1127,7 +1129,7 @@ header.scrolled {
 .paper-row-label {
   width: 80px;
   shrink: 0;
-  font-family: var(--font-wenkai), 'PingFang SC', sans-serif;
+  font-family: var(--font-songti), 'PingFang SC', sans-serif;
   font-size: 0.95rem;
   font-weight: 800;
   color: #1a1816;
@@ -1180,7 +1182,7 @@ header.scrolled {
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  font-family: var(--font-wenkai), sans-serif;
+  font-family: var(--font-songti), sans-serif;
   font-size: 0.85rem;
   font-weight: 600;
   color: #222;
@@ -1260,7 +1262,7 @@ header.scrolled {
   color: #d13438 !important;
   padding: 8px 18px !important;
   border-radius: 6px !important;
-  font-family: var(--font-wenkai), -apple-system, sans-serif !important;
+  font-family: var(--font-songti), -apple-system, sans-serif !important;
   font-size: 0.92rem !important;
   font-weight: 900 !important;
   letter-spacing: 1.5px !important;
@@ -3827,7 +3829,7 @@ body.immersive-modal-active header {
 }
 
 .imm-album-title {
-  font-family: var(--font-songti), serif;
+  font-family: var(--font-gaoduanhei), sans-serif !important;
   font-size: 1.8rem;
   font-weight: 700;
   margin: 0 0 6px;
@@ -4217,7 +4219,7 @@ body.immersive-modal-active header {
   font-family: var(--font-eng-title);
 }
 .drawer-title {
-  font-family: var(--font-songti), serif;
+  font-family: var(--font-gaoduanhei), sans-serif !important;
   font-size: 2.2rem;
   color: var(--gold);
   margin: 6px 0;
