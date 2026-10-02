@@ -792,30 +792,14 @@ You have set my feet upon the rock!`
       <div class="album-3d-box ${origIdx === currentIndex && vIdx === 0 ? 'active' : ''}" data-vindex="${vIdx}" data-real-index="${origIdx}">
         <div class="album-cube">
           
-          <!-- 1. Front Outer Cover (现代加长画册封套) -->
+          <!-- 1. Front Outer Cover (纯净高清封面，无黑框、无杂字) -->
           <div class="cube-face cube-front sleeve-outer-front">
             <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
-            
-            <!-- Left Spine Fold Crease -->
-            <div class="album-spine-crease"></div>
-            
             <!-- Modern Satin Specular Reflection -->
             <div class="album-glass-sheen"></div>
-
-            <!-- Modern Editorial Hype Badge -->
-            <div class="vinyl-hype-sticker">
-              <span class="hype-badge-top">HARVESTER ORIGINALS</span>
-              <span class="hype-badge-main">${album.year || '2025'} EDITION</span>
-              <span class="hype-badge-code">CAT-${(origIdx + 1).toString().padStart(2, '0')}</span>
-            </div>
-
-            <!-- Bottom Right Audio Badge -->
-            <div class="sleeve-barcode-badge">
-              <i class="fas fa-wave-square" style="font-size:0.55rem; color:var(--gold); margin-right:3px;"></i> HI-RES AUDIO
-            </div>
           </div>
 
-          <!-- 2. Left Spine (Slim Refined 16px Spine - 纤细修长优雅书脊，严格对应5套莫兰迪色系，无文字纯色极简设计) -->
+          <!-- 2. Left Spine (Slim Refined 14px Spine - 纤细修长优雅书脊，严格对应5套莫兰迪色系，纯色极简设计) -->
           <div class="cube-face cube-spine-left" style="background: ${spineColor} !important;"></div>
 
           <!-- Top Sealed Edge -->
@@ -828,10 +812,6 @@ You have set my feet upon the rock!`
           <div class="cube-face cube-back sleeve-outer-back">
             <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
             <div class="album-glass-sheen"></div>
-            <div class="vinyl-hype-sticker" style="left:auto; right:12px;">
-              <span class="hype-badge-top">HARVESTER MUSIC</span>
-              <span class="hype-badge-main">${album.year || '2025'} RELEASE</span>
-            </div>
           </div>
         </div>
 
