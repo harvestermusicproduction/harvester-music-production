@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 40" fill="none" class="wheat-line-divider-svg">
+  <defs>
+    <linearGradient id="divGoldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f6d28a" stop-opacity="0.1" />
+      <stop offset="20%" stop-color="#f6d28a" stop-opacity="0.85" />
+      <stop offset="50%" stop-color="#fff5db" stop-opacity="1" />
+      <stop offset="80%" stop-color="#f6d28a" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#f6d28a" stop-opacity="0.1" />
+    </linearGradient>
+  </defs>
+  <g stroke="url(#divGoldGrad)" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Organic Hand-drawn Center Wave Line -->
+    <path d="M 20,20 Q 80,14 140,20 T 250,20 T 360,20 T 480,20" stroke-width="2" opacity="0.75" />
+    <path d="M 50,23 Q 150,17 250,22 T 450,22" stroke-width="1" opacity="0.4" />
+
+    <!-- Center Wheat Ear Motif -->
+    <!-- Center Grain -->
+    <path d="M 250,10 C 246,14 246,24 250,28 C 254,24 254,14 250,10 Z" stroke-width="1.8" fill="rgba(246, 210, 138, 0.2)" />
+    <path d="M 250,10 L 250,-2" stroke-width="1.2" />
+    <!-- Left Grains -->
+    <path d="M 242,16 C 235,16 232,23 238,27 C 244,25 244,20 242,16 Z" stroke-width="1.5" fill="rgba(246, 210, 138, 0.12)" />
+    <path d="M 235,16 Q 225,10 216,6" stroke-width="1.2" />
+    <path d="M 230,19 C 223,19 220,25 226,29 C 232,27 232,22 230,19 Z" stroke-width="1.5" fill="rgba(246, 210, 138, 0.12)" />
+    <path d="M 223,19 Q 212,14 204,11" stroke-width="1.2" />
+    <path d="M 218,21 C 212,21 209,26 215,29 C 220,28 220,24 218,21 Z" stroke-width="1.4" fill="rgba(246, 210, 138, 0.08)" />
+    <path d="M 212,21 Q 202,17 194,15" stroke-width="1" />
+
+    <!-- Right Grains -->
+    <path d="M 258,16 C 265,16 268,23 262,27 C 256,25 256,20 258,16 Z" stroke-width="1.5" fill="rgba(246, 210, 138, 0.12)" />
+    <path d="M 265,16 Q 275,10 284,6" stroke-width="1.2" />
+    <path d="M 270,19 C 277,19 280,25 274,29 C 268,27 268,22 270,19 Z" stroke-width="1.5" fill="rgba(246, 210, 138, 0.12)" />
+    <path d="M 277,19 Q 288,14 296,11" stroke-width="1.2" />
+    <path d="M 282,21 C 288,21 291,26 285,29 C 280,28 280,24 282,21 Z" stroke-width="1.4" fill="rgba(246, 210, 138, 0.08)" />
+    <path d="M 288,21 Q 298,17 306,15" stroke-width="1" />
+
+    <!-- Center Micro Star -->
+    <path d="M 250,32 Q 250,35 247,35 Q 250,35 250,38 Q 250,35 253,35 Q 250,35 250,32 Z" stroke-width="1" fill="#fff5db" />
+  </g>
+</svg>

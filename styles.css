@@ -485,6 +485,47 @@ section { padding: 7rem 2rem; max-width: 1100px; margin: 0 auto; }
   pointer-events: none;
 }
 
+/* 🌾 Hand-drawn Wheat Line Art Illustration (手绘金线麦穗艺术插画 · 取代传统矩形相框) */
+.wheat-hero-crest-wrap {
+  max-width: 540px;
+  width: 92%;
+  margin: 0 auto 1.6rem;
+  position: relative;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.45s ease;
+  filter: drop-shadow(0 4px 18px rgba(246, 210, 138, 0.35));
+  user-select: none;
+  pointer-events: auto;
+}
+
+.wheat-hero-crest-wrap:hover {
+  transform: translateY(-4px) scale(1.02);
+  filter: drop-shadow(0 8px 28px rgba(246, 210, 138, 0.55));
+}
+
+.wheat-line-crest-svg {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  display: block;
+}
+
+.wheat-line-divider-wrap {
+  width: 180px;
+  height: 20px;
+  margin: 0 auto 1.4rem;
+  opacity: 0.85;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.wheat-line-divider-wrap:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
 /* 🌾 Hand-drawn Border Cards */
 .hand-card {
   background: rgba(28, 36, 45, 0.78) !important;
@@ -3256,6 +3297,13 @@ body.harvest-active {
     margin-bottom: 2.5rem !important;
     padding: 0 0.5rem !important;
   }
+  .wheat-hero-crest-wrap {
+    max-width: 440px !important;
+    margin-bottom: 1.2rem !important;
+  }
+  .wheat-line-crest-svg {
+    max-height: 160px !important;
+  }
   .turntable-container {
     max-width: 340px !important;
     transform: scale(0.95);
@@ -3297,6 +3345,13 @@ body.harvest-active {
     margin-top: 1.8rem !important;
     margin-bottom: 1.8rem !important;
     padding: 0 0.4rem !important;
+  }
+  .wheat-hero-crest-wrap {
+    max-width: 320px !important;
+    margin-bottom: 1rem !important;
+  }
+  .wheat-line-crest-svg {
+    max-height: 130px !important;
   }
 
   .event-photo-card {
