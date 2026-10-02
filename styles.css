@@ -3622,12 +3622,18 @@ section[id], div[id^="section-"] {
 
 .coverflow-section {
   position: relative;
-  max-width: 1400px;
+  max-width: 1440px;
+  width: 100%;
   margin: 0 auto;
-  padding: 0.2rem 1.5rem 1rem;
-  overflow: hidden;
+  padding: 0.4rem 2rem 5.5rem;
+  overflow: visible;
   perspective: 1400px;
   perspective-origin: 50% 45%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
 }
 
 /* =========================================================
@@ -3638,13 +3644,15 @@ section[id], div[id^="section-"] {
 .music-unified-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  max-width: 1280px;
-  margin: 0.2rem auto 0.6rem;
+  align-items: center;
+  max-width: 1300px;
+  width: 100%;
+  margin: 0.4rem auto 1rem;
   padding: 0 1.2rem;
   position: relative;
   z-index: 10;
   gap: 15px;
+  flex-shrink: 0;
 }
 
 .unified-header-left {
@@ -3765,9 +3773,25 @@ section[id], div[id^="section-"] {
    ========================================================================= */
 
 /* 🌈 Dynamic Ambient Background Stage Layer (随中心专辑平滑变色) */
+/* 🌈 Dynamic Ambient Background Stage Layer (随中心专辑平滑变色) */
 body.page-music {
   background-color: var(--active-album-theme, #182222);
   transition: background-color 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 769px) {
+  body.page-music {
+    height: 100vh;
+    overflow: hidden;
+  }
+  body.page-music header {
+    padding: 0.75rem 2.5rem 0.35rem !important;
+    flex-shrink: 0;
+  }
 }
 
 body.page-music footer {
@@ -3822,12 +3846,17 @@ body.page-music footer {
   max-width: 1320px;
   margin: 0 auto;
   z-index: 4;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .coverflow-carousel {
   position: relative;
   width: 100%;
-  height: clamp(320px, 38vh, 360px);
+  height: clamp(285px, 35vh, 320px);
   perspective: 1300px;
   -webkit-perspective: 1300px;
   display: flex;
@@ -3836,7 +3865,7 @@ body.page-music footer {
   transform-style: preserve-3d;
   user-select: none;
   cursor: grab;
-  margin: 0.2rem auto 0;
+  margin: 0.3rem auto 0.6rem;
 }
 .coverflow-carousel:active {
   cursor: grabbing;
@@ -3846,11 +3875,11 @@ body.page-music footer {
    💿 SLIM-SPINE ELONGATED 3D ARTBOOK ALBUM ENGINE (修长纤细书脊现代画册专辑)
    ========================================================================= */
 
-/* 3D Elongated Modern Art Album Box (216px x 310px, 14px Slim Spine) */
+/* 3D Elongated Modern Art Album Box (195px x 280px, 14px Slim Spine) */
 .album-3d-box {
   position: absolute;
-  width: 216px;
-  height: 310px;
+  width: 195px;
+  height: 280px;
   transform-style: preserve-3d;
   cursor: pointer;
   will-change: transform, opacity;
@@ -3875,8 +3904,8 @@ body.page-music footer {
 .cube-face.cube-front.sleeve-outer-front {
   top: 0;
   left: 0;
-  width: 216px;
-  height: 310px;
+  width: 195px;
+  height: 280px;
   transform: translateZ(7px);
   border-radius: 6px;
   overflow: hidden;
@@ -3996,7 +4025,7 @@ body.page-music footer {
   top: 0;
   left: -7px;
   width: 14px;
-  height: 310px;
+  height: 280px;
   transform: rotateY(-90deg) translateZ(0);
   border: none !important;
   display: block !important;
@@ -4030,7 +4059,7 @@ body.page-music footer {
 .cube-face.cube-top {
   top: -7px;
   left: 0;
-  width: 216px;
+  width: 195px;
   height: 14px;
   transform: rotateX(90deg);
   border: none !important;
@@ -4041,7 +4070,7 @@ body.page-music footer {
 .cube-face.cube-bottom {
   bottom: -7px;
   left: 0;
-  width: 216px;
+  width: 195px;
   height: 14px;
   transform: rotateX(-90deg);
   background: #080a0c;
@@ -4053,8 +4082,8 @@ body.page-music footer {
 .cube-face.cube-back.sleeve-outer-back {
   top: 0;
   left: 0;
-  width: 216px;
-  height: 310px;
+  width: 195px;
+  height: 280px;
   transform: rotateY(180deg) translateZ(7px);
   border-radius: 6px;
   overflow: hidden;
@@ -4118,12 +4147,13 @@ body.page-music footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.8rem;
-  max-width: 800px;
+  gap: 2.2rem;
+  max-width: 820px;
   margin: 0.4rem auto 0;
   text-align: center;
   position: relative;
   z-index: 5;
+  flex-shrink: 0;
 }
 
 .cf-nav-btn {
