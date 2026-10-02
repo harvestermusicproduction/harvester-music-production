@@ -162,32 +162,32 @@
   --morandi-border-subtle: rgba(255, 255, 255, 0.12);
   
   /* 🏛️ Unified Platform Typography Standard: 
-     - 统一中文标题 (Chinese Titles/Headings): 站酷高端黑 (ZCOOL GaoDuanHei)
-     - 统一中文正文 (Chinese Body): 思源宋体 (Noto Serif SC / Source Han Serif)
-     - 统一英文大标题 (Headings & Numbers): Syne / Montserrat / Archivo Black
-     - 统一手写/书脊 (Handwritten & Spines): 辰宇落雁体 (ChenYuluoyan) / Apple Chancery
+     - 全站统一中文字体 (All Chinese Fonts): 思源宋体 (Noto Serif SC / Source Han Serif / Songti SC)
+       与「那人撒种，这人收割」字体 100% 完全一致
+     - 英文标题与数字 (Headings & Numbers): Syne / Montserrat / Archivo Black
+     - 英文手写/衬线 (English Serif/Chancery): Times New Roman / Apple Chancery
   */
-  --font-gaoduanhei: '站酷高端黑', 'ZCOOL GaoDuanHei', 'ZCOOL-GaoDuanHei', 'ZCOOL_GaoDuanHei', 'ZcoolGaoDuanHei', 'GaoDuanHei', 'Syne', 'Montserrat', 'Archivo Black', 'SimHei', 'Heiti SC', sans-serif;
   --font-songti: 'Noto Serif SC', 'Source Han Serif SC', 'Source Han Serif', '思源宋体', 'Songti SC', 'STSong', 'SimSun', serif;
+  --font-gaoduanhei: var(--font-songti);
   --font-noto-serif-sc: var(--font-songti);
   --font-wenkai: var(--font-songti);
-  --font-chenyuluoyan: 'ChenYuluoyan', '辰宇落雁体', 'Yozai', '悠哉体', cursive, var(--font-songti);
-  --font-handwriting: var(--font-chenyuluoyan);
+  --font-chenyuluoyan: var(--font-songti);
+  --font-handwriting: var(--font-songti);
   
   --font-times-new-roman: 'Times New Roman', Times, 'Baskerville', var(--font-songti), serif;
-  --font-brand: 'Syne', 'Montserrat', 'Archivo Black', 'Anton', var(--font-gaoduanhei), sans-serif;
+  --font-brand: 'Syne', 'Montserrat', 'Archivo Black', 'Anton', var(--font-songti), sans-serif;
   --font-puploop: var(--font-brand);
-  --font-chancery: 'Apple Chancery', 'Snell Roundhand', 'Dancing Script', 'Caveat', cursive, serif;
+  --font-chancery: 'Apple Chancery', 'Snell Roundhand', 'Dancing Script', 'Caveat', cursive, var(--font-songti);
 
   --font-times: var(--font-times-new-roman);
   
   --font-eng-title: var(--font-brand);
   --font-eng-body:  var(--font-times-new-roman);
-  --font-chn-title: var(--font-gaoduanhei);
+  --font-chn-title: var(--font-songti);
   --font-chn-body:  var(--font-songti);
-  --font-hand-title: var(--font-gaoduanhei);
+  --font-hand-title: var(--font-songti);
   --font-hand-en:    var(--font-chancery);
-  --font-hand-cn:    var(--font-chenyuluoyan);
+  --font-hand-cn:    var(--font-songti);
   --font-serif-cn:   var(--font-songti);
   --font-kaiti:      var(--font-songti);
   --font-kai:        var(--font-songti);
@@ -196,9 +196,9 @@
   
   /* Helper Assignments */
   --font-display-en: var(--font-brand);
-  --font-display: var(--font-gaoduanhei);
-  --font-title:   var(--font-gaoduanhei);
-  --font-title-cn: var(--font-gaoduanhei);
+  --font-display: var(--font-songti);
+  --font-title:   var(--font-songti);
+  --font-title-cn: var(--font-songti);
   --font-body:    var(--font-songti);
   --font-body-text: var(--font-songti);
   --font-body-cn: var(--font-songti);
@@ -299,7 +299,7 @@ body.page-contact, .page-contact {
   color: var(--gold);
   opacity: 0;
   pointer-events: none;
-  font-family: 'ChenYuluoyan', 'Gaegu', 'Noto Sans SC', sans-serif;
+  font-family: var(--font-songti), serif;
   filter: drop-shadow(0 0 12px rgba(246, 210, 138, 0.55));
   animation: ambientNoteRise linear infinite;
 }
