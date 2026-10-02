@@ -3515,6 +3515,50 @@ svg.sketch-icon {
   vertical-align: middle;
 }
 
+/* 🏷️ Hand-drawn Tape / Pill Badges */
+.sketch-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 18px;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  border: 1.5px dashed rgba(246, 210, 138, 0.45);
+  background: rgba(246, 210, 138, 0.08);
+  color: var(--gold);
+  font-family: var(--font-hand-en), var(--font-hand-cn), sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 1.5px;
+  margin-bottom: 1.2rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.sketch-pill:hover {
+  transform: scale(1.04) rotate(-0.5deg);
+  border-color: var(--gold);
+  background: rgba(246, 210, 138, 0.16);
+}
+
+@media (max-width: 768px) {
+  .sketch-pill {
+    font-size: 0.88rem !important;
+    letter-spacing: 1px !important;
+    padding: 5px 14px !important;
+    white-space: nowrap !important;
+  }
+}
+@media (max-width: 480px) {
+  .sketch-pill {
+    font-size: 0.8rem !important;
+    letter-spacing: 0.5px !important;
+    padding: 4px 10px !important;
+    margin-bottom: 0.8rem !important;
+    white-space: nowrap !important;
+  }
+}
+
 /* --- Navigation Dropdown System (Singers & About Us) --- */
 .nav-dropdown {
   position: relative;

@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=53.0.0">
+  <link rel="stylesheet" href="styles.css?v=57.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* ========================================================
@@ -34,17 +34,21 @@
     .sketch-pill {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
-      padding: 6px 20px;
+      padding: 6px 18px;
       border-radius: var(--hand-radius);
       border: 1.5px dashed rgba(246, 210, 138, 0.45);
       background: rgba(246, 210, 138, 0.08);
       color: var(--gold);
       font-family: var(--font-hand-en);
-      font-size: 1.15rem;
-      letter-spacing: 2px;
+      font-size: 1.05rem;
+      letter-spacing: 1.5px;
       margin-bottom: 1.2rem;
       transition: all 0.3s ease;
+      white-space: nowrap;
+      max-width: 100%;
+      box-sizing: border-box;
     }
     .sketch-pill:hover {
       transform: scale(1.05) rotate(-1deg);
@@ -789,8 +793,21 @@
       .wing-card {
         padding: 2.2rem 1.6rem;
       }
+      .sketch-pill {
+        font-size: 0.88rem !important;
+        letter-spacing: 1px !important;
+        padding: 5px 14px !important;
+        white-space: nowrap !important;
+      }
     }
     @media (max-width: 600px) {
+      .sketch-pill {
+        font-size: 0.8rem !important;
+        letter-spacing: 0.5px !important;
+        padding: 4px 10px !important;
+        margin-bottom: 0.8rem !important;
+        white-space: nowrap !important;
+      }
       .about-page-wrapper {
         padding: 0 1rem 3.5rem;
       }
