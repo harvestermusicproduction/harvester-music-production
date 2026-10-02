@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentModule = 'dashboard';
   window.switchModule = (m) => { currentModule = m; renderCMS(); };
   window.logoutAdmin = () => db.auth.signOut();
+  window.renderCMS = renderCMS;
 
   async function renderCMS() {
     adminDashboard.innerHTML = `
