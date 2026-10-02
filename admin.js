@@ -4147,6 +4147,22 @@ document.addEventListener('DOMContentLoaded', () => {
       console.warn("cfg_diary_albums_json read note:", e);
     }
 
+    // Also query diary_media to ensure live photo counts are up-to-date
+    try {
+      const { data: allMedia } = await db.from('diary_media').select('id, album_id, media_url');
+      if (Array.isArray(allMedia) && allMedia.length > 0) {
+        albums.forEach(a => {
+          if (!a.photos) a.photos = [];
+          const mForAlbum = allMedia.filter(m => String(m.album_id) === String(a.id));
+          mForAlbum.forEach(m => {
+            if (!a.photos.some(p => (typeof p === 'string' ? p : p.media_url) === m.media_url)) {
+              a.photos.push(m);
+            }
+          });
+        });
+      }
+    } catch(mErr){}
+
     // Sort by date descending
     albums.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
     window._currentAdminDiaryAlbums = albums;
@@ -4154,33 +4170,39 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:12px;">
         <div>
-          <h1 style="color:var(--gold); margin:0;">照片集 Photo Gallery Management</h1>
-          <p style="color:#888; font-size:0.85rem; margin-top:4px;">共 ${albums.length} 个相册。支持双重云端同步，相册与照片永久安全保存。</p>
+          <h1 style="color:var(--gold); margin:0;">📷 照片集与相册管理 (Photo Gallery CMS)</h1>
+          <p style="color:#888; font-size:0.85rem; margin-top:4px;">共 ${albums.length} 个相册。支持为相册极速批量上传多张照片、拖拽上传、设为封面与双重云端同步。</p>
         </div>
         <button class="btn btn-submit" style="width:auto; padding:10px 25px;" onclick="openDiaryModal()">+ 新建相册</button>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
-        ${albums.map(a => `
-          <div style="background:#1a1a1a; padding:20px; border-radius:12px; border:1px solid #222; position:relative; display:flex; flex-direction:column; justify-content:space-between;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:22px;">
+        ${albums.map(a => {
+          const photoCount = (a.photos && Array.isArray(a.photos)) ? a.photos.length : 0;
+          return `
+          <div style="background:#141414; padding:20px; border-radius:14px; border:1px solid #282828; position:relative; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 8px 24px rgba(0,0,0,0.5); transition:transform 0.25s, border-color 0.25s;" onmouseover="this.style.borderColor='rgba(246,210,138,0.45)'" onmouseout="this.style.borderColor='#282828'">
             <div>
-              <img src="${a.cover_url || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80'}" style="width:100%; aspect-ratio:1.6/1; object-fit:cover; border-radius:8px; margin-bottom:15px; border:1px solid #333;" onerror="this.src='assets/logo.png'">
-              <h3 style="margin:0; color:var(--gold); font-size:1.15rem;">${a.title}</h3>
-              <p style="color:#888; font-size:0.85rem; margin:6px 0;">📅 ${a.date || '未定日期'}</p>
+              <div style="position:relative; width:100%; aspect-ratio:1.6/1; border-radius:10px; overflow:hidden; margin-bottom:15px; border:1px solid #333; background:#080808;">
+                <img src="${a.cover_url || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80'}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
+                <span style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); color:var(--gold); font-size:0.75rem; font-weight:bold; padding:4px 10px; border-radius:50px; border:1px solid rgba(246,210,138,0.3);">
+                  📷 ${photoCount} 张照片
+                </span>
+              </div>
+              <h3 style="margin:0; color:var(--gold); font-size:1.15rem; font-weight:600;">${a.title}</h3>
+              <p style="color:#aaa; font-size:0.85rem; margin:6px 0;">📅 ${a.date || '未定日期'}</p>
               ${a.fb_url ? `<p style="font-size:0.75rem; color:#1877F2; margin:0;"><i class="fab fa-facebook"></i> 已关联 Facebook 相册</p>` : ''}
-              ${a.photos?.length ? `<p style="font-size:0.75rem; color:#aaa; margin:3px 0 0 0;">📷 包含 ${a.photos.length} 张照片</p>` : ''}
             </div>
             
-            <div style="margin-top:20px;">
-              <div style="display:flex; gap:10px;">
-                <button class="btn-submit" style="flex:1; padding:8px;" onclick="managePhotos('${a.id}')">📷 照片管理 (${a.photos?.length || 0})</button>
-              </div>
-              <div style="display:flex; gap:10px; margin-top:10px;">
-                <button class="btn-tiny" style="flex:1;" onclick="openDiaryModal('${a.id}')">编辑相册信息</button>
-                <button class="btn-tiny danger" onclick="deleteItem('diary_albums', '${a.id}')">删除整个相册</button>
+            <div style="margin-top:20px; display:flex; flex-direction:column; gap:8px;">
+              <button class="btn btn-submit" style="width:100%; padding:10px; font-size:0.9rem; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="managePhotos('${a.id}')">
+                <span>📤</span> 上传与管理照片 (${photoCount} 张)
+              </button>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-tiny" style="flex:1; padding:8px;" onclick="openDiaryModal('${a.id}')">✏️ 编辑信息</button>
+                <button class="btn-tiny danger" style="padding:8px 12px;" onclick="deleteItem('diary_albums', '${a.id}')" title="删除整个相册">🗑️ 删除</button>
               </div>
             </div>
           </div>
-        `).join('') || '<p style="color:#888; grid-column:1/-1; text-align:center; padding:3rem 0;">暂无日记相册，立即点击右上角「+ 新建相册」创建一个吧。</p>'}
+        `;}).join('') || '<p style="color:#888; grid-column:1/-1; text-align:center; padding:3rem 0;">暂无日记相册，立即点击右上角「+ 新建相册」创建一个吧。</p>'}
       </div>
     `;
   }
@@ -4201,22 +4223,24 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.id = 'diaryAlbumModal';
     modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
     modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,1);">
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,1);">
         <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '编辑日记相册' : '新建日记相册'}</h2>
         
+        <!-- 相册封面 -->
         <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222;">
-          <label style="display:block; margin-bottom:10px; color:#aaa; font-size:0.8rem; font-weight:600;">相册封面 (Album Cover)</label>
-          <img id="da_prev" src="${a?.cover_url || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80'}" style="width:100%; aspect-ratio:1.6/1; object-fit:cover; border-radius:8px; display:block; margin:0 auto 15px; border:1px solid #333; background:#222;" onerror="this.src='assets/logo.png'">
+          <label style="display:block; margin-bottom:8px; color:#aaa; font-size:0.8rem; font-weight:600;">相册封面 (Album Cover)</label>
+          <img id="da_prev" src="${a?.cover_url || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80'}" style="width:100%; aspect-ratio:1.6/1; object-fit:cover; border-radius:8px; display:block; margin:0 auto 12px; border:1px solid #333; background:#222;" onerror="this.src='assets/logo.png'">
           <div style="display:flex; flex-direction:column; gap:8px;">
             <input type="file" id="daf_up" accept="image/*" style="font-size:0.8rem; color:#888;">
             <button class="btn-tiny" style="width:100%; padding:7px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); font-weight:600;" onclick="uploadFile('daf_up', 'da_url', 'da_prev')">📤 上传相册封面图</button>
-            <input type="text" id="da_url" value="${a?.cover_url || ''}" placeholder="或直接粘贴图片 URL 链接..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#eee; border-radius:4px; font-size:0.8rem;" oninput="document.getElementById('da_prev').src = this.value.trim() || 'assets/logo.png'">
+            <input type="text" id="da_url" value="${a?.cover_url || ''}" placeholder="或直接粘贴封面图片 URL 链接..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#eee; border-radius:4px; font-size:0.8rem;" oninput="document.getElementById('da_prev').src = this.value.trim() || 'assets/logo.png'">
           </div>
         </div>
 
+        <!-- 相册名称与日期 -->
         <div style="margin-bottom:15px;">
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">相册名称 (Album Name)</label>
-          <input type="text" id="da_title" value="${a?.title || ''}" placeholder="例如：2026 巴生谷田野调查" style="width:100%; padding:10px;">
+          <input type="text" id="da_title" value="${a?.title || ''}" placeholder="例如：2026 巴生谷田野调查与敬拜瞬间" style="width:100%; padding:10px;">
         </div>
 
         <div style="margin-bottom:15px;">
@@ -4224,13 +4248,25 @@ document.addEventListener('DOMContentLoaded', () => {
           <input type="date" id="da_date" value="${a?.date || new Date().toISOString().split('T')[0]}" style="width:100%; padding:10px;">
         </div>
 
+        <!-- Facebook 关联相册链接 -->
         <div style="margin-bottom:20px;">
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">Facebook 相册链接 (Social Link - 可选)</label>
           <input type="text" id="da_fb" value="${a?.fb_url || ''}" placeholder="https://www.facebook.com/media/set/?set=..." style="width:100%; padding:10px;">
         </div>
 
+        ${!isEdit ? `
+          <!-- 新建时可选：直接选择第一批照片 -->
+          <div style="margin-bottom:20px; background:#161616; padding:15px; border-radius:10px; border:1px dashed rgba(246,210,138,0.3);">
+            <label style="display:block; margin-bottom:5px; color:var(--gold); font-size:0.8rem; font-weight:600;">
+              ✨ 一键顺便上传第一批相册照片 (可选)
+            </label>
+            <p style="font-size:0.72rem; color:#888; margin:0 0 8px 0;">可在此一次性选择多张照片，创建后会自动全部加入相册中。</p>
+            <input type="file" id="daf_multi_create" multiple accept="image/*" style="font-size:0.8rem; color:#aaa; width:100%;">
+          </div>
+        ` : ''}
+
         <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
-          <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveDiaryAlbum('${a?.id || ''}')">💾 保存相册信息</button>
+          <button class="btn btn-submit" id="btnSaveDiaryAlbum" style="flex:2; padding:12px;" onclick="saveDiaryAlbum('${a?.id || ''}')">💾 保存相册信息</button>
           <button class="btn-tiny" style="flex:1;" onclick="this.closest('#diaryAlbumModal').remove()">取消</button>
         </div>
       </div>
@@ -4239,13 +4275,18 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   window.saveDiaryAlbum = async(id) => {
+    const btn = document.getElementById('btnSaveDiaryAlbum');
+    const origText = btn ? btn.innerText : '保存';
     const title = document.getElementById('da_title')?.value.trim();
     let date = document.getElementById('da_date')?.value.trim();
     const coverUrl = document.getElementById('da_url')?.value.trim();
     const fbUrl = document.getElementById('da_fb')?.value.trim() || '';
+    const multiFiles = document.getElementById('daf_multi_create')?.files;
 
     if(!title) return alert("请输入相册名称");
     if(!date) date = new Date().toISOString().split('T')[0];
+
+    if (btn) { btn.innerText = "⏳ 正在同步中..."; btn.disabled = true; }
 
     const albumId = id || ('album_' + Date.now());
     const payload = {
@@ -4274,7 +4315,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.warn("diary_albums table insert note:", err);
     }
 
-    // 2. 双重持久化同步到 site_config cfg_diary_albums_json (确保前后台 100% 可见)
+    // 2. 双重持久化同步到 site_config cfg_diary_albums_json
     try {
       const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
       let list = [];
@@ -4302,10 +4343,20 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch(cfgErr) {
       console.warn("cfg_diary_albums_json sync note:", cfgErr);
     }
+
+    // 3. 如果在新建时选择了首批照片，立刻后台批量上传
+    if (multiFiles && multiFiles.length > 0) {
+      if (btn) btn.innerText = `⏳ 正在批量上传首批 ${multiFiles.length} 张照片...`;
+      try {
+        await uploadDiaryPhotosBatch(albumId, Array.from(multiFiles), false);
+      } catch(upErr){
+        console.warn("Batch initial photos upload note:", upErr);
+      }
+    }
     
     // 关闭模态框并刷新
     if(document.getElementById('diaryAlbumModal')) document.getElementById('diaryAlbumModal').remove();
-    alert("✅ 相册信息已成功保存并同步！前台与后台已生效。");
+    alert("✅ 相册已成功保存！");
     renderCMS();
   };
 
@@ -4335,9 +4386,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
   
+  // --- 🌟 照片管理与多图批量上传模态框 ---
   window.managePhotos = async(id) => {
     const list = window._currentAdminDiaryAlbums || [];
     let album = list.find(x => String(x.id) === String(id)) || null;
+
+    if (!album && id) {
+      try {
+        const { data } = await db.from('diary_albums').select('*').eq('id', id).maybeSingle();
+        if (data) album = data;
+      } catch(e){}
+    }
 
     let dbPhotos = [];
     try {
@@ -4349,90 +4408,252 @@ document.addEventListener('DOMContentLoaded', () => {
     let allPhotos = [...dbPhotos];
     if (album?.photos?.length) {
       album.photos.forEach(p => {
-        if (!allPhotos.some(dp => dp.media_url === p.media_url || String(dp.id) === String(p.id))) {
-          allPhotos.push(p);
+        const pUrl = typeof p === 'string' ? p : p.media_url;
+        if (pUrl && !allPhotos.some(dp => dp.media_url === pUrl || (p.id && String(dp.id) === String(p.id)))) {
+          allPhotos.push(typeof p === 'string' ? { id: 'photo_' + Math.random(), media_url: p } : p);
         }
       });
     }
 
     const modal = document.createElement('div');
     modal.id = 'photoManagerModal';
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(10px); padding:20px;";
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(12px); padding:20px;";
     modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:800px; max-height:85vh; overflow-y:auto; box-shadow:0 0 50px rgba(0,0,0,0.8);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
-          <h3 style="color:var(--gold); margin:0;">正在管理《${album?.title || '相册'}》照片 (${allPhotos.length} 张)</h3>
-          <button class="btn-tiny" onclick="this.closest('#photoManagerModal').remove(); renderCMS();">关闭</button>
-        </div>
-
-        <!-- Social Link field -->
-        <div style="background:rgba(24,119,242,0.1); padding:16px; border-radius:12px; margin-bottom:20px; border:1px solid rgba(24,119,242,0.3);">
-          <label style="display:block; margin-bottom:8px; color:#1877F2; font-weight:bold; font-size:0.85rem;">
-            <i class="fab fa-facebook"></i> 同步至 Facebook 相册链接 (Social Cross-post Link)
-          </label>
-          <div style="display:flex; gap:10px;">
-            <input type="text" id="da_fb_instant" value="${album?.fb_url || ''}" placeholder="粘贴 FB 相册链接..." style="flex:1; padding:10px; background:#000; border:1px solid #333; color: #F6F4F0; border-radius:4px;">
-            <button class="btn-tiny" onclick="saveDiaryAlbumMinimal('${id}')" style="background:#1877F2; color: #F6F4F0; border:none; padding:0 20px;">更新链接</button>
+      <div style="background:#111; border:1.5px solid var(--gold); border-radius:18px; padding:2rem; width:100%; max-width:880px; max-height:88vh; overflow-y:auto; box-shadow:0 25px 70px rgba(0,0,0,0.95); position:relative;">
+        
+        <!-- Header -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; border-bottom:1px solid #222; padding-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <div>
+            <h2 style="color:var(--gold); margin:0; font-size:1.35rem; display:flex; align-items:center; gap:8px;">
+              <span>📷</span> 照片管理 ·《${album?.title || '未命名相册'}》
+            </h2>
+            <p style="color:#888; font-size:0.8rem; margin:4px 0 0 0;">
+              当前相册共有 <b id="photoCountHeader" style="color:var(--gold);">${allPhotos.length}</b> 张照片 · 支持批量上传与拖拽选择多图
+            </p>
           </div>
-          <p style="font-size:0.68rem; color:#888; margin-top:6px;">此处修改后，官网详情页将立即显示 "View on Facebook" 按钮。</p>
+          <button class="btn-tiny" style="padding:6px 14px; font-size:0.85rem;" onclick="this.closest('#photoManagerModal').remove(); renderCMS();">✕ 完成并关闭</button>
         </div>
 
-        <div style="background:#0a0a0a; padding:20px; border-radius:12px; text-align:center; margin-bottom:20px; border:1px dashed #333;">
-           <p style="color:#aaa; font-size:0.85rem; margin-bottom:10px; font-weight:600;">选择想要上传的作品瞬间照片</p>
-           <input type="file" id="d_up" accept="image/*" style="font-size:0.85rem; color:#888;">
-           <button class="btn btn-submit" style="margin-top:12px; width:100%; padding:10px;" onclick="uploadDiaryPhoto('${id}')">📤 上传并存入相册</button>
-           <div id="up_stat" style="font-size:0.75rem; color:var(--gold); margin-top:6px;"></div>
+        <!-- 🌟 Upload Area with Drag-and-Drop & Multi-select -->
+        <div id="diaryDropZone" style="background:#0a0a0a; padding:24px 20px; border-radius:14px; text-align:center; margin-bottom:20px; border:2px dashed rgba(246,210,138,0.35); transition:all 0.3s ease; position:relative; cursor:pointer;"
+             onclick="document.getElementById('d_up_multi').click();"
+             ondragover="event.preventDefault(); this.style.borderColor='var(--gold)'; this.style.background='rgba(246,210,138,0.08)';"
+             ondragleave="this.style.borderColor='rgba(246,210,138,0.35)'; this.style.background='#0a0a0a';"
+             ondrop="event.preventDefault(); this.style.borderColor='rgba(246,210,138,0.35)'; this.style.background='#0a0a0a'; handleDiaryFilesDrop(event, '${id}');">
+           
+           <div style="font-size:2.2rem; margin-bottom:6px;">📤</div>
+           <p style="color: #F6F4F0; font-size:0.95rem; margin:0 0 6px 0; font-weight:600;">
+             点击此处批量选择多张照片，或直接将图片文件拖放至此
+           </p>
+           <p style="color:#888; font-size:0.75rem; margin:0 0 12px 0;">
+             ✨ 支持 JPG / PNG / WEBP 格式，系统会自动进行高清无损压缩与极速上传
+           </p>
+           
+           <input type="file" id="d_up_multi" multiple accept="image/*" style="display:none;" onchange="handleDiaryFilesSelected(this.files, '${id}')" onclick="event.stopPropagation();">
+           
+           <button type="button" class="btn btn-submit" style="display:inline-block; width:auto; padding:8px 24px; font-size:0.85rem;" onclick="event.stopPropagation(); document.getElementById('d_up_multi').click();">
+             + 批量选择本地照片 (按住 Ctrl / Shift 可选多张)
+           </button>
+
+           <div id="up_stat_box" style="margin-top:12px; display:none;">
+             <div id="up_progress_bar_bg" style="width:100%; height:6px; background:#222; border-radius:3px; overflow:hidden; margin-bottom:6px;">
+               <div id="up_progress_bar" style="width:0%; height:100%; background:var(--gold); transition:width 0.2s;"></div>
+             </div>
+             <div id="up_stat" style="font-size:0.8rem; color:var(--gold); font-weight:600;"></div>
+           </div>
         </div>
 
-        <div id="photoGridCMS" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:15px;">
-          ${allPhotos.map(p => {
-             const optimized = p.media_url; 
-             return `
-            <div style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #333; background:#000;">
-              <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
-              <button onclick="deleteDiaryPhoto('${p.id || ''}', '${optimized.replace(/'/g, "\\'")}', '${id}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.85); border:none; color: #F6F4F0; border-radius:50%; width:24px; height:24px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.6);" title="删除照片">✕</button>
+        <!-- 🌟 Option 2: Batch Paste URLs or Social Link (Collapsible / Clean) -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
+          <!-- Batch URLs -->
+          <div style="background:#141414; padding:14px; border-radius:10px; border:1px solid #222;">
+            <label style="display:block; margin-bottom:6px; color:#aaa; font-size:0.78rem; font-weight:600;">
+              🔗 批量粘贴图片链接快速加入相册
+            </label>
+            <textarea id="d_urls_batch" placeholder="可粘贴多行图片链接，每行一个 URL..." style="width:100%; height:60px; font-size:0.75rem; padding:8px; background:#080808; border:1px solid #333; color:#eee; border-radius:4px; margin-bottom:8px; resize:none;"></textarea>
+            <button class="btn-tiny" style="width:100%; padding:6px; background:rgba(246,210,138,0.1); border-color:var(--gold); color:var(--gold);" onclick="batchAddPhotoUrls('${id}')">
+              ➕ 批量导入链接照片
+            </button>
+          </div>
+
+          <!-- FB Social Link -->
+          <div style="background:#141414; padding:14px; border-radius:10px; border:1px solid #222; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <label style="display:block; margin-bottom:6px; color:#1877F2; font-size:0.78rem; font-weight:600;">
+                <i class="fab fa-facebook"></i> 关联 Facebook 相册外链 (Social Cross-post)
+              </label>
+              <input type="text" id="da_fb_instant" value="${album?.fb_url || ''}" placeholder="https://www.facebook.com/media/set/..." style="width:100%; padding:8px; font-size:0.75rem; background:#080808; border:1px solid #333; color:#eee; border-radius:4px; margin-bottom:8px;">
             </div>
-          `}).join('') || '<p style="grid-column:1/-1; text-align:center; opacity:0.4; padding:2rem 0;">此相册暂无照片，请点击上方选择图片上传。</p>'}
+            <button class="btn-tiny" onclick="saveDiaryAlbumMinimal('${id}')" style="width:100%; padding:6px; background:#1877F2; color:#fff; border:none;">
+              💾 保存 FB 链接
+            </button>
+          </div>
         </div>
+
+        <!-- 🌟 Photos Grid -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h4 style="margin:0; color:#ddd; font-size:0.9rem;">
+            相册内所有相片列表 (共 <span id="photoCountBadge">${allPhotos.length}</span> 张)
+          </h4>
+          <span style="font-size:0.72rem; color:#888;">💡 点击「⭐ 设为封面」可随时更换相册主展示图</span>
+        </div>
+
+        <div id="photoGridCMS" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(135px, 1fr)); gap:12px; max-height:420px; overflow-y:auto; padding-right:4px;">
+          ${allPhotos.map((p, pIdx) => {
+             const optimized = p.media_url; 
+             const isCover = album?.cover_url === optimized;
+             return `
+            <div id="photo_card_${p.id || pIdx}" style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:${isCover ? '2px solid var(--gold)' : '1px solid #333'}; background:#080808; box-shadow:0 4px 12px rgba(0,0,0,0.5);">
+              <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
+              
+              <!-- Index Badge -->
+              <span style="position:absolute; top:4px; left:4px; background:rgba(0,0,0,0.7); color:#ccc; font-size:0.65rem; padding:1px 5px; border-radius:3px;">#${pIdx + 1}</span>
+
+              <!-- Cover Badge -->
+              ${isCover ? `<span style="position:absolute; bottom:4px; left:4px; background:var(--gold); color:#000; font-size:0.62rem; font-weight:bold; padding:1px 5px; border-radius:3px;">封面</span>` : ''}
+
+              <!-- Action buttons overlay -->
+              <div style="position:absolute; top:4px; right:4px; display:flex; gap:3px;">
+                ${!isCover ? `<button onclick="setAlbumCover('${id}', '${optimized.replace(/'/g, "\\'")}', this)" style="background:rgba(0,0,0,0.75); border:1px solid #555; color:var(--gold); border-radius:4px; padding:2px 5px; cursor:pointer; font-size:0.65rem;" title="设为此相册封面">⭐ 封面</button>` : ''}
+                <button onclick="deleteDiaryPhoto('${p.id || ''}', '${optimized.replace(/'/g, "\\'")}', '${id}', this)" style="background:rgba(255,0,0,0.85); border:none; color:#fff; border-radius:4px; width:22px; height:22px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center;" title="删除此照片">✕</button>
+              </div>
+            </div>
+          `;}).join('') || '<p id="emptyPhotoNotice" style="grid-column:1/-1; text-align:center; opacity:0.5; padding:3rem 0; font-size:0.9rem;">此相册暂无照片，请使用上方拖拽或点击上传多张照片。</p>'}
+        </div>
+
       </div>
     `;
     document.body.appendChild(modal);
   };
 
-  window.uploadDiaryPhoto = async (aid) => {
-    const fileInput = document.getElementById('d_up');
-    const stat = document.getElementById('up_stat');
-    let file = fileInput?.files?.[0];
-    if(!file) return alert("请先选择照片");
-    
-    stat.innerText = "🎨 正在自动无损压缩照片体积...";
-    if (file.type.startsWith('image/')) {
-        file = await compressImage(file);
+  window.handleDiaryFilesSelected = (files, aid) => {
+    if (!files || files.length === 0) return;
+    uploadDiaryPhotosBatch(aid, Array.from(files));
+  };
+
+  window.handleDiaryFilesDrop = (event, aid) => {
+    const files = event.dataTransfer?.files;
+    if (!files || files.length === 0) return;
+    uploadDiaryPhotosBatch(aid, Array.from(files));
+  };
+
+  window.uploadDiaryPhotosBatch = async (aid, files, updateUI = true) => {
+    const imageFiles = files.filter(f => f.type.startsWith('image/'));
+    if (imageFiles.length === 0) return alert("请选择有效的图片文件");
+
+    const statBox = document.getElementById('up_stat_box');
+    const statText = document.getElementById('up_stat');
+    const pBar = document.getElementById('up_progress_bar');
+    if (statBox && updateUI) statBox.style.display = 'block';
+
+    let successCount = 0;
+    const total = imageFiles.length;
+
+    for (let i = 0; i < total; i++) {
+      const file = imageFiles[i];
+      const percent = Math.round(((i + 1) / total) * 100);
+      if (pBar && updateUI) pBar.style.width = `${percent}%`;
+      if (statText && updateUI) statText.innerText = `⏳ 正在处理并上传第 ${i + 1}/${total} 张照片: ${file.name}... (${percent}%)`;
+
+      try {
+        let uploadObj = file;
+        if (file.type.startsWith('image/')) {
+          uploadObj = await compressImage(file);
+        }
+        const safeName = uploadObj.name.replace(/[^\w.-]/g, "_");
+        const path = `diary/${Date.now()}-${i}-${safeName}`;
+
+        const { data, error } = await db.storage.from('harvester-media').upload(path, uploadObj);
+        if (error) throw error;
+
+        const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
+        const photoItem = {
+          id: 'photo_' + Date.now() + '_' + i,
+          album_id: aid,
+          media_url: publicUrl,
+          type: 'image'
+        };
+
+        // 1. Save to DB table
+        try {
+          await db.from('diary_media').insert([photoItem]);
+        } catch(err){}
+
+        // 2. Sync to site_config cfg_diary_albums_json
+        try {
+          const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
+          if (cfg?.value) {
+            let list = JSON.parse(cfg.value);
+            const aIdx = list.findIndex(x => String(x.id) === String(aid));
+            if (aIdx !== -1) {
+              if (!list[aIdx].photos) list[aIdx].photos = [];
+              if (!list[aIdx].cover_url || list[aIdx].cover_url.includes('unsplash') || list[aIdx].cover_url === 'assets/logo.png') {
+                list[aIdx].cover_url = publicUrl;
+              }
+              list[aIdx].photos.push(photoItem);
+              await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+            }
+          }
+        } catch(err){}
+
+        // Append to DOM live if modal is open
+        const emptyNotice = document.getElementById('emptyPhotoNotice');
+        if (emptyNotice) emptyNotice.remove();
+
+        const grid = document.getElementById('photoGridCMS');
+        if (grid && updateUI) {
+          const photoDiv = document.createElement('div');
+          photoDiv.style = "position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #333; background:#080808; box-shadow:0 4px 12px rgba(0,0,0,0.5);";
+          photoDiv.innerHTML = `
+            <img src="${publicUrl}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
+            <span style="position:absolute; top:4px; left:4px; background:rgba(0,0,0,0.7); color:#ccc; font-size:0.65rem; padding:1px 5px; border-radius:3px;">新</span>
+            <div style="position:absolute; top:4px; right:4px; display:flex; gap:3px;">
+              <button onclick="setAlbumCover('${aid}', '${publicUrl.replace(/'/g, "\\'")}', this)" style="background:rgba(0,0,0,0.75); border:1px solid #555; color:var(--gold); border-radius:4px; padding:2px 5px; cursor:pointer; font-size:0.65rem;" title="设为封面">⭐ 封面</button>
+              <button onclick="deleteDiaryPhoto('${photoItem.id}', '${publicUrl.replace(/'/g, "\\'")}', '${aid}', this)" style="background:rgba(255,0,0,0.85); border:none; color:#fff; border-radius:4px; width:22px; height:22px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center;" title="删除照片">✕</button>
+            </div>
+          `;
+          grid.appendChild(photoDiv);
+        }
+
+        successCount++;
+      } catch(err) {
+        console.warn("Photo upload fail:", err);
+      }
     }
-    
-    stat.innerText = "⚡ 正在极速上传并同步数据库...";
-    
-    const safeName = file.name.replace(/[^\w.-]/g, "_");
-    const path = `diary/${Date.now()}-${safeName}`;
-    
-    try {
-      const { data, error } = await db.storage.from('harvester-media').upload(path, file);
-      if(error) throw error;
-      
-      const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
+
+    if (statText && updateUI) statText.innerText = `🎉 批量上传完成！已成功加入 ${successCount} 张照片。`;
+    const countBadge = document.getElementById('photoCountBadge');
+    const countH = document.getElementById('photoCountHeader');
+    const gridEl = document.getElementById('photoGridCMS');
+    if (gridEl) {
+      const newTotal = gridEl.querySelectorAll('img').length;
+      if (countBadge) countBadge.innerText = newTotal;
+      if (countH) countH.innerText = newTotal;
+    }
+
+    const fileInput = document.getElementById('d_up_multi');
+    if (fileInput) fileInput.value = "";
+  };
+
+  window.batchAddPhotoUrls = async (aid) => {
+    const txt = document.getElementById('d_urls_batch')?.value.trim();
+    if (!txt) return alert("请输入图片链接（每行一个）");
+    const urls = txt.split(/[\r\n,]+/).map(u => u.trim()).filter(u => u && (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('assets/')));
+    if (urls.length === 0) return alert("未识别到有效的图片链接");
+
+    let count = 0;
+    for (const url of urls) {
       const photoItem = {
-        id: 'photo_' + Date.now(),
-        album_id: aid, 
-        media_url: publicUrl, 
+        id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        album_id: aid,
+        media_url: url,
         type: 'image'
       };
 
-      // 1. Try DB table
       try {
         await db.from('diary_media').insert([photoItem]);
       } catch(e){}
 
-      // 2. Sync to site_config cfg_diary_albums_json
       try {
         const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
         if (cfg?.value) {
@@ -4445,23 +4666,36 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       } catch(e){}
-      
-      stat.innerText = "✅ 上传成功！已存入相册。";
-      
-      // Append to photo grid DOM immediately
-      const grid = document.getElementById('photoGridCMS');
-      const photoDiv = document.createElement('div');
-      photoDiv.style = "position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #333; background:#000;";
-      photoDiv.innerHTML = `
-        <img src="${publicUrl}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
-        <button onclick="deleteDiaryPhoto('${photoItem.id}', '${publicUrl.replace(/'/g, "\\'")}', '${aid}', this)" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.85); border:none; color: #F6F4F0; border-radius:50%; width:24px; height:24px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.6);" title="删除照片">✕</button>
-      `;
-      grid.appendChild(photoDiv);
-      
-      fileInput.value = "";
-    } catch (e) {
-      alert("上传失败: " + e.message);
-      stat.innerText = "❌ 发生错误";
+
+      count++;
+    }
+
+    alert(`✅ 已成功批量导入 ${count} 张链接照片！`);
+    managePhotos(aid);
+  };
+
+  window.setAlbumCover = async (aid, photoUrl, btn) => {
+    try {
+      // 1. Update DB table
+      try {
+        await db.from('diary_albums').update({ cover_url: photoUrl }).eq('id', aid);
+      } catch(e){}
+
+      // 2. Update site_config
+      const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
+      if (cfg?.value) {
+        let list = JSON.parse(cfg.value);
+        const aIdx = list.findIndex(x => String(x.id) === String(aid));
+        if (aIdx !== -1) {
+          list[aIdx].cover_url = photoUrl;
+          await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+        }
+      }
+
+      alert("⭐ 已成功将该照片设为相册封面！");
+      managePhotos(aid);
+    } catch(e) {
+      alert("设置封面失败：" + e.message);
     }
   };
 
@@ -4484,13 +4718,24 @@ document.addEventListener('DOMContentLoaded', () => {
         let list = JSON.parse(cfg.value);
         const aIdx = list.findIndex(x => String(x.id) === String(aid));
         if (aIdx !== -1 && list[aIdx].photos) {
-          list[aIdx].photos = list[aIdx].photos.filter(p => p.media_url !== mediaUrl && String(p.id) !== String(photoId));
+          list[aIdx].photos = list[aIdx].photos.filter(p => (typeof p === 'string' ? p : p.media_url) !== mediaUrl && String(p.id) !== String(photoId));
           await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
         }
       }
     } catch(e){}
 
-    if (btn && btn.parentElement) btn.parentElement.remove();
+    if (btn && btn.parentElement) {
+      const card = btn.closest('[id^="photo_card_"]') || btn.parentElement;
+      if (card) card.remove();
+    }
+    const countBadge = document.getElementById('photoCountBadge');
+    const countH = document.getElementById('photoCountHeader');
+    const gridEl = document.getElementById('photoGridCMS');
+    if (gridEl) {
+      const newTotal = gridEl.querySelectorAll('img').length;
+      if (countBadge) countBadge.innerText = newTotal;
+      if (countH) countH.innerText = newTotal;
+    }
   };
 
   window.deleteItem = async(t, id) => {
@@ -4498,6 +4743,23 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       await db.from(t).delete().eq('id', id);
     } catch(e){}
+
+    // If deleting diary album, also delete photos and config
+    if (t === 'diary_albums') {
+      try {
+        await db.from('diary_media').delete().eq('album_id', id);
+      } catch(e){}
+      try {
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
+        if (cfg?.value) {
+          let list = JSON.parse(cfg.value);
+          if (Array.isArray(list)) {
+            list = list.filter(x => String(x.id) !== String(id));
+            await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+          }
+        }
+      } catch(e){}
+    }
 
     // 1. If deleting event, also clean up from site_config fallback stores, orders, and posters
     if (t === 'events') {

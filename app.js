@@ -897,9 +897,12 @@ document.addEventListener('DOMContentLoaded', () => {
       container.innerHTML = albums.map(d => {
         const coverImg = d.cover_url || (d.photos && d.photos[0] ? d.photos[0].media_url : 'assets/logo.png');
         const finalFb = d.fb_url || globalFb;
+        const photoCount = (d.photos && Array.isArray(d.photos)) ? d.photos.length : 0;
+        const countBadge = photoCount > 0 ? `<span class="folder-count"><i class="fas fa-images"></i> ${photoCount} 张相片</span>` : '';
         return `
           <div class="folder-card fade-in" onclick="location.href='event.html?id=${d.id}'">
             <div class="folder-main">
+              ${countBadge}
               <img src="${coverImg}" class="folder-cover" onerror="this.src='assets/logo.png'">
               <div class="folder-info">
                 <p class="folder-date">📅 ${d.date || '未定日期'}</p>
@@ -1043,10 +1046,44 @@ document.addEventListener('DOMContentLoaded', () => {
         if (eventHeader) eventHeader.appendChild(btnWrap);
       }
 
+      // Gather and merge all photos from DB diary_media and cfg_diary_albums_json
+      let dbPhotos = [];
+      try {
+        const { data: mData, error: mErr } = await db.from('diary_media').select('*').eq('album_id', id);
+        if (!mErr && Array.isArray(mData)) dbPhotos = mData;
+      } catch(err){}
+
       let list = [];
-      if (album.cover_url) list.push({ media_url: album.cover_url, is_cover: true });
-      if (parsed.image_url && parsed.image_url !== album.cover_url) list.push({ media_url: parsed.image_url, is_cover: true });
-      if (album.diary_media && album.diary_media.length > 0) list = [...list, ...album.diary_media];
+      if (Array.isArray(album.photos) && album.photos.length > 0) {
+        album.photos.forEach(p => {
+          const url = typeof p === 'string' ? p : p.media_url;
+          if (url && !list.some(x => x.media_url === url)) {
+            list.push({ media_url: url });
+          }
+        });
+      }
+
+      dbPhotos.forEach(p => {
+        const url = p.media_url;
+        if (url && !list.some(x => x.media_url === url)) {
+          list.push({ media_url: url });
+        }
+      });
+
+      if (album.diary_media && Array.isArray(album.diary_media)) {
+        album.diary_media.forEach(p => {
+          const url = p.media_url;
+          if (url && !list.some(x => x.media_url === url)) {
+            list.push({ media_url: url });
+          }
+        });
+      }
+
+      // If no photos in album, fallback to album cover or image_url
+      if (list.length === 0) {
+        if (album.cover_url) list.push({ media_url: album.cover_url, is_cover: true });
+        if (parsed.image_url && parsed.image_url !== album.cover_url) list.push({ media_url: parsed.image_url, is_cover: true });
+      }
 
       if (list.length === 0) {
         container.innerHTML = `<div style="text-align:center; padding:3rem; color:#aaa; max-width:600px; margin:0 auto;"><p style="line-height:1.8;">${parsed.description ? '' : '精彩照片整理中...'}</p></div>`;
