@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=53.0.0">
+  <link rel="stylesheet" href="styles.css?v=57.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .submit-hero-card {
@@ -424,13 +424,23 @@
       .bento-card-proportional.span-total {
         grid-column: span 1 !important;
       }
-      .revenue-card, .sharing-table-card {
-        padding: 1.4rem !important;
+      .revenue-card, .sharing-table-card, .coop-card-box {
+        padding: 1.4rem 1.2rem !important;
         border-radius: 16px !important;
       }
       .coop-vision-banner {
         padding: 1.4rem !important;
         border-radius: 16px !important;
+      }
+      .coop-card-box h3 {
+        font-size: 1.28rem !important;
+        letter-spacing: 1px !important;
+        white-space: nowrap !important;
+      }
+      .coop-card-box span {
+        font-size: 0.8rem !important;
+        letter-spacing: 1px !important;
+        white-space: nowrap !important;
       }
     }
   </style>
@@ -797,12 +807,12 @@
       <!-- Bottom Dual Cards: Model & Requirements -->
       <div class="coop-cards-grid">
         <!-- Card A: 合作模式 -->
-        <div style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem;">
-          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px dashed rgba(246,210,138,0.25); padding-bottom:1rem; margin-bottom:1.5rem;">
-            <h3 style="font-family: var(--font-gaoduanhei), sans-serif; font-size: 1.5rem; color: #F6F4F0; margin: 0; letter-spacing: 2px;">
-              合 作 模 式
+        <div class="coop-card-box" style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem;">
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px dashed rgba(246,210,138,0.25); padding-bottom:1rem; margin-bottom:1.5rem; gap:10px;">
+            <h3 style="font-family: var(--font-gaoduanhei), sans-serif; font-size: 1.45rem; color: #F6F4F0; margin: 0; letter-spacing: 2px; white-space: nowrap;">
+              合作模式
             </h3>
-            <span style="font-family: var(--font-eng-title); font-size: 0.95rem; color: var(--gold); letter-spacing: 2px;">MODEL</span>
+            <span style="font-family: var(--font-eng-title); font-size: 0.92rem; color: var(--gold); letter-spacing: 2px; white-space: nowrap;">MODEL</span>
           </div>
 
           <div style="display:flex; flex-direction:column; gap:1.2rem;">
@@ -833,12 +843,12 @@
         </div>
 
         <!-- Card B: 参与要求 -->
-        <div style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem;">
-          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px dashed rgba(246,210,138,0.25); padding-bottom:1rem; margin-bottom:1.5rem;">
-            <h3 style="font-family: var(--font-gaoduanhei), sans-serif; font-size: 1.5rem; color: #F6F4F0; margin: 0; letter-spacing: 2px;">
-              参 与 要 求
+        <div class="coop-card-box" style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem;">
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px dashed rgba(246,210,138,0.25); padding-bottom:1rem; margin-bottom:1.5rem; gap:10px;">
+            <h3 style="font-family: var(--font-gaoduanhei), sans-serif; font-size: 1.45rem; color: #F6F4F0; margin: 0; letter-spacing: 2px; white-space: nowrap;">
+              参与要求
             </h3>
-            <span style="font-family: var(--font-eng-title); font-size: 0.95rem; color: var(--gold); letter-spacing: 2px;">REQUIREMENTS</span>
+            <span style="font-family: var(--font-eng-title); font-size: 0.92rem; color: var(--gold); letter-spacing: 2px; white-space: nowrap;">REQUIREMENTS</span>
           </div>
 
           <div style="display:flex; flex-direction:column; gap:1.2rem;">
