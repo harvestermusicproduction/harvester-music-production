@@ -391,7 +391,7 @@ You have set my feet upon the rock!`
             const doodleFallback = childlikeDoodles[idx % childlikeDoodles.length];
             const customMatch = customAlbums?.find(c => c.id === s.id || c.title === s.title);
             const songYear = customMatch?.year || s.year || "2025";
-            const pal = getMorandiFivePalette(s, idx);
+            const pal = getMorandiFivePalette(customMatch || s, idx);
             
             return {
               id: s.id,
@@ -400,10 +400,11 @@ You have set my feet upon the rock!`
               artist: customMatch?.artist || s.artist || "Harvester Worship",
               genre: customMatch?.genre || `Worship / CCM · ${songYear}`,
               year: songYear,
+              palette_id: customMatch?.palette_id || pal.id,
               palette: pal,
               theme_color: customMatch?.theme_color || pal.theme_color,
               spine_bg: customMatch?.spine_bg || pal.spine_bg,
-              spine_color: customMatch?.spine_color || "#F6F4F0",
+              spine_color: customMatch?.spine_color || pal.spine_color || "#FDF9EE",
               spine_text: customMatch?.spine_text || s.title,
               cover_url: s.cover_url || customMatch?.cover_url || doodleFallback,
               duration: "4'15\"",
@@ -574,10 +575,10 @@ You have set my feet upon the rock!`
       cream: "#FDF9EE",
       spine_bg: "#607272",
       theme_color: "#182222",
-      bg_center: "#2c3d3d",
-      bg_mid: "#182222",
-      bg_outer: "#0e1414",
-      glow: "rgba(96, 114, 114, 0.75)",
+      bg_center: "#384a4a",
+      bg_mid: "#222e2e",
+      bg_outer: "#131b1b",
+      glow: "rgba(193, 194, 167, 0.45)",
       fold1_bg: "#EBD6CE",
       fold1_text: "#2c3434",
       fold2_bg: "#687676",
@@ -594,10 +595,10 @@ You have set my feet upon the rock!`
       cream: "#FDF9EE",
       spine_bg: "#6c6374",
       theme_color: "#211b27",
-      glow: "rgba(108, 99, 116, 0.75)",
-      bg_center: "#3b2e46",
-      bg_mid: "#211b27",
-      bg_outer: "#120e16",
+      glow: "rgba(198, 183, 207, 0.45)",
+      bg_center: "#42374b",
+      bg_mid: "#2a2231",
+      bg_outer: "#17121b",
       fold1_bg: "#D5DEDD",
       fold1_text: "#2a2330",
       fold2_bg: "#6c6473",
@@ -614,10 +615,10 @@ You have set my feet upon the rock!`
       cream: "#FDF9EE",
       spine_bg: "#556958",
       theme_color: "#1b241d",
-      glow: "rgba(85, 105, 88, 0.75)",
-      bg_center: "#2c3e30",
-      bg_mid: "#1b241d",
-      bg_outer: "#0e140f",
+      glow: "rgba(180, 194, 182, 0.45)",
+      bg_center: "#37493b",
+      bg_mid: "#233026",
+      bg_outer: "#141c16",
       fold1_bg: "#E0CEE0",
       fold1_text: "#2a2323",
       fold2_bg: "#7a6d6d",
@@ -634,10 +635,10 @@ You have set my feet upon the rock!`
       cream: "#FDF9EE",
       spine_bg: "#755963",
       theme_color: "#241b1f",
-      glow: "rgba(117, 89, 99, 0.75)",
-      bg_center: "#452a34",
-      bg_mid: "#241b1f",
-      bg_outer: "#140e11",
+      glow: "rgba(207, 183, 188, 0.45)",
+      bg_center: "#48343b",
+      bg_mid: "#2d2025",
+      bg_outer: "#191114",
       fold1_bg: "#D6DAEB",
       fold1_text: "#2b2326",
       fold2_bg: "#79786d",
@@ -654,10 +655,10 @@ You have set my feet upon the rock!`
       cream: "#FDF9EE",
       spine_bg: "#52222e",
       theme_color: "#210e14",
-      glow: "rgba(82, 34, 46, 0.75)",
-      bg_center: "#481220",
-      bg_mid: "#210e14",
-      bg_outer: "#120609",
+      glow: "rgba(180, 70, 95, 0.45)",
+      bg_center: "#481a25",
+      bg_mid: "#2d0f17",
+      bg_outer: "#19080d",
       fold1_bg: "#dfd5c4",
       fold1_text: "#2c241c",
       fold2_bg: "#5c2734",
@@ -669,6 +670,10 @@ You have set my feet upon the rock!`
 
   // 🎲 Deterministic Assignment Matching Spine Color or Theme Color First
   function getMorandiFivePalette(song, index = 0) {
+    if (song?.palette_id) {
+      const match = MORANDI_FIVE_PALETTES.find(p => p.id === song.palette_id);
+      if (match) return match;
+    }
     const spine = (song?.spine_bg || '').trim().toLowerCase();
     const theme = (song?.theme_color || '').trim().toLowerCase();
     if (spine) {
@@ -676,7 +681,7 @@ You have set my feet upon the rock!`
       if (match) return match;
     }
     if (theme) {
-      const match = MORANDI_FIVE_PALETTES.find(p => p.theme_color.toLowerCase() === theme);
+      const match = MORANDI_FIVE_PALETTES.find(p => p.theme_color.toLowerCase() === theme || (p.bg_mid && p.bg_mid.toLowerCase() === theme));
       if (match) return match;
     }
     const key = String(song?.id || song?.title || index);

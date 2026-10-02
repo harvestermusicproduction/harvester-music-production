@@ -461,6 +461,180 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // --- 🎨 莫兰迪五大高定色系标准配置表 (5 Signature Morandi Sets) ---
+  const MORANDI_5_SETS = [
+    {
+      id: "palette_1_sage",
+      num: "01",
+      name: "01 · 鼠尾草灰绿",
+      nameEn: "Sage Green & Slate",
+      icon: "🍃",
+      spine_bg: "#607272",
+      spine_color: "#FDF9EE",
+      theme_color: "#182222",
+      bg_center: "#384a4a",
+      bg_mid: "#222e2e",
+      bg_outer: "#131b1b",
+      glow: "rgba(193, 194, 167, 0.45)",
+      colors: [
+        { label: "冷青石灰", hex: "#778585" },
+        { label: "鼠尾草绿", hex: "#C1C2A7" },
+        { label: "柔粉砂色", hex: "#EBD6CE" },
+        { label: "象牙暖白", hex: "#FDF9EE" }
+      ],
+      fold1: { name: "歌词", bg: "#EBD6CE", text: "#2c3434" },
+      fold2: { name: "经文/心得", bg: "#687676", text: "#FDF9EE" },
+      fold3: { name: "同工团队", bg: "#C1C2A7", text: "#222a2a" }
+    },
+    {
+      id: "palette_2_lavender",
+      num: "02",
+      name: "02 · 雾霭薰衣紫",
+      nameEn: "Misty Lavender & Slate Lilac",
+      icon: "🪻",
+      spine_bg: "#6c6374",
+      spine_color: "#FDF9EE",
+      theme_color: "#211b27",
+      bg_center: "#42374b",
+      bg_mid: "#2a2231",
+      bg_outer: "#17121b",
+      glow: "rgba(198, 183, 207, 0.45)",
+      colors: [
+        { label: "暗灰紫", hex: "#7C7582" },
+        { label: "雾紫灰", hex: "#C6B7CF" },
+        { label: "薄荷雾白", hex: "#D5DEDD" },
+        { label: "象牙暖白", hex: "#FDF9EE" }
+      ],
+      fold1: { name: "歌词", bg: "#D5DEDD", text: "#2a2330" },
+      fold2: { name: "经文/心得", bg: "#6c6473", text: "#FDF9EE" },
+      fold3: { name: "同工团队", bg: "#C6B7CF", text: "#221a28" }
+    },
+    {
+      id: "palette_3_eucalyptus",
+      num: "03",
+      name: "03 · 尤加利草木",
+      nameEn: "Eucalyptus & Earth Grey",
+      icon: "🌿",
+      spine_bg: "#556958",
+      spine_color: "#FDF9EE",
+      theme_color: "#1b241d",
+      bg_center: "#37493b",
+      bg_mid: "#233026",
+      bg_outer: "#141c16",
+      glow: "rgba(180, 194, 182, 0.45)",
+      colors: [
+        { label: "暖木灰褐", hex: "#857979" },
+        { label: "尤加利绿", hex: "#B4C2B6" },
+        { label: "柔淡紫", hex: "#E0CEE0" },
+        { label: "象牙暖白", hex: "#FDF9EE" }
+      ],
+      fold1: { name: "歌词", bg: "#E0CEE0", text: "#2a2323" },
+      fold2: { name: "经文/心得", bg: "#7a6d6d", text: "#FDF9EE" },
+      fold3: { name: "同工团队", bg: "#B4C2B6", text: "#1c241e" }
+    },
+    {
+      id: "palette_4_dusty_rose",
+      num: "04",
+      name: "04 · 烟粉豆沙灰",
+      nameEn: "Dusty Rose & Olive Taupe",
+      icon: "🌸",
+      spine_bg: "#755963",
+      spine_color: "#FDF9EE",
+      theme_color: "#241b1f",
+      bg_center: "#48343b",
+      bg_mid: "#2d2025",
+      bg_outer: "#191114",
+      glow: "rgba(207, 183, 188, 0.45)",
+      colors: [
+        { label: "橄榄褐灰", hex: "#858479" },
+        { label: "烟粉豆沙", hex: "#CFB7BC" },
+        { label: "雾蓝紫", hex: "#D6DAEB" },
+        { label: "象牙暖白", hex: "#FDF9EE" }
+      ],
+      fold1: { name: "歌词", bg: "#D6DAEB", text: "#2b2326" },
+      fold2: { name: "经文/心得", bg: "#79786d", text: "#FDF9EE" },
+      fold3: { name: "同工团队", bg: "#CFB7BC", text: "#261b20" }
+    },
+    {
+      id: "palette_5_burgundy_wine",
+      num: "05",
+      name: "05 · 勃艮第夜幕",
+      nameEn: "Burgundy & Warm Linen",
+      icon: "🍷",
+      spine_bg: "#52222e",
+      spine_color: "#FDF9EE",
+      theme_color: "#210e14",
+      bg_center: "#481a25",
+      bg_mid: "#2d0f17",
+      bg_outer: "#19080d",
+      glow: "rgba(180, 70, 95, 0.45)",
+      colors: [
+        { label: "勃艮第酒红", hex: "#5c2734" },
+        { label: "暖砂陶土", hex: "#dfd5c4" },
+        { label: "亚麻草木灰", hex: "#dedad4" },
+        { label: "象牙暖白", hex: "#FDF9EE" }
+      ],
+      fold1: { name: "歌词", bg: "#dfd5c4", text: "#2c241c" },
+      fold2: { name: "经文/心得", bg: "#5c2734", text: "#fae8ec" },
+      fold3: { name: "同工团队", bg: "#dedad4", text: "#26221f" }
+    }
+  ];
+
+  function getMorandiSet(item, idx = 0) {
+    if (item?.palette_id) {
+      const found = MORANDI_5_SETS.find(s => s.id === item.palette_id);
+      if (found) return found;
+    }
+    const spine = (item?.spine_bg || '').trim().toLowerCase();
+    if (spine) {
+      const found = MORANDI_5_SETS.find(s => s.spine_bg.toLowerCase() === spine);
+      if (found) return found;
+    }
+    const theme = (item?.theme_color || '').trim().toLowerCase();
+    if (theme) {
+      const found = MORANDI_5_SETS.find(s => s.theme_color.toLowerCase() === theme || (s.bg_mid && s.bg_mid.toLowerCase() === theme));
+      if (found) return found;
+    }
+    return MORANDI_5_SETS[idx % MORANDI_5_SETS.length];
+  }
+
+  window.selectMorandiSet = (setId) => {
+    const selInput = document.getElementById('m_selected_morandi_set');
+    if (selInput) selInput.value = setId;
+
+    const set = MORANDI_5_SETS.find(s => s.id === setId) || MORANDI_5_SETS[0];
+
+    const spineBgEl = document.getElementById('m_spine_bg_hex');
+    if (spineBgEl) spineBgEl.value = set.spine_bg;
+    const spineClrEl = document.getElementById('m_spine_clr_hex');
+    if (spineClrEl) spineClrEl.value = set.spine_color;
+    const themeClrEl = document.getElementById('m_theme_clr_hex');
+    if (themeClrEl) themeClrEl.value = set.theme_color;
+    const spineTEl = document.getElementById('m_spine_t');
+    if (spineTEl) spineTEl.value = "";
+
+    document.querySelectorAll('.morandi-set-card').forEach(card => {
+      const cardId = card.getAttribute('data-set-id');
+      const isSelected = cardId === setId;
+      card.style.borderColor = isSelected ? 'var(--gold)' : '#262626';
+      card.style.background = isSelected ? 'rgba(246, 210, 138, 0.08)' : '#0d0d0d';
+      card.style.boxShadow = isSelected ? '0 0 16px rgba(246, 210, 138, 0.25)' : 'none';
+      const radio = card.querySelector('input[type="radio"]');
+      if (radio) radio.checked = isSelected;
+      const checkIcon = card.querySelector('.morandi-check-icon');
+      if (checkIcon) checkIcon.style.opacity = isSelected ? '1' : '0';
+    });
+
+    const spinePreview = document.getElementById('modalSpinePreview');
+    if (spinePreview) {
+      spinePreview.style.background = set.spine_bg;
+      spinePreview.innerHTML = `
+        <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#fff; box-shadow:0 0 4px rgba(255,255,255,0.8);"></span>
+        <span>已选专属色系：<strong>${set.name}</strong>（${set.spine_bg} · 3D 书脊极简硬壳质感）</span>
+      `;
+    }
+  };
+
   // --- 🎵 音乐与歌谱集 (Music & Scores Management Organized by Year) ---
   let adminMusicYearFilter = 'ALL';
   window.setAdminMusicYearFilter = (yr) => {
@@ -480,12 +654,12 @@ document.addEventListener('DOMContentLoaded', () => {
       try { albumsCustom = JSON.parse(albumCfg.value); } catch(e){}
     }
 
-    const MORANDI_SPINE_PALETTES = ["#607272", "#6c6374", "#556958", "#755963", "#52222e"];
     const songs = (rawSongs || []).map((s, idx) => {
       const customMatch = albumsCustom.find(c => c.id === s.id || c.title === s.title);
+      const matchedSet = getMorandiSet(customMatch || s, idx);
       const year = String(customMatch?.year || s.year || '2025');
-      const spineBg = customMatch?.spine_bg || MORANDI_SPINE_PALETTES[idx % MORANDI_SPINE_PALETTES.length];
-      const spineClr = customMatch?.spine_color || "#F6F4F0";
+      const spineBg = customMatch?.spine_bg || matchedSet.spine_bg;
+      const spineClr = customMatch?.spine_color || matchedSet.spine_color;
       const spineTxt = customMatch?.spine_text || `${s.title}`;
       const coverUrl = s.cover_url || customMatch?.cover_url || childlikeDoodles[idx % childlikeDoodles.length];
       
@@ -494,7 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const youtubeUrl = customMatch?.youtube_url || (s.audio_url && (s.audio_url.includes('youtube.com') || s.audio_url.includes('youtu.be')) ? s.audio_url : '');
       const spotifyUrl = customMatch?.spotify_url || s.spotify_url || '';
 
-      return { ...s, customMatch, year, spineBg, spineClr, spineTxt, coverUrl, previewAudio, youtubeUrl, spotifyUrl };
+      return { ...s, customMatch, matchedSet, year, spineBg, spineClr, spineTxt, coverUrl, previewAudio, youtubeUrl, spotifyUrl };
     });
 
     // Extract unique available years sorted descending
@@ -588,10 +762,15 @@ document.addEventListener('DOMContentLoaded', () => {
                       </div>
                     ` : ''}
 
-                    <!-- 3D Spine Preview Bar -->
-                    <div style="background:${s.spineBg}; color:#fff; padding:6px 12px; border-radius:6px; font-size:0.75rem; font-weight:bold; letter-spacing:1px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.15); display:flex; align-items:center; gap:8px; text-shadow:0 1px 2px rgba(0,0,0,0.8);">
-                      <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#fff; box-shadow:0 0 4px rgba(255,255,255,0.8);"></span>
-                      <span>3D 书脊色调（极简无字）：${s.spineBg}</span>
+                    <!-- 3D Spine & Morandi Set Preview Badge -->
+                    <div style="background:${s.spineBg}; color:#fff; padding:6px 12px; border-radius:6px; font-size:0.75rem; font-weight:bold; letter-spacing:0.5px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:space-between; text-shadow:0 1px 2px rgba(0,0,0,0.8);">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#fff; box-shadow:0 0 4px rgba(255,255,255,0.8);"></span>
+                        <span>${s.matchedSet ? s.matchedSet.icon + ' ' + s.matchedSet.name : '3D 书脊底色：' + s.spineBg}</span>
+                      </div>
+                      <div style="display:flex; gap:3px;">
+                        ${(s.matchedSet?.colors || []).map(c => `<span title="${c.label}: ${c.hex}" style="width:10px; height:10px; border-radius:2px; background:${c.hex}; display:inline-block; border:1px solid rgba(255,255,255,0.3);"></span>`).join('')}
+                      </div>
                     </div>
                   </div>
 
@@ -633,10 +812,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const isEdit = !!s;
+      const currentSet = getMorandiSet(spineCustom || s, 0);
       const initialCover = s?.cover_url || spineCustom?.cover_url || childlikeDoodles[Math.floor(Math.random() * childlikeDoodles.length)];
-      const spineBg = spineCustom?.spine_bg || "#607272";
-      const spineClr = spineCustom?.spine_color || "#ffffff";
-      const spineTxt = spineCustom?.spine_text || (s?.title ? `${s.title}` : "");
       const spotifyUrl = spineCustom?.spotify_url || s?.spotify_url || '';
       let previewAudio = spineCustom?.preview_audio_url || '';
       let youtubeUrl = spineCustom?.youtube_url || '';
@@ -650,7 +827,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!youtubeUrl && s?.audio_url && (s.audio_url.includes('youtube.com') || s.audio_url.includes('youtu.be'))) {
         youtubeUrl = s.audio_url;
       }
-      const themeColor = spineCustom?.theme_color || "#182222";
       const titleEn = spineCustom?.title_en || "Harvester Single";
       const year = spineCustom?.year || "2025";
       const genre = spineCustom?.genre || "Worship / CCM · 2025";
@@ -696,12 +872,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <!-- 2. 基本信息 -->
           <div style="background:#0a0a0a; border:1px solid #222; border-radius:10px; padding:15px; margin-bottom:15px;">
-            <label style="display:block; margin-bottom:12px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🏷️ 基础信息与莫兰迪主题色</label>
+            <label style="display:block; margin-bottom:12px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🏷️ 基础信息 (Basic Information)</label>
             
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:12px;">
               <div>
                 <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲中文名称 (Title) *</label>
-                <input type="text" id="m_t" value="${s?.title || ''}" placeholder="例如：更新敬拜" style="width:100%; padding:10px;" oninput="document.getElementById('m_spine_t').value = this.value">
+                <input type="text" id="m_t" value="${s?.title || ''}" placeholder="例如：更新敬拜" style="width:100%; padding:10px;">
               </div>
               <div>
                 <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">英文译名 / 副标题 (English Title)</label>
@@ -723,51 +899,91 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="text" id="m_genre" value="${genre}" placeholder="Worship / CCM · 2025" style="width:100%; padding:8px;">
               </div>
             </div>
-
-            <div style="margin-top:12px;">
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">海报及页面专属莫兰迪主题色 (Theme Color)</label>
-              <div style="display:flex; gap:8px; align-items:center;">
-                <input type="color" id="m_theme_clr" value="${themeColor}" style="width:40px; height:35px; background:transparent; border:none; cursor:pointer;">
-                <input type="text" id="m_theme_clr_hex" value="${themeColor}" style="flex:1; padding:6px; font-family:monospace;" onchange="document.getElementById('m_theme_clr').value=this.value">
-              </div>
-            </div>
           </div>
 
-          <!-- 3. 3D 立体书脊属性 -->
-          <div style="background:#0a0a0a; border:1px solid rgba(246,210,138,0.25); border-radius:10px; padding:15px; margin-bottom:15px;">
-            <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🧱 3D 立体书脊属性 (Spine Attributes)</label>
-            
-            <!-- 5 Morandi Palette Presets -->
-            <div style="margin-bottom:12px; background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px dashed rgba(246,210,138,0.2);">
-              <span style="font-size:0.75rem; color:#f6d28a; display:block; margin-bottom:6px; font-weight:bold;">🎨 推荐莫兰迪 5 套专属配色（点击一键联动应用书脊底色与背景主题）：</span>
-              <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button type="button" class="btn-tiny" style="background:#607272; color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:4px 10px; cursor:pointer;" onclick="document.getElementById('m_spine_bg').value='#607272'; document.getElementById('m_spine_bg_hex').value='#607272'; document.getElementById('m_theme_clr').value='#182222'; document.getElementById('m_theme_clr_hex').value='#182222';">🍃 鼠尾草灰绿</button>
-                <button type="button" class="btn-tiny" style="background:#6c6374; color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:4px 10px; cursor:pointer;" onclick="document.getElementById('m_spine_bg').value='#6c6374'; document.getElementById('m_spine_bg_hex').value='#6c6374'; document.getElementById('m_theme_clr').value='#211b27'; document.getElementById('m_theme_clr_hex').value='#211b27';">🪻 雾霭薰衣紫</button>
-                <button type="button" class="btn-tiny" style="background:#556958; color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:4px 10px; cursor:pointer;" onclick="document.getElementById('m_spine_bg').value='#556958'; document.getElementById('m_spine_bg_hex').value='#556958'; document.getElementById('m_theme_clr').value='#1b241d'; document.getElementById('m_theme_clr_hex').value='#1b241d';">🌿 尤加利草木</button>
-                <button type="button" class="btn-tiny" style="background:#755963; color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:4px 10px; cursor:pointer;" onclick="document.getElementById('m_spine_bg').value='#755963'; document.getElementById('m_spine_bg_hex').value='#755963'; document.getElementById('m_theme_clr').value='#241b1f'; document.getElementById('m_theme_clr_hex').value='#241b1f';">🌸 烟粉豆沙灰</button>
-                <button type="button" class="btn-tiny" style="background:#52222e; color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:4px 10px; cursor:pointer;" onclick="document.getElementById('m_spine_bg').value='#52222e'; document.getElementById('m_spine_bg_hex').value='#52222e'; document.getElementById('m_theme_clr').value='#210e14'; document.getElementById('m_theme_clr_hex').value='#210e14';">🍷 勃艮第夜幕</button>
-              </div>
+          <!-- 3. 五大高定莫兰迪色系（单选勾选） -->
+          <div style="background:#0a0a0a; border:1.5px solid rgba(246,210,138,0.3); border-radius:12px; padding:18px; margin-bottom:15px;">
+            <div style="margin-bottom:14px;">
+              <label style="color:var(--gold); font-size:0.92rem; font-weight:bold; margin:0; display:flex; align-items:center; gap:8px;">
+                🎨 莫兰迪五大高定色系选择 (5 Signature Morandi Sets)
+              </label>
+              <p style="color:#888; font-size:0.75rem; margin:4px 0 0; line-height:1.4;">
+                勾选其中一个高定色系 Set，系统将自动联动 3D 书脊底色、动态环境背景与三折页内页配色。前台 3D 书脊统一为极简纯粹无字硬壳质感。
+              </p>
             </div>
 
-            <div style="margin-bottom:10px;">
-              <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">书脊印制文字 (Spine Text) <span style="color:var(--gold); font-size:0.7rem;">（前台 3D 展架书脊已统一为无文字纯净极简硬壳质感）</span></label>
-              <input type="text" id="m_spine_t" value="${spineTxt}" placeholder="前台书脊默认无字展示纯粹色调" style="width:100%; padding:8px;">
+            <!-- 绑定字段（隐藏存储） -->
+            <input type="hidden" id="m_selected_morandi_set" value="${currentSet.id}">
+            <input type="hidden" id="m_theme_clr_hex" value="${currentSet.theme_color}">
+            <input type="hidden" id="m_spine_bg_hex" value="${currentSet.spine_bg}">
+            <input type="hidden" id="m_spine_clr_hex" value="${currentSet.spine_color}">
+            <input type="hidden" id="m_spine_t" value="">
+
+            <!-- 5 大高定色系单选卡片 -->
+            <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
+              ${MORANDI_5_SETS.map(item => {
+                const isSelected = item.id === currentSet.id;
+                return `
+                  <div class="morandi-set-card" data-set-id="${item.id}" onclick="selectMorandiSet('${item.id}')"
+                       style="cursor:pointer; border:1.5px solid ${isSelected ? 'var(--gold)' : '#262626'}; background:${isSelected ? 'rgba(246, 210, 138, 0.08)' : '#0e0e0e'}; border-radius:10px; padding:12px 16px; transition:all 0.25s ease; ${isSelected ? 'box-shadow:0 0 16px rgba(246, 210, 138, 0.22);' : ''}">
+                    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                      
+                      <!-- 左侧：单选勾选框 + 色系名称 + 书脊标 -->
+                      <div style="display:flex; align-items:center; gap:12px; min-width:240px;">
+                        <input type="radio" name="morandi_set_radio" value="${item.id}" ${isSelected ? 'checked' : ''} style="width:18px; height:18px; accent-color:var(--gold); cursor:pointer;">
+                        <div>
+                          <div style="color:#FDF9EE; font-size:0.95rem; font-weight:bold; display:flex; align-items:center; gap:8px;">
+                            <span>${item.icon} ${item.name}</span>
+                            <span style="font-size:0.75rem; color:#888; font-weight:normal;">(${item.nameEn})</span>
+                          </div>
+                          <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                            <span style="display:inline-flex; align-items:center; gap:5px; background:${item.spine_bg}; color:#fff; font-size:0.72rem; padding:2px 8px; border-radius:4px; border:1px solid rgba(255,255,255,0.25); text-shadow:0 1px 2px rgba(0,0,0,0.8);">
+                              <span style="width:6px; height:6px; border-radius:50%; background:#fff;"></span>
+                              书脊底色: ${item.spine_bg}
+                            </span>
+                            <span style="font-size:0.7rem; color:#666;">极简硬壳无字</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 右侧：核心4色点 + 三折页色彩预览 + 勾选标记 -->
+                      <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                        <!-- 核心提取4色板 -->
+                        <div style="display:flex; flex-direction:column; gap:3px;">
+                          <span style="font-size:0.68rem; color:#777;">核心色板:</span>
+                          <div style="display:flex; gap:5px;">
+                            ${item.colors.map(c => `
+                              <div title="${c.label}: ${c.hex}" style="width:18px; height:18px; border-radius:4px; background:${c.hex}; border:1px solid rgba(255,255,255,0.2); box-shadow:0 1px 3px rgba(0,0,0,0.4);"></div>
+                            `).join('')}
+                          </div>
+                        </div>
+
+                        <!-- 三折页内页色彩 -->
+                        <div style="display:flex; flex-direction:column; gap:3px;">
+                          <span style="font-size:0.68rem; color:#777;">折页色彩:</span>
+                          <div style="display:flex; gap:4px;">
+                            <span title="折页1歌词 (${item.fold1.bg})" style="background:${item.fold1.bg}; color:${item.fold1.text}; font-size:0.65rem; padding:1px 6px; border-radius:3px; border:1px solid rgba(0,0,0,0.15); font-weight:bold;">折1</span>
+                            <span title="折页2心得 (${item.fold2.bg})" style="background:${item.fold2.bg}; color:${item.fold2.text}; font-size:0.65rem; padding:1px 6px; border-radius:3px; border:1px solid rgba(255,255,255,0.15); font-weight:bold;">折2</span>
+                            <span title="折页3团队 (${item.fold3.bg})" style="background:${item.fold3.bg}; color:${item.fold3.text}; font-size:0.65rem; padding:1px 6px; border-radius:3px; border:1px solid rgba(0,0,0,0.15); font-weight:bold;">折3</span>
+                          </div>
+                        </div>
+
+                        <!-- 选中对勾图标 -->
+                        <span class="morandi-check-icon" style="color:var(--gold); font-size:1.15rem; opacity:${isSelected ? '1' : '0'}; transition:opacity 0.2s;">
+                          <i class="fas fa-check-circle"></i>
+                        </span>
+                      </div>
+
+                    </div>
+                  </div>
+                `;
+              }).join('')}
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-              <div>
-                <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">书脊底色 (Spine Color)</label>
-                <div style="display:flex; gap:8px; align-items:center;">
-                  <input type="color" id="m_spine_bg" value="${spineBg}" style="width:40px; height:35px; background:transparent; border:none; cursor:pointer;">
-                  <input type="text" id="m_spine_bg_hex" value="${spineBg}" style="flex:1; padding:6px; font-family:monospace;" onchange="document.getElementById('m_spine_bg').value=this.value">
-                </div>
-              </div>
-              <div>
-                <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">书脊文字颜色 (Text Color)</label>
-                <div style="display:flex; gap:8px; align-items:center;">
-                  <input type="color" id="m_spine_clr" value="${spineClr}" style="width:40px; height:35px; background:transparent; border:none; cursor:pointer;">
-                  <input type="text" id="m_spine_clr_hex" value="${spineClr}" style="flex:1; padding:6px; font-family:monospace;" onchange="document.getElementById('m_spine_clr').value=this.value">
-                </div>
-              </div>
+
+            <!-- 当前选中摘要指示条 -->
+            <div id="modalSpinePreview" style="margin-top:14px; background:${currentSet.spine_bg}; color:#fff; padding:9px 14px; border-radius:8px; font-size:0.8rem; font-weight:bold; letter-spacing:0.5px; border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; gap:8px; text-shadow:0 1px 2px rgba(0,0,0,0.8); transition:background 0.3s ease;">
+              <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#fff; box-shadow:0 0 4px rgba(255,255,255,0.8);"></span>
+              <span>已选专属色系：<strong>${currentSet.name}</strong>（${currentSet.spine_bg} · 3D 书脊极简硬壳质感）</span>
             </div>
           </div>
 
@@ -904,16 +1120,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
       document.body.appendChild(modal);
-
-      document.getElementById('m_theme_clr').addEventListener('input', (e) => {
-        document.getElementById('m_theme_clr_hex').value = e.target.value;
-      });
-      document.getElementById('m_spine_bg').addEventListener('input', (e) => {
-        document.getElementById('m_spine_bg_hex').value = e.target.value;
-      });
-      document.getElementById('m_spine_clr').addEventListener('input', (e) => {
-        document.getElementById('m_spine_clr_hex').value = e.target.value;
-      });
     } catch (err) {
       console.error("openMusicModal Fail:", err);
       alert("❌ 无法加载数据: " + (err.message || err));
@@ -935,7 +1141,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const artist = document.getElementById('m_artist').value.trim() || 'Harvester Worship';
       const year = document.getElementById('m_year')?.value.trim() || "2025";
       const genre = document.getElementById('m_genre')?.value.trim() || "Worship / CCM · 2025";
-      const theme_color = document.getElementById('m_theme_clr_hex')?.value.trim() || "#182222";
+
+      // 🎨 Read selected Morandi Set
+      const selectedSetId = document.getElementById('m_selected_morandi_set')?.value || 'palette_1_sage';
+      const selectedSet = MORANDI_5_SETS.find(set => set.id === selectedSetId) || MORANDI_5_SETS[0];
+
+      const theme_color = selectedSet.theme_color;
+      const spine_bg = selectedSet.spine_bg;
+      const spine_color = selectedSet.spine_color;
+      const spine_text = ""; // 前台 3D 书脊统一为极简纯粹无字硬壳质感
+      const palette_id = selectedSet.id;
+      const palette_name = selectedSet.name;
 
       const cover_url = document.getElementById('m_url').value.trim();
       const preview_audio_url = document.getElementById('m_preview_audio')?.value.trim() || '';
@@ -943,10 +1159,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const spotify_url = document.getElementById('m_sp')?.value.trim() || '';
       const score_url = document.getElementById('m_s').value.trim();
       const description = document.getElementById('m_d').value.trim();
-      
-      const spine_text = document.getElementById('m_spine_t').value.trim() || title;
-      const spine_bg = document.getElementById('m_spine_bg_hex').value.trim() || '#607272';
-      const spine_color = document.getElementById('m_spine_clr_hex').value.trim() || '#ffffff';
 
       const key_bpm = document.getElementById('m_key_bpm')?.value.trim() || "KEY: C · 72 BPM";
       const scripture = document.getElementById('m_scripture')?.value.trim() || "";
@@ -996,6 +1208,8 @@ document.addEventListener('DOMContentLoaded', () => {
         artist,
         year,
         genre,
+        palette_id,
+        palette_name,
         theme_color,
         spine_text,
         spine_bg,
