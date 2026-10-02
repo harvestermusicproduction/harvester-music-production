@@ -453,23 +453,52 @@
       text-overflow: ellipsis;
     }
 
-    /* Status Tags */
-    .event-tag-sold-out {
-      color: #ff6b81;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+    /* Top-Left Small Status Badges (左上角精致微标签) */
+    .event-tag-badge-wrap {
+      margin-bottom: 5px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
     }
 
-    .event-tag-cancelled {
-      color: #a4b0be;
-      font-weight: 600;
+    .event-strip-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
       letter-spacing: 0.5px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      width: fit-content;
+      line-height: 1.35;
     }
 
+    .event-strip-badge.open,
     .event-tag-open {
       color: #2ed573;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+      background: rgba(46, 213, 115, 0.12);
+      border: 1px solid rgba(46, 213, 115, 0.3);
+    }
+
+    .event-strip-badge.hot {
+      color: #ffa502;
+      background: rgba(255, 165, 2, 0.12);
+      border: 1px solid rgba(255, 165, 2, 0.3);
+    }
+
+    .event-strip-badge.sold,
+    .event-tag-sold-out {
+      color: #ff6b81;
+      background: rgba(255, 107, 129, 0.12);
+      border: 1px solid rgba(255, 107, 129, 0.3);
+    }
+
+    .event-strip-badge.cancelled,
+    .event-tag-cancelled {
+      color: #a4b0be;
+      background: rgba(164, 176, 190, 0.12);
+      border: 1px solid rgba(164, 176, 190, 0.3);
     }
 
     /* Right: Action Block */
@@ -695,7 +724,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=16.1.0"></script>
-  <script src="app.js?v=29.0.0"></script>
+  <script src="app.js?v=30.0.0"></script>
 
 
 </body>

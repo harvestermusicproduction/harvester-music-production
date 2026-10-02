@@ -1268,7 +1268,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // --- 📅 EVENTS MODULE (Upgraded) ---
+  // --- Event Title Sanitizer ---
+  function sanitizeEventTitle(rawTitle, statusTag = '') {
+    if (!rawTitle) return "";
+    let clean = String(rawTitle).trim();
+    
+    const tagWords = [
+      (statusTag || '').trim(),
+      '即将来临 ⏳', '即将来临', '即将开启', 
+      'HOT 热门 🔥', 'HOT 热门', 'HOT', '热门', 
+      '报名中 🎟️', '报名中', 'OPEN 报名中', 'OPEN', 
+      '售罄', 'SOLD OUT', '已满额', 
+      '已结束 🏁', '已结束', 
+      '精彩回顾 🎞️', '精彩回顾', 'RECAP', 
+      'ANNUAL 年度特会', 'ANNUAL', '年度特会', 
+      '进行中 ⚡', '进行中', 
+      '⏳', '🔥', '🎟️', '🏁', '🔒', '⛪', '🎞️', '⚡'
+    ].filter(Boolean);
+
+    let changed = true;
+    while (changed) {
+      changed = false;
+      // Strip brackets
+      const bMatch = clean.match(/^(\[[^\]]+\]|【[^】]+】)\s*/);
+      if (bMatch) {
+        clean = clean.substring(bMatch[0].length).trim();
+        changed = true;
+      }
+      // Strip any matching tag words at the beginning
+      for (const tw of tagWords) {
+        if (clean.startsWith(tw)) {
+          clean = clean.substring(tw.length).trim();
+          changed = true;
+          break;
+        }
+      }
+      // Strip leading colons, hyphens, dots
+      const pMatch = clean.match(/^[:：\-—·\s]+/);
+      if (pMatch) {
+        clean = clean.substring(pMatch[0].length).trim();
+        changed = true;
+      }
+    }
+
+    return clean || rawTitle;
+  }
+
   // --- 📅 EVENTS MODULE (Upgraded with Order Controls & Full Details) ---
   async function renderEvents(container) {
     let rawEvents = [];
@@ -1433,13 +1478,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // Title status tag extraction if present
-      let rawTitle = e.title || "";
+      // Title status tag extraction and sanitization
+      let rawTitle = sanitizeEventTitle(e.title || "", stag);
       const titleTagMatch = rawTitle.match(/^(\[[^\]]+\]|\【[^\】]+\】)/);
       if (!stag && titleTagMatch) {
         stag = titleTagMatch[1];
         rawTitle = rawTitle.replace(titleTagMatch[0], '').trim();
       }
+      rawTitle = sanitizeEventTitle(rawTitle, stag);
 
       if (!evTime && evDate) {
         if (evDate.includes('T')) {
@@ -1637,7 +1683,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td style="padding:14px;">
                       <div style="font-size:1rem; font-weight:500; color: #F6F4F0; display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
                         ${tagBadge}
-                        <span>${e.title}</span>
+                        <span>${sanitizeEventTitle(e.title, e.status_tag)}</span>
                       </div>
                     </td>
                     <td style="padding:14px; font-size:0.85rem; color:#aaa;">
@@ -1707,7 +1753,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Build options for events linking
     const evList = window._currentAdminEvents || [];
-    const eventOptions = evList.map(e => `<option value="event.html?id=${e.id}">${e.title} (${e.event_date || '未定日期'})</option>`).join('');
+    const eventOptions = evList.map(e => `<option value="event.html?id=${e.id}">${sanitizeEventTitle(e.title, e.status_tag)} (${e.event_date || '未定日期'})</option>`).join('');
 
     modal.innerHTML = `
       <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:620px; max-height:90vh; overflow-y:auto; position:relative; box-shadow:0 20px 60px rgba(0,0,0,1);">
@@ -2031,12 +2077,13 @@ document.addEventListener('DOMContentLoaded', () => {
            }
         }
 
-        let rawTitle = e.title || "";
+        let rawTitle = sanitizeEventTitle(e.title || "", stag);
         const titleTagMatch = rawTitle.match(/^(\[[^\]]+\]|\【[^\】]+\】)/);
         if (!stag && titleTagMatch) {
           stag = titleTagMatch[1];
           rawTitle = rawTitle.replace(titleTagMatch[0], '').trim();
         }
+        rawTitle = sanitizeEventTitle(rawTitle, stag);
 
         if (!evTime && evDate) {
           if (evDate.includes('T')) {
@@ -2094,7 +2141,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="display:grid; grid-template-columns: 2fr 1fr; gap:15px; margin-bottom:10px;">
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动名称 (Title)</label>
-              <input type="text" id="ev_t" value="${e?.title || ''}" placeholder="例如：东京敬拜赞美节庆" style="width:100%; padding:10px;">
+              <input type="text" id="ev_t" value="${sanitizeEventTitle(e?.title || '', e?.status_tag || '')}" placeholder="例如：东京敬拜赞美节庆" style="width:100%; padding:10px;">
             </div>
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">状态标签 (Tag)</label>
@@ -2194,7 +2241,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reqTicket = document.getElementById('ev_req_ticket').checked;
     const rawTitle = document.getElementById('ev_t').value.trim();
     const stag = document.getElementById('ev_stag').value.trim();
-    const finalTitle = stag ? `${stag} ${rawTitle}` : rawTitle;
+    const finalTitle = sanitizeEventTitle(rawTitle, stag);
 
     const payload = {
       title: finalTitle,

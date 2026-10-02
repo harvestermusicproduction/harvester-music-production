@@ -267,6 +267,52 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {}
   }
 
+  // --- Event Title Sanitizer ---
+  function sanitizeEventTitle(rawTitle, statusTag = '') {
+    if (!rawTitle) return "";
+    let clean = String(rawTitle).trim();
+    
+    const tagWords = [
+      (statusTag || '').trim(),
+      '即将来临 ⏳', '即将来临', '即将开启', 
+      'HOT 热门 🔥', 'HOT 热门', 'HOT', '热门', 
+      '报名中 🎟️', '报名中', 'OPEN 报名中', 'OPEN', 
+      '售罄', 'SOLD OUT', '已满额', 
+      '已结束 🏁', '已结束', 
+      '精彩回顾 🎞️', '精彩回顾', 'RECAP', 
+      'ANNUAL 年度特会', 'ANNUAL', '年度特会', 
+      '进行中 ⚡', '进行中', 
+      '⏳', '🔥', '🎟️', '🏁', '🔒', '⛪', '🎞️', '⚡'
+    ].filter(Boolean);
+
+    let changed = true;
+    while (changed) {
+      changed = false;
+      // Strip brackets
+      const bMatch = clean.match(/^(\[[^\]]+\]|【[^】]+】)\s*/);
+      if (bMatch) {
+        clean = clean.substring(bMatch[0].length).trim();
+        changed = true;
+      }
+      // Strip any matching tag words at the beginning
+      for (const tw of tagWords) {
+        if (clean.startsWith(tw)) {
+          clean = clean.substring(tw.length).trim();
+          changed = true;
+          break;
+        }
+      }
+      // Strip leading colons, hyphens, dots
+      const pMatch = clean.match(/^[:：\-—·\s]+/);
+      if (pMatch) {
+        clean = clean.substring(pMatch[0].length).trim();
+        changed = true;
+      }
+    }
+
+    return clean || rawTitle;
+  }
+
   // --- Event & Album Metadata Parser ---
   function parseEventData(item) {
     if (!item) return { id: '', title: '', dateStr: '', timeStr: '', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '', fullDateTime: '' };
@@ -396,6 +442,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (item.ticket_text) ticketText = item.ticket_text;
     if (item.status_tag) statusTag = item.status_tag;
 
+    // Sanitize title to ensure status tags or prefixes are never duplicated
+    cleanTitle = sanitizeEventTitle(item.title || "", statusTag);
+
     // Format Date (e.g. 2026-08-25 -> 2026年8月25日)
     let dateStr = datePart;
     if (dMatch) {
@@ -503,15 +552,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 🌟 各活动横向条状列表渲染 (Horizontal Tour Strips)
       container.innerHTML = events.map(e => {
-        // Tag badge formatting
-        let tagClass = "event-tag-open";
+        // Tag badge formatting (精致小巧的左上角微徽章)
+        let badgeClass = "open";
         const tagText = e.statusTag ? e.statusTag.toUpperCase() : "";
         if (tagText.includes("SOLD") || tagText.includes("售罄") || tagText.includes("满额")) {
-          tagClass = "event-tag-sold-out";
+          badgeClass = "sold";
         } else if (tagText.includes("取消") || tagText.includes("CANCEL")) {
-          tagClass = "event-tag-cancelled";
+          badgeClass = "cancelled";
+        } else if (tagText.includes("HOT") || tagText.includes("热门") || tagText.includes("🔥")) {
+          badgeClass = "hot";
         }
-        const tagHtml = e.statusTag ? `<span class="${tagClass}">${e.statusTag}</span> ` : '';
+        const tagHtml = e.statusTag ? `<span class="event-strip-badge ${badgeClass}">${e.statusTag}</span>` : '';
 
         // Action Link logic: 若活动不需要报名/购票，只展示铃铛
         let actionHtml = '';
@@ -530,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
           actionHtml = `<a href="event.html?id=${e.id}" class="event-strip-link">${e.ticketText || '前往购票/索票/报名'}</a>`;
         }
 
-        const safeTitle = (e.title || "").replace(/'/g, "\\'");
+        const safeTitle = (e.cleanTitle || e.title || "").replace(/'/g, "\\'");
 
         return `
           <div class="event-strip-row fade-in">
@@ -543,10 +594,10 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </div>
 
-            <!-- Center: Info -->
+            <!-- Center: Info (左上角精致小微标) -->
             <div class="event-info-block">
+              ${tagHtml ? `<div class="event-tag-badge-wrap">${tagHtml}</div>` : ''}
               <h3 class="event-strip-title">
-                ${tagHtml}
                 <a href="event.html?id=${e.id}">${e.cleanTitle}</a>
               </h3>
               <p class="event-strip-venue">${e.location || 'HARVESTER MUSIC PRODUCTION'}</p>
@@ -929,12 +980,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const parsed = parseEventData(album);
 
-      if (parsed.title) {
-        document.title = `${parsed.title} | Harvester Music`;
+      const cleanT = parsed.cleanTitle || parsed.title || '';
+      if (cleanT) {
+        document.title = `${cleanT} | Harvester Music`;
       }
 
       const titleEl = document.getElementById('eventTitle');
-      if (titleEl) titleEl.innerText = parsed.title || '';
+      if (titleEl) titleEl.innerText = cleanT;
 
       const dateEl = document.getElementById('eventDate');
       if (dateEl) {
