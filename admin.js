@@ -2234,6 +2234,8 @@ document.addEventListener('DOMContentLoaded', () => {
           : await db.from('events').insert([fallbackPayload]);
         
         if (fRes.error) throw fRes.error;
+      }
+
       // 2. 双重持久化同步到 site_config 备用存储 (防 RLS 拦截)
       try {
         const { data: evCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_custom_json').maybeSingle();
