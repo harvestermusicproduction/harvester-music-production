@@ -65,10 +65,35 @@
       align-items: center;
     }
     .profit-hero-layout {
-      display: grid;
-      grid-template-columns: 1fr 1.35fr;
+      display: flex;
+      flex-direction: column;
       gap: 2.5rem;
-      align-items: stretch;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .revenue-card {
+      background: rgba(28, 36, 45, 0.78);
+      border: 1.5px solid rgba(246, 210, 138, 0.3);
+      border-radius: 20px;
+      padding: 2.5rem;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 3rem;
+      align-items: center;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    }
+    .revenue-card-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .sharing-table-card {
+      background: rgba(28, 36, 45, 0.78);
+      border: 1.5px solid rgba(246, 210, 138, 0.3);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
     }
     .coop-vision-banner {
       background: rgba(28, 36, 45, 0.78);
@@ -91,7 +116,7 @@
     .revenue-organic-wrap {
       position: relative;
       width: 100%;
-      margin-top: 1.6rem;
+      margin-top: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -103,7 +128,7 @@
       display: block;
       border: none !important;
       outline: none !important;
-      border-radius: 24px;
+      border-radius: 20px;
       -webkit-mask-image: radial-gradient(ellipse 95% 85% at 50% 50%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 98%);
       mask-image: radial-gradient(ellipse 95% 85% at 50% 50%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 98%);
       filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.5));
@@ -196,17 +221,17 @@
     .ratio-segment.seg-vocals      { width: 10%; background: #EBD6CE; color: #EBD6CE; }
     .ratio-segment.seg-admin       { width: 10%; background: #CFB7BC; color: #CFB7BC; }
 
-    /* 📐 Proportional Bento Grid (格子大小按分配比例) */
+    /* 📐 Proportional Bento Grid (6列对称网格，横向通栏布局) */
     .proportional-bento-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
     }
 
     .bento-card-proportional {
       position: relative;
       border-radius: 14px;
-      padding: 1.25rem 1.15rem;
+      padding: 1.35rem 1.25rem;
       background: rgba(255, 255, 255, 0.035);
       border: 1.5px solid rgba(255, 255, 255, 0.08);
       transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -217,20 +242,20 @@
       justify-content: space-between;
     }
 
-    /* 20% Dominant Cards (Span 2 Columns, 2x Visual Weight) */
+    /* 20% Dominant Cards (占 2 列，Row 1 放置 3 张 = 6 列) */
     .bento-card-proportional.span-2 {
       grid-column: span 2;
       min-height: 145px;
     }
 
-    /* 10% Compact Cards (Span 1 Column, 1x Half-Width Weight) */
+    /* 10% Compact Cards (占 1 列，正好是 20% 的一半体积) */
     .bento-card-proportional.span-1 {
       grid-column: span 1;
       min-height: 145px;
-      padding: 1.1rem 0.85rem;
+      padding: 1.2rem 0.9rem;
     }
 
-    /* 100% Overview Card (Span 2 Columns) */
+    /* 100% Overview Card (占 2 列，Row 2: 2 + 1 + 1 + 2 = 6 列完美对称闭环) */
     .bento-card-proportional.span-total {
       grid-column: span 2;
       min-height: 145px;
@@ -340,9 +365,24 @@
         grid-template-columns: 1fr !important;
         gap: 2rem !important;
       }
-      .profit-hero-layout {
+      .revenue-card {
         grid-template-columns: 1fr !important;
-        gap: 2rem !important;
+        gap: 1.8rem !important;
+        padding: 2rem !important;
+      }
+      .sharing-table-card {
+        padding: 2rem !important;
+      }
+      .proportional-bento-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+      }
+      .bento-card-proportional.span-2,
+      .bento-card-proportional.span-total {
+        grid-column: span 2 !important;
+      }
+      .bento-card-proportional.span-1 {
+        grid-column: span 1 !important;
       }
       .coop-vision-banner {
         grid-template-columns: 1fr !important;
@@ -376,17 +416,13 @@
         letter-spacing: 1px !important;
       }
       .proportional-bento-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: 1fr !important;
         gap: 10px !important;
       }
-      .bento-card-proportional.span-2 {
-        grid-column: span 2 !important;
-      }
-      .bento-card-proportional.span-1 {
-        grid-column: span 1 !important;
-      }
+      .bento-card-proportional.span-2,
+      .bento-card-proportional.span-1,
       .bento-card-proportional.span-total {
-        grid-column: span 2 !important;
+        grid-column: span 1 !important;
       }
       .revenue-card, .sharing-table-card {
         padding: 1.4rem !important;
@@ -562,24 +598,24 @@
       </div>
 
       <div class="profit-hero-layout">
-        <!-- 收入来源 (左侧：无框有机插画融景 + 流媒体收益来源) -->
-        <div class="revenue-card" style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem 2rem; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
+        <!-- 收入来源 (横向宽屏卡片：左侧文本 + 右侧有机插画) -->
+        <div class="revenue-card">
+          <div class="revenue-card-left">
             <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed rgba(246,210,138,0.25); padding-bottom: 1rem; margin-bottom: 1.2rem;">
               <h3 style="font-family: var(--font-gaoduanhei), sans-serif; font-size: 1.5rem; color: #F6F4F0; margin: 0; letter-spacing: 1px;">
                 REVENUE 收入来源
               </h3>
               <span style="font-family: var(--font-eng-title); font-size: 0.92rem; color: var(--gold); letter-spacing: 2px;">SOURCES</span>
             </div>
-            <p style="font-family: var(--font-songti), serif; font-size: 1.22rem; color: #F6F4F0; line-height: 1.75; margin-bottom: 0.6rem;">
+            <p style="font-family: var(--font-songti), serif; font-size: 1.22rem; color: #F6F4F0; line-height: 1.8; margin-bottom: 0.8rem;">
               主要来自 YouTube、Spotify、Apple Music 及各大数字流媒体音乐平台的播放与版税收益。
             </p>
-            <p style="font-family: var(--font-eng-title); font-size: 0.82rem; color: #9c9083; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 1rem 0;">
-              Mainly from YouTube, Spotify, Apple Music and digital streaming platforms worldwide.
+            <p style="font-family: var(--font-eng-title); font-size: 0.82rem; color: #9c9083; text-transform: uppercase; letter-spacing: 1px; margin: 0;">
+              MAINLY FROM YOUTUBE, SPOTIFY, APPLE MUSIC AND DIGITAL STREAMING PLATFORMS WORLDWIDE.
             </p>
           </div>
 
-          <!-- 🎨 音乐与生命插画（无边框、无分割线框，纯自然径向柔和羽化融入背景） -->
+          <!-- 🎨 音乐与生命插画（无边框自然径向羽化） -->
           <div class="revenue-organic-wrap">
             <img src="assets/illustrations/morandi-birds-melody.jpg" 
                  alt="音乐与生命 · 信仰长河插画" 
@@ -591,8 +627,8 @@
           </div>
         </div>
 
-        <!-- 盈利分配比例表格（右侧：全景光带 + 比例网格） -->
-        <div class="sharing-table-card" style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem 2rem;">
+        <!-- 盈利分配比例表格 (横向宽屏卡片：全景光带 + 6列比例网格) -->
+        <div class="sharing-table-card">
           <div class="sharing-table-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(246,210,138,0.25); padding-bottom: 1rem; margin-bottom: 1.4rem;">
             <div>
               <h3 style="font-family: var(--font-gaoduanhei), sans-serif; font-size: 1.5rem; color: #F6F4F0; margin: 0; letter-spacing: 1px;">
