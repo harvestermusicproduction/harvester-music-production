@@ -66,7 +66,7 @@
     }
     .profit-hero-layout {
       display: grid;
-      grid-template-columns: 1fr 1.2fr;
+      grid-template-columns: 1fr 1.35fr;
       gap: 2.5rem;
       align-items: stretch;
     }
@@ -85,6 +85,355 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
+    }
+
+    /* 🌾 Organic Seamless Illustration (No rigid bounding boxes) */
+    .revenue-organic-wrap {
+      position: relative;
+      width: 100%;
+      margin-top: 1.6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .organic-feather-img {
+      width: 100%;
+      max-height: 240px;
+      object-fit: cover;
+      display: block;
+      border: none !important;
+      outline: none !important;
+      border-radius: 24px;
+      -webkit-mask-image: radial-gradient(ellipse 95% 85% at 50% 50%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 98%);
+      mask-image: radial-gradient(ellipse 95% 85% at 50% 50%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 98%);
+      filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.5));
+      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.6s ease;
+    }
+    .revenue-organic-wrap:hover .organic-feather-img {
+      transform: scale(1.03);
+      filter: drop-shadow(0 20px 45px rgba(246, 210, 138, 0.25));
+    }
+    .revenue-organic-caption {
+      margin-top: 0.9rem;
+      font-family: var(--font-wenkai);
+      font-size: 0.88rem;
+      color: var(--gold);
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 1px;
+    }
+
+    /* 🎧 Streaming Platform Pills */
+    .streaming-platforms-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 1.2rem 0 0.4rem;
+    }
+    .stream-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(246, 210, 138, 0.2);
+      border-radius: 50px;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      color: #dedad4;
+      font-family: var(--font-eng-title);
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+    .stream-pill:hover {
+      background: rgba(246, 210, 138, 0.15);
+      border-color: var(--gold);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* 📊 100% Panoramic Ratio Bar */
+    .panoramic-ratio-bar-wrap {
+      margin-bottom: 1.4rem;
+    }
+    .panoramic-ratio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      font-family: var(--font-eng-title);
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .panoramic-ratio-bar {
+      display: flex;
+      height: 14px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+      position: relative;
+    }
+    .ratio-segment {
+      height: 100%;
+      transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+    }
+    .ratio-segment:hover, .ratio-segment.highlighted {
+      filter: brightness(1.35);
+      box-shadow: 0 0 16px currentColor;
+      transform: scaleY(1.35);
+      z-index: 5;
+    }
+    .ratio-segment.seg-composition { width: 20%; background: #f6d28a; color: #f6d28a; }
+    .ratio-segment.seg-production  { width: 20%; background: #89b4b5; color: #89b4b5; }
+    .ratio-segment.seg-film        { width: 20%; background: #C6B7CF; color: #C6B7CF; }
+    .ratio-segment.seg-promotion   { width: 20%; background: #7fb088; color: #7fb088; }
+    .ratio-segment.seg-vocals      { width: 10%; background: #EBD6CE; color: #EBD6CE; }
+    .ratio-segment.seg-admin       { width: 10%; background: #CFB7BC; color: #CFB7BC; }
+
+    /* 💡 Interactive Revenue Simulator */
+    .revenue-simulator-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1.5px solid rgba(246, 210, 138, 0.25);
+      border-radius: 16px;
+      padding: 1.1rem 1.4rem;
+      margin-bottom: 1.4rem;
+      backdrop-filter: blur(10px);
+    }
+    .simulator-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+    .sim-readout-label {
+      font-size: 0.85rem;
+      color: #dedad4;
+      font-family: var(--font-songti), serif;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sim-readout-amount {
+      font-family: var(--font-eng-title);
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 1px;
+      text-shadow: 0 0 12px rgba(246, 210, 138, 0.45);
+    }
+    .simulator-slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sim-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 6px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.18);
+      outline: none;
+      cursor: pointer;
+    }
+    .sim-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(246, 210, 138, 0.8);
+      transition: transform 0.2s ease;
+    }
+    .sim-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+    .sim-presets-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .sim-preset-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #dedad4;
+      font-size: 0.75rem;
+      padding: 3px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: var(--font-eng-title);
+      transition: all 0.25s ease;
+    }
+    .sim-preset-btn:hover, .sim-preset-btn.active {
+      background: rgba(246, 210, 138, 0.25);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* 📐 Proportional Bento Grid (格子大小按分配比例) */
+    .proportional-bento-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .bento-card-proportional {
+      position: relative;
+      border-radius: 14px;
+      padding: 1.25rem 1.15rem;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* 20% Dominant Cards (Span 2 Columns, 2x Visual Weight) */
+    .bento-card-proportional.span-2 {
+      grid-column: span 2;
+      min-height: 145px;
+    }
+
+    /* 10% Compact Cards (Span 1 Column, 1x Half-Width Weight) */
+    .bento-card-proportional.span-1 {
+      grid-column: span 1;
+      min-height: 145px;
+      padding: 1.1rem 0.85rem;
+    }
+
+    /* 100% Overview Card (Span 2 Columns) */
+    .bento-card-proportional.span-total {
+      grid-column: span 2;
+      min-height: 145px;
+      background: linear-gradient(135deg, rgba(246, 210, 138, 0.12) 0%, rgba(20, 26, 33, 0.9) 100%);
+      border-color: rgba(246, 210, 138, 0.35);
+    }
+
+    .bento-card-proportional:hover, .bento-card-proportional.active-highlight {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 22px var(--card-glow, rgba(246, 210, 138, 0.3));
+      border-color: var(--card-accent, var(--gold));
+      background: rgba(255, 255, 255, 0.065);
+    }
+
+    /* Color Schemes by Department */
+    .card-dept-composition { --card-accent: #f6d28a; --card-glow: rgba(246, 210, 138, 0.4); }
+    .card-dept-production  { --card-accent: #89b4b5; --card-glow: rgba(137, 180, 181, 0.4); }
+    .card-dept-film        { --card-accent: #C6B7CF; --card-glow: rgba(198, 183, 207, 0.4); }
+    .card-dept-promotion   { --card-accent: #7fb088; --card-glow: rgba(127, 176, 136, 0.4); }
+    .card-dept-vocals      { --card-accent: #EBD6CE; --card-glow: rgba(235, 214, 206, 0.4); }
+    .card-dept-admin       { --card-accent: #CFB7BC; --card-glow: rgba(207, 183, 188, 0.4); }
+
+    .bento-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+    .bento-percent-badge {
+      font-size: 1.85rem;
+      font-weight: 800;
+      font-family: var(--font-eng-title);
+      color: var(--card-accent, var(--gold));
+      line-height: 1;
+    }
+    .bento-card-proportional.span-1 .bento-percent-badge {
+      font-size: 1.6rem;
+    }
+    .bento-dept-title {
+      font-family: var(--font-songti), serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #F6F4F0;
+      margin: 4px 0 2px;
+    }
+    .bento-card-proportional.span-1 .bento-dept-title {
+      font-size: 1.02rem;
+    }
+    .bento-dept-en {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: var(--font-eng-title);
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+    .bento-dept-desc {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin: 6px 0 0;
+      line-height: 1.4;
+      font-family: var(--font-wenkai);
+    }
+    .bento-payout-readout {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .bento-payout-label {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.6);
+      font-family: var(--font-wenkai);
+    }
+    .bento-payout-val {
+      font-family: var(--font-eng-title);
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--card-accent, var(--gold));
+      letter-spacing: 0.5px;
+    }
+
+    /* Soundwave Mini Bars on Card Hover */
+    .bento-soundwaves {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 18px;
+    }
+    .bento-soundwaves span {
+      width: 3px;
+      height: 6px;
+      background: var(--card-accent, var(--gold));
+      border-radius: 2px;
+      opacity: 0.5;
+      transition: height 0.25s ease, opacity 0.25s ease;
+    }
+    .bento-card-proportional:hover .bento-soundwaves span {
+      opacity: 1;
+      animation: soundwaveBounce 0.6s infinite alternate ease-in-out;
+    }
+    .bento-soundwaves span:nth-child(2) { animation-delay: 0.15s !important; }
+    .bento-soundwaves span:nth-child(3) { animation-delay: 0.3s !important; }
+    .bento-soundwaves span:nth-child(4) { animation-delay: 0.45s !important; }
+
+    @keyframes soundwaveBounce {
+      0%   { height: 5px; }
+      100% { height: 18px; }
+    }
+
+    @keyframes spinDisc {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    .sharing-table-header i {
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+    .sharing-table-header i:hover {
+      animation: spinDisc 2.5s linear infinite;
+      color: #fff;
     }
 
     @media (max-width: 960px) {
@@ -127,9 +476,18 @@
         font-size: 1.6rem !important;
         letter-spacing: 1px !important;
       }
-      .sharing-grid {
+      .proportional-bento-grid {
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: 0.8rem !important;
+        gap: 10px !important;
+      }
+      .bento-card-proportional.span-2 {
+        grid-column: span 2 !important;
+      }
+      .bento-card-proportional.span-1 {
+        grid-column: span 1 !important;
+      }
+      .bento-card-proportional.span-total {
+        grid-column: span 2 !important;
       }
       .revenue-card, .sharing-table-card {
         padding: 1.4rem !important;
@@ -305,82 +663,218 @@
       </div>
 
       <div class="profit-hero-layout">
-        <!-- 收入来源 -->
-        <div class="revenue-card" style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; justify-content: space-between;">
+        <!-- 收入来源 (左侧：无框有机插画融景 + 流媒体收益来源) -->
+        <div class="revenue-card" style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem 2rem; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
             <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed rgba(246,210,138,0.25); padding-bottom: 1rem; margin-bottom: 1.2rem;">
               <h3 style="font-family: var(--font-songti), serif; font-size: 1.5rem; color: #F6F4F0; margin: 0; letter-spacing: 1px;">
                 REVENUE 收入来源
               </h3>
-              <span style="font-family: var(--font-eng-title); font-size: 0.95rem; color: var(--gold); letter-spacing: 2px;">SOURCES</span>
+              <span style="font-family: var(--font-eng-title); font-size: 0.92rem; color: var(--gold); letter-spacing: 2px;">SOURCES</span>
             </div>
-            <p style="font-family: var(--font-songti), serif; font-size: 1.25rem; color: #F6F4F0; line-height: 1.7; margin-bottom: 0.5rem;">
+            <p style="font-family: var(--font-songti), serif; font-size: 1.22rem; color: #F6F4F0; line-height: 1.75; margin-bottom: 0.6rem;">
               主要来自 YouTube、Spotify、Apple Music 及各大数字流媒体音乐平台的播放与版税收益。
             </p>
-            <p style="font-family: var(--font-eng-title); font-size: 0.85rem; color: #9c9083; text-transform: uppercase; letter-spacing: 1px; margin: 0;">
-              Mainly from YouTube, Spotify, Apple Music and digital streaming platforms.
+            <p style="font-family: var(--font-eng-title); font-size: 0.82rem; color: #9c9083; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 1rem 0;">
+              Mainly from YouTube, Spotify, Apple Music and digital streaming platforms worldwide.
             </p>
+
+            <!-- 🎧 流媒体平台专属灵动药丸标签 -->
+            <div class="streaming-platforms-row">
+              <span class="stream-pill"><i class="fab fa-spotify" style="color:#1DB954;"></i> Spotify</span>
+              <span class="stream-pill"><i class="fab fa-apple" style="color:#FA2D48;"></i> Apple Music</span>
+              <span class="stream-pill"><i class="fab fa-youtube" style="color:#FF0000;"></i> YouTube</span>
+              <span class="stream-pill"><i class="fas fa-music" style="color:var(--gold);"></i> KKBOX</span>
+              <span class="stream-pill"><i class="fas fa-compact-disc" style="color:#89b4b5;"></i> Joox / Tidal</span>
+            </div>
           </div>
-          <div class="revenue-photo-wrap" style="margin-top: 1.5rem; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-            <img id="about_rev_img" src="assets/illustrations/morandi-light-silhouette.png" alt="音乐与生命插画" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+
+          <!-- 🎨 音乐与生命插画（无边框、无分割线框，纯自然径向柔和羽化融入背景） -->
+          <div class="revenue-organic-wrap">
+            <img src="assets/illustrations/morandi-birds-melody.jpg" 
+                 alt="音乐与生命 · 信仰长河插画" 
+                 class="organic-feather-img"
+                 onerror="this.src='assets/illustrations/morandi-wheat-field.jpg'">
+            <div class="revenue-organic-caption">
+              <span>🕊️ 音乐如川流 · 歌声达穹苍 · 涓滴汇聚丰收</span>
+            </div>
           </div>
         </div>
 
-        <!-- 盈利分配比例表格 -->
-        <div class="sharing-table-card" style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2rem;">
-          <div class="sharing-table-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(246,210,138,0.25); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+        <!-- 盈利分配比例表格（右侧：全景光带 + 收益测算模拟器 + 比例网格） -->
+        <div class="sharing-table-card" style="background: rgba(28, 36, 45, 0.78); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 20px; padding: 2.2rem 2rem;">
+          <div class="sharing-table-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(246,210,138,0.25); padding-bottom: 1rem; margin-bottom: 1.4rem;">
             <div>
-              <h3 style="font-family: var(--font-songti), serif; font-size: 1.5rem; color: #F6F4F0; margin: 0;">
+              <h3 style="font-family: var(--font-songti), serif; font-size: 1.5rem; color: #F6F4F0; margin: 0; letter-spacing: 1px;">
                 盈利按比例分配
               </h3>
               <p style="font-family: var(--font-eng-title); font-size: 0.8rem; color: var(--gold); margin: 3px 0 0 0; letter-spacing: 1px;">
-                PROFITS WILL BE DISTRIBUTED AS FOLLOWS
+                100% TRANSPARENT SHARING · 按分配比例设计
               </p>
             </div>
-            <i class="fas fa-compact-disc" style="font-size: 2rem; color: var(--gold); opacity: 0.7;"></i>
+            <i class="fas fa-compact-disc" style="font-size: 2.2rem; color: var(--gold); opacity: 0.85;"></i>
           </div>
 
-          <div class="sharing-grid">
-            <!-- 01 词曲 -->
-            <div class="sharing-item-box" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(246,210,138,0.2); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
-              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">20%</div>
-              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #F6F4F0; font-weight: 600; margin: 4px 0 2px;">词曲</div>
-              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">创作部门 · Creation</p>
+          <!-- 📊 全景 100% 动态光带 (分段悬停联动) -->
+          <div class="panoramic-ratio-bar-wrap">
+            <div class="panoramic-ratio-header">
+              <span>✦ 100% 闭环分配光带（悬停联动下方部门）</span>
+              <span style="color:var(--gold); font-weight:700;">TOTAL 100%</span>
+            </div>
+            <div class="panoramic-ratio-bar" id="ratioBar">
+              <div class="ratio-segment seg-composition" data-dept="composition" title="词曲 20%"></div>
+              <div class="ratio-segment seg-production" data-dept="production" title="制作 20%"></div>
+              <div class="ratio-segment seg-film" data-dept="film" title="影片 20%"></div>
+              <div class="ratio-segment seg-promotion" data-dept="promotion" title="推广 20%"></div>
+              <div class="ratio-segment seg-vocals" data-dept="vocals" title="歌手 10%"></div>
+              <div class="ratio-segment seg-admin" data-dept="admin" title="行政 10%"></div>
+            </div>
+          </div>
+
+          <!-- 💡 收益实时测算模拟器 (拖动滑块查看各部门所得) -->
+          <div class="revenue-simulator-box">
+            <div class="simulator-top-row">
+              <span class="sim-readout-label"><i class="fas fa-calculator" style="color:var(--gold);"></i> 模拟单曲流媒体收益：</span>
+              <span class="sim-readout-amount" id="simRevenueDisplay">RM 10,000</span>
+            </div>
+            <div class="simulator-slider-wrap">
+              <input type="range" class="sim-slider" id="revSimSlider" min="1000" max="100000" step="1000" value="10000">
+            </div>
+            <div class="sim-presets-row">
+              <button type="button" class="sim-preset-btn" data-val="5000" onclick="setSimRevenue(5000)">RM 5,000</button>
+              <button type="button" class="sim-preset-btn active" data-val="10000" onclick="setSimRevenue(10000)">RM 10,000</button>
+              <button type="button" class="sim-preset-btn" data-val="30000" onclick="setSimRevenue(30000)">RM 30,000</button>
+              <button type="button" class="sim-preset-btn" data-val="50000" onclick="setSimRevenue(50000)">RM 50,000</button>
+              <button type="button" class="sim-preset-btn" data-val="100000" onclick="setSimRevenue(100000)">RM 100,000</button>
+            </div>
+          </div>
+
+          <!-- 📐 Proportional Bento Grid (格子大小按分配比例：20% 为 2倍宽度，10% 为 1倍宽度) -->
+          <div class="proportional-bento-grid">
+            <!-- 01 词曲 (20% - 2倍宽) -->
+            <div class="bento-card-proportional span-2 card-dept-composition" data-dept="composition">
+              <div class="bento-top-row">
+                <div>
+                  <div class="bento-percent-badge">20%</div>
+                  <div class="bento-dept-title">词曲创作</div>
+                  <p class="bento-dept-en">Creation · 作词 · 作曲</p>
+                </div>
+                <div class="bento-soundwaves">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+              <p class="bento-dept-desc">原创旋律与歌词灵魂，永久保留词曲著作署名</p>
+              <div class="bento-payout-readout">
+                <span class="bento-payout-label">模拟分润所得</span>
+                <span class="bento-payout-val" data-ratio="0.2">RM 2,000</span>
+              </div>
             </div>
 
-            <!-- 02 制作 -->
-            <div class="sharing-item-box" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(246,210,138,0.2); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
-              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">20%</div>
-              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #F6F4F0; font-weight: 600; margin: 4px 0 2px;">制作</div>
-              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">制作部门 · Production</p>
+            <!-- 02 制作 (20% - 2倍宽) -->
+            <div class="bento-card-proportional span-2 card-dept-production" data-dept="production">
+              <div class="bento-top-row">
+                <div>
+                  <div class="bento-percent-badge">20%</div>
+                  <div class="bento-dept-title">音乐制作</div>
+                  <p class="bento-dept-en">Production · 编曲 · 混音 · 母带</p>
+                </div>
+                <div class="bento-soundwaves">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+              <p class="bento-dept-desc">专业音频工程打磨，打造现代高规格听觉盛宴</p>
+              <div class="bento-payout-readout">
+                <span class="bento-payout-label">模拟分润所得</span>
+                <span class="bento-payout-val" data-ratio="0.2">RM 2,000</span>
+              </div>
             </div>
 
-            <!-- 03 影片 -->
-            <div class="sharing-item-box" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(246,210,138,0.2); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
-              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">20%</div>
-              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #F6F4F0; font-weight: 600; margin: 4px 0 2px;">影片</div>
-              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">影片部门 · Film</p>
+            <!-- 03 影片 (20% - 2倍宽) -->
+            <div class="bento-card-proportional span-2 card-dept-film" data-dept="film">
+              <div class="bento-top-row">
+                <div>
+                  <div class="bento-percent-badge">20%</div>
+                  <div class="bento-dept-title">视觉影片</div>
+                  <p class="bento-dept-en">Film & MV · 导演 · 剪辑 · 调色</p>
+                </div>
+                <div class="bento-soundwaves">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+              <p class="bento-dept-desc">高清敬拜与剧情 MV 呈现，拓展全网视听广度</p>
+              <div class="bento-payout-readout">
+                <span class="bento-payout-label">模拟分润所得</span>
+                <span class="bento-payout-val" data-ratio="0.2">RM 2,000</span>
+              </div>
             </div>
 
-            <!-- 04 推广 -->
-            <div class="sharing-item-box" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(246,210,138,0.2); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
-              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">20%</div>
-              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #F6F4F0; font-weight: 600; margin: 4px 0 2px;">推广</div>
-              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">宣传部门 · Promotion</p>
+            <!-- 04 推广 (20% - 2倍宽) -->
+            <div class="bento-card-proportional span-2 card-dept-promotion" data-dept="promotion">
+              <div class="bento-top-row">
+                <div>
+                  <div class="bento-percent-badge">20%</div>
+                  <div class="bento-dept-title">宣传推广</div>
+                  <p class="bento-dept-en">Promotion · 宣发 · 自媒体 · 渠道</p>
+                </div>
+                <div class="bento-soundwaves">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+              <p class="bento-dept-desc">全域社媒与教会宣发，让赞美触达未得之民</p>
+              <div class="bento-payout-readout">
+                <span class="bento-payout-label">模拟分润所得</span>
+                <span class="bento-payout-val" data-ratio="0.2">RM 2,000</span>
+              </div>
             </div>
 
-            <!-- 05 歌手 -->
-            <div class="sharing-item-box" style="background: rgba(246, 210, 138, 0.08); border: 1px solid rgba(246, 210, 138, 0.4); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
-              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">10%</div>
-              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #F6F4F0; font-weight: 600; margin: 4px 0 2px;">歌手</div>
-              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">歌唱部门 · Singing</p>
+            <!-- 05 歌手 (10% - 1倍宽，正好是20%的一半体积) -->
+            <div class="bento-card-proportional span-1 card-dept-vocals" data-dept="vocals">
+              <div class="bento-top-row">
+                <div>
+                  <div class="bento-percent-badge">10%</div>
+                  <div class="bento-dept-title">歌手演绎</div>
+                  <p class="bento-dept-en">Vocals · 主唱 · 和声</p>
+                </div>
+                <i class="fas fa-microphone-alt" style="color:var(--card-accent); font-size:1.1rem; opacity:0.8;"></i>
+              </div>
+              <p class="bento-dept-desc">开声赞美神恩</p>
+              <div class="bento-payout-readout">
+                <span class="bento-payout-label">所得</span>
+                <span class="bento-payout-val" data-ratio="0.1">RM 1,000</span>
+              </div>
             </div>
 
-            <!-- 06 行政 -->
-            <div class="sharing-item-box" style="background: rgba(246, 210, 138, 0.08); border: 1px solid rgba(246, 210, 138, 0.4); border-radius: 12px; padding: 1.2rem 0.8rem; text-align: center;">
-              <div class="sharing-percent-badge" style="font-size: 1.8rem; color: var(--gold); font-weight: 700; font-family: var(--font-eng-title);">10%</div>
-              <div class="sharing-dept-cn" style="font-family: var(--font-songti), serif; font-size: 1.1rem; color: #F6F4F0; font-weight: 600; margin: 4px 0 2px;">行政</div>
-              <p class="sharing-dept-en" style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">行政部门 · Admin</p>
+            <!-- 06 行政 (10% - 1倍宽，正好是20%的一半体积) -->
+            <div class="bento-card-proportional span-1 card-dept-admin" data-dept="admin">
+              <div class="bento-top-row">
+                <div>
+                  <div class="bento-percent-badge">10%</div>
+                  <div class="bento-dept-title">平台行政</div>
+                  <p class="bento-dept-en">Admin · 版权 · 财务</p>
+                </div>
+                <i class="fas fa-file-contract" style="color:var(--card-accent); font-size:1.1rem; opacity:0.8;"></i>
+              </div>
+              <p class="bento-dept-desc">合规透明守护</p>
+              <div class="bento-payout-readout">
+                <span class="bento-payout-label">所得</span>
+                <span class="bento-payout-val" data-ratio="0.1">RM 1,000</span>
+              </div>
+            </div>
+
+            <!-- 07 100% 完整闭环总览 (2倍宽，与下方形成完美闭环) -->
+            <div class="bento-card-proportional span-total">
+              <div class="bento-top-row">
+                <div>
+                  <span class="sketch-pill" style="font-size:0.75rem; padding:3px 12px; margin-bottom:4px;">✦ 100% 全部归入同工</span>
+                  <div class="bento-dept-title" style="color:var(--gold);">透明 · 永续 · 共享</div>
+                </div>
+                <i class="fas fa-seedling" style="color:var(--gold); font-size:1.4rem;"></i>
+              </div>
+              <p class="bento-dept-desc" style="color:#dedad4;">扣除第三方流媒体发行必要成本后，收益百分之百全部分配予创作同工，不留任何平台私利！</p>
+              <div class="bento-payout-readout">
+                <span class="bento-payout-label" style="color:var(--gold);">模拟总分发金额</span>
+                <span class="bento-payout-val" id="simTotalDisplay" style="color:#fff; font-size:1.15rem;">RM 10,000</span>
+              </div>
             </div>
           </div>
         </div>
@@ -509,5 +1003,87 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=2.6.0"></script>
   <script src="app.js?v=27.0.0"></script>
+
+  <!-- 💽 Interactive Revenue Calculator & Proportional Grid Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const slider = document.getElementById('revSimSlider');
+      const amountDisplay = document.getElementById('simRevenueDisplay');
+      const totalDisplay = document.getElementById('simTotalDisplay');
+      const payoutElements = document.querySelectorAll('.bento-payout-val');
+      const presetButtons = document.querySelectorAll('.sim-preset-btn');
+      const ratioSegments = document.querySelectorAll('.ratio-segment');
+      const bentoCards = document.querySelectorAll('.bento-card-proportional[data-dept]');
+
+      function formatRM(val) {
+        return 'RM ' + Math.round(val).toLocaleString();
+      }
+
+      function updateSimulation(totalVal) {
+        if (amountDisplay) amountDisplay.innerText = formatRM(totalVal);
+        if (totalDisplay) totalDisplay.innerText = formatRM(totalVal);
+
+        payoutElements.forEach(el => {
+          const ratio = parseFloat(el.getAttribute('data-ratio') || '0');
+          if (ratio > 0) {
+            const calculated = totalVal * ratio;
+            el.innerText = formatRM(calculated);
+          }
+        });
+
+        // Update preset active class
+        presetButtons.forEach(btn => {
+          const btnVal = parseInt(btn.getAttribute('data-val'), 10);
+          btn.classList.toggle('active', btnVal === totalVal);
+        });
+      }
+
+      if (slider) {
+        slider.addEventListener('input', (e) => {
+          updateSimulation(parseInt(e.target.value, 10));
+        });
+      }
+
+      window.setSimRevenue = (val) => {
+        if (slider) slider.value = val;
+        updateSimulation(val);
+      };
+
+      // Bidirectional Hover Linkage between 100% Bar and Bento Cards
+      bentoCards.forEach(card => {
+        const dept = card.getAttribute('data-dept');
+        const seg = document.querySelector(`.ratio-segment[data-dept="${dept}"]`);
+
+        card.addEventListener('mouseenter', () => {
+          if (seg) seg.classList.add('highlighted');
+        });
+        card.addEventListener('mouseleave', () => {
+          if (seg) seg.classList.remove('highlighted');
+        });
+      });
+
+      ratioSegments.forEach(seg => {
+        const dept = seg.getAttribute('data-dept');
+        const card = document.querySelector(`.bento-card-proportional[data-dept="${dept}"]`);
+
+        seg.addEventListener('mouseenter', () => {
+          if (card) card.classList.add('active-highlight');
+        });
+        seg.addEventListener('mouseleave', () => {
+          if (card) card.classList.remove('active-highlight');
+        });
+        seg.addEventListener('click', () => {
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            card.classList.add('active-highlight');
+            setTimeout(() => card.classList.remove('active-highlight'), 1200);
+          }
+        });
+      });
+
+      // Initialize with default RM 10,000
+      updateSimulation(10000);
+    });
+  </script>
 </body>
 </html>
