@@ -263,7 +263,11 @@ window.showOverlay = function(artist) {
   const tagEl = document.getElementById('modal-tag');
   const bioEl = document.getElementById('modal-bio');
 
-  if (imgEl) imgEl.src = artist.image_url || 'assets/logo.png';
+  if (imgEl) {
+    imgEl.src = artist.image_url || 'assets/logo.png';
+    imgEl.style.objectPosition = artist.img_pos || '50% 20%';
+    imgEl.style.transform = `scale(${artist.img_zoom || 1.0})`;
+  }
   if (nameEl) nameEl.innerText = artist.name;
   if (tagEl) tagEl.innerText = getTagLabel(artist.category) + ` · ${artist.role || ''}`;
   if (bioEl) bioEl.innerText = artist.bio || "收割机主要服事同工，同心合意奔跑天路。";

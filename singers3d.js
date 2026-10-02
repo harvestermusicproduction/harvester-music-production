@@ -84,7 +84,7 @@ function initSpaceDOM() {
     el.className = 'team-node';
     el.innerHTML = `
       <div class="team-node-card">
-        <img src="${toImageLink(data.image_url)}" class="team-node-img" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=111&color=f6d28a&size=512'" alt="${data.name}">
+        <img src="${toImageLink(data.image_url)}" class="team-node-img" style="object-position: ${data.img_pos || data.pos || '50% 20%'}; transform: scale(${data.img_zoom || data.zoom || 1.0}); transform-origin: ${data.img_pos || data.pos || '50% 20%'};" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=111&color=f6d28a&size=512'" alt="${data.name}">
         <div class="team-node-info-text">
           <div class="team-node-role">${data.role || ''}</div>
           <div class="team-node-name">${data.name || 'Untitled'}</div>

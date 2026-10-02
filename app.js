@@ -500,7 +500,9 @@ document.addEventListener('DOMContentLoaded', () => {
       emailTemplate,
       order,
       created_at: item.created_at || '',
-      fullDateTime
+      fullDateTime,
+      img_pos: meta.img_pos || meta.pos || item.img_pos || item.pos || '50% 50%',
+      img_zoom: meta.img_zoom || meta.zoom || item.img_zoom || item.zoom || 1.0
     };
   }
 
@@ -735,7 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <a href="${item.link || 'javascript:void(0)'}" class="event-photo-card" ${item.link && item.link.startsWith('http') ? 'target="_blank"' : ''}>
         <div class="event-card-bg-blur" style="background-image: url('${item.image_url}')"></div>
         <div class="event-card-img-wrap">
-          <img src="${item.image_url}" alt="${item.title}" class="event-card-main-img" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
+          <img src="${item.image_url}" alt="${item.title}" class="event-card-main-img" loading="lazy" style="object-position: ${item.img_pos || '50% 50%'}; transform: scale(${item.img_zoom || 1.0}); transform-origin: ${item.img_pos || '50% 50%'};" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
         </div>
         <div class="event-card-gradient"></div>
         <span class="event-card-top-tag">${item.date}</span>
@@ -906,7 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="folder-card fade-in" onclick="location.href='event.html?id=${d.id}'">
             <div class="folder-main">
               ${countBadge}
-              <img src="${coverImg}" class="folder-cover" onerror="this.src='assets/logo.png'">
+              <img src="${coverImg}" class="folder-cover" style="object-position: ${d.cover_pos || d.img_pos || '50% 50%'}; transform: scale(${d.cover_zoom || d.img_zoom || 1.0}); transform-origin: ${d.cover_pos || d.img_pos || '50% 50%'};" onerror="this.src='assets/logo.png'">
               <div class="folder-info">
                 <p class="folder-date">📅 ${d.date || '未定日期'}</p>
                 <h3 class="folder-title">${d.title}</h3>

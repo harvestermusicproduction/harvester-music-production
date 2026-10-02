@@ -186,6 +186,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if(prevEl.tagName === 'VIDEO' || prevEl.tagName === 'AUDIO') {
           prevEl.style.display = 'block';
           prevEl.load();
+        } else if (prevEl.tagName === 'IMG') {
+          const widget = document.querySelector(`.crop-controller-widget[data-target-img="${previewId}"]`);
+          if (widget) {
+            const ctrlId = widget.dataset.ctrlId;
+            if (ctrlId && typeof window.onImageCropChange === 'function') {
+              window.onImageCropChange(ctrlId);
+            }
+          }
         }
       }
       const bgEl = document.getElementById(previewId + '_bg');
@@ -879,7 +887,9 @@ document.addEventListener('DOMContentLoaded', () => {
           <!-- 1. 封面管理与童趣手绘预设 -->
           <div style="margin-bottom:20px; background:#0a0a0a; padding:18px; border-radius:12px; border:1px solid #222; text-align:center;">
             <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">📸 单曲主封面 (Single Cover / Poster Sticker)</label>
-            <img id="m_prev" src="${initialCover}" style="width:140px; height:140px; object-fit:cover; border-radius:12px; display:block; margin:0 auto 12px; border:1.5px solid rgba(246,210,138,0.3); background:#181818;">
+            <div style="width:150px; height:150px; margin:0 auto 12px; overflow:hidden; border-radius:12px; border:1.5px solid rgba(246,210,138,0.3); background:#181818; display:flex; align-items:center; justify-content:center;">
+              <img id="m_prev" src="${initialCover}" style="width:100%; height:100%; object-fit:cover; object-position:${initialCoverPos}; transform:scale(${initialCoverZoom}); transform-origin:${initialCoverPos}; transition:all 0.1s ease;" onerror="this.src='assets/logo.png'">
+            </div>
             
             <div style="display:flex; gap:10px; justify-content:center; margin-bottom:10px;">
               <button type="button" class="btn-tiny" style="background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); padding:8px 16px;" onclick="setRandomChildlikeCover()">
@@ -890,6 +900,18 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="file" id="mf_up" style="font-size:0.8rem; color:#aaa; margin-bottom:8px; width:100%;">
             <button type="button" class="btn-tiny" style="width:100%; padding:8px;" onclick="uploadFile('mf_up', 'm_url', 'm_prev')">📤 上传自定义封面图片</button>
             <input type="hidden" id="m_url" value="${initialCover}">
+
+            <!-- 🎚️ 单曲封面焦点与裁剪调整 -->
+            ${renderImageCropControllerHTML({
+              id: 'm_cover_crop',
+              targetImgId: 'm_prev',
+              posVal: initialCoverPos,
+              zoomVal: initialCoverZoom,
+              posInputId: 'm_cover_pos',
+              zoomInputId: 'm_cover_zoom',
+              label: '调整单曲封面呈现区域与焦点 (Cover Crop & Zoom)',
+              hint: '因照片与方框比例不同，可微调上下/左右位置或放大，让封面主体居中完美呈现'
+            })}
           </div>
 
           <!-- 2. 基本信息 -->
@@ -1176,6 +1198,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const palette_name = selectedSet.name;
 
       const cover_url = document.getElementById('m_url').value.trim();
+      const cover_pos = document.getElementById('m_cover_pos')?.value.trim() || '50% 50%';
+      const cover_zoom = parseFloat(document.getElementById('m_cover_zoom')?.value) || 1.0;
       const preview_audio_url = document.getElementById('m_preview_audio')?.value.trim() || '';
       const youtube_url = document.getElementById('m_yt')?.value.trim() || '';
       const spotify_url = document.getElementById('m_sp')?.value.trim() || '';
@@ -1201,6 +1225,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const payload = {
         title,
         cover_url,
+        cover_pos,
+        cover_zoom,
+        img_pos: cover_pos,
+        img_zoom: cover_zoom,
         audio_url,
         score_url,
         description
@@ -1237,6 +1265,10 @@ document.addEventListener('DOMContentLoaded', () => {
         spine_bg,
         spine_color,
         cover_url,
+        cover_pos,
+        cover_zoom,
+        img_pos: cover_pos,
+        img_zoom: cover_zoom,
         description,
         score_url,
         preview_audio_url,
@@ -1766,6 +1798,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const list = window._currentAdminPosters || [];
     const p = posterId ? list.find(item => String(item.id) === String(posterId)) : null;
     const isEdit = !!p;
+    const posterPos = p?.img_pos || p?.pos || '50% 50%';
+    const posterZoom = p?.img_zoom || p?.zoom ? parseFloat(p.img_zoom || p.zoom) : 1.0;
 
     const modal = document.createElement('div');
     modal.id = "eventPosterModal";
@@ -1787,7 +1821,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div style="width:100%; height:220px; border-radius:8px; overflow:hidden; border:1px solid #333; background:#080808; margin-bottom:10px; display:flex; align-items:center; justify-content:center; position:relative;">
             <div id="ev_p_prev_bg" style="position:absolute; inset:-10px; background-image:url('${p?.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'}'); background-size:cover; background-position:center; filter:blur(20px) brightness(0.35); opacity:0.85;"></div>
-            <img id="ev_p_prev" src="${p?.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'}" style="position:relative; z-index:1; max-height:100%; max-width:100%; object-fit:contain; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85));" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
+            <img id="ev_p_prev" src="${p?.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'}" style="position:relative; z-index:1; width:100%; height:100%; object-fit:cover; object-position:${posterPos}; transform:scale(${posterZoom}); transform-origin:${posterPos}; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85)); transition:all 0.1s ease;" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
           </div>
 
           <div style="display:flex; flex-direction:column; gap:8px;">
@@ -1803,6 +1837,18 @@ document.addEventListener('DOMContentLoaded', () => {
               <input type="text" id="ev_p_img" value="${p?.image_url || ''}" placeholder="https://..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px; font-size:0.85rem;" oninput="document.getElementById('ev_p_prev').src = this.value.trim() || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'; const bgEl = document.getElementById('ev_p_prev_bg'); if (bgEl) bgEl.style.backgroundImage = 'url(' + (this.value.trim() || '') + ')';">
             </div>
           </div>
+
+          <!-- 🎚️ 走廊海报焦点与缩放调整 -->
+          ${renderImageCropControllerHTML({
+            id: 'ev_p_crop',
+            targetImgId: 'ev_p_prev',
+            posVal: posterPos,
+            zoomVal: posterZoom,
+            posInputId: 'ev_p_pos',
+            zoomInputId: 'ev_p_zoom',
+            label: '调整走廊海报呈现区域与焦点 (Poster Crop & Zoom)',
+            hint: '因走廊卡片与原海报比例不同，可调整画面上下/左右对焦点与放大倍数'
+          })}
         </div>
 
         <!-- 状态标签设置 -->
@@ -1910,10 +1956,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!title) return alert("请输入海报标题");
 
     const list = window._currentAdminPosters || [];
+    const imgPos = document.getElementById('ev_p_pos')?.value.trim() || '50% 50%';
+    const imgZoom = parseFloat(document.getElementById('ev_p_zoom')?.value) || 1.0;
     const item = {
       id: posterId || ('poster_' + Date.now()),
       title: title,
       image_url: imgUrl,
+      img_pos: imgPos,
+      img_zoom: imgZoom,
       statusTag: tag,
       date: date,
       venue: venue,
@@ -2148,13 +2198,25 @@ document.addEventListener('DOMContentLoaded', () => {
               <label style="color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; margin:0;">活动海报预览 (Poster)</label>
               <span style="font-size:0.72rem; color:var(--gold);">✨ 支持横版及打直/竖版海报完整展示</span>
             </div>
-            <div style="width:100%; height:200px; border-radius:8px; overflow:hidden; border:1px solid #333; background:#080808; margin-bottom:10px; display:flex; align-items:center; justify-content:center; position:relative;">
+            <div style="width:100%; height:220px; border-radius:8px; overflow:hidden; border:1px solid #333; background:#080808; margin-bottom:10px; display:flex; align-items:center; justify-content:center; position:relative;">
               <div id="ev_prev_bg" style="position:absolute; inset:-10px; background-image:url('${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}'); background-size:cover; background-position:center; filter:blur(20px) brightness(0.35); opacity:0.85;"></div>
-              <img id="ev_prev" src="${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}" style="position:relative; z-index:1; max-height:100%; max-width:100%; object-fit:contain; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85));" onerror="this.src='https://via.placeholder.com/1920x1080?text=Harvester+Event'">
+              <img id="ev_prev" src="${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}" style="position:relative; z-index:1; width:100%; height:100%; object-fit:cover; object-position:${e?.img_pos || e?.pos || '50% 50%'}; transform:scale(${e?.img_zoom || e?.zoom || 1.0}); transform-origin:${e?.img_pos || e?.pos || '50% 50%'}; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85)); transition:all 0.1s ease;" onerror="this.src='https://via.placeholder.com/1920x1080?text=Harvester+Event'">
             </div>
             <input type="file" id="f_ev" style="font-size:0.8rem; color:#888;">
             <button class="btn-tiny" style="margin-top:10px; width:100%; padding:8px;" onclick="uploadFile('f_ev', 'ev_url', 'ev_prev')">📤 上传活动海报图片</button>
             <input type="hidden" id="ev_url" value="${e?.image_url || ''}">
+
+            <!-- 🎚️ 活动海报焦点与裁剪 -->
+            ${renderImageCropControllerHTML({
+              id: 'ev_crop',
+              targetImgId: 'ev_prev',
+              posVal: e?.img_pos || e?.pos || '50% 50%',
+              zoomVal: e?.img_zoom || e?.zoom || 1.0,
+              posInputId: 'ev_pos',
+              zoomInputId: 'ev_zoom',
+              label: '调整活动海报显示区域与焦点 (Event Poster Focus)',
+              hint: '可调整海报上下/左右位置与缩放，使核心文字与视觉主体完美呈现'
+            })}
           </div>
 
           <!-- 标题与状态标签 -->
@@ -2263,6 +2325,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const stag = document.getElementById('ev_stag').value.trim();
     const finalTitle = sanitizeEventTitle(rawTitle, stag);
 
+    const imgPos = document.getElementById('ev_pos')?.value.trim() || '50% 50%';
+    const imgZoom = parseFloat(document.getElementById('ev_zoom')?.value) || 1.0;
     const payload = {
       title: finalTitle,
       event_date: document.getElementById('ev_d').value,
@@ -2270,6 +2334,8 @@ document.addEventListener('DOMContentLoaded', () => {
       location: document.getElementById('ev_l').value,
       map_url: document.getElementById('ev_ml').value,
       image_url: document.getElementById('ev_url').value,
+      img_pos: imgPos,
+      img_zoom: imgZoom,
       ticket_url: reqTicket ? document.getElementById('ev_turl').value.trim() : '',
       ticket_text: reqTicket ? (document.getElementById('ev_ttext').value.trim() || '前往购票/索票/报名') : '',
       requires_ticket: reqTicket,
@@ -2299,6 +2365,10 @@ document.addEventListener('DOMContentLoaded', () => {
           loc: payload.location,
           murl: payload.map_url,
           img: payload.image_url,
+          pos: payload.img_pos,
+          zoom: payload.img_zoom,
+          img_pos: payload.img_pos,
+          img_zoom: payload.img_zoom,
           turl: payload.ticket_url,
           ttext: payload.ticket_text,
           rt: payload.requires_ticket,
@@ -2452,60 +2522,173 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  // Dynamic co-worker team management helper
-  window.getCoWorkersListFromConfig = function(aboutData) {
-    if (aboutData && Array.isArray(aboutData.about_team_list) && aboutData.about_team_list.length > 0) {
-      return aboutData.about_team_list;
-    }
-    const list = [];
-    for (let i = 1; i <= 20; i++) {
-      const role = aboutData[`about_team_r${i}_t`];
-      const role_en = aboutData[`about_team_r${i}_te`];
-      const names = aboutData[`about_team_r${i}_names`];
-      const img = aboutData[`about_team_r${i}_img`];
-      if (role || names || img) {
-        list.push({
-          id: `staff_${i}`,
-          role: role || `职务 ${i}`,
-          role_en: role_en || '',
-          names: names || '',
-          image_url: img || 'assets/logo.png'
-        });
+  // ==========================================
+  // 🎚️ 统一照片裁剪/焦点与缩放控制器 (Universal Image Focal & Crop System)
+  // ==========================================
+  window.parseImageCropPosition = function(posStr) {
+    if (!posStr) return { x: 50, y: 50 };
+    const parts = String(posStr).trim().split(/\s+/);
+    let x = 50, y = 50;
+    if (parts.length >= 1) {
+      if (parts[0] === 'left') x = 0;
+      else if (parts[0] === 'center') x = 50;
+      else if (parts[0] === 'right') x = 100;
+      else {
+        const n = parseInt(parts[0], 10);
+        if (!isNaN(n)) x = Math.max(0, Math.min(100, n));
       }
     }
-    if (list.length > 0) return list;
-
-    return [
-  // Dynamic co-worker team management helper
-  window.getCoworkerXPercent = function(posStr) {
-    if (!posStr) return 50;
-    const parts = String(posStr).trim().split(/\s+/);
-    if (parts.length >= 1) {
-      if (parts[0] === 'left') return 0;
-      if (parts[0] === 'center') return 50;
-      if (parts[0] === 'right') return 100;
-      const num = parseInt(parts[0], 10);
-      if (!isNaN(num)) return num;
+    if (parts.length >= 2) {
+      if (parts[1] === 'top') y = 0;
+      else if (parts[1] === 'center') y = 50;
+      else if (parts[1] === 'bottom') y = 100;
+      else {
+        const n = parseInt(parts[1], 10);
+        if (!isNaN(n)) y = Math.max(0, Math.min(100, n));
+      }
+    } else if (parts.length === 1 && (parts[0] === 'top' || parts[0] === 'bottom')) {
+      y = parts[0] === 'top' ? 0 : 100;
+      x = 50;
     }
-    return 50;
+    return { x, y };
+  };
+
+  window.getCoworkerXPercent = function(posStr) {
+    return window.parseImageCropPosition(posStr).x;
   };
 
   window.getCoworkerYPercent = function(posStr) {
-    if (!posStr) return 20;
-    const parts = String(posStr).trim().split(/\s+/);
-    if (parts.length >= 2) {
-      if (parts[1] === 'top') return 0;
-      if (parts[1] === 'center') return 50;
-      if (parts[1] === 'bottom') return 100;
-      const num = parseInt(parts[1], 10);
-      if (!isNaN(num)) return num;
-    } else if (parts.length === 1) {
-      if (parts[0] === 'top') return 0;
-      if (parts[0] === 'bottom') return 100;
-    }
-    return 20;
+    return window.parseImageCropPosition(posStr).y;
   };
 
+  window.renderImageCropControllerHTML = function({
+    id,
+    targetImgId,
+    posVal = '50% 50%',
+    zoomVal = 1.0,
+    posInputId,
+    zoomInputId,
+    label = '调整照片呈现区域与焦点 (Crop Focus & Zoom)',
+    hint = '因照片与方框比例不同，可微调上下/左右位置或放大，让照片主体完美呈现'
+  }) {
+    const { x, y } = window.parseImageCropPosition(posVal);
+    const zoom = zoomVal ? Math.max(1.0, Math.min(2.5, parseFloat(zoomVal))) : 1.0;
+    const zoomPct = Math.round(zoom * 100);
+    const pId = posInputId || `in_pos_${id}`;
+    const zId = zoomInputId || `in_zoom_${id}`;
+
+    return `
+      <div class="crop-controller-widget" data-ctrl-id="${id}" data-target-img="${targetImgId}" data-pos-id="${pId}" data-zoom-id="${zId}"
+           style="background:#141414; padding:12px 14px; border-radius:10px; border:1px solid #282828; margin-top:10px; text-align:left; animation:fadeIn 0.2s ease;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:0.75rem; color:var(--gold); font-weight:bold; display:flex; align-items:center; gap:6px;">
+            <i class="fas fa-crop-alt"></i> ${label}
+          </span>
+          <span id="pos_val_badge_${id}" style="font-size:0.68rem; color:#aaa; font-family:monospace; background:#222; padding:2px 6px; border-radius:4px; border:1px solid #333;">${x}% ${y}% · ${zoomPct}%</span>
+        </div>
+        
+        ${hint ? `<p style="font-size:0.68rem; color:#777; margin:0 0 8px 0; line-height:1.3;">${hint}</p>` : ''}
+
+        <!-- 5 快捷焦点预设按钮 -->
+        <div style="display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap;">
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 50, 10, ${zoom})" title="对齐人物面部/头部/顶部">⬆️ 偏上(头部)</button>
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 50, 50, ${zoom})" title="画面正中居中">🎯 居中</button>
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 50, 90, ${zoom})" title="对齐底部">⬇️ 偏下</button>
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 10, 50, ${zoom})" title="偏左对齐">⬅️ 偏左</button>
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 90, 50, ${zoom})" title="偏右对齐">➡️ 偏右</button>
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#1c1c1c; border-color:#383838; color:#888;" onclick="setImageCropPreset('${id}', 50, 50, 1.0)" title="重置位置与缩放">↺ 还原</button>
+        </div>
+
+        <!-- 上下垂直位置滑块 -->
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+          <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">↕️ 上下:</span>
+          <input type="range" min="0" max="100" value="${y}" 
+                 id="crop_sl_y_${id}" 
+                 style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                 oninput="onImageCropChange('${id}')">
+          <span id="crop_txt_y_${id}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right; font-family:monospace;">${y}%</span>
+        </div>
+
+        <!-- 左右水平位置滑块 -->
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+          <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">↔️ 左右:</span>
+          <input type="range" min="0" max="100" value="${x}" 
+                 id="crop_sl_x_${id}" 
+                 style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                 oninput="onImageCropChange('${id}')">
+          <span id="crop_txt_x_${id}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right; font-family:monospace;">${x}%</span>
+        </div>
+
+        <!-- 画面缩放滑块 -->
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">🔍 缩放:</span>
+          <input type="range" min="100" max="250" value="${zoomPct}" 
+                 id="crop_sl_z_${id}" 
+                 style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                 oninput="onImageCropChange('${id}')">
+          <span id="crop_txt_z_${id}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right; font-family:monospace;">${zoomPct}%</span>
+        </div>
+
+        <input type="hidden" id="${pId}" value="${posVal || '50% 50%'}">
+        <input type="hidden" id="${zId}" value="${zoom}">
+      </div>
+    `;
+  };
+
+  window.onImageCropChange = function(id) {
+    const slX = document.getElementById(`crop_sl_x_${id}`);
+    const slY = document.getElementById(`crop_sl_y_${id}`);
+    const slZ = document.getElementById(`crop_sl_z_${id}`);
+    if (!slX || !slY) return;
+
+    const x = parseInt(slX.value, 10) || 50;
+    const y = parseInt(slY.value, 10) || 50;
+    const zoom = slZ ? (parseInt(slZ.value, 10) / 100) : 1.0;
+    const zoomPct = Math.round(zoom * 100);
+
+    const txtX = document.getElementById(`crop_txt_x_${id}`);
+    const txtY = document.getElementById(`crop_txt_y_${id}`);
+    const txtZ = document.getElementById(`crop_txt_z_${id}`);
+    const badge = document.getElementById(`pos_val_badge_${id}`);
+    
+    if (txtX) txtX.innerText = `${x}%`;
+    if (txtY) txtY.innerText = `${y}%`;
+    if (txtZ) txtZ.innerText = `${zoomPct}%`;
+    if (badge) badge.innerText = `${x}% ${y}% · ${zoomPct}%`;
+
+    const widget = document.querySelector(`.crop-controller-widget[data-ctrl-id="${id}"]`);
+    const targetImgId = widget?.dataset?.targetImg;
+    const posInputId = widget?.dataset?.posId || `in_pos_${id}`;
+    const zoomInputId = widget?.dataset?.zoomId || `in_zoom_${id}`;
+
+    const posStr = `${x}% ${y}%`;
+    const posInput = document.getElementById(posInputId);
+    const zoomInput = document.getElementById(zoomInputId);
+    if (posInput) posInput.value = posStr;
+    if (zoomInput) zoomInput.value = zoom;
+
+    if (targetImgId) {
+      const targetImg = document.getElementById(targetImgId);
+      if (targetImg) {
+        targetImg.style.objectFit = 'cover';
+        targetImg.style.objectPosition = posStr;
+        targetImg.style.transform = `scale(${zoom})`;
+        targetImg.style.transformOrigin = posStr;
+      }
+    }
+  };
+
+  window.setImageCropPreset = function(id, x, y, zoom) {
+    const slX = document.getElementById(`crop_sl_x_${id}`);
+    const slY = document.getElementById(`crop_sl_y_${id}`);
+    const slZ = document.getElementById(`crop_sl_z_${id}`);
+    if (slX) slX.value = x;
+    if (slY) slY.value = y;
+    if (slZ && zoom) slZ.value = Math.round(zoom * 100);
+    window.onImageCropChange(id);
+  };
+
+  // Backward compatibility aliases for coworkers
   window.onCoworkerCropChange = function(idx) {
     const sX = document.getElementById(`slider_x_${idx}`);
     const sY = document.getElementById(`slider_y_${idx}`);
@@ -2533,6 +2716,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (imgPrev) {
       imgPrev.style.objectPosition = posStr;
       imgPrev.style.transform = `scale(${valZ})`;
+      imgPrev.style.transformOrigin = posStr;
     }
   };
 
@@ -2543,7 +2727,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sX) sX.value = xVal;
     if (sY) sY.value = yVal;
     if (sZ) sZ.value = Math.round(zVal * 100);
-    onCoworkerCropChange(idx);
+    window.onCoworkerCropChange(idx);
   };
 
   window.getCoWorkersListFromConfig = function(aboutData) {
@@ -2862,10 +3046,24 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3 style="color:var(--gold); margin-top:0;">邀请新歌手档案 (Add Singer)</h3>
         
         <div style="margin-bottom:20px; text-align:center; background:#0a0a0a; padding:15px; border-radius:10px; border:1px solid #222;">
-          <img id="sprev_new" src="assets/logo.png" style="width:130px; aspect-ratio:3/4; object-fit:cover; border-radius:8px; margin-bottom:10px; background:#181818; border:1px solid #333;">
+          <div style="width:130px; height:160px; margin:0 auto 10px; overflow:hidden; border-radius:8px; background:#181818; border:1px solid #333; display:flex; align-items:center; justify-content:center;">
+            <img id="sprev_new" src="assets/logo.png" style="width:100%; height:100%; object-fit:cover; object-position:50% 20%; transform:scale(1.0); transform-origin:50% 20%; transition:all 0.1s ease;">
+          </div>
           <input type="file" id="sfup_new" style="display:block; margin:0 auto; font-size:0.8rem; color:#aaa; width:100%;">
           <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('sfup_new', 'surl_new', 'sprev_new')">📤 上传歌手照片</button>
           <input type="hidden" id="surl_new" value="">
+
+          <!-- 🎚️ 歌手相片焦点与裁剪调整 -->
+          ${renderImageCropControllerHTML({
+            id: 'singer_new_crop',
+            targetImgId: 'sprev_new',
+            posVal: '50% 20%',
+            zoomVal: 1.0,
+            posInputId: 's_pos_new',
+            zoomInputId: 's_zoom_new',
+            label: '调整歌手相片呈现区域 (Singer Photo Focus)',
+            hint: '调整头部或面部上下位置与缩放，让歌手在卡片上完美展示'
+          })}
         </div>
 
         <label style="color:#aaa; font-size:0.8rem; display:block; margin-bottom:4px;">姓名 (Name) *</label>
@@ -2919,11 +3117,25 @@ document.addEventListener('DOMContentLoaded', () => {
       <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:600px; margin:auto;">
         <h2 style="color:var(--gold); margin-bottom:1.5rem;">编辑歌手档案</h2>
         
-        <div style="margin-bottom:20px; text-align:center;">
-          <img id="sprev" src="${s.image_url || 'https://via.placeholder.com/300x400'}" style="width:150px; aspect-ratio:3/4; object-fit:cover; border-radius:8px; margin-bottom:10px; background:#222;">
-          <input type="file" id="sfup" style="display:block; margin:0 auto;">
-          <button class="btn-tiny" style="margin-top:10px;" onclick="uploadFile('sfup', 'surl', 'sprev')">上传照片</button>
+        <div style="margin-bottom:20px; text-align:center; background:#0a0a0a; padding:15px; border-radius:10px; border:1px solid #222;">
+          <div style="width:130px; height:160px; margin:0 auto 10px; overflow:hidden; border-radius:8px; background:#181818; border:1px solid #333; display:flex; align-items:center; justify-content:center;">
+            <img id="sprev" src="${s.image_url || 'assets/logo.png'}" style="width:100%; height:100%; object-fit:cover; object-position:${s.img_pos || s.pos || '50% 20%'}; transform:scale(${s.img_zoom || s.zoom || 1.0}); transform-origin:${s.img_pos || s.pos || '50% 20%'}; transition:all 0.1s ease;" onerror="this.src='assets/logo.png'">
+          </div>
+          <input type="file" id="sfup" style="display:block; margin:0 auto; font-size:0.8rem; color:#aaa; width:100%;">
+          <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('sfup', 'surl', 'sprev')">📤 上传照片</button>
           <input type="hidden" id="surl" value="${s.image_url || ''}">
+
+          <!-- 🎚️ 歌手相片焦点与裁剪调整 -->
+          ${renderImageCropControllerHTML({
+            id: 'singer_crop',
+            targetImgId: 'sprev',
+            posVal: s.img_pos || s.pos || '50% 20%',
+            zoomVal: s.img_zoom || s.zoom || 1.0,
+            posInputId: 'spos',
+            zoomInputId: 'szoom',
+            label: '调整歌手相片呈现区域 (Singer Photo Focus)',
+            hint: '调整头部或面部上下位置与缩放，让歌手在卡片上完美展示'
+          })}
         </div>
 
         <label>姓名 Name</label>
@@ -2962,6 +3174,8 @@ document.addEventListener('DOMContentLoaded', () => {
       role: document.getElementById('sr').value,
       category: document.getElementById('scat').value,
       image_url: document.getElementById('surl').value,
+      img_pos: document.getElementById('spos')?.value || '50% 20%',
+      img_zoom: parseFloat(document.getElementById('szoom')?.value) || 1.0,
       display_order: parseInt(document.getElementById('so').value) || 0
     };
     try {
@@ -4465,12 +4679,26 @@ document.addEventListener('DOMContentLoaded', () => {
         <!-- 相册封面 -->
         <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222;">
           <label style="display:block; margin-bottom:8px; color:#aaa; font-size:0.8rem; font-weight:600;">相册封面 (Album Cover)</label>
-          <img id="da_prev" src="${a?.cover_url || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80'}" style="width:100%; aspect-ratio:1.6/1; object-fit:cover; border-radius:8px; display:block; margin:0 auto 12px; border:1px solid #333; background:#222;" onerror="this.src='assets/logo.png'">
+          <div style="width:100%; aspect-ratio:1.6/1; overflow:hidden; border-radius:8px; border:1px solid #333; background:#222; margin:0 auto 12px; display:flex; align-items:center; justify-content:center;">
+            <img id="da_prev" src="${a?.cover_url || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80'}" style="width:100%; height:100%; object-fit:cover; object-position:${a?.cover_pos || a?.img_pos || '50% 50%'}; transform:scale(${a?.cover_zoom || a?.img_zoom || 1.0}); transform-origin:${a?.cover_pos || a?.img_pos || '50% 50%'}; transition:all 0.1s ease;" onerror="this.src='assets/logo.png'">
+          </div>
           <div style="display:flex; flex-direction:column; gap:8px;">
             <input type="file" id="daf_up" accept="image/*" style="font-size:0.8rem; color:#888;">
             <button class="btn-tiny" style="width:100%; padding:7px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); font-weight:600;" onclick="uploadFile('daf_up', 'da_url', 'da_prev')">📤 上传相册封面图</button>
             <input type="text" id="da_url" value="${a?.cover_url || ''}" placeholder="或直接粘贴封面图片 URL 链接..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#eee; border-radius:4px; font-size:0.8rem;" oninput="document.getElementById('da_prev').src = this.value.trim() || 'assets/logo.png'">
           </div>
+
+          <!-- 🎚️ 相册封面焦点与裁剪调整 -->
+          ${renderImageCropControllerHTML({
+            id: 'da_crop',
+            targetImgId: 'da_prev',
+            posVal: a?.cover_pos || a?.img_pos || '50% 50%',
+            zoomVal: a?.cover_zoom || a?.img_zoom || 1.0,
+            posInputId: 'da_pos',
+            zoomInputId: 'da_zoom',
+            label: '调整相册封面呈现区域与焦点 (Album Cover Crop & Zoom)',
+            hint: '微调封面上下/左右位置与放大比例，确保相册卡片封面不切到人脸或重要景物'
+          })}
         </div>
 
         <!-- 相册名称与日期 -->
@@ -4524,12 +4752,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btn) { btn.innerText = "⏳ 正在同步中..."; btn.disabled = true; }
 
+    const coverPos = document.getElementById('da_pos')?.value.trim() || '50% 50%';
+    const coverZoom = parseFloat(document.getElementById('da_zoom')?.value) || 1.0;
     const albumId = id || ('album_' + Date.now());
     const payload = {
       id: albumId,
       title: title,
       date: date,
       cover_url: coverUrl || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
+      cover_pos: coverPos,
+      cover_zoom: coverZoom,
+      img_pos: coverPos,
+      img_zoom: coverZoom,
       fb_url: fbUrl
     };
 
@@ -4538,7 +4772,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const dbPayload = {
         title: payload.title,
         date: payload.date,
-        cover_url: payload.cover_url
+        cover_url: payload.cover_url,
+        cover_pos: coverPos,
+        cover_zoom: coverZoom,
+        img_pos: coverPos,
+        img_zoom: coverZoom
       };
       if (fbUrl) dbPayload.fb_url = fbUrl;
 

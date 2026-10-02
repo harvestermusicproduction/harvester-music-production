@@ -429,7 +429,9 @@ You have set my feet upon the rock!`
               mixing: (customMatch?.mixing !== undefined ? customMatch.mixing : (s.mixing || "")).trim(),
               photo_1: customMatch?.photo_1 || s.cover_url || doodleFallback,
               photo_2: customMatch?.photo_2 || childlikeDoodles[1],
-              photo_3: customMatch?.photo_3 || childlikeDoodles[2]
+              photo_3: customMatch?.photo_3 || childlikeDoodles[2],
+              cover_pos: customMatch?.cover_pos || s.cover_pos || s.img_pos || "50% 50%",
+              cover_zoom: customMatch?.cover_zoom || s.cover_zoom || s.img_zoom || 1.0
             };
           });
 
@@ -441,7 +443,9 @@ You have set my feet upon the rock!`
             return {
               ...c,
               audio_url: isDirect ? raw : (c.preview_audio_url || ""),
-              preview_audio_url: isDirect ? raw : (c.preview_audio_url || "")
+              preview_audio_url: isDirect ? raw : (c.preview_audio_url || ""),
+              cover_pos: c.cover_pos || c.img_pos || "50% 50%",
+              cover_zoom: c.cover_zoom || c.img_zoom || 1.0
             };
           }));
         }
@@ -794,7 +798,7 @@ You have set my feet upon the rock!`
           
           <!-- 1. Front Outer Cover (纯净高清封面，无黑框、无杂字) -->
           <div class="cube-face cube-front sleeve-outer-front">
-            <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
+            <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" style="object-position: ${album.cover_pos || album.img_pos || '50% 50%'}; transform: scale(${album.cover_zoom || album.img_zoom || 1.0}); transform-origin: ${album.cover_pos || album.img_pos || '50% 50%'};" onerror="this.src='assets/logo.png'">
             <!-- Modern Satin Specular Reflection -->
             <div class="album-glass-sheen"></div>
           </div>
@@ -810,7 +814,7 @@ You have set my feet upon the rock!`
 
           <!-- Back Outer Face -->
           <div class="cube-face cube-back sleeve-outer-back">
-            <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" onerror="this.src='assets/logo.png'">
+            <img src="${album.cover_url || childlikeDoodles[origIdx % childlikeDoodles.length]}" alt="${album.title}" draggable="false" style="object-position: ${album.cover_pos || album.img_pos || '50% 50%'}; transform: scale(${album.cover_zoom || album.img_zoom || 1.0}); transform-origin: ${album.cover_pos || album.img_pos || '50% 50%'};" onerror="this.src='assets/logo.png'">
             <div class="album-glass-sheen"></div>
           </div>
         </div>
@@ -1295,7 +1299,7 @@ You have set my feet upon the rock!`
           <!-- Center Band Member Cut-out Sticker -->
           <div style="position:relative; z-index:2; margin:10px 0; text-align:center;">
             <div class="cutout-sticker" style="width:190px; height:190px; margin:0 auto; overflow:hidden; position:relative;">
-              <img src="${activeSong.cover_url}" alt="${activeSong.title}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='${childlikeDoodles[0]}'">
+              <img src="${activeSong.cover_url}" alt="${activeSong.title}" style="width:100%; height:100%; object-fit:cover; object-position: ${activeSong.cover_pos || activeSong.img_pos || '50% 50%'}; transform: scale(${activeSong.cover_zoom || activeSong.img_zoom || 1.0}); transform-origin: ${activeSong.cover_pos || activeSong.img_pos || '50% 50%'};" onerror="this.src='${childlikeDoodles[0]}'">
               <div style="position:absolute; bottom:6px; left:6px; right:6px; background:rgba(0,0,0,0.65); backdrop-filter:blur(8px); padding:4px 10px; border-radius:6px; font-size:0.7rem; color: #F6F4F0; display:flex; justify-content:space-between;">
                 <span>${activeSong.artist}</span>
                 <span style="color:var(--gold); font-family:var(--font-times);">${activeSong.year || '2025'}</span>
