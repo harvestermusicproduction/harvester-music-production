@@ -181,6 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
           prevEl.load();
         }
       }
+      const bgEl = document.getElementById(previewId + '_bg');
+      if(bgEl) bgEl.style.backgroundImage = `url('${publicUrl}')`;
     }
     btn.innerText = "✅ 上传成功";
   };
@@ -1532,18 +1534,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
               <div style="background:#161616; border:1px solid rgba(246,210,138,0.22); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; position:relative; box-shadow:0 8px 20px rgba(0,0,0,0.5);">
                 <!-- Poster Image with Badges -->
-                <div style="position:relative; width:100%; height:150px; background:#000;">
-                  <img src="${p.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80'}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80'">
-                  <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 60%);"></div>
+                <div style="position:relative; width:100%; height:170px; background:#080808; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                  <div style="position:absolute; inset:-10px; background-image:url('${p.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80'}'); background-size:cover; background-position:center; filter:blur(16px) brightness(0.35); opacity:0.85;"></div>
+                  <img src="${p.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80'}" style="position:relative; z-index:1; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.8));" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80'">
+                  <div style="position:absolute; inset:0; z-index:2; background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 55%); pointer-events:none;"></div>
                   <!-- Top Left Date Badge -->
-                  <span style="position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.75); color:var(--gold); border:1px solid rgba(246,210,138,0.3); font-size:0.7rem; padding:2px 8px; border-radius:12px; font-weight:600;">
+                  <span style="position:absolute; top:8px; left:8px; z-index:3; background:rgba(0,0,0,0.8); color:var(--gold); border:1px solid rgba(246,210,138,0.35); font-size:0.7rem; padding:2px 8px; border-radius:12px; font-weight:600;">
                     ${p.date || '未定日期'}
                   </span>
                   <!-- Top Right Status Tag -->
-                  <span style="position:absolute; top:8px; right:8px; background:${badgeBg}; color:${badgeColor}; font-size:0.68rem; font-weight:800; padding:2px 9px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.4);">
+                  <span style="position:absolute; top:8px; right:8px; z-index:3; background:${badgeBg}; color:${badgeColor}; font-size:0.68rem; font-weight:800; padding:2px 9px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.4);">
                     ${tag}
                   </span>
-                  <span style="position:absolute; bottom:6px; right:8px; background:rgba(0,0,0,0.8); color:#aaa; font-size:0.68rem; padding:1px 6px; border-radius:4px;">
+                  <span style="position:absolute; bottom:6px; right:8px; z-index:3; background:rgba(0,0,0,0.8); color:#aaa; font-size:0.68rem; padding:1px 6px; border-radius:4px;">
                     #${idx + 1}
                   </span>
                 </div>
@@ -1709,14 +1712,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         <!-- 海报图片预览与上传 -->
         <div style="margin-bottom:18px; background:#0a0a0a; padding:15px; border-radius:12px; border:1px solid #222;">
-          <label style="display:block; margin-bottom:8px; color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; font-weight:600;">海报图片预览 (Poster Image)</label>
-          <div style="width:100%; height:170px; border-radius:8px; overflow:hidden; border:1px solid #333; background:#000; margin-bottom:10px; display:flex; align-items:center; justify-content:center;">
-            <img id="ev_p_prev" src="${p?.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label style="color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; font-weight:600; margin:0;">海报图片预览 (Poster Image)</label>
+            <span style="font-size:0.72rem; color:var(--gold);">✨ 完美自适应横版及竖版（打直）海报</span>
+          </div>
+          <div style="width:100%; height:220px; border-radius:8px; overflow:hidden; border:1px solid #333; background:#080808; margin-bottom:10px; display:flex; align-items:center; justify-content:center; position:relative;">
+            <div id="ev_p_prev_bg" style="position:absolute; inset:-10px; background-image:url('${p?.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'}'); background-size:cover; background-position:center; filter:blur(20px) brightness(0.35); opacity:0.85;"></div>
+            <img id="ev_p_prev" src="${p?.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'}" style="position:relative; z-index:1; max-height:100%; max-width:100%; object-fit:contain; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85));" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
           </div>
 
           <div style="display:flex; flex-direction:column; gap:8px;">
             <div>
-              <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">方式一：选择本地图片上传</label>
+              <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">方式一：选择本地图片上传 (支持横版 / 竖版 A4 / 手机比例海报)</label>
               <div style="display:flex; gap:8px;">
                 <input type="file" id="f_ev_p" accept="image/*" style="font-size:0.75rem; color:#888; flex:1;">
                 <button class="btn-tiny" id="btnUploadEvP" style="background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); font-weight:600; padding:6px 14px;" onclick="uploadPosterPhoto('f_ev_p', 'ev_p_img', 'ev_p_prev')">📤 上传并同步</button>
@@ -1724,7 +1731,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div>
               <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">方式二：直接输入海报图片 URL 链接</label>
-              <input type="text" id="ev_p_img" value="${p?.image_url || ''}" placeholder="https://..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px; font-size:0.85rem;" oninput="document.getElementById('ev_p_prev').src = this.value.trim() || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
+              <input type="text" id="ev_p_img" value="${p?.image_url || ''}" placeholder="https://..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px; font-size:0.85rem;" oninput="document.getElementById('ev_p_prev').src = this.value.trim() || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'; const bgEl = document.getElementById('ev_p_prev_bg'); if (bgEl) bgEl.style.backgroundImage = 'url(' + (this.value.trim() || '') + ')';">
             </div>
           </div>
         </div>
@@ -1810,6 +1817,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById(targetId).value = publicUrl;
       const prevEl = document.getElementById(previewId);
       if(prevEl) prevEl.src = publicUrl;
+      const bgEl = document.getElementById(previewId + '_bg');
+      if (bgEl) bgEl.style.backgroundImage = `url('${publicUrl}')`;
       alert("✅ 海报图片上传成功！");
     } catch(err) {
       alert("上传失败: " + err.message);
@@ -2065,8 +2074,14 @@ document.addEventListener('DOMContentLoaded', () => {
           
           <!-- 活动海报 -->
           <div style="margin-bottom:20px; background: #0a0a0a; padding: 15px; border-radius: 12px; border:1px solid #222;">
-            <label style="display:block; margin-bottom:8px; color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">活动海报预览 (Poster)</label>
-            <img id="ev_prev" src="${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}" style="width:100%; max-height:180px; object-fit:cover; border-radius:8px; margin-bottom:10px; border:1px solid #333;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <label style="color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; margin:0;">活动海报预览 (Poster)</label>
+              <span style="font-size:0.72rem; color:var(--gold);">✨ 支持横版及打直/竖版海报完整展示</span>
+            </div>
+            <div style="width:100%; height:200px; border-radius:8px; overflow:hidden; border:1px solid #333; background:#080808; margin-bottom:10px; display:flex; align-items:center; justify-content:center; position:relative;">
+              <div id="ev_prev_bg" style="position:absolute; inset:-10px; background-image:url('${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}'); background-size:cover; background-position:center; filter:blur(20px) brightness(0.35); opacity:0.85;"></div>
+              <img id="ev_prev" src="${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}" style="position:relative; z-index:1; max-height:100%; max-width:100%; object-fit:contain; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85));" onerror="this.src='https://via.placeholder.com/1920x1080?text=Harvester+Event'">
+            </div>
             <input type="file" id="f_ev" style="font-size:0.8rem; color:#888;">
             <button class="btn-tiny" style="margin-top:10px; width:100%; padding:8px;" onclick="uploadFile('f_ev', 'ev_url', 'ev_prev')">📤 上传活动海报图片</button>
             <input type="hidden" id="ev_url" value="${e?.image_url || ''}">

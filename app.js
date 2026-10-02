@@ -700,7 +700,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render cards
     const renderCard = (item) => `
       <a href="${item.link || 'javascript:void(0)'}" class="event-photo-card" ${item.link && item.link.startsWith('http') ? 'target="_blank"' : ''}>
-        <img src="${item.image_url}" alt="${item.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
+        <div class="event-card-bg-blur" style="background-image: url('${item.image_url}')"></div>
+        <div class="event-card-img-wrap">
+          <img src="${item.image_url}" alt="${item.title}" class="event-card-main-img" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
+        </div>
         <div class="event-card-gradient"></div>
         <span class="event-card-top-tag">${item.date}</span>
         <span class="event-card-status-pill">${item.statusTag}</span>
@@ -723,7 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 🏹 Setup Arrow Navigation
     window.scrollEventsGallery = function(direction) {
-      const cardWidth = window.innerWidth <= 768 ? 310 : 424;
+      const cardWidth = window.innerWidth <= 768 ? 310 : 404;
       viewport.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
     };
 

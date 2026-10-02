@@ -3246,8 +3246,8 @@ body.harvest-active {
     padding: 0.5rem 0 !important;
   }
   .event-photo-card {
-    width: 270px !important;
-    height: 195px !important;
+    width: 290px !important;
+    height: 250px !important;
   }
   .events-section-header {
     gap: 0.6rem !important;
@@ -3364,8 +3364,8 @@ body.harvest-active {
   }
 
   .event-photo-card {
-    width: 235px !important;
-    height: 170px !important;
+    width: 250px !important;
+    height: 220px !important;
   }
   .events-gallery-arrow {
     width: 34px !important;
