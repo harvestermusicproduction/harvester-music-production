@@ -51,15 +51,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function renderCMS() {
     adminDashboard.innerHTML = `
-      <div class="cms-layout" style="display:flex; height:100vh; background:#050505; color: #F6F4F0; overflow:hidden; font-family: 'Inter', -apple-system, sans-serif;">
-        <!-- Clean Professional Sidebar -->
-        <aside style="width:250px; background:#000; border-right:1px solid #1a1a1a; padding:2rem 1.2rem; display:flex; flex-direction:column;">
-          <div style="margin-bottom:2rem; padding-left:10px;">
-            <h2 style="color:var(--gold); font-size:1.35rem; letter-spacing:3px; margin:0; font-weight: 300;">HARVESTER</h2>
-            <p style="font-size:0.6rem; color:#1877F2; margin:5px 0 0; letter-spacing:2px; text-transform:uppercase; font-weight:bold;">CMS CONTROL PANEL</p>
+      <div class="cms-layout" style="display:flex; height:100vh; background:#080808; color: #ffffff; overflow:hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;">
+        <!-- Clean Professional Red/Black/White Sidebar -->
+        <aside style="width:265px; min-width:265px; background:#0c0c0c; border-right:1px solid #222222; padding:1.8rem 1.1rem; display:flex; flex-direction:column; box-sizing:border-box;">
+          <div style="margin-bottom:1.8rem; padding: 0 4px; display:flex; align-items:center; gap:10px;">
+            <img src="assets/logo.png" alt="Harvester Logo" style="height:26px; width:auto; object-fit:contain; filter:brightness(1.6); flex-shrink:0;">
+            <div style="min-width:0; flex:1; overflow:visible;">
+              <h2 style="color:#ffffff; font-size:1.22rem; letter-spacing:2px; margin:0; font-weight:800; white-space:nowrap; font-family:var(--font-brand), sans-serif;">HARVESTER</h2>
+              <p style="font-size:0.62rem; color:#e63946; margin:3px 0 0; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; white-space:nowrap;">CMS CONTROL PANEL</p>
+            </div>
           </div>
           
-          <nav style="flex:1; display:flex; flex-direction:column; gap:5px; overflow-y:auto; padding-right:4px;">
+          <nav style="flex:1; display:flex; flex-direction:column; gap:4px; overflow-y:auto; padding-right:4px;">
             <p class="nav-section-title">CONTROL CENTER / 概览</p>
             <a href="javascript:void(0)" onclick="switchModule('dashboard')" class="nav-item ${currentModule==='dashboard'?'active':''}">📊 仪表盘概览 (Overview)</a>
 
@@ -79,35 +82,38 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ 全站设置与 SEO (Config)</a>
           </nav>
           
-          <button onclick="logoutAdmin()" style="background:none; border:none; color:#555; text-align:left; padding:10px; font-size:0.8rem; cursor:pointer; transition:0.3s; margin-top:15px; border-top:1px solid #111;">
-            <i class="fas fa-sign-out-alt"></i> SIGN OUT (登出)
+          <button onclick="logoutAdmin()" style="background:none; border:none; color:#777; text-align:left; padding:10px; font-size:0.8rem; cursor:pointer; transition:0.3s; margin-top:15px; border-top:1px solid #222; display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-sign-out-alt" style="color:#e63946;"></i> <span style="color:#bbb;">SIGN OUT (登出)</span>
           </button>
         </aside>
 
-        <main id="moduleBody" style="flex:1; padding:3.5rem 4.5rem; overflow-y:auto; background:#050505;"></main>
+        <main id="moduleBody" style="flex:1; padding:3rem 3.5rem; overflow-y:auto; background:#080808;"></main>
       </div>
 
       <style>
-        .nav-section-title { font-size: 0.6rem; color: #3a3a3a; text-transform: uppercase; letter-spacing: 2px; margin: 8px 0 6px 10px; font-weight: bold; }
+        .nav-section-title { font-size: 0.62rem; color: #666666; text-transform: uppercase; letter-spacing: 1.8px; margin: 10px 0 6px 8px; font-weight: 700; }
         .nav-item {
-          color: #888;
+          color: #999999;
           text-decoration: none;
-          padding: 9px 14px;
+          padding: 8px 12px;
           border-radius: 6px;
-          font-size: 0.85rem;
-          transition: all 0.25s ease;
+          font-size: 0.84rem;
+          transition: all 0.22s ease;
           display: flex;
           align-items: center;
           gap: 10px;
           letter-spacing: 0.3px;
         }
-        .nav-item:hover { background: rgba(255,255,255,0.04); color: #ccc; }
-        .nav-item.active { background: rgba(246, 210, 138, 0.1); color: var(--gold); font-weight: 600; border-left: 2px solid var(--gold); }
+        .nav-item:hover { background: rgba(255,255,255,0.06); color: #ffffff; }
+        .nav-item.active { background: rgba(230, 57, 70, 0.14); color: #ffffff; font-weight: 600; border-left: 3px solid #e63946; }
         
-        .cms-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 12px; padding: 2rem; }
-        .btn-tiny { background: #111; border: 1px solid #222; color: #888; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: 0.3s; }
-        .btn-tiny:hover { background: #222; color: #F6F4F0; border-color: #444; }
-        .btn-tiny.danger:hover { background: #422; color: #f44; border-color: #622; }
+        .cms-card { background: #111111; border: 1px solid #222222; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .btn-tiny { background: #1a1a1a; border: 1px solid #333333; color: #cccccc; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; transition: 0.25s; font-weight: 500; }
+        .btn-tiny:hover { background: #262626; color: #ffffff; border-color: #e63946; }
+        .btn-tiny.danger { color: #ff6b6b; border-color: rgba(230, 57, 70, 0.4); background: rgba(230, 57, 70, 0.08); }
+        .btn-tiny.danger:hover { background: #e63946; color: #ffffff; border-color: #e63946; }
+        .btn-primary, .btn-submit-cms { background: linear-gradient(135deg, #e63946 0%, #c92a3f 100%); color: #ffffff; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.25s; box-shadow: 0 4px 15px rgba(230, 57, 70, 0.35); }
+        .btn-primary:hover, .btn-submit-cms:hover { background: #ff4d4f; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(230, 57, 70, 0.5); }
       </style>
     `;
     const body = document.getElementById('moduleBody');
@@ -273,40 +279,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const { data: topListen } = await db.from('music_works').select('*').order('listen_count', { ascending: false }).limit(5);
 
     container.innerHTML = `
-      <h1 style="color:var(--gold);">系统概览 (Dashboard)</h1>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-top:20px;">
-        <div class="cms-card" style="background:#1a1a1a; padding:2rem; border-radius:12px; border-left:4px solid var(--gold);">
-          <h3 style="font-size:2.5rem; margin:0;">${v||0}</h3><p style="color:#666; margin:0;">全站访客总数 (Total Visits)</p>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #222; padding-bottom:1.2rem; margin-bottom:2rem;">
+        <div>
+          <h1 style="color:#ffffff; font-size:1.85rem; margin:0; font-weight:800; letter-spacing:0.5px;">系统概览 <span style="color:#e63946;">(Dashboard)</span></h1>
+          <p style="color:#888; font-size:0.85rem; margin:4px 0 0;">欢迎进入收割机音乐后台控制中心 · Red, Black & White Edition</p>
         </div>
-        <div class="cms-card" style="background:#1a1a1a; padding:2rem; border-radius:12px; border-left:4px solid #64D28A;">
-          <h3 style="font-size:2.5rem; margin:0;">${m||0}</h3><p style="color:#666; margin:0;">已发布曲目 (Live Tracks)</p>
+        <button onclick="renderCMS()" class="btn-tiny" style="display:flex; align-items:center; gap:6px;"><i class="fas fa-sync-alt"></i> 刷新数据</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-top:20px;">
+        <div class="cms-card" style="background:#111111; padding:1.8rem; border-radius:12px; border-left:4px solid #e63946; border:1px solid #222; border-left:4px solid #e63946;">
+          <h3 style="font-size:2.6rem; margin:0; color:#ffffff; font-weight:900;">${v||0}</h3>
+          <p style="color:#888; margin:6px 0 0; font-size:0.82rem; text-transform:uppercase; letter-spacing:1px; font-weight:600;">全站访客总数 (Total Visits)</p>
+        </div>
+        <div class="cms-card" style="background:#111111; padding:1.8rem; border-radius:12px; border-left:4px solid #ffffff; border:1px solid #222; border-left:4px solid #ffffff;">
+          <h3 style="font-size:2.6rem; margin:0; color:#ffffff; font-weight:900;">${m||0}</h3>
+          <p style="color:#888; margin:6px 0 0; font-size:0.82rem; text-transform:uppercase; letter-spacing:1px; font-weight:600;">已发布曲目 (Live Tracks)</p>
         </div>
       </div>
 
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:30px; margin-top:40px;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:25px; margin-top:35px;">
         <!-- Ranking 1: Downloads -->
-        <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px;">
-          <h3 style="color:var(--gold); margin-top:0; border-bottom:1px solid #222; padding-bottom:10px;">📈 热门下载 (Top Scores)</h3>
+        <div style="background:#111111; border:1px solid #222222; border-radius:12px; padding:22px; box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+          <h3 style="color:#ffffff; margin-top:0; border-bottom:1px solid #222; padding-bottom:12px; font-size:1.05rem; display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-file-pdf" style="color:#e63946;"></i> 热门歌谱下载 (Top Scores)
+          </h3>
           <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
             ${topDownloads?.map((s, i) => `
-              <div style="display:flex; justify-content:space-between; align-items:center; background:#151515; padding:10px 15px; border-radius:8px;">
-                <span><small style="color:#444;">#${i+1}</small> ${s.title}</span>
-                <span style="color:var(--gold); font-weight:bold;">${s.download_count||0} 📄</span>
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#181818; border:1px solid #262626; padding:10px 14px; border-radius:6px;">
+                <span style="color:#f0f0f0; font-size:0.88rem;"><small style="color:#e63946; font-weight:bold; margin-right:6px;">#${i+1}</small> ${s.title}</span>
+                <span style="color:#ffffff; font-weight:bold; font-size:0.82rem; background:rgba(230,57,70,0.18); border:1px solid rgba(230,57,70,0.4); padding:2px 8px; border-radius:4px;">${s.download_count||0} 📄</span>
               </div>
-            `).join('') || '<p style="color:#444;">暂无下载数据</p>'}
+            `).join('') || '<p style="color:#666; font-size:0.85rem;">暂无下载数据</p>'}
           </div>
         </div>
 
         <!-- Ranking 2: Listening -->
-        <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px;">
-          <h3 style="color:#64D28A; margin-top:0; border-bottom:1px solid #222; padding-bottom:10px;">🎧 热门收听 (Top Listening)</h3>
+        <div style="background:#111111; border:1px solid #222222; border-radius:12px; padding:22px; box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+          <h3 style="color:#ffffff; margin-top:0; border-bottom:1px solid #222; padding-bottom:12px; font-size:1.05rem; display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-headphones" style="color:#e63946;"></i> 热门试听曲目 (Top Listening)
+          </h3>
           <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
             ${topListen?.map((s, i) => `
-              <div style="display:flex; justify-content:space-between; align-items:center; background:#151515; padding:10px 15px; border-radius:8px;">
-                <span><small style="color:#444;">#${i+1}</small> ${s.title}</span>
-                <span style="color:#64D28A; font-weight:bold;">${s.listen_count||0} 🎧</span>
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#181818; border:1px solid #262626; padding:10px 14px; border-radius:6px;">
+                <span style="color:#f0f0f0; font-size:0.88rem;"><small style="color:#e63946; font-weight:bold; margin-right:6px;">#${i+1}</small> ${s.title}</span>
+                <span style="color:#ffffff; font-weight:bold; font-size:0.82rem; background:rgba(255,255,255,0.08); border:1px solid #333; padding:2px 8px; border-radius:4px;">${s.listen_count||0} 🎧</span>
               </div>
-            `).join('') || '<p style="color:#444;">暂无收听数据</p>'}
+            `).join('') || '<p style="color:#666; font-size:0.85rem;">暂无试听数据</p>'}
           </div>
         </div>
       </div>
