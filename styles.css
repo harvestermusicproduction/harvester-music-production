@@ -3496,6 +3496,25 @@ body.harvest-active {
 video::-webkit-media-controls { display:none !important; }
 video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
 
+/* 🎨 Sketch Icon & Vector Dropdown Icons */
+.sketch-icon,
+svg.sketch-icon {
+  width: 15px !important;
+  height: 15px !important;
+  min-width: 15px !important;
+  min-height: 15px !important;
+  max-width: 15px !important;
+  max-height: 15px !important;
+  stroke: var(--gold, #F6D28A);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 /* --- Navigation Dropdown System (Singers & About Us) --- */
 .nav-dropdown {
   position: relative;
@@ -3584,35 +3603,69 @@ video::-webkit-media-controls-start-playback-button { display: none !important; 
   transform: scale(1.15);
 }
 
-/* Mobile Dropdown styles */
+/* Mobile Dropdown styles (与电脑端保持精致小巧与小图标) */
 .mobile-dropdown {
   width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
   text-align: center;
+}
+.mobile-dropdown-toggle {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
 }
 .mobile-dropdown-content {
   display: none;
-  background: rgba(0,0,0,0.45);
-  margin-top: 10px;
+  background: rgba(18, 24, 30, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  margin-top: 8px;
   border-radius: 12px;
-  padding: 8px 0;
-  border: 1px dashed rgba(246, 210, 138, 0.3);
+  padding: 6px;
+  border: 1px solid rgba(246, 210, 138, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 .mobile-dropdown-content.show {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 .mobile-dropdown-content a {
   border: none !important;
   background: transparent !important;
-  font-size: 1.15rem !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  font-family: var(--font-body) !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.4px !important;
   color: #f5eee6 !important;
-  padding: 8px 12px !important;
+  padding: 6px 12px !important;
   display: flex !important;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-start;
+  text-align: left;
+  gap: 10px;
+  transition: all 0.22s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
-.mobile-dropdown-content a:hover {
+.mobile-dropdown-content a:hover,
+.mobile-dropdown-content a:active {
   color: var(--gold) !important;
+  background: rgba(246, 210, 138, 0.15) !important;
+  transform: translateX(4px) !important;
+}
+.mobile-dropdown-content a i {
+  font-size: 0.82rem;
+  color: var(--gold);
+  width: 15px;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 /* Section Anchor Smooth Scrolling Offset */
