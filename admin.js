@@ -3221,7 +3221,10 @@ document.addEventListener('DOMContentLoaded', () => {
             管理前台「支持我们」页面的银行转账信息、DuitNow 收款二维码、顶部海报与奉献寄语。
           </p>
         </div>
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a href="receipt.html" target="_blank" class="btn-tiny" style="padding:10px 16px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg, #d4af37, #aa820a); color:#111; font-weight:bold; border:none;">
+            <i class="fas fa-file-invoice-dollar"></i> 🧾 开具官方奉献收据 / 发送感谢信
+          </a>
           <a href="support.html" target="_blank" class="btn-tiny" style="padding:10px 16px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; color:var(--gold); border-color:var(--gold);">
             <i class="fas fa-external-link-alt"></i> 预览前台支持页
           </a>
@@ -3230,6 +3233,23 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       <div style="display:flex; flex-direction:column; gap:2.5rem; max-width:1100px;">
+        <!-- 0. 快速开具奉献收据与感谢信通道 -->
+        <div class="cms-card" style="border-left: 4px solid #d4af37; background: linear-gradient(135deg, #1f1b14 0%, #151515 100%);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
+            <div>
+              <h3 style="color:#f6d28a; margin:0; display:flex; align-items:center; gap:8px;">
+                <span>🧾</span> 官方奉献电子收据开具系统 (Official E-Receipt Generator)
+              </h3>
+              <p style="color:#aaa; font-size:0.85rem; margin-top:6px; margin-bottom:0; line-height:1.6;">
+                当收到奉献凭证邮件时，点击右侧按钮即可快速生成带有 Harvester 官方水印、印章和经文的 A4 打印/PDF 格式电子收据，并一键复制官方感谢回信。
+              </p>
+            </div>
+            <a href="receipt.html" target="_blank" class="btn-tiny" style="padding:10px 20px; text-decoration:none; display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, #d4af37, #aa820a); color:#111; font-weight:bold; border:none; border-radius:6px;">
+              <i class="fas fa-external-link-alt"></i> 立即进入收据开具系统
+            </a>
+          </div>
+        </div>
+
         <!-- 1. 银行账户与二维码 -->
         <div class="cms-card" style="border-left: 4px solid var(--gold);">
           <h3 style="color:var(--gold); margin-top:0; display:flex; align-items:center; gap:8px;">

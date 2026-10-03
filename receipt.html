@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>收割机音乐 · 官方奉献电子收据开具系统 | Harvester Official E-Receipt</title>
+  <link rel="icon" type="image/jpeg" href="assets/favicon.jpg">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --gold-dark: #8c733e;
+      --gold: #b3924c;
+      --gold-light: #dfc88a;
+      --gold-bg: rgba(179, 146, 76, 0.08);
+      --dark-bg: #121212;
+      --card-bg: #1e1e1e;
+      --border-color: #333;
+      --text-main: #f0ede6;
+      --text-muted: #999;
+      --paper-cream: #fbf9f4;
+      --paper-ink: #1f1d1a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--dark-bg);
+      color: var(--text-main);
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Control Bar */
+    .top-nav {
+      background: #181818;
+      border-bottom: 1px solid #2a2a2a;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .nav-brand img {
+      height: 28px;
+    }
+
+    .nav-brand-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--gold-light);
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #d4af37, #aa820a);
+      color: #111;
+      border: none;
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+    }
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #e5c158, #bd9315);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #ddd;
+      border-color: #444;
+    }
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(212, 175, 55, 0.08);
+    }
+
+    .btn-success {
+      background: rgba(46, 213, 115, 0.15);
+      color: #2ed573;
+      border-color: rgba(46, 213, 115, 0.4);
+    }
+    .btn-success:hover {
+      background: rgba(46, 213, 115, 0.25);
+    }
+
+    /* Main Workspace Layout */
+    .workspace-container {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      flex: 1;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      gap: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .workspace-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Input Panel */
+    .input-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      height: fit-content;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.82rem;
+      color: #aaa;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      background: #141414;
+      border: 1px solid #333;
+      color: #fff;
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Right Preview Area */
+    .preview-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .preview-toolbar {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #181818;
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 1px solid #282828;
+    }
+
+    /* Printable A4 Paper Layout */
+    .receipt-paper {
+      width: 100%;
+      max-width: 800px;
+      background: var(--paper-cream);
+      color: var(--paper-ink);
+      border-radius: 4px;
+      padding: 3rem 3.5rem;
+      box-shadow: 0 15px 45px rgba(0,0,0,0.6);
+      position: relative;
+      overflow: hidden;
+      font-family: 'Noto Serif SC', 'Georgia', serif;
+    }
+
+    /* Elegant Security Border */
+    .receipt-paper::before {
+      content: "";
+      position: absolute;
+      top: 15px;
+      bottom: 15px;
+      left: 15px;
+      right: 15px;
+      border: 2px solid #b3924c;
+      pointer-events: none;
+    }
+    .receipt-paper::after {
+      content: "";
+      position: absolute;
+      top: 19px;
+      bottom: 19px;
+      left: 19px;
+      right: 19px;
+      border: 1px dashed rgba(179, 146, 76, 0.4);
+      pointer-events: none;
+    }
+
+    /* Watermark */
+    .receipt-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-25deg);
+      opacity: 0.04;
+      pointer-events: none;
+      width: 320px;
+      user-select: none;
+    }
+
+    /* Receipt Header */
+    .receipt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #b3924c;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .org-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .org-title-cn {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #1f1d1a;
+      letter-spacing: 2px;
+    }
+
+    .org-title-en {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gold-dark);
+      letter-spacing: 2px;
+      margin-top: 1px;
+    }
+
+    .org-sub {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .receipt-title-box {
+      text-align: right;
+    }
+
+    .receipt-badge {
+      display: inline-block;
+      background: var(--gold-dark);
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      letter-spacing: 1.5px;
+      border-radius: 2px;
+    }
+
+    .receipt-cn-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--gold-dark);
+      margin-top: 6px;
+      letter-spacing: 3px;
+    }
+
+    .receipt-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin-bottom: 1.8rem;
+      gap: 15px;
+      font-size: 0.9rem;
+    }
+
+    .meta-item {
+      display: flex;
+      gap: 8px;
+    }
+
+    .meta-label {
+      color: #777;
+      font-size: 0.82rem;
+      font-family: 'Montserrat', sans-serif;
+      min-width: 90px;
+    }
+
+    .meta-val {
+      font-weight: 600;
+      color: #111;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* Detail Table */
+    .receipt-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.8rem;
+    }
+
+    .receipt-table th {
+      background: rgba(179, 146, 76, 0.12);
+      color: var(--gold-dark);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 10px 14px;
+      border-top: 1px solid #b3924c;
+      border-bottom: 1px solid #b3924c;
+      text-align: left;
+    }
+
+    .receipt-table td {
+      padding: 14px;
+      border-bottom: 1px solid #e5dec9;
+      font-size: 0.95rem;
+      vertical-align: top;
+    }
+
+    .amount-highlight {
+      font-family: 'Cinzel', 'Montserrat', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #a02020;
+    }
+
+    .amount-words-box {
+      background: #f4ede0;
+      padding: 10px 14px;
+      border-left: 3px solid #b3924c;
+      margin-bottom: 1.8rem;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: #444;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Footer & Signature & Seal */
+    .receipt-footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 20px;
+      align-items: flex-end;
+      padding-top: 1rem;
+      border-top: 1px dashed #d5ccb8;
+    }
+
+    .scripture-box {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: #555;
+      font-style: italic;
+    }
+
+    .scripture-verse {
+      color: var(--gold-dark);
+      font-weight: 600;
+      margin-top: 4px;
+      font-size: 0.8rem;
+      font-style: normal;
+    }
+
+    .signature-box {
+      text-align: center;
+      position: relative;
+    }
+
+    /* Red Official Stamp */
+    .official-seal {
+      width: 110px;
+      height: 110px;
+      border: 3px double #d63031;
+      border-radius: 50%;
+      color: #d63031;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 5px;
+      transform: rotate(-8deg);
+      opacity: 0.88;
+      box-shadow: inset 0 0 0 2px #d63031;
+      user-select: none;
+    }
+
+    .seal-text-top {
+      font-size: 0.65rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      font-family: 'Cinzel', serif;
+    }
+    .seal-text-mid {
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin: 2px 0;
+      border-top: 1px solid #d63031;
+      border-bottom: 1px solid #d63031;
+      padding: 1px 4px;
+    }
+    .seal-text-bot {
+      font-size: 0.6rem;
+      letter-spacing: 1px;
+    }
+
+    .sign-line {
+      border-top: 1px solid #888;
+      width: 80%;
+      margin: 6px auto;
+    }
+
+    .sign-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .receipt-bottom-note {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #888;
+      margin-top: 2rem;
+      font-family: 'Montserrat', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    /* Toast Notification */
+    .toast-msg {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #2ed573;
+      color: #111;
+      font-weight: bold;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      animation: slideInUp 0.3s ease;
+    }
+
+    @keyframes slideInUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* 🖨️ Print Styles (Optimized for single page A4 PDF) */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      .top-nav, .input-panel, .preview-toolbar, .toast-msg {
+        display: none !important;
+      }
+      .workspace-container {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+      }
+      .preview-panel {
+        display: block !important;
+      }
+      .receipt-paper {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 2.5rem 3rem !important;
+        margin: 0 !important;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 1.2cm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <a href="index.html" class="nav-brand">
+      <img src="assets/logo.png" alt="Harvester Music">
+      <span class="nav-brand-title">HARVESTER · 官方收据开具系统</span>
+    </a>
+    <div class="nav-actions">
+      <a href="admin.html" class="btn btn-outline"><i class="fas fa-arrow-left"></i> 返回 CMS 管理</a>
+      <button type="button" class="btn btn-outline" onclick="copyThankYouEmail()"><i class="far fa-copy"></i> 复制官方感谢回信</button>
+      <button type="button" class="btn btn-gold" onclick="window.print()"><i class="fas fa-print"></i> 打印 / 另存为 PDF 收据</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="workspace-container">
+    
+    <!-- Left: Data Input Form -->
+    <section class="input-panel">
+      <div class="panel-title">
+        <span><i class="fas fa-edit" style="color:var(--gold);"></i> 奉献信息录入</span>
+        <button type="button" class="btn btn-outline" style="padding:4px 8px; font-size:0.75rem;" onclick="generateReceiptNo()">
+          <i class="fas fa-sync-alt"></i> 换单号
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label>收据编号 (Receipt No.)</label>
+        <input type="text" id="in_receipt_no" value="" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>奉献者 / 机构全名 (Donor / Church / Entity)</label>
+        <input type="text" id="in_donor_name" value="陈弟兄 / Brother Tan" placeholder="例如：陈弟兄 / 主恩堂" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>奉献者邮箱 (Donor Email) <span style="font-size:0.75rem; color:#777;">(用于一键回信)</span></label>
+        <input type="email" id="in_donor_email" value="" placeholder="donor@example.com" oninput="updatePreview()">
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>奉献金额 (RM)</label>
+          <input type="number" id="in_amount" value="500.00" step="0.01" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>奉献日期 (Offering Date)</label>
+          <input type="date" id="in_date" value="" oninput="updatePreview()">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>奉献用途 (Purpose / Fund Category)</label>
+        <select id="in_purpose" onchange="updatePreview()">
+          <option value="自由奉献 / General Offering">自由奉献 / General Offering</option>
+          <option value="音乐制作与录音事工 / Music Production Fund">音乐制作与录音事工 / Music Production Fund</option>
+          <option value="事工巡回与服侍 / Ministry & Worship Touring">事工巡回与服侍 / Ministry & Worship Touring</option>
+          <option value="新专辑创作支持 / Album Creation Support">新专辑创作支持 / Album Creation Support</option>
+          <option value="特别指定专款 / Designated Fund">特别指定专款 / Designated Fund</option>
+        </select>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>支付方式 (Payment Method)</label>
+          <select id="in_method" onchange="updatePreview()">
+            <option value="DuitNow QR 扫码支付">DuitNow QR 扫码支付</option>
+            <option value="Maybank 银行线上转账">Maybank 银行线上转账</option>
+            <option value="银行电汇 / Bank Transfer">银行电汇 / Bank Transfer</option>
+            <option value="支票 / Cheque">支票 / Cheque</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>银行交易单号 (Ref No.)</label>
+          <input type="text" id="in_ref_no" value="REF-20251003-889" placeholder="例如：20261003123456" oninput="updatePreview()">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>经办签署人 (Authorized Signatory)</label>
+        <input type="text" id="in_signatory" value="Harvester Music Admin 财务服事部" oninput="updatePreview()">
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+        <button type="button" class="btn btn-gold" style="justify-content:center; padding:12px;" onclick="window.print()">
+          <i class="fas fa-file-pdf"></i> 立即导出 / 打印 PDF 收据
+        </button>
+        <button type="button" class="btn btn-success" style="justify-content:center; padding:10px;" onclick="sendEmailToDonor()">
+          <i class="fas fa-paper-plane"></i> 打开 Gmail 回信给奉献者
+        </button>
+      </div>
+    </section>
+
+    <!-- Right: High Resolution E-Receipt Preview -->
+    <section class="preview-panel">
+      
+      <div class="preview-toolbar">
+        <span style="font-size:0.85rem; color:#aaa;"><i class="fas fa-eye" style="color:var(--gold);"></i> A4 打印预览效果 (Print Preview)</span>
+        <button type="button" class="btn btn-outline" style="font-size:0.8rem; padding:4px 10px;" onclick="copyThankYouEmail()">
+          <i class="far fa-copy"></i> 复制感谢回复文本
+        </button>
+      </div>
+
+      <!-- Printable Receipt Paper -->
+      <div class="receipt-paper" id="receiptPrintArea">
+        <img src="assets/logo.png" alt="watermark" class="receipt-watermark">
+
+        <!-- Header -->
+        <div class="receipt-header">
+          <div class="org-info">
+            <div class="org-title-cn">收割机音乐制作</div>
+            <div class="org-title-en">HARVESTER MUSIC PRODUCTION</div>
+            <div class="org-sub">Email: harvestermusicproduction@gmail.com</div>
+            <div class="org-sub">Official Website: harvestermusicproduction.com</div>
+          </div>
+          <div class="receipt-title-box">
+            <div class="receipt-badge">OFFICIAL RECEIPT</div>
+            <div class="receipt-cn-title">官方奉献收据</div>
+          </div>
+        </div>
+
+        <!-- Meta Grid -->
+        <div class="receipt-meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">收据编号:</span>
+            <span class="meta-val" id="prev_receipt_no" style="color:var(--gold-dark); font-weight:700;">HMP-202510-001</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">开具日期:</span>
+            <span class="meta-val" id="prev_date">2026-10-03</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">支付方式:</span>
+            <span class="meta-val" id="prev_method">DuitNow QR 扫码支付</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">交易单号:</span>
+            <span class="meta-val" id="prev_ref_no">REF-20251003-889</span>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <table class="receipt-table">
+          <thead>
+            <tr>
+              <th style="width:55%;">款项项目说明 (Description / Purpose)</th>
+              <th style="width:45%; text-align:right;">奉献金额 (Amount)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div style="font-weight:700; font-size:1.05rem; margin-bottom:4px;" id="prev_donor_name">陈弟兄 / Brother Tan</div>
+                <div style="color:#666; font-size:0.88rem;" id="prev_purpose">自由奉献 / General Offering</div>
+                <div style="font-size:0.75rem; color:#888; margin-top:4px;">感谢您对收割机福音音乐事工的奉献与同行</div>
+              </td>
+              <td style="text-align:right;">
+                <div class="amount-highlight" id="prev_amount">RM 500.00</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Amount In Words -->
+        <div class="amount-words-box">
+          <strong style="color:var(--gold-dark); font-style:normal;">大写金额 / In Words:</strong>
+          <span id="prev_amount_words">RINGGIT MALAYSIA FIVE HUNDRED ONLY</span>
+        </div>
+
+        <!-- Footer / Scripture / Stamp -->
+        <div class="receipt-footer-grid">
+          <div class="scripture-box">
+            “各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。”
+            <div class="scripture-verse">—— 哥林多后书 2 Corinthians 9:7</div>
+            <div style="margin-top:8px; font-size:0.78rem; color:#777; font-style:normal;">
+              愿神亲自记念并充充足足赏赐您的慷慨与爱心奉献！
+            </div>
+          </div>
+
+          <div class="signature-box">
+            <!-- Red Official Stamp -->
+            <div class="official-seal">
+              <span class="seal-text-top">HARVESTER MUSIC</span>
+              <span class="seal-text-mid">官方财务讫</span>
+              <span class="seal-text-bot">OFFICIAL SEAL</span>
+            </div>
+            <div class="sign-line"></div>
+            <div class="sign-title" id="prev_signatory">Harvester Music Admin 财务服事部</div>
+          </div>
+        </div>
+
+        <!-- Bottom Machine Generated Notice -->
+        <div class="receipt-bottom-note">
+          ※ 此收据为收割机音乐制作 (Harvester Music Production) 官方电子生成收据，经官方核对无误开具。
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Toast Message -->
+  <div id="toastMsg" class="toast-msg">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastText">已成功复制官方感谢回信！</span>
+  </div>
+
+  <script>
+    // Set initial date to today
+    window.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('in_date').value = today;
+      generateReceiptNo();
+      updatePreview();
+    });
+
+    function generateReceiptNo() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const random = String(Math.floor(1000 + Math.random() * 9000));
+      document.getElementById('in_receipt_no').value = `HMP-${year}${month}-${random}`;
+      updatePreview();
+    }
+
+    function numberToEnglishWords(num) {
+      const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+      const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+      num = parseFloat(num) || 0;
+      const dollars = Math.floor(num);
+      const cents = Math.round((num - dollars) * 100);
+
+      function inWords(n) {
+        if ((n = n.toString()).length > 9) return 'overflow';
+        let nArray = ('000000000' + n).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+        if (!nArray) return '';
+        let str = '';
+        str += (nArray[1] != 0) ? (a[Number(nArray[1])] || b[nArray[1][0]] + ' ' + a[nArray[1][1]]) + 'Crore ' : '';
+        str += (nArray[2] != 0) ? (a[Number(nArray[2])] || b[nArray[2][0]] + ' ' + a[nArray[2][1]]) + 'Lakh ' : '';
+        str += (nArray[3] != 0) ? (a[Number(nArray[3])] || b[nArray[3][0]] + ' ' + a[nArray[3][1]]) + 'Thousand ' : '';
+        str += (nArray[4] != 0) ? (a[Number(nArray[4])] || b[nArray[4][0]] + ' ' + a[nArray[4][1]]) + 'Hundred ' : '';
+        str += (nArray[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(nArray[5])] || b[nArray[5][0]] + ' ' + a[nArray[5][1]]) : '';
+        return str;
+      }
+
+      let words = inWords(dollars);
+      if (!words) words = 'Zero ';
+      let result = 'RINGGIT MALAYSIA ' + words.toUpperCase() + 'ONLY';
+      if (cents > 0) {
+        result = 'RINGGIT MALAYSIA ' + words.toUpperCase() + 'AND ' + cents + '/100 ONLY';
+      }
+      return result;
+    }
+
+    function updatePreview() {
+      const receiptNo = document.getElementById('in_receipt_no').value || 'HMP-000';
+      const donorName = document.getElementById('in_donor_name').value || '奉献者 / Donor';
+      const amountVal = parseFloat(document.getElementById('in_amount').value) || 0;
+      const dateVal = document.getElementById('in_date').value || new Date().toISOString().split('T')[0];
+      const purposeVal = document.getElementById('in_purpose').value;
+      const methodVal = document.getElementById('in_method').value;
+      const refNo = document.getElementById('in_ref_no').value || '-';
+      const signatory = document.getElementById('in_signatory').value || 'Harvester Music Admin';
+
+      document.getElementById('prev_receipt_no').innerText = receiptNo;
+      document.getElementById('prev_donor_name').innerText = donorName;
+      document.getElementById('prev_amount').innerText = `RM ${amountVal.toFixed(2)}`;
+      document.getElementById('prev_date').innerText = dateVal;
+      document.getElementById('prev_purpose').innerText = purposeVal;
+      document.getElementById('prev_method').innerText = methodVal;
+      document.getElementById('prev_ref_no').innerText = refNo;
+      document.getElementById('prev_signatory').innerText = signatory;
+      document.getElementById('prev_amount_words').innerText = numberToEnglishWords(amountVal);
+    }
+
+    function getThankYouEmailText() {
+      const receiptNo = document.getElementById('in_receipt_no').value;
+      const donorName = document.getElementById('in_donor_name').value;
+      const amountVal = parseFloat(document.getElementById('in_amount').value) || 0;
+      const dateVal = document.getElementById('in_date').value;
+      const purposeVal = document.getElementById('in_purpose').value;
+
+      return `平安，亲爱的 ${donorName}：
+
+衷心感谢您对【Harvester 收割机音乐制作】的奉献与代祷支持！
+
+我们已收到您于 ${dateVal} 的奉献凭证，款项已确认入账。随信附上您的官方奉献电子收据（Receipt No.: ${receiptNo}），请查收附件。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🧾 【官方奉献收据明细 / Official Receipt Summary】
+• 奉献收据编号：${receiptNo}
+• 奉献者/机构：${donorName}
+• 奉献金额：RM ${amountVal.toFixed(2)}
+• 奉献日期：${dateVal}
+• 奉献用途：${purposeVal}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+“各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。” —— 哥林多后书 9:7
+
+您的每一份支持，都化作我们在福音音乐创作、编曲录音与事工服侍上的力量，使更多的生命借着敬拜被主触摸。愿神亲自记念您的爱心与慷慨，赐福您与您的家庭平安喜乐、恩典满溢！
+
+在基督里祝福您，
+
+收割机音乐制作团队 (Harvester Music Production)
+官方邮箱：harvestermusicproduction@gmail.com
+官方网站：https://harvestermusicproduction.com`;
+    }
+
+    function copyThankYouEmail() {
+      const text = getThankYouEmailText();
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('已复制官方感谢回信文本，可直接粘贴至 Gmail！');
+      }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('已复制官方感谢回信文本，可直接粘贴至 Gmail！');
+      });
+    }
+
+    function sendEmailToDonor() {
+      const donorEmail = document.getElementById('in_donor_email').value.trim();
+      const receiptNo = document.getElementById('in_receipt_no').value;
+      const subject = encodeURIComponent(`【Harvester 收割机音乐】奉献收据确认与致谢函 (Receipt: ${receiptNo})`);
+      const body = encodeURIComponent(getThankYouEmailText());
+      window.location.href = `mailto:${donorEmail}?subject=${subject}&body=${body}`;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastMsg');
+      document.getElementById('toastText').innerText = msg;
+      toast.style.display = 'flex';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
