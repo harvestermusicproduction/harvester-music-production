@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=57.0.0">
+  <link rel="stylesheet" href="styles.css?v=58.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* --- 📏 Compact Header Explicit (超精致小巧导航栏) --- */
@@ -221,27 +221,39 @@
     .paper-checkbox-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px 12px;
+      gap: 10px 12px;
       flex: 1;
     }
     .paper-check-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       cursor: pointer;
       font-family: var(--font-songti), serif;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 600;
       color: #222;
       user-select: none;
+      padding: 4px 6px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    .paper-check-item:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+    .paper-check-item.paper-check-highlight {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px dashed rgba(180, 140, 40, 0.45);
+      color: #0d0b0a;
+      font-weight: 700;
     }
     .paper-check-item input[type="checkbox"] {
       appearance: none;
       -webkit-appearance: none;
-      width: 16px !important;
-      height: 16px !important;
-      border: 1.8px solid #111 !important;
-      border-radius: 2px !important;
+      width: 17px !important;
+      height: 17px !important;
+      border: 2px solid #111 !important;
+      border-radius: 3px !important;
       background: #fff !important;
       cursor: pointer;
       margin: 0 !important;
@@ -249,6 +261,7 @@
       display: grid;
       place-content: center;
       transition: 0.2s;
+      flex-shrink: 0;
     }
     .paper-check-item input[type="checkbox"]:checked {
       background: #111 !important;
@@ -256,7 +269,7 @@
     .paper-check-item input[type="checkbox"]:checked::before {
       content: '✓';
       color: #F6F4F0;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: bold;
     }
 
@@ -557,9 +570,9 @@
       <div class="header-socials" style="display: flex; gap: 0.8rem; font-size: 0.78rem;">
         <a id="cfg_nav_wa" href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry." target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a id="cfg_nav_sp" href="https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Spotify"><i class="fab fa-spotify"></i></a>
-        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
-        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
-        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+        <a id="cfg_nav_fb" href="https://www.facebook.com/harvester2025" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="https://www.instagram.com/harvestermusic.production?stkn=bzVqMGhvN2Q2OXZo&utm_source=qr" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="https://youtube.com/@harvestermusic.production?si=JvBC-9qgOsKdI3XT" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="YouTube"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
     <div class="menu-toggle" onclick="toggleMobileMenu()">
@@ -649,7 +662,7 @@
       <div style="text-align: center;">
         <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
           <a id="cfg_contact_wa" href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry." target="_blank" class="social-icon" style="font-size: 1.5rem; color: #F6F4F0; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-          <a id="cfg_contact_fb" href="#" target="_blank" class="social-icon" style="font-size: 1.5rem; color: #F6F4F0; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a id="cfg_contact_fb" href="https://www.facebook.com/harvester2025" target="_blank" class="social-icon" style="font-size: 1.5rem; color: #F6F4F0; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="Facebook"><i class="fab fa-facebook-f"></i></a>
           <a id="cfg_contact_email" href="mailto:harvestermusicproduction@gmail.com" class="social-icon" style="font-size: 1.5rem; color: #F6F4F0; background: rgba(255,255,255,0.05); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);" title="Email"><i class="fas fa-envelope"></i></a>
         </div>
 
@@ -697,15 +710,10 @@
                 <span class="paper-top-tag">GET IN TOUCH ✉️</span>
                 <span class="paper-meta-code" style="font-family: monospace; font-size: 0.68rem; color: #777; letter-spacing: 1.5px; font-weight: bold;">COLLABORATION FILE · NO. 2025</span>
               </div>
-              <div style="display: flex; align-items: center; gap: 14px; margin: 4px 0 6px;">
-                <div class="paper-logo-badge" style="display: inline-flex; align-items: center; background: #1a1816; padding: 7px 14px; border-radius: 6px; box-shadow: 0 3px 10px rgba(0,0,0,0.22); border: 1.5px solid var(--gold, #d4af37); flex-shrink: 0;" title="Harvester Music Production">
-                  <img src="assets/logo.png" alt="Harvester Logo" style="height: 28px; width: auto; object-fit: contain; filter: brightness(1.25);">
-                </div>
-                <div>
-                  <h2 class="paper-title-main" style="margin: 0; line-height: 1.05;">联系我们</h2>
-                  <div class="paper-title-sub" style="margin-top: 3px;">
-                    <span>CONTACT US</span>
-                  </div>
+              <div style="margin: 6px 0 6px;">
+                <h2 class="paper-title-main" style="margin: 0; line-height: 1.05;">联系我们</h2>
+                <div class="paper-title-sub" style="margin-top: 3px;">
+                  <span>CONTACT US</span>
                 </div>
               </div>
               <div class="paper-meta-rule">COLLABORATION · WORSHIP · MUSIC ARCHIVE</div>
@@ -743,21 +751,25 @@
                   <small>PURPOSE</small>
                 </div>
                 <div class="paper-checkbox-grid">
+                  <label class="paper-check-item paper-check-highlight" title="欢迎各地方教会/团契邀约服事、主日崇拜、特会或培训">
+                    <input type="checkbox" name="purpose" value="邀请团队服侍/事工邀约" id="checkMinistryPurpose">
+                    <span>🕊️ 邀请团队服侍/事工邀约</span>
+                  </label>
                   <label class="paper-check-item">
-                    <input type="checkbox" name="purpose" value="词曲创作/投稿" checked>
-                    <span>词曲创作/投稿</span>
+                    <input type="checkbox" name="purpose" value="词曲创作/投稿">
+                    <span>🎵 词曲创作/投稿</span>
                   </label>
                   <label class="paper-check-item">
                     <input type="checkbox" name="purpose" value="音乐制作/编曲">
-                    <span>音乐制作/编曲</span>
+                    <span>🎛️ 音乐制作/编曲</span>
                   </label>
                   <label class="paper-check-item">
                     <input type="checkbox" name="purpose" value="视觉/版权合作">
-                    <span>视觉/版权合作</span>
+                    <span>🎨 视觉/版权合作</span>
                   </label>
                   <label class="paper-check-item" style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-top: 4px;">
                     <input type="checkbox" name="purpose" value="其他" id="checkOtherPurpose" onchange="document.getElementById('contactPurposeOther').focus();">
-                    <span>其他：</span>
+                    <span>✏️ 其他：</span>
                     <input type="text" id="contactPurposeOther" placeholder="可在此自行填写合作意向..." oninput="document.getElementById('checkOtherPurpose').checked = true;" style="flex:1; border:none; border-bottom:1.5px dashed #999; background:transparent; font-family:'Caveat', 'Times New Roman', serif; font-size:1.15rem; color:#111; outline:none; padding:2px 6px;">
                   </label>
                 </div>
@@ -849,8 +861,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js?v=16.0.0"></script>
-  <script src="app.js?v=34.0.0"></script>
+  <script src="config.js?v=16.1.0"></script>
+  <script src="app.js?v=36.0.0"></script>
   <script>
     // --- 📨 Contact Form Handler ---
     document.getElementById('contactForm')?.addEventListener('submit', async (e) => {
@@ -883,7 +895,16 @@
       try {
         const { error } = await db.from('contact_messages').insert([data]);
         if (error) throw error;
-        alert("✅ 消息已成功发送！我们会尽快与您联络。");
+        
+        const rawMsg = document.getElementById('contactMsg').value.trim();
+
+        // 📲 1. 后台静默发送 WhatsApp 消息到负责人手机 (CallMeBot)
+        sendWhatsAppNotification(data.name, data.email, selectedPurposes, rawMsg);
+
+        // 📧 2. 后台静默发送新留言提醒到官方 Gmail 邮箱
+        sendEmailNotification(data.name, data.email, selectedPurposes, rawMsg);
+
+        alert("✅ 留言已成功发送！我们会尽快与您联络。");
         e.target.reset();
       } catch(err) {
         alert("❌ 发送失败：" + err.message);
@@ -892,6 +913,72 @@
         btn.disabled = false;
       }
     });
+
+    // --- 📲 Background WhatsApp Notification Dispatcher (CallMeBot API) ---
+    async function sendWhatsAppNotification(name, contact, purpose, msg) {
+      try {
+        const db = window.supabase;
+        if (!db) return;
+        const { data: cfgPhone } = await db.from('site_config').select('value').eq('key', 'cfg_notify_wa_phone').maybeSingle();
+        const { data: cfgApiKey } = await db.from('site_config').select('value').eq('key', 'cfg_notify_wa_apikey').maybeSingle();
+
+        const phone = (cfgPhone?.value || '+60187755581').replace(/[^0-9+]/g, '');
+        const apiKey = cfgApiKey?.value?.trim();
+
+        if (phone && apiKey) {
+          const text = `📢【Harvester 官网新留言】\n\n👤 姓名：${name}\n📞 联络：${contact}\n🎯 意向：${purpose || '一般咨询'}\n📝 留言：${msg}\n\n⏰ 提交时间：${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Kuala_Lumpur' })}`;
+          const url = `https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(phone)}&text=${encodeURIComponent(text)}&apikey=${encodeURIComponent(apiKey)}`;
+          
+          const beacon = new Image();
+          beacon.src = url;
+        }
+      } catch (err) {
+        console.warn('Auto WhatsApp notification non-fatal exception:', err);
+      }
+    }
+
+    // --- 📧 Background Email Notification Dispatcher (Gmail Instant Backup) ---
+    async function sendEmailNotification(name, contact, purpose, msg) {
+      try {
+        fetch('https://formsubmit.co/ajax/harvestermusicproduction@gmail.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            _subject: `【Harvester 官网新留言提醒】来自 ${name} 的咨询`,
+            姓名: name,
+            联络方式: contact,
+            合作意向: purpose || '一般咨询',
+            详细留言: msg,
+            提交时间: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Kuala_Lumpur' })
+          })
+        }).catch(e => console.warn('Email notify non-fatal error:', e));
+      } catch(e) {}
+    }
+
+    // --- 🎯 Auto-check Purpose from URL query params (e.g. ?purpose=ministry) ---
+    function checkUrlPurposeParam() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('purpose') === 'ministry' || urlParams.get('type') === 'ministry') {
+          const minCb = document.getElementById('checkMinistryPurpose');
+          if (minCb) {
+            document.querySelectorAll('input[name="purpose"]').forEach(cb => { cb.checked = false; });
+            minCb.checked = true;
+            const msgEl = document.getElementById('contactMsg');
+            if (msgEl) {
+              msgEl.placeholder = '请填写您的教会/团契名称、拟定服事日期、聚会性质与具体需求...';
+            }
+            const formEl = document.getElementById('contactForm');
+            if (formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      } catch(e) {}
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkUrlPurposeParam);
+    } else {
+      checkUrlPurposeParam();
+    }
 
     // --- 🔮 3D Echo Universe Engine ---
     let echoScene, echoCamera, echoRenderer, echoStarField;

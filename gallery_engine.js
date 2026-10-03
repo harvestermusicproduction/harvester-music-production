@@ -88,6 +88,7 @@ async function fetchArtists() {
               name: (item.names || item.name || `服事同工 ${idx + 1}`).replace(/\n/g, ' & '),
               category: "core",
               role: item.role || item.roleTitle || "主要服事同工",
+              role_en: item.role_en || item.roleTitleEn || "",
               image_url: item.image_url || item.img || "assets/logo.png",
               img_pos: item.img_pos || item.pos || "50% 20%",
               img_zoom: item.img_zoom || item.zoom || 1.0,
@@ -97,6 +98,7 @@ async function fetchArtists() {
             const dynamicCore = [];
             for (let i = 1; i <= 20; i++) {
               const roleTitle = customTeam[`about_team_r${i}_t`];
+              const roleTitleEn = customTeam[`about_team_r${i}_te`];
               const names = customTeam[`about_team_r${i}_names`];
               const img = customTeam[`about_team_r${i}_img`];
               const pos = customTeam[`about_team_r${i}_pos`];
@@ -108,6 +110,7 @@ async function fetchArtists() {
                   name: (names || defaultCoreStaff[i-1]?.name || `服事团队 ${i}`).replace(/\n/g, ' & '),
                   category: "core",
                   role: roleTitle || defaultCoreStaff[i-1]?.role || "主要服事同工",
+                  role_en: roleTitleEn || defaultCoreStaff[i-1]?.role_en || "",
                   image_url: img || defaultCoreStaff[i-1]?.image_url || "assets/logo.png",
                   img_pos: pos || "50% 20%",
                   img_zoom: zoom ? parseFloat(zoom) : 1.0,
@@ -191,8 +194,8 @@ function renderGrid(data) {
       </div>
       <!-- 底部双栏极简信息 (Minimalist Bottom Bar) -->
       <div class="card-bottom-bar">
-        <span class="bottom-role">${artist.role || '主要服事同工'}</span>
-        <span class="bottom-category">${getTagCategoryLabel(artist.category)} —</span>
+        <span class="bottom-role" title="${artist.role || ''}">${artist.role || '主要服事同工'}</span>
+        ${artist.role_en && artist.role_en.trim() ? `<span class="bottom-category">${artist.role_en.trim()}</span>` : ''}
       </div>
     </div>
   `).join('');

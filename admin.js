@@ -388,35 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       <div style="display:flex; flex-direction:column; gap:2.5rem; max-width:1100px;">
-        <!-- 1. Hero 视频与标语 -->
-        <div class="cms-card" style="border-left: 4px solid var(--gold);">
-          <h3 style="color:var(--gold); margin-top:0; display:flex; align-items:center; gap:8px;">
-            <span>🎬</span> 主页 Hero 顶部背景与主视觉
-          </h3>
-          <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-top:15px;">
-            <div>
-              <div style="margin-bottom:15px;">
-                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">顶部主标题 (Hero Title)</label>
-                <input type="text" id="in_home_hero_title" value="${c['cfg_home_hero_title'] || '收割感动，播种福音'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
-              </div>
-              <div style="margin-bottom:15px;">
-                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">顶部英文副标 (Hero Subtitle)</label>
-                <input type="text" id="in_home_hero_subtitle" value="${c['cfg_home_hero_subtitle'] || 'HARVESTING EMOTIONS, SOWING GOSPEL'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
-              </div>
-              <div>
-                <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">Hero 视频流或背景视频链接 (MP4 / WebM)</label>
-                <input type="text" id="in_hero_video_url" value="${c['cfg_hero_video_url'] || ''}" placeholder="https://... 或点击右侧上传" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
-              </div>
-            </div>
-            <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
-              <label style="display:block; color:var(--gold); font-size:0.85rem; font-weight:bold; margin-bottom:10px;">上传 Hero 视频文件</label>
-              <input type="file" id="f_hero_vid" accept="video/mp4,video/webm" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:10px;">
-              <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_hero_vid', 'in_hero_video_url', null)">📤 上传并填入视频链接</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. 最新歌曲推荐设定 -->
+        <!-- 1. 最新歌曲推荐设定 -->
         <div class="cms-card" style="border-left: 4px solid #64D28A;">
           <h3 style="color:#64D28A; margin-top:0; display:flex; align-items:center; gap:8px;">
             <span>🎵</span> 主页推荐主打单曲 (Latest Harvest Music)
@@ -433,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- 3. 全局社交网络链接 -->
+        <!-- 2. 全局社交网络链接 -->
         <div class="cms-card" style="border-left: 4px solid #1877F2;">
           <h3 style="color:#1877F2; margin-top:0; display:flex; align-items:center; gap:8px;">
             <span>🌐</span> 官方社群媒体与联络链接 (Header Socials)
@@ -449,15 +421,15 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-facebook" style="color:#1877F2;"></i> Facebook 专页</label>
-              <input type="text" id="in_nav_fb" value="${c['cfg_nav_fb'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_fb" value="${c['cfg_nav_fb'] && c['cfg_nav_fb'] !== '#' ? c['cfg_nav_fb'] : 'https://www.facebook.com/harvester2025'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-instagram" style="color:#E1306C;"></i> Instagram 账号</label>
-              <input type="text" id="in_nav_ig" value="${c['cfg_nav_ig'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_ig" value="${c['cfg_nav_ig'] && c['cfg_nav_ig'] !== '#' ? c['cfg_nav_ig'] : 'https://www.instagram.com/harvestermusic.production?stkn=bzVqMGhvN2Q2OXZo&utm_source=qr'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div style="grid-column: 1/-1;">
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-youtube" style="color:#FF0000;"></i> YouTube 官方频道</label>
-              <input type="text" id="in_nav_yt" value="${c['cfg_nav_yt'] || '#'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_yt" value="${c['cfg_nav_yt'] && c['cfg_nav_yt'] !== '#' ? c['cfg_nav_yt'] : 'https://youtube.com/@harvestermusic.production?si=JvBC-9qgOsKdI3XT'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
           </div>
         </div>
@@ -469,15 +441,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.saveHomeCMS = async () => {
     const payload = [
-      { key: 'cfg_home_hero_title', value: document.getElementById('in_home_hero_title').value.trim() },
-      { key: 'cfg_home_hero_subtitle', value: document.getElementById('in_home_hero_subtitle').value.trim() },
-      { key: 'cfg_hero_video_url', value: document.getElementById('in_hero_video_url').value.trim() },
-      { key: 'cfg_latest_music_id', value: document.getElementById('in_latest_music_id').value.trim() },
-      { key: 'cfg_nav_wa', value: document.getElementById('in_nav_wa').value.trim() },
-      { key: 'cfg_nav_sp', value: document.getElementById('in_nav_sp').value.trim() },
-      { key: 'cfg_nav_fb', value: document.getElementById('in_nav_fb').value.trim() },
-      { key: 'cfg_nav_ig', value: document.getElementById('in_nav_ig').value.trim() },
-      { key: 'cfg_nav_yt', value: document.getElementById('in_nav_yt').value.trim() }
+      { key: 'cfg_latest_music_id', value: document.getElementById('in_latest_music_id')?.value.trim() || '' },
+      { key: 'cfg_nav_wa', value: document.getElementById('in_nav_wa')?.value.trim() || '' },
+      { key: 'cfg_nav_sp', value: document.getElementById('in_nav_sp')?.value.trim() || '' },
+      { key: 'cfg_nav_fb', value: document.getElementById('in_nav_fb')?.value.trim() || '' },
+      { key: 'cfg_nav_ig', value: document.getElementById('in_nav_ig')?.value.trim() || '' },
+      { key: 'cfg_nav_yt', value: document.getElementById('in_nav_yt')?.value.trim() || '' }
     ];
 
     try {
@@ -1592,7 +1561,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px;">
         <div>
           <h1 style="color:var(--gold); margin:0;">📅 活动排期与详情管理 (Events CMS)</h1>
-          <p style="color:#888; font-size:0.85rem; margin-top:4px;">管理顶部走廊多海报展示，以及下方条状活动排期的顺序、标签、购票链接与海报等细节。</p>
+          <p style="color:#888; font-size:0.85rem; margin-top:4px;">管理顶部走廊多海报展示，以及下方条状活动排期的顺序、时间、地点、状态标签与海报等细节。</p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button class="btn btn-submit" style="width:auto; padding:10px 18px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold);" onclick="openEventPosterModal()">+ 添加走廊海报</button>
@@ -1700,7 +1669,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <th style="padding:14px; width:120px;">日期/时间</th>
                 <th style="padding:14px;">活动名称与状态</th>
                 <th style="padding:14px;">地点 / 场馆</th>
-                <th style="padding:14px;">购票/报名</th>
+                <th style="padding:14px;">前台提示</th>
                 <th style="padding:14px; text-align:right; width:150px;">操作</th>
               </tr>
             </thead>
@@ -1730,7 +1699,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </td>
                     <td style="padding:14px; font-size:0.85rem; color:#ccc;">
                       <b style="color: #F6F4F0;">${e.event_date || '未定'}</b>
-                      <div style="font-size:0.75rem; color:#888;">${e.event_time || ''}</div>
+                      <div style="font-size:0.75rem; color:var(--gold);"><i class="far fa-clock"></i> ${e.event_time || '未设时间'}</div>
                     </td>
                     <td style="padding:14px;">
                       <div style="font-size:1rem; font-weight:500; color: #F6F4F0; display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
@@ -1742,9 +1711,7 @@ document.addEventListener('DOMContentLoaded', () => {
                       ${e.location || '待定'}
                     </td>
                     <td style="padding:14px; font-size:0.8rem;">
-                      ${!e.requires_ticket 
-                        ? `<span style="display:inline-flex; align-items:center; gap:5px; color:#aaa; background:rgba(255,255,255,0.06); padding:3px 8px; border-radius:50px; font-size:0.75rem; border:1px solid rgba(255,255,255,0.1);"><i class="fas fa-bell" style="color:var(--gold);"></i> 仅铃铛提醒 (免购票)</span>` 
-                        : (e.ticket_url ? `<a href="${e.ticket_url}" target="_blank" style="color:var(--gold); text-decoration:underline;">${e.ticket_text || '外部链接'} ↗</a>` : `<span style="color:#666;">站内详情</span>`)}
+                      <span style="display:inline-flex; align-items:center; gap:5px; color:#aaa; background:rgba(255,255,255,0.06); padding:3px 8px; border-radius:50px; font-size:0.75rem; border:1px solid rgba(255,255,255,0.1);"><i class="fas fa-bell" style="color:var(--gold);"></i> 开启提醒 (免购票)</span>
                     </td>
                     <td style="padding:14px; text-align:right; white-space:nowrap;">
                       <button class="btn-tiny" style="margin-right:6px; border-color:var(--gold); color:var(--gold);" onclick="openEventModal('${e.id}')">✏️ 编辑</button>
@@ -2264,27 +2231,24 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
 
-          <!-- 是否需要购票/报名 (勾选切换) -->
-          <div style="background:#0e0e0e; border:1px solid #222; border-radius:12px; padding:15px; margin-bottom:15px;">
-            <label style="display:flex; align-items:center; gap:12px; cursor:pointer; font-size:0.9rem; color: #F6F4F0; font-weight:600; user-select:none;">
-              <input type="checkbox" id="ev_req_ticket" ${e && e.requires_ticket === false ? '' : 'checked'} onchange="document.getElementById('ev_ticket_fields').style.display = this.checked ? 'grid' : 'none';" style="width:20px; height:20px; accent-color:var(--gold); cursor:pointer;">
-              <span>需要购票 / 报名 / 索票 (Require Ticket or Registration)</span>
-            </label>
-            <p style="margin:6px 0 0 32px; font-size:0.75rem; color:#888; line-height:1.5;">
-              💡 <b>勾选时</b>：活动列表中会显示【前往购票/索票/报名】按钮与铃铛。<br>
-              💡 <b>取消勾选时</b>：活动为免购票/免报名开放活动，<b>前台仅显示铃铛提醒图标</b>。
-            </p>
+          <!-- 免购票开放活动说明与链接配置 -->
+          <div style="background:#0e0e0e; border:1px solid #222; border-radius:12px; padding:12px 15px; margin-bottom:15px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <span style="font-size:0.85rem; color:#aaa;"><i class="fas fa-check-circle" style="color:#2ed573; margin-right:5px;"></i> 免购票开放活动（前台展示具体时间与提醒铃铛）</span>
+              <a href="javascript:void(0)" onclick="const f=document.getElementById('ev_ticket_fields'); f.style.display=f.style.display==='none'?'grid':'none';" style="font-size:0.75rem; color:var(--gold); text-decoration:none;">外部详情链接设置 ▾</a>
+            </div>
+            <input type="checkbox" id="ev_req_ticket" style="display:none;">
           </div>
 
-          <!-- 购票/报名链接与按钮文字 (根据勾选状态展示/折叠) -->
-          <div id="ev_ticket_fields" style="display:${e && e.requires_ticket === false ? 'none' : 'grid'}; grid-template-columns: 2fr 1.2fr; gap:15px; margin-bottom:15px;">
+          <!-- 外部链接配置 (折叠) -->
+          <div id="ev_ticket_fields" style="display:none; grid-template-columns: 2fr 1.2fr; gap:15px; margin-bottom:15px;">
             <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">购票/索票/报名链接 (Ticket URL)</label>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">外部活动链接 (URL)</label>
               <input type="text" id="ev_turl" value="${e?.ticket_url || ''}" placeholder="https://... 留空则链接到站内详情" style="width:100%; padding:10px;">
             </div>
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">按钮文字 (Button Text)</label>
-              <input type="text" id="ev_ttext" value="${e?.ticket_text || '前往购票/索票/报名'}" placeholder="前往购票/索票/报名" style="width:100%; padding:10px;">
+              <input type="text" id="ev_ttext" value="${e?.ticket_text || '查看详情'}" placeholder="查看详情" style="width:100%; padding:10px;">
             </div>
           </div>
 
@@ -2757,13 +2721,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (list.length > 0) return list;
 
     return [
-      { id: "staff_1", role: "创作平台创办启发人", role_en: "Founding Inspirer", names: "汤小康\nWarren 沈自强", image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_2", role: "创作", role_en: "Music Creation", names: "Warren 沈自强\n汤小康\nNatasha", image_url: "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_3", role: "制作", role_en: "Music Production", names: "汤小康\nWarren 沈自强\nEdward", image_url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_4", role: "拍摄", role_en: "Visual & Video Design", names: "陈宏亮", image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_5", role: "宣传", role_en: "Marketing & Promotion", names: "Sherlyn", image_url: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_6", role: "行政", role_en: "Administration", names: "梁苡乐", image_url: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_7", role: "歌手与主领", role_en: "Singers & Worship Leaders", names: "依歌曲需求而定", image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 }
+      { id: "staff_1", role: "创作平台创办启发人", role_en: "", names: "汤小康\nWarren 沈自强", image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_2", role: "创作", role_en: "", names: "Warren 沈自强\n汤小康\nNatasha", image_url: "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_3", role: "制作", role_en: "", names: "汤小康\nWarren 沈自强\nEdward", image_url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_4", role: "拍摄", role_en: "", names: "陈宏亮", image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_5", role: "宣传", role_en: "", names: "Sherlyn", image_url: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_6", role: "行政", role_en: "", names: "梁苡乐", image_url: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
+      { id: "staff_7", role: "歌手与主领", role_en: "", names: "依歌曲需求而定", image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 }
     ];
   };
 
@@ -3641,6 +3605,40 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <button class="btn btn-submit" style="width:100%; padding:14px; margin-top:25px;" onclick="saveContactInfoCMS()">💾 立即保存官方联络信息</button>
         </div>
+
+        <!-- 📲 官网新留言 WhatsApp 自动提醒推送配置 -->
+        <div class="cms-card" style="border-left:4px solid #25D366; margin-top:25px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <h3 style="color:#25D366; margin:0;"><i class="fab fa-whatsapp"></i> 官网新留言 WhatsApp 自动提醒推送 (CallMeBot API)</h3>
+            <span style="font-size:0.75rem; background:rgba(37,211,102,0.15); color:#25D366; padding:3px 10px; border-radius:20px; border:1px solid rgba(37,211,102,0.3);">全自动静默推送</span>
+          </div>
+          <p style="color:#aaa; font-size:0.85rem; line-height:1.6; margin:10px 0 15px;">
+            当访客在官网提交联系表单时，系统将通过 CallMeBot 自动在后台向您的 WhatsApp 发送一条新留言通知消息。
+          </p>
+
+          <div style="background:#111; border:1px dashed #333; border-radius:8px; padding:14px 18px; margin-bottom:18px; font-size:0.85rem; color:#bbb; line-height:1.8;">
+            <strong style="color:var(--gold); font-size:0.92rem;">🔑 获取免费 CallMeBot API Key（最新有效方式）：</strong><br>
+            1. 点击此官方链接直接打开 WhatsApp 对话：<a href="https://wa.me/34644992698?text=I%20allow%20callmebot%20to%20send%20me%20messages" target="_blank" style="color:#25D366; text-decoration:underline; font-weight:bold;">👉 点击这里给机器人发送激活消息 (+34 644 99 26 98)</a><br>
+            2. 发送预填消息：<code style="color:#F6F4F0; background:#222; padding:2px 6px; border-radius:3px;">I allow callmebot to send me messages</code><br>
+            3. 等待机器人回复您的专属 <strong>API Key</strong>（例如：123456），将该数字填入下方保存即可！
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <div>
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">接收提醒的 WhatsApp 号码（包含国家区号，如 +60187755581）</label>
+              <input type="text" id="in_notify_wa_phone" value="${c['cfg_notify_wa_phone'] || '+60187755581'}" placeholder="+60187755581" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+            </div>
+            <div>
+              <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">CallMeBot WhatsApp API Key (若暂未开通可先留空)</label>
+              <input type="text" id="in_notify_wa_apikey" value="${c['cfg_notify_wa_apikey'] || ''}" placeholder="例如：123456" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+            </div>
+          </div>
+
+          <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
+            <button class="btn btn-submit" style="flex:1; min-width:200px; padding:12px; background:linear-gradient(135deg, #25D366 0%, #128C7E 100%);" onclick="saveNotifyWACMS()">💾 保存 WhatsApp 推送配置</button>
+            <button class="btn btn-tiny" style="padding:12px 20px; border-color:#25D366; color:#25D366; background:rgba(37,211,102,0.1);" onclick="testNotifyWA()">📲 发送测试提醒到我手机</button>
+          </div>
+        </div>
       `}
     `;
   }
@@ -3659,6 +3657,43 @@ document.addEventListener('DOMContentLoaded', () => {
       renderCMS();
     } catch(err) {
       alert("保存失败: " + err.message);
+    }
+  };
+
+  window.saveNotifyWACMS = async () => {
+    const payload = [
+      { key: 'cfg_notify_wa_phone', value: document.getElementById('in_notify_wa_phone').value.trim() },
+      { key: 'cfg_notify_wa_apikey', value: document.getElementById('in_notify_wa_apikey').value.trim() }
+    ];
+    try {
+      for (const item of payload) {
+        await db.from('site_config').upsert(item, { onConflict: 'key' });
+      }
+      alert("🎉 WhatsApp 提醒推送配置已成功保存！");
+      renderCMS();
+    } catch(err) {
+      alert("保存失败: " + err.message);
+    }
+  };
+
+  window.testNotifyWA = async () => {
+    const phone = (document.getElementById('in_notify_wa_phone')?.value || '+60187755581').replace(/[^0-9+]/g, '');
+    const apiKey = document.getElementById('in_notify_wa_apikey')?.value?.trim();
+
+    if (!apiKey) {
+      alert("⚠️ 请先填写您的 CallMeBot API Key 后再进行测试！\n\n获取方式：用 WhatsApp 发送「I allow callmebot to send me messages」至 +34 644 99 26 98 获取 Key。");
+      return;
+    }
+
+    const testMsg = `🔔【Harvester 官网测试提醒】\n这是一条来自收割机音乐后台的 WhatsApp 自动推送测试消息！\n\n发送时间：${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Kuala_Lumpur' })}`;
+    const url = `https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(phone)}&text=${encodeURIComponent(testMsg)}&apikey=${encodeURIComponent(apiKey)}`;
+
+    try {
+      const beacon = new Image();
+      beacon.src = url;
+      alert("🚀 测试消息请求已发出！请检查您的 WhatsApp 是否收到来自 CallMeBot 的测试提醒。");
+    } catch(err) {
+      alert("发送测试请求失败: " + err.message);
     }
   };
 

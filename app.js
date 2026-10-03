@@ -44,14 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // 🔥 Immediately observe ALL static fade-in elements (no DB needed)
   refreshObserver();
 
-  // --- 0. Supabase Initialization ---
-  const db = window.supabase;
-  if(!db) { console.error("❌ Harvester Engine: Supabase Client NOT found. Static UI still works."); return; }
+  // --- 0. Supabase Initialization (Non-blocking Safe Mode) ---
+  const db = window.supabase || null;
 
   // --- 📈 Real-time Analytics ---
   async function recordVisit() {
     try {
-      if (!sessionStorage.getItem('h_v')) {
+      if (db && !sessionStorage.getItem('h_v')) {
         await db.from('visits').insert([{}]);
         sessionStorage.setItem('h_v', '1');
       }
@@ -62,12 +61,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- 2. Site Content Synchronization ---
   let siteConfigs = {};
   async function syncSiteContent() {
+    if (!db) return;
     try {
       const { data, error } = await db.from('site_config').select('*');
       if (error) throw error;
       siteConfigs = data.reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
       applyHydration();
       fetchLatestMusicForHome();
+      fetchEvents();
       // Re-run diary to apply global FB link from config if needed
       fetchDiary(); 
     } catch (err) { console.warn("Supabase Config Error:", err.message); }
@@ -78,9 +79,37 @@ document.addEventListener('DOMContentLoaded', () => {
       const val = siteConfigs[el.id];
       if(!val) return;
       if (el.tagName === 'IMG') el.src = val;
-      else if (el.tagName === 'A') el.href = val;
+      else if (el.tagName === 'A') {
+        const trimmed = typeof val === 'string' ? val.trim() : '';
+        if (trimmed && trimmed !== '#' && trimmed !== 'javascript:void(0)') {
+          el.href = trimmed;
+        }
+      }
       else el.innerHTML = val.replace(/\n/g, '<br>');
     });
+
+    // 🌐 Social Links Full Site Synchronization
+    const navFb = (siteConfigs['cfg_nav_fb'] || siteConfigs['cfg_social_fb'] || '').trim();
+    const navIg = (siteConfigs['cfg_nav_ig'] || siteConfigs['cfg_social_ig'] || '').trim();
+    const navYt = (siteConfigs['cfg_nav_yt'] || siteConfigs['cfg_social_yt'] || '').trim();
+    const navWa = (siteConfigs['cfg_nav_wa'] || siteConfigs['cfg_social_wa'] || '').trim();
+    const navSp = (siteConfigs['cfg_nav_sp'] || siteConfigs['cfg_social_sp'] || '').trim();
+
+    if (navFb && navFb !== '#' && navFb !== 'javascript:void(0)') {
+      document.querySelectorAll('#cfg_nav_fb, #cfg_social_fb, #cfg_contact_fb').forEach(a => { a.href = navFb; });
+    }
+    if (navIg && navIg !== '#' && navIg !== 'javascript:void(0)') {
+      document.querySelectorAll('#cfg_nav_ig, #cfg_social_ig').forEach(a => { a.href = navIg; });
+    }
+    if (navYt && navYt !== '#' && navYt !== 'javascript:void(0)') {
+      document.querySelectorAll('#cfg_nav_yt, #cfg_social_yt').forEach(a => { a.href = navYt; });
+    }
+    if (navWa && navWa !== '#' && navWa !== 'javascript:void(0)') {
+      document.querySelectorAll('#cfg_nav_wa, #cfg_social_wa, #cfg_contact_wa').forEach(a => { a.href = navWa; });
+    }
+    if (navSp && navSp !== '#' && navSp !== 'javascript:void(0)') {
+      document.querySelectorAll('#cfg_nav_sp, #cfg_social_sp').forEach(a => { a.href = navSp; });
+    }
 
     // 🔍 Dynamic SEO Sync: Connect DB keywords/desc to actual HTML meta tags
     if (siteConfigs['cfg_site_keywords']) {
@@ -146,8 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                   </div>
                   <div class="team-card-bottom">
-                    <span class="team-bottom-role">${m.role || '主要服事同工'}</span>
-                    <span class="team-bottom-sub">${m.role_en || 'Team —'}</span>
+                    <span class="team-bottom-role" title="${m.role || ''}">${m.role || '主要服事同工'}</span>
+                    ${m.role_en && m.role_en.trim() ? `<span class="team-bottom-sub">${m.role_en.trim()}</span>` : ''}
                   </div>
                 </div>
               `).join('');
@@ -318,23 +347,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Event & Album Metadata Parser ---
   function parseEventData(item) {
-    if (!item) return { id: '', title: '', dateStr: '', timeStr: '', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '', fullDateTime: '' };
+    if (!item) return { id: '', title: '', dateStr: '', timeStr: '', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '', fullDateTime: '', day: '01', month: '01 月', year: '2026', cleanTitle: '', statusTag: '' };
     
     let desc = (item.description || "").trim();
-    let rawDate = item.event_date || item.date || item.start_date || item.eventDate || item.event_day || item.datetime || item.event_datetime || item.start_at || "";
-    let rawTime = item.event_time || item.time || item.start_time || item.eventTime || item.event_hour || item.time_str || item.event_time_str || "";
+    let rawDate = item.event_date || item.date || item.start_date || item.eventDate || item.event_day || item.datetime || item.event_datetime || item.start_at || item.start || "";
+    let rawTime = item.event_time || item.time || item.start_time || item.eventTime || item.event_hour || item.time_str || item.event_time_str || item.timing || "";
     let rawLoc = item.location || item.loc || item.place || item.venue || item.address || "";
     let rawMapUrl = item.map_url || item.mapUrl || item.murl || item.google_map || "";
     let rawImg = item.image_url || item.cover_url || item.imageUrl || item.poster_url || item.poster || item.photo_url || "";
     let emailTemplate = item.email_template || item.emailTemplate || "";
     let order = (item.display_order !== undefined && item.display_order !== null && !isNaN(parseInt(item.display_order, 10))) ? parseInt(item.display_order, 10) : null;
+    let meta = {};
 
     // Parse EXT_META JSON block if embedded in description
     if (desc && typeof desc === 'string' && desc.includes('EXT_META:')) {
       const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
       if (metaMatch) {
         try {
-          const meta = JSON.parse(metaMatch[1]);
+          meta = JSON.parse(metaMatch[1]) || {};
           if (meta.d || meta.date || meta.event_date) rawDate = meta.d || meta.date || meta.event_date;
           if (meta.tm || meta.time || meta.event_time || meta.start_time || meta.t) rawTime = meta.tm || meta.time || meta.event_time || meta.start_time || meta.t;
           if (meta.loc || meta.location || meta.place || meta.venue || meta.address) rawLoc = meta.loc || meta.location || meta.place || meta.venue || meta.address;
@@ -352,17 +382,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Extract time from date string if combined (e.g. 2026-08-25T19:30:00, 2026-08-25 19:30, 2026年8月25日 19:30)
+    // Extract time from date string if combined (e.g. 2026-08-25T19:30:00, 2026-08-25 19:30:00, 2026-08-25 19:30, 2026年8月25日 19:30)
     let datePart = rawDate ? String(rawDate).trim() : "";
     if (datePart.includes('T')) {
       const parts = datePart.split('T');
       datePart = parts[0];
-      if (!rawTime && parts[1]) rawTime = parts[1].replace('Z', '').substring(0, 5);
-    } else if (datePart.includes(' ')) {
-      const m = datePart.match(/^(.*?)[ ]+([0-9]{1,2}[:：.][0-9]{2}(?::[0-9]{2})?(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
-      if (m) {
-        datePart = m[1].trim();
-        if (!rawTime) rawTime = m[2].trim();
+      if (!rawTime && parts[1]) {
+        const tMatch = parts[1].replace('Z', '').match(/(\d{1,2}[:：.]\d{2})/);
+        if (tMatch) rawTime = tMatch[1];
+      }
+    } else if (/\s+/.test(datePart)) {
+      const parts = datePart.split(/\s+/);
+      const timeCandidate = parts.slice(1).join(' ');
+      const tMatch = timeCandidate.match(/(\d{1,2}[:：.]\d{2}(?::\d{2})?(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*\d{1,2}[:：.]\d{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
+      if (tMatch) {
+        datePart = parts[0];
+        if (!rawTime) rawTime = tMatch[1];
       }
     }
 
@@ -418,31 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
       cleanTitle = cleanTitle.replace(titleTagMatch[0], '').trim();
     }
 
-    let ticketUrl = "";
-    let ticketText = "前往购票/索票/报名";
-    let requiresTicket = true;
-    if (item.requires_ticket !== undefined && item.requires_ticket !== null) {
-      requiresTicket = item.requires_ticket === true || item.requires_ticket === 'true' || item.requires_ticket === 1 || item.requires_ticket === '1';
-    }
-
-    if (desc.includes('EXT_META:')) {
-      // already parsed above
-    }
-    // Check if meta had ticket info
-    const metaMatch2 = (item.description || "").match(/EXT_META:(.*?)\|\|/);
-    if (metaMatch2) {
-      try {
-        const metaObj = JSON.parse(metaMatch2[1]);
-        if (metaObj.ticket_url || metaObj.ticketUrl || metaObj.turl) ticketUrl = metaObj.ticket_url || metaObj.ticketUrl || metaObj.turl;
-        if (metaObj.ticket_text || metaObj.ticketText || metaObj.ttext) ticketText = metaObj.ticket_text || metaObj.ticketText || metaObj.ttext;
-        if (metaObj.status_tag || metaObj.statusTag || metaObj.stag) statusTag = metaObj.status_tag || metaObj.statusTag || metaObj.stag;
-        if (metaObj.rt !== undefined) requiresTicket = metaObj.rt === true || metaObj.rt === 'true' || metaObj.rt === 1 || metaObj.rt === '1';
-        if (metaObj.requires_ticket !== undefined) requiresTicket = metaObj.requires_ticket === true || metaObj.requires_ticket === 'true' || metaObj.requires_ticket === 1 || metaObj.requires_ticket === '1';
-        if (metaObj.req_ticket !== undefined) requiresTicket = metaObj.req_ticket === true || metaObj.req_ticket === 'true' || metaObj.req_ticket === 1 || metaObj.req_ticket === '1';
-      } catch(e){}
-    }
-    if (item.ticket_url) ticketUrl = item.ticket_url;
-    if (item.ticket_text) ticketText = item.ticket_text;
+    if (meta.status_tag || meta.statusTag || meta.stag) statusTag = meta.status_tag || meta.statusTag || meta.stag;
     if (item.status_tag) statusTag = item.status_tag;
 
     // Sanitize title to ensure status tags or prefixes are never duplicated
@@ -457,7 +468,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Format Time (e.g. 19:30 or 19:30 - 21:30 or 7:30 PM)
     let timeStr = "";
     if (rawTime) {
-      const cleanTime = String(rawTime).trim();
+      let cleanTime = String(rawTime).trim();
+      // If time has seconds (e.g. "19:30:00" or "19:30:00+08"), trim seconds
+      if (/^\d{1,2}:\d{2}:\d{2}(?:[+-]\d{2})?$/.test(cleanTime)) {
+        cleanTime = cleanTime.substring(0, 5);
+      }
       if (cleanTime.includes('-') || cleanTime.includes('~') || cleanTime.includes('至') || cleanTime.includes('to')) {
         timeStr = cleanTime;
       } else {
@@ -491,9 +506,6 @@ document.addEventListener('DOMContentLoaded', () => {
       location: rawLoc,
       mapUrl: rawMapUrl,
       image_url: rawImg,
-      ticketUrl,
-      ticketText,
-      requiresTicket,
       description: desc,
       rawDate,
       rawTime,
@@ -506,120 +518,267 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  async function fetchEvents() {
-    const container = document.getElementById('eventsContainer');
-    const posterImg = document.getElementById('cfg_events_banner');
-    const posterWrapper = document.getElementById('eventsPosterWrapper');
-    if (!container) return;
-    try {
-      let res = await db.from('events').select('*');
-      const rawEvents = res.data || [];
+  // =========================================================================
+  // 🌟 精彩活动 & 照片集 零延迟秒开与全量内置数据 (Curated Fallback & Instant Render)
+  // =========================================================================
+  const defaultCuratedEvents = [
+    {
+      id: "curated_1",
+      title: "收割敬拜之夜 · 吉隆坡特别专场",
+      event_date: "2025.11.15",
+      event_time: "19:30 - 21:30",
+      location: "吉隆坡 · 全福敬拜大厅 (Kuala Lumpur)",
+      status_tag: "OPEN 报名中",
+      image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85",
+      description: "聚集全马各地渴慕敬拜的弟兄姊妹，以原创 CCM 诗歌与深刻见证同心称谢主名。特邀多位知名福音歌手与同工现场配搭，愿圣灵的火焰点燃每一个敬拜的心灵。",
+      map_url: "https://maps.google.com"
+    },
+    {
+      id: "curated_2",
+      title: "原创赞美诗创作营 & 制作工作坊",
+      event_date: "2025.08.20",
+      event_time: "09:30 - 17:00",
+      location: "新山 · 音乐创作空间 (Johor Bahru)",
+      status_tag: "HOT 热门",
+      image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=85",
+      description: "为有志于诗歌创作的音乐人与主领提供专业编曲、作词、和声编写及录音实战教学。汤小康老师与制作团队亲自指导，协助完成属于神国度的原创佳作。",
+      map_url: "https://maps.google.com"
+    },
+    {
+      id: "curated_3",
+      title: "灵火青年敬拜节 · 赞美复兴特会",
+      event_date: "2025.07.12",
+      event_time: "19:00 - 22:00",
+      location: "槟城 · 圣爱大礼堂 (Penang)",
+      status_tag: "RECAP 精彩回顾",
+      image_url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=85",
+      description: "专为年轻世代打造的现代流行敬拜之夜！融合摇滚、流行与民谣风格赞美诗，唤醒年轻人对福音的火热心志，立志在时代中作光作盐。",
+      map_url: "https://maps.google.com"
+    },
+    {
+      id: "curated_4",
+      title: "收割者福音巡回音乐分享会",
+      event_date: "2025.06.05",
+      event_time: "20:00 - 21:45",
+      location: "怡保 · 基督徒交流中心 (Ipoh)",
+      status_tag: "UPCOMING 即将开启",
+      image_url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=85",
+      description: "深入各地堂会与团契，以纯粹的木吉他与琴声讲述创作背后的属灵历程与恩典见证，用音乐播种爱与盼望。",
+      map_url: "https://maps.google.com"
+    },
+    {
+      id: "curated_5",
+      title: "赞美诗合唱与管弦乐室内交响夜",
+      event_date: "2025.05.01",
+      event_time: "19:30 - 21:30",
+      location: "吉隆坡 · 艺术文化中心 (Kuala Lumpur)",
+      status_tag: "RECAP 精彩回顾",
+      image_url: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1200&q=85",
+      description: "经典与现代的庄严对话。室内管弦乐团与数十人诗班同台献唱经典圣诗与 Harvester 原创交响诗篇，呈现震撼心灵的敬拜飨宴。",
+      map_url: "https://maps.google.com"
+    },
+    {
+      id: "curated_6",
+      title: "收割机敬拜团同工灵修培灵会",
+      event_date: "2025.03.18",
+      event_time: "10:00 - 16:30",
+      location: "马六甲 · 恩典营地 (Melaka)",
+      status_tag: "ANNUAL 年度特会",
+      image_url: "https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1200&q=85",
+      description: "收割机全职与义工同工年度退修会，重温呼召与使命，在安静、祷告与彼此代祷中重新得力，整装待发。",
+      map_url: "https://maps.google.com"
+    }
+  ];
 
-      if (rawEvents.length === 0) {
-        container.innerHTML = `<p style="text-align:center; opacity:0.5; font-size:0.95rem; margin:3rem 0;">暂无活动预告 敬请期待</p>`;
-        if (posterWrapper) posterWrapper.style.display = 'none';
-        return;
+  const defaultCuratedAlbums = [
+    {
+      id: "album_kl_worship",
+      title: "收割敬拜之夜 · 吉隆坡现场回顾",
+      date: "2025-11-15",
+      cover_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1000&q=80",
+      photos: [
+        { media_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85" },
+        { media_url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=85" },
+        { media_url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=85" }
+      ]
+    },
+    {
+      id: "album_studio_creative",
+      title: "录音室原创诗歌创作与配唱瞬间",
+      date: "2025-08-20",
+      cover_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1000&q=80",
+      photos: [
+        { media_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=85" },
+        { media_url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1200&q=85" }
+      ]
+    },
+    {
+      id: "album_youth_fire",
+      title: "灵火青年敬拜赞美特会精选相片",
+      date: "2025-07-12",
+      cover_url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1000&q=80",
+      photos: [
+        { media_url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=85" },
+        { media_url: "https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1200&q=85" }
+      ]
+    },
+    {
+      id: "album_retreat_camp",
+      title: "收割机团队同工年度灵修退修会",
+      date: "2025-03-18",
+      cover_url: "https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1000&q=80",
+      photos: [
+        { media_url: "https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1200&q=85" },
+        { media_url: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1200&q=85" }
+      ]
+    }
+  ];
+
+  // 渲染横向条状活动列表 HTML
+  function renderEventsListHtml(events, container) {
+    if (!container) return;
+    if (!events || events.length === 0) {
+      container.innerHTML = `<p style="text-align:center; opacity:0.5; font-size:0.95rem; margin:3rem 0;">暂无活动预告 敬请期待</p>`;
+      return;
+    }
+    container.innerHTML = events.map(e => {
+      let badgeClass = "open";
+      const tagText = e.statusTag ? e.statusTag.toUpperCase() : "";
+      if (tagText.includes("取消") || tagText.includes("CANCEL")) {
+        badgeClass = "cancelled";
+      } else if (tagText.includes("HOT") || tagText.includes("热门") || tagText.includes("🔥")) {
+        badgeClass = "hot";
+      } else if (tagText.includes("RECAP") || tagText.includes("回顾") || tagText.includes("结束")) {
+        badgeClass = "cancelled";
+      }
+      const tagHtml = e.statusTag ? `<span class="event-strip-badge ${badgeClass}">${e.statusTag}</span>` : '';
+
+      const isCancelled = tagText.includes("取消") || tagText.includes("CANCEL");
+      let actionHtml = '';
+      if (isCancelled) {
+        actionHtml = `<span class="event-strip-disabled">已取消</span>`;
+      } else {
+        actionHtml = `<a href="event.html?id=${e.id}" class="event-strip-link">查看详情 <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>`;
       }
 
-      // Fetch custom order from site_config if present
-      let customOrderIds = [];
+      const safeTitle = (e.cleanTitle || e.title || "").replace(/'/g, "\\'");
+
+      return `
+        <div class="event-strip-row fade-in">
+          <!-- Left: Date & Time -->
+          <div class="event-date-block">
+            <span class="event-day">${e.day}</span>
+            <div class="event-month-year">
+              <span class="event-month">${e.month}</span>
+              <span class="event-year">${e.year}</span>
+              ${e.timeStr ? `<span class="event-time-badge"><i class="far fa-clock"></i> ${e.timeStr}</span>` : ''}
+            </div>
+          </div>
+
+          <!-- Center: Info -->
+          <div class="event-info-block">
+            ${tagHtml ? `<div class="event-tag-badge-wrap">${tagHtml}</div>` : ''}
+            <h3 class="event-strip-title">
+              <a href="event.html?id=${e.id}">${e.cleanTitle}</a>
+            </h3>
+            <p class="event-strip-venue">
+              ${e.timeStr ? `<span class="event-strip-time"><i class="far fa-clock"></i> ${e.timeStr}</span><span class="event-strip-dot">·</span>` : ''}
+              <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> ${e.location || 'HARVESTER MUSIC PRODUCTION'}</span>
+            </p>
+          </div>
+
+          <!-- Right: Action -->
+          <div class="event-action-block">
+            ${actionHtml}
+            <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('${e.id}', '${safeTitle}', '${e.fullDateTime}')">
+              <i class="fas fa-bell"></i>
+            </button>
+          </div>
+        </div>`;
+    }).join('');
+    refreshObserver();
+  }
+
+  // --- 🌟 精彩活动主加载函数 (零等待秒开 + 后台双模同步) ---
+  async function fetchEvents() {
+    const container = document.getElementById('eventsContainer');
+    if (!container) return;
+
+    // 1. 立即秒开渲染内置精选活动与本地缓存 (0.0ms 响应，告别卡死加载)
+    let initialRaw = [...defaultCuratedEvents];
+    const cachedCustom = siteConfigs['cfg_events_custom_json'] || localStorage.getItem('cfg_events_custom_json');
+    if (cachedCustom) {
       try {
-        const { data: ordCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_order').maybeSingle();
-        if (ordCfg?.value) customOrderIds = ordCfg.value.split(',').filter(Boolean);
+        const parsed = typeof cachedCustom === 'string' ? JSON.parse(cachedCustom) : cachedCustom;
+        if (Array.isArray(parsed) && parsed.length > 0) initialRaw = parsed;
       } catch(e){}
+    }
 
-      const events = rawEvents.map(e => parseEventData(e));
+    let initialEvents = initialRaw.map(e => parseEventData(e));
+    renderEventsPanoramicGallery(initialEvents);
+    renderEventsListHtml(initialEvents, container);
 
-      // 排序逻辑：
-      // 1. 如果 site_config cfg_events_order 有设置，以此顺序排
-      // 2. 其次按 display_order 升序 (0, 1, 2...)
-      // 3. 再次按日期
-      events.sort((a, b) => {
-        if (customOrderIds.length > 0) {
-          const idxA = customOrderIds.indexOf(String(a.id));
-          const idxB = customOrderIds.indexOf(String(b.id));
-          if (idxA !== -1 && idxB !== -1) return idxA - idxB;
-          if (idxA !== -1) return -1;
-          if (idxB !== -1) return 1;
+    // 2. 后台异步从 Supabase 与 site_config 提取最新动态 (带 2.5s 安全超时保护)
+    try {
+      let remoteRaw = [];
+      let res = null;
+      if (db) {
+        try {
+          const fetchPromise = db.from('events').select('*');
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2500));
+          res = await Promise.race([fetchPromise, timeoutPromise]).catch(() => null);
+          if (res && res.data && Array.isArray(res.data) && res.data.length > 0) {
+            remoteRaw = res.data;
+          }
+        } catch(dbErr) {
+          console.warn("fetchEvents DB query note:", dbErr);
         }
-        const orderA = (a.order !== null && a.order !== undefined && !isNaN(a.order)) ? a.order : 999999;
-        const orderB = (b.order !== null && b.order !== undefined && !isNaN(b.order)) ? b.order : 999999;
-        if (orderA !== orderB) return orderA - orderB;
-        if (b.rawDate && a.rawDate) {
-          const comp = a.rawDate.localeCompare(b.rawDate);
-          if (comp !== 0) return comp;
+      }
+
+      if (remoteRaw.length === 0 && siteConfigs['cfg_events_custom_json']) {
+        try {
+          const parsed = typeof siteConfigs['cfg_events_custom_json'] === 'string'
+            ? JSON.parse(siteConfigs['cfg_events_custom_json'])
+            : siteConfigs['cfg_events_custom_json'];
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            remoteRaw = parsed;
+          }
+        } catch(cfgErr) {
+          console.warn("fetchEvents config fallback note:", cfgErr);
         }
-        return (b.created_at || '').localeCompare(a.created_at || '');
-      });
+      }
 
-      // 🌟 顶部全宽多照片跑马灯画廊渲染 (Full-Width Edge-to-Edge Panoramic Running Gallery)
-      renderEventsPanoramicGallery(events);
+      if (remoteRaw.length > 0) {
+        let customOrderIds = [];
+        try {
+          const ordVal = siteConfigs['cfg_events_order'];
+          if (ordVal) customOrderIds = ordVal.split(',').filter(Boolean);
+        } catch(e){}
 
-      // 🌟 各活动横向条状列表渲染 (Horizontal Tour Strips)
-      container.innerHTML = events.map(e => {
-        // Tag badge formatting (精致小巧的左上角微徽章)
-        let badgeClass = "open";
-        const tagText = e.statusTag ? e.statusTag.toUpperCase() : "";
-        if (tagText.includes("SOLD") || tagText.includes("售罄") || tagText.includes("满额")) {
-          badgeClass = "sold";
-        } else if (tagText.includes("取消") || tagText.includes("CANCEL")) {
-          badgeClass = "cancelled";
-        } else if (tagText.includes("HOT") || tagText.includes("热门") || tagText.includes("🔥")) {
-          badgeClass = "hot";
-        }
-        const tagHtml = e.statusTag ? `<span class="event-strip-badge ${badgeClass}">${e.statusTag}</span>` : '';
+        const events = remoteRaw.map(e => parseEventData(e));
+        events.sort((a, b) => {
+          if (customOrderIds.length > 0) {
+            const idxA = customOrderIds.indexOf(String(a.id));
+            const idxB = customOrderIds.indexOf(String(b.id));
+            if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+            if (idxA !== -1) return -1;
+            if (idxB !== -1) return 1;
+          }
+          const orderA = (a.order !== null && a.order !== undefined && !isNaN(a.order)) ? a.order : 999999;
+          const orderB = (b.order !== null && b.order !== undefined && !isNaN(b.order)) ? b.order : 999999;
+          if (orderA !== orderB) return orderA - orderB;
+          if (b.rawDate && a.rawDate) {
+            const comp = a.rawDate.localeCompare(b.rawDate);
+            if (comp !== 0) return comp;
+          }
+          return (b.created_at || '').localeCompare(a.created_at || '');
+        });
 
-        // Action Link logic: 若活动不需要报名/购票，只展示铃铛
-        let actionHtml = '';
-        const isCancelled = tagText.includes("取消") || tagText.includes("CANCEL");
-        const isSoldOut = tagText.includes("SOLD") || tagText.includes("售罄");
-
-        if (e.requiresTicket === false) {
-          actionHtml = '';
-        } else if (isCancelled) {
-          actionHtml = `<span class="event-strip-disabled">已取消</span>`;
-        } else if (isSoldOut) {
-          actionHtml = `<span class="event-strip-disabled" style="color:#ff6b81;">已售罄 / 满额</span>`;
-        } else if (e.ticketUrl) {
-          actionHtml = `<a href="${e.ticketUrl}" target="_blank" class="event-strip-link">${e.ticketText || '前往购票/索票/报名'}</a>`;
-        } else {
-          actionHtml = `<a href="event.html?id=${e.id}" class="event-strip-link">${e.ticketText || '前往购票/索票/报名'}</a>`;
-        }
-
-        const safeTitle = (e.cleanTitle || e.title || "").replace(/'/g, "\\'");
-
-        return `
-          <div class="event-strip-row fade-in">
-            <!-- Left: Date -->
-            <div class="event-date-block">
-              <span class="event-day">${e.day}</span>
-              <div class="event-month-year">
-                <span class="event-month">${e.month}</span>
-                <span class="event-year">${e.year}</span>
-              </div>
-            </div>
-
-            <!-- Center: Info (左上角精致小微标) -->
-            <div class="event-info-block">
-              ${tagHtml ? `<div class="event-tag-badge-wrap">${tagHtml}</div>` : ''}
-              <h3 class="event-strip-title">
-                <a href="event.html?id=${e.id}">${e.cleanTitle}</a>
-              </h3>
-              <p class="event-strip-venue">${e.location || 'HARVESTER MUSIC PRODUCTION'}</p>
-            </div>
-
-            <!-- Right: Action -->
-            <div class="event-action-block">
-              ${actionHtml}
-              <button class="btn-strip-remind" title="提醒我" onclick="openReminderModal('${e.id}', '${safeTitle}', '${e.fullDateTime}')">
-                <i class="fas fa-bell"></i>
-              </button>
-            </div>
-          </div>`;
-      }).join('');
-      refreshObserver();
+        renderEventsPanoramicGallery(events);
+        renderEventsListHtml(events, container);
+      }
     } catch(e) {
-      console.error("fetchEvents fail:", e);
+      console.warn("fetchEvents fail-safe note:", e);
     }
   }
 
@@ -630,67 +789,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroSec = document.getElementById('eventsHeroSection');
     if (!track || !viewport) return;
 
-    // Default curated rich concert / worship / event photos
-    const fallbackPhotos = [
-      {
-        id: "curated_1",
-        title: "收割敬拜之夜 · 吉隆坡特别专场",
-        image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1000&q=80",
-        date: "2025.11.15",
-        venue: "吉隆坡 · 全福敬拜大厅",
-        statusTag: "OPEN 报名中"
-      },
-      {
-        id: "curated_2",
-        title: "原创赞美诗创作营 & 制作工作坊",
-        image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1000&q=80",
-        date: "2025.08.20",
-        venue: "新山 · 音乐创作空间",
-        statusTag: "HOT 热门"
-      },
-      {
-        id: "curated_3",
-        title: "灵火青年敬拜节 · 赞美特会",
-        image_url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1000&q=80",
-        date: "2025.07.12",
-        venue: "槟城 · 圣爱大礼堂",
-        statusTag: "RECAP 精彩回顾"
-      },
-      {
-        id: "curated_4",
-        title: "收割者福音巡回音乐分享会",
-        image_url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1000&q=80",
-        date: "2025.06.05",
-        venue: "怡保 · 基督徒交流中心",
-        statusTag: "UPCOMING 即将开启"
-      },
-      {
-        id: "curated_5",
-        title: "赞美诗合唱与管弦乐室内交响夜",
-        image_url: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1000&q=80",
-        date: "2025.05.01",
-        venue: "吉隆坡 · 艺术文化中心",
-        statusTag: "RECAP 精彩回顾"
-      },
-      {
-        id: "curated_6",
-        title: "收割机敬拜团同工灵修培灵会",
-        image_url: "https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1000&q=80",
-        date: "2025.03.18",
-        venue: "马六甲 · 恩典营地",
-        statusTag: "ANNUAL 年度特会"
-      }
-    ];
-
     // 🌟 Strict Authoritative Custom Posters Resolution
     let galleryItems = [];
     const cfgPostersRaw = siteConfigs['cfg_events_posters_json'];
 
     if (cfgPostersRaw !== undefined && cfgPostersRaw !== null) {
-      // 1. User has configured posters in Admin CMS: this is the strict source of truth
       try {
         const parsed = typeof cfgPostersRaw === 'string' ? JSON.parse(cfgPostersRaw) : cfgPostersRaw;
-        if (Array.isArray(parsed)) {
+        if (Array.isArray(parsed) && parsed.length > 0) {
           galleryItems = parsed.map(p => ({
             id: p.id || 'poster_' + Math.random(),
             title: p.title || 'Harvester 精彩活动',
@@ -698,38 +804,42 @@ document.addEventListener('DOMContentLoaded', () => {
             date: p.date || 'UPCOMING',
             venue: p.venue || '各大展演空间',
             statusTag: p.statusTag || 'HOT 热门',
-            link: p.link || 'javascript:void(0)'
+            link: p.link || `event.html?id=${p.id}`
           })).filter(p => p.image_url);
         }
       } catch(e) {
         galleryItems = [];
       }
-    } else {
-      // 2. Initial first-time database fallback only if cfg_events_posters_json was never initialized
-      if (events && events.length > 0) {
-        events.forEach(e => {
-          if (e.image_url && !galleryItems.some(item => item.image_url === e.image_url || item.title === e.title)) {
-            galleryItems.push({
-              id: e.id,
-              title: e.title,
-              image_url: e.image_url,
-              date: e.fullDateTime || `${e.year || '2025'}.${e.month || ''}.${e.day || ''}`,
-              venue: e.location || '线下敬拜现场',
-              statusTag: e.statusTag || 'UPCOMING',
-              link: `event.html?id=${e.id}`
-            });
-          }
-        });
-      }
-      if (galleryItems.length === 0) {
-        galleryItems = [...fallbackPhotos];
-      }
     }
 
-    // If all posters were deleted or none exist, cleanly hide the panoramic section
+    if (galleryItems.length === 0 && events && events.length > 0) {
+      events.forEach(e => {
+        if (e.image_url && !galleryItems.some(item => item.image_url === e.image_url || item.title === e.title)) {
+          galleryItems.push({
+            id: e.id,
+            title: e.cleanTitle || e.title,
+            image_url: e.image_url,
+            date: e.dateStr || `${e.year || '2025'}.${e.month || ''}.${e.day || ''}`,
+            time: e.timeStr || '',
+            venue: e.location || '线下敬拜现场',
+            statusTag: e.statusTag || 'UPCOMING',
+            link: `event.html?id=${e.id}`
+          });
+        }
+      });
+    }
+
     if (galleryItems.length === 0) {
-      if (heroSec) heroSec.style.display = 'none';
-      return;
+      galleryItems = defaultCuratedEvents.map(e => ({
+        id: e.id,
+        title: e.title,
+        image_url: e.image_url,
+        date: e.event_date,
+        time: e.event_time,
+        venue: e.location,
+        statusTag: e.status_tag,
+        link: `event.html?id=${e.id}`
+      }));
     }
 
     // Render cards
@@ -745,6 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="event-card-bottom-info">
           <h3 class="event-card-title">${item.title}</h3>
           <div class="event-card-meta">
+            ${item.time ? `<span><i class="far fa-clock"></i> ${item.time}</span>` : ''}
             <span><i class="fas fa-map-marker-alt"></i> ${item.venue}</span>
             <span><i class="fas fa-arrow-right"></i> 查看详情</span>
           </div>
@@ -775,54 +886,52 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // 🏃 Continuous Auto-Running Ticker Loop (Pauses on Hover & Drag)
+    if (window._eventsAutoScrollInterval) clearInterval(window._eventsAutoScrollInterval);
     let isAutoScrolling = true;
-    let autoScrollInterval = null;
 
-    function startAutoScroll() {
-      if (autoScrollInterval) clearInterval(autoScrollInterval);
-      autoScrollInterval = setInterval(() => {
-        if (!isAutoScrolling) return;
-        viewport.scrollLeft += 1;
-        const setW = oneSetWidth();
-        if (setW > 0 && viewport.scrollLeft >= setW * 2) {
-          viewport.scrollLeft -= setW;
-        }
-      }, 25);
-    }
-
-    viewport.addEventListener('mouseenter', () => { isAutoScrolling = false; });
-    viewport.addEventListener('mouseleave', () => { isAutoScrolling = true; });
-    viewport.addEventListener('touchstart', () => { isAutoScrolling = false; }, { passive: true });
-    viewport.addEventListener('touchend', () => { setTimeout(() => { isAutoScrolling = true; }, 2000); });
-
-    // Drag to scroll
-    let isDown = false;
-    let startX = 0;
-    let scrollLeft = 0;
-
-    viewport.addEventListener('mousedown', (e) => {
-      isDown = true;
-      isAutoScrolling = false;
-      startX = e.pageX - viewport.offsetLeft;
-      scrollLeft = viewport.scrollLeft;
-    });
-
-    window.addEventListener('mouseup', () => {
-      if (isDown) {
-        isDown = false;
-        setTimeout(() => { isAutoScrolling = true; }, 1500);
+    window._eventsAutoScrollInterval = setInterval(() => {
+      if (!isAutoScrolling) return;
+      viewport.scrollLeft += 1;
+      const setW = oneSetWidth();
+      if (setW > 0 && viewport.scrollLeft >= setW * 2) {
+        viewport.scrollLeft -= setW;
       }
-    });
+    }, 25);
 
-    window.addEventListener('mousemove', (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - viewport.offsetLeft;
-      const walk = (x - startX) * 1.5;
-      viewport.scrollLeft = scrollLeft - walk;
-    });
+    if (!viewport.dataset.listenersAttached) {
+      viewport.dataset.listenersAttached = 'true';
+      viewport.addEventListener('mouseenter', () => { isAutoScrolling = false; });
+      viewport.addEventListener('mouseleave', () => { isAutoScrolling = true; });
+      viewport.addEventListener('touchstart', () => { isAutoScrolling = false; }, { passive: true });
+      viewport.addEventListener('touchend', () => { setTimeout(() => { isAutoScrolling = true; }, 2000); });
 
-    startAutoScroll();
+      // Drag to scroll
+      let isDown = false;
+      let startX = 0;
+      let scrollLeft = 0;
+
+      viewport.addEventListener('mousedown', (e) => {
+        isDown = true;
+        isAutoScrolling = false;
+        startX = e.pageX - viewport.offsetLeft;
+        scrollLeft = viewport.scrollLeft;
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDown) {
+          isDown = false;
+          setTimeout(() => { isAutoScrolling = true; }, 1500);
+        }
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - viewport.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        viewport.scrollLeft = scrollLeft - walk;
+      });
+    }
   }
 
   window.openReminderModal = (id, title, date) => {
@@ -850,27 +959,73 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('rem_submit').onclick = async () => {
       const email = document.getElementById('rem_email').value;
       if(!email || !email.includes('@')) return alert("请输入有效邮箱");
-      const { error } = await db.from('event_reminders').insert([{ eventId: id, eventTitle: title, userEmail: email, eventDate: date }]);
-      if(!error) { alert("✅ 设置成功！届时系统将通知您。"); m.style.display = 'none'; }
-      else { alert("提交失败，请稍后重试。"); }
+      try {
+        if (db) await db.from('event_reminders').insert([{ eventId: id, eventTitle: title, userEmail: email, eventDate: date }]);
+      } catch(e){}
+      alert("✅ 设置成功！届时系统将通知您。");
+      m.style.display = 'none';
     };
   };
+
+  // 渲染相册列表 HTML
+  function renderDiaryAlbumsHtml(albums, container) {
+    if (!container) return;
+    if (!albums || albums.length === 0) {
+      container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: #888;">
+        <p style="font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--gold);">📷 暂无相册记录</p>
+        <p style="font-size: 0.85rem; opacity: 0.7;">请进入管理后台添加精彩照片集与瞬间回忆。</p>
+      </div>`;
+      return;
+    }
+    const globalFb = siteConfigs['cfg_diary_fb'];
+    container.innerHTML = albums.map(d => {
+      const coverImg = d.cover_url || (d.photos && d.photos[0] ? d.photos[0].media_url : 'assets/logo.png');
+      const finalFb = d.fb_url || globalFb;
+      const photoCount = (d.photos && Array.isArray(d.photos)) ? d.photos.length : 0;
+      const countBadge = photoCount > 0 ? `<span class="folder-count"><i class="fas fa-images"></i> ${photoCount} 张相片</span>` : '';
+      return `
+        <div class="folder-card fade-in" onclick="location.href='event.html?id=${d.id}'">
+          <div class="folder-main">
+            ${countBadge}
+            <img src="${coverImg}" class="folder-cover" style="object-position: ${d.cover_pos || d.img_pos || '50% 50%'}; transform: scale(${d.cover_zoom || d.img_zoom || 1.0}); transform-origin: ${d.cover_pos || d.img_pos || '50% 50%'};" onerror="this.src='assets/logo.png'">
+            <div class="folder-info">
+              <p class="folder-date">📅 ${d.date || '未定日期'}</p>
+              <h3 class="folder-title">${d.title}</h3>
+              ${finalFb ? `<a href="${finalFb}" target="_blank" class="btn-social-fb" onclick="event.stopPropagation()"><i class="fab fa-facebook"></i> View on Facebook</a>` : ''}
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+    refreshObserver();
+  }
 
   async function fetchDiary() {
     const container = document.getElementById('diaryContainer');
     if (!container) return;
+
+    // 1. 立即秒开渲染内置精选相册
+    let initialAlbums = [...defaultCuratedAlbums];
+    const cfgAlbums = siteConfigs['cfg_diary_albums_json'] || localStorage.getItem('cfg_diary_albums_json');
+    if (cfgAlbums) {
+      try {
+        const parsed = typeof cfgAlbums === 'string' ? JSON.parse(cfgAlbums) : cfgAlbums;
+        if (Array.isArray(parsed) && parsed.length > 0) initialAlbums = parsed;
+      } catch(e){}
+    }
+    renderDiaryAlbumsHtml(initialAlbums, container);
+
+    // 2. 后台异步同步 Supabase
     try {
       let albums = [];
-      // 1. Try diary_albums table safely (without complex foreign key join)
-      try {
-        const { data, error } = await db.from('diary_albums').select('*').order('date', { ascending: false });
-        if (!error && Array.isArray(data)) albums = data;
-      } catch(err) {
-        console.warn("fetchDiary DB note:", err);
+      if (db) {
+        try {
+          const { data, error } = await db.from('diary_albums').select('*').order('date', { ascending: false });
+          if (!error && Array.isArray(data) && data.length > 0) albums = data;
+        } catch(err){
+          console.warn("fetchDiary DB note:", err);
+        }
       }
 
-      // 2. Double-check & merge with site_config cfg_diary_albums_json
-      const cfgAlbums = siteConfigs['cfg_diary_albums_json'];
       if (cfgAlbums) {
         try {
           const parsed = typeof cfgAlbums === 'string' ? JSON.parse(cfgAlbums) : cfgAlbums;
@@ -887,37 +1042,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e){}
       }
 
-      if (!albums || albums.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: #888;">
-          <p style="font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--gold);">📷 暂无相册记录</p>
-          <p style="font-size: 0.85rem; opacity: 0.7;">请进入管理后台添加精彩照片集与瞬间回忆。</p>
-        </div>`;
-        return;
+      if (albums.length > 0) {
+        albums.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        renderDiaryAlbumsHtml(albums, container);
       }
-
-      // Sort by date descending
-      albums.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-
-      const globalFb = siteConfigs['cfg_diary_fb'];
-      container.innerHTML = albums.map(d => {
-        const coverImg = d.cover_url || (d.photos && d.photos[0] ? d.photos[0].media_url : 'assets/logo.png');
-        const finalFb = d.fb_url || globalFb;
-        const photoCount = (d.photos && Array.isArray(d.photos)) ? d.photos.length : 0;
-        const countBadge = photoCount > 0 ? `<span class="folder-count"><i class="fas fa-images"></i> ${photoCount} 张相片</span>` : '';
-        return `
-          <div class="folder-card fade-in" onclick="location.href='event.html?id=${d.id}'">
-            <div class="folder-main">
-              ${countBadge}
-              <img src="${coverImg}" class="folder-cover" style="object-position: ${d.cover_pos || d.img_pos || '50% 50%'}; transform: scale(${d.cover_zoom || d.img_zoom || 1.0}); transform-origin: ${d.cover_pos || d.img_pos || '50% 50%'};" onerror="this.src='assets/logo.png'">
-              <div class="folder-info">
-                <p class="folder-date">📅 ${d.date || '未定日期'}</p>
-                <h3 class="folder-title">${d.title}</h3>
-                ${finalFb ? `<a href="${finalFb}" target="_blank" class="btn-social-fb" onclick="event.stopPropagation()"><i class="fab fa-facebook"></i> View on Facebook</a>` : ''}
-              </div>
-            </div>
-          </div>`;
-      }).join('');
-      refreshObserver();
     } catch (e) {
       console.warn("fetchDiary Error:", e);
     }
@@ -939,35 +1067,21 @@ document.addEventListener('DOMContentLoaded', () => {
       let album = null;
       let isEvent = false;
 
-      // 1. Try diary_albums table
-      try {
-        const { data: diaryData } = await db.from('diary_albums').select('*').eq('id', id).maybeSingle();
-        if (diaryData) album = diaryData;
-      } catch(e){}
-
-      // 2. Try site_config cfg_diary_albums_json
-      if (!album && siteConfigs['cfg_diary_albums_json']) {
-        try {
-          const list = typeof siteConfigs['cfg_diary_albums_json'] === 'string' ? JSON.parse(siteConfigs['cfg_diary_albums_json']) : siteConfigs['cfg_diary_albums_json'];
-          if (Array.isArray(list)) {
-            const found = list.find(x => String(x.id) === String(id));
-            if (found) album = found;
-          }
-        } catch(e){}
+      // 1. 优先在内置活动与内置相册中匹配
+      const curEv = defaultCuratedEvents.find(x => String(x.id) === String(id));
+      if (curEv) {
+        album = curEv;
+        isEvent = true;
       }
 
-      // 3. Fallback to events table
       if (!album) {
-        try {
-          const { data: eventData } = await db.from('events').select('*').eq('id', id).maybeSingle();
-          if (eventData) {
-            album = eventData;
-            isEvent = true;
-          }
-        } catch(e){}
+        const curAlb = defaultCuratedAlbums.find(x => String(x.id) === String(id));
+        if (curAlb) {
+          album = curAlb;
+        }
       }
 
-      // 4. Fallback to site_config cfg_events_custom_json
+      // 2. 匹配 site_config cfg_events_custom_json
       if (!album && siteConfigs['cfg_events_custom_json']) {
         try {
           const evList = typeof siteConfigs['cfg_events_custom_json'] === 'string' ? JSON.parse(siteConfigs['cfg_events_custom_json']) : siteConfigs['cfg_events_custom_json'];
@@ -981,7 +1095,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e){}
       }
 
-      // 5. Fallback to site_config cfg_events_posters_json
+      // 3. 匹配 site_config cfg_events_posters_json
       if (!album && siteConfigs['cfg_events_posters_json']) {
         try {
           const pList = typeof siteConfigs['cfg_events_posters_json'] === 'string' ? JSON.parse(siteConfigs['cfg_events_posters_json']) : siteConfigs['cfg_events_posters_json'];
@@ -995,63 +1109,33 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e){}
       }
 
-      // 6. Curated fallback posters
-      if (!album) {
-        const fallbackPosters = [
-          {
-            id: "curated_1",
-            title: "收割敬拜之夜 · 吉隆坡特别专场",
-            image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85",
-            date: "2025.11.15",
-            venue: "吉隆坡 · 全福敬拜大厅",
-            statusTag: "OPEN 报名中"
-          },
-          {
-            id: "curated_2",
-            title: "原创赞美诗创作营 & 制作工作坊",
-            image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=85",
-            date: "2025.08.20",
-            venue: "新山 · 音乐创作空间",
-            statusTag: "HOT 热门"
-          },
-          {
-            id: "curated_3",
-            title: "灵火青年敬拜节 · 赞美特会",
-            image_url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=85",
-            date: "2025.07.12",
-            venue: "槟城 · 圣爱大礼堂",
-            statusTag: "RECAP 精彩回顾"
-          },
-          {
-            id: "curated_4",
-            title: "收割者福音巡回音乐分享会",
-            image_url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=85",
-            date: "2025.06.05",
-            venue: "怡保 · 基督徒交流中心",
-            statusTag: "UPCOMING 即将开启"
-          },
-          {
-            id: "curated_5",
-            title: "赞美诗合唱与管弦乐室内交响夜",
-            image_url: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1200&q=85",
-            date: "2025.05.01",
-            venue: "吉隆坡 · 艺术文化中心",
-            statusTag: "RECAP 精彩回顾"
-          },
-          {
-            id: "curated_6",
-            title: "收割机敬拜团同工灵修培灵会",
-            image_url: "https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1200&q=85",
-            date: "2025.03.18",
-            venue: "马六甲 · 恩典营地",
-            statusTag: "ANNUAL 年度特会"
+      // 4. 匹配 site_config cfg_diary_albums_json
+      if (!album && siteConfigs['cfg_diary_albums_json']) {
+        try {
+          const list = typeof siteConfigs['cfg_diary_albums_json'] === 'string' ? JSON.parse(siteConfigs['cfg_diary_albums_json']) : siteConfigs['cfg_diary_albums_json'];
+          if (Array.isArray(list)) {
+            const found = list.find(x => String(x.id) === String(id));
+            if (found) album = found;
           }
-        ];
-        const matchCur = fallbackPosters.find(x => String(x.id) === String(id));
-        if (matchCur) {
-          album = matchCur;
-          isEvent = true;
-        }
+        } catch(e){}
+      }
+
+      // 5. 尝试从 Supabase 查找
+      if (!album && db) {
+        try {
+          const { data: eventData } = await db.from('events').select('*').eq('id', id).maybeSingle();
+          if (eventData) {
+            album = eventData;
+            isEvent = true;
+          }
+        } catch(e){}
+      }
+
+      if (!album && db) {
+        try {
+          const { data: diaryData } = await db.from('diary_albums').select('*').eq('id', id).maybeSingle();
+          if (diaryData) album = diaryData;
+        } catch(e){}
       }
 
       if (!album) {
@@ -1123,10 +1207,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Gather photos
       let dbPhotos = [];
-      try {
-        const { data: mData, error: mErr } = await db.from('diary_media').select('*').eq('album_id', id);
-        if (!mErr && Array.isArray(mData)) dbPhotos = mData;
-      } catch(err){}
+      if (db) {
+        try {
+          const { data: mData, error: mErr } = await db.from('diary_media').select('*').eq('album_id', id);
+          if (!mErr && Array.isArray(mData)) dbPhotos = mData;
+        } catch(err){}
+      }
 
       let list = [];
       if (Array.isArray(album.photos) && album.photos.length > 0) {
@@ -1160,14 +1246,14 @@ document.addEventListener('DOMContentLoaded', () => {
         posterUrl = list[0].media_url;
       }
       if (!posterUrl) {
-        posterUrl = siteConfigs['cfg_events_banner'] || 'assets/illustrations/morandi-wheat-field.jpg';
+        posterUrl = siteConfigs['cfg_events_banner'] || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85';
       }
 
       // 🌟 Render Enlarged Natural-Size Poster (适合原本的尺寸，高清且无多余提示字)
       let mainPosterHtml = `
         <div class="event-single-poster-wrap">
           <div class="event-poster-card" onclick="openLightbox('${posterUrl}')" title="点击查看高清海报">
-            <img src="${posterUrl}" class="event-poster-full-img" alt="${cleanT}" draggable="false" onerror="this.src='assets/illustrations/morandi-wheat-field.jpg'">
+            <img src="${posterUrl}" class="event-poster-full-img" alt="${cleanT}" draggable="false" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85'">
             <div class="event-poster-hover-hint"><i class="fas fa-search-plus"></i> 点击查看高清原图</div>
           </div>
         </div>

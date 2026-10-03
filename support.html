@@ -293,6 +293,310 @@
       margin: 0;
     }
 
+    /* 📌 Payment Remark Reminder */
+    .support-remark-reminder {
+      margin-top: 1.3rem;
+      background: rgba(246, 210, 138, 0.07);
+      border: 1.5px dashed rgba(246, 210, 138, 0.35);
+      border-radius: 14px;
+      padding: 1.1rem 1.3rem;
+      transition: all 0.3s ease;
+    }
+    .support-remark-reminder:hover {
+      border-color: var(--gold);
+      background: rgba(246, 210, 138, 0.1);
+    }
+    .remark-reminder-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gold, #d4af37);
+      font-weight: bold;
+      font-size: 1.05rem;
+      margin-bottom: 0.4rem;
+      font-family: var(--font-hand-cn), serif;
+      letter-spacing: 1px;
+    }
+    .remark-reminder-text {
+      margin: 0;
+      color: #ded6c8;
+      font-family: var(--font-hand-cn), sans-serif;
+      font-size: 0.98rem;
+      line-height: 1.7;
+      letter-spacing: 0.5px;
+    }
+    .remark-tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(246, 210, 138, 0.18);
+      border: 1px solid var(--gold, #d4af37);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: var(--font-hand-cn), sans-serif;
+      transition: all 0.25s ease;
+      vertical-align: baseline;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+    .remark-tag-pill:hover {
+      background: var(--gold, #d4af37);
+      color: #111;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 4px 12px rgba(246, 210, 138, 0.35);
+    }
+    .remark-tag-pill:active {
+      transform: scale(0.96);
+    }
+    .remark-tag-pill.copied {
+      background: rgba(46, 213, 115, 0.25);
+      border-color: #2ed573;
+      color: #2ed573;
+    }
+
+    /* 🧾 Receipt Request Section & Button */
+    .receipt-section-box {
+      margin-top: 1.4rem;
+      padding-top: 1.3rem;
+      border-top: 1px dashed rgba(246, 210, 138, 0.2);
+      text-align: center;
+    }
+    .sketch-receipt-btn {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 20px;
+      background: linear-gradient(135deg, rgba(246, 210, 138, 0.15) 0%, rgba(212, 175, 55, 0.28) 100%);
+      border: 1.5px solid var(--gold, #d4af37);
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      color: #F6F4F0;
+      font-family: var(--font-hand-cn), serif;
+      font-size: 1.08rem;
+      letter-spacing: 1.2px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+    }
+    .sketch-receipt-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      background: linear-gradient(135deg, rgba(246, 210, 138, 0.3) 0%, rgba(212, 175, 55, 0.45) 100%);
+      border-color: #fff;
+      color: #fff;
+      box-shadow: 0 8px 25px rgba(246, 210, 138, 0.3);
+    }
+    .sketch-receipt-btn:active {
+      transform: scale(0.98);
+    }
+    .receipt-sub-tip {
+      font-family: var(--font-hand-cn), sans-serif;
+      font-size: 0.85rem;
+      color: #9c9083;
+      margin: 0.6rem 0 0;
+      letter-spacing: 0.5px;
+    }
+
+    /* 🪟 Receipt Modal Styles */
+    .receipt-modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(10, 8, 6, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .receipt-modal-backdrop.show {
+      display: flex;
+      opacity: 1;
+    }
+    .receipt-modal-card {
+      background: #181d22;
+      border: 1.5px solid rgba(246, 210, 138, 0.35);
+      border-radius: 24px;
+      max-width: 580px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2.2rem 2.4rem;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.85), 0 0 30px rgba(246, 210, 138, 0.1);
+      position: relative;
+      transform: translateY(20px) scale(0.96);
+      transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      box-sizing: border-box;
+    }
+    .receipt-modal-backdrop.show .receipt-modal-card {
+      transform: translateY(0) scale(1);
+    }
+    .receipt-modal-close {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      color: #ccc;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .receipt-modal-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      transform: rotate(90deg);
+    }
+    .receipt-modal-header {
+      margin-bottom: 1.2rem;
+    }
+    .receipt-modal-title {
+      font-family: var(--font-hand-cn);
+      font-size: 1.8rem;
+      color: #F6F4F0;
+      margin: 0.3rem 0 0.2rem;
+      letter-spacing: 2px;
+    }
+    .receipt-modal-subtitle {
+      font-family: var(--font-hand-en), var(--font-times), serif;
+      font-size: 0.92rem;
+      color: var(--gold);
+      margin: 0;
+      letter-spacing: 1px;
+    }
+    .receipt-modal-intro {
+      font-size: 0.98rem;
+      line-height: 1.7;
+      color: #cfc7ba;
+      font-family: var(--font-hand-cn);
+      margin-bottom: 1.3rem;
+      background: rgba(246, 210, 138, 0.04);
+      padding: 0.9rem 1.1rem;
+      border-radius: 10px;
+      border-left: 3px solid var(--gold);
+    }
+    .receipt-info-block {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px dashed rgba(246, 210, 138, 0.25);
+      border-radius: 14px;
+      padding: 1.1rem 1.3rem;
+      margin-bottom: 1.2rem;
+    }
+    .receipt-block-title {
+      font-size: 0.95rem;
+      color: var(--gold);
+      font-family: var(--font-hand-cn);
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .receipt-email-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(246, 210, 138, 0.08);
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-top: 8px;
+      border: 1px solid rgba(246, 210, 138, 0.2);
+      flex-wrap: wrap;
+    }
+    .receipt-email-val {
+      color: #F6F4F0;
+      font-family: var(--font-times), 'Courier Prime', monospace;
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      word-break: break-all;
+    }
+    .receipt-template-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .receipt-template-box {
+      background: rgba(10, 12, 14, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: 'Courier Prime', monospace, var(--font-hand-cn);
+      font-size: 0.88rem;
+      color: #c9d1d9;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      user-select: text;
+      margin-top: 8px;
+    }
+    .receipt-modal-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .receipt-modal-actions .btn-mail-action {
+      flex: 1;
+      min-width: 210px;
+      background: linear-gradient(135deg, var(--gold, #d4af37) 0%, #b8860b 100%);
+      color: #111 !important;
+      font-weight: 900;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 20px;
+      cursor: pointer;
+      font-family: var(--font-hand-cn);
+      font-size: 1.05rem;
+      letter-spacing: 1px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+    .receipt-modal-actions .btn-mail-action:hover {
+      background: linear-gradient(135deg, #ffe082 0%, #d4af37 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.45);
+    }
+    .receipt-modal-actions .btn-secondary-action {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #e2dbce;
+      border-radius: 12px;
+      padding: 13px 22px;
+      cursor: pointer;
+      font-family: var(--font-hand-cn);
+      font-size: 1rem;
+      letter-spacing: 1px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s;
+    }
+    .receipt-modal-actions .btn-secondary-action:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
     /* 📱 Tablet & iPad Responsive (600px ~ 960px) */
     @media (max-width: 960px) {
       .support-page-wrapper {
@@ -358,9 +662,9 @@
       <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 0.78rem;">
         <a id="cfg_nav_wa" href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry." target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a id="cfg_nav_sp" href="https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Spotify"><i class="fab fa-spotify"></i></a>
-        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
-        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
-        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+        <a id="cfg_nav_fb" href="https://www.facebook.com/harvester2025" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="https://www.instagram.com/harvestermusic.production?stkn=bzVqMGhvN2Q2OXZo&utm_source=qr" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="https://youtube.com/@harvestermusic.production?si=JvBC-9qgOsKdI3XT" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="YouTube"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
     <div class="menu-toggle" onclick="toggleMobileMenu()">
@@ -528,6 +832,27 @@
               </p>
             </div>
           </div>
+
+          <!-- 💡 5. 付款备注提醒 (Payment Reference Reminder) -->
+          <div class="support-remark-reminder">
+            <div class="remark-reminder-header">
+              <i class="fas fa-lightbulb"></i> <span>付款备注提醒 · Payment Reference</span>
+            </div>
+            <p class="remark-reminder-text">
+              转账或扫码支付时，请在付款备注（Recipient Reference / Remarks）注明奉献用途（例如：主日奉献、音乐事工、专辑支持等）；<strong>若无特定指定用途，请直接填写「<span class="remark-tag-pill" onclick="copyPresetText('奉献', this)" title="点击快速复制「奉献」"><i class="far fa-copy"></i> 奉献</span>」</strong>。
+            </p>
+          </div>
+
+          <!-- 🧾 6. 索取收据 / 发送凭证按钮 (Request Official Receipt) -->
+          <div class="receipt-section-box">
+            <button type="button" class="sketch-receipt-btn" onclick="openReceiptModal()">
+              <i class="fas fa-file-invoice-dollar" style="font-size: 1.2rem;"></i>
+              <span>索取收据 · 发送奉献凭证至 Email</span>
+            </button>
+            <p class="receipt-sub-tip">
+              如需官方奉献收据，请在支付后点击上方按钮将交易凭证发送至官方邮箱。
+            </p>
+          </div>
         </div>
 
         <p style="margin-top: 1.8rem; margin-bottom: 0; font-style: italic; color: #8c8276; font-size: 0.95rem; font-family: var(--font-hand-cn); text-align: center;">
@@ -538,7 +863,80 @@
     </div>
   </main>
 
-    <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+  <!-- ==========================================
+       🧾 索取收据弹窗 (Receipt Request Modal)
+       ========================================== -->
+  <div id="receiptModal" class="receipt-modal-backdrop" onclick="closeReceiptModalOnBackdrop(event)">
+    <div class="receipt-modal-card" role="dialog" aria-modal="true" aria-labelledby="receiptModalTitle">
+      <button type="button" class="receipt-modal-close" onclick="closeReceiptModal()" aria-label="关闭">
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <div class="receipt-modal-header">
+        <span class="sketch-pill" style="font-size:0.75rem; margin-bottom:0.5rem; display:inline-block;">🧾 Official Receipt · 奉献收据</span>
+        <h3 id="receiptModalTitle" class="receipt-modal-title">
+          索 取 奉 献 收 据
+        </h3>
+        <p class="receipt-modal-subtitle">Official Receipt Request & Payment Slip Submission</p>
+      </div>
+      
+      <p class="receipt-modal-intro">
+        若您需要官方奉献收据，请在完成银行转账或扫码支付后，将<strong>交易凭证/截图</strong>发送至官方邮箱，我们将为您核对并开具收据。
+      </p>
+
+      <!-- 官方邮箱展示与复制 -->
+      <div class="receipt-info-block">
+        <div class="receipt-block-title">
+          <i class="fas fa-envelope-open" style="color:var(--gold);"></i> 官方凭证接收邮箱 (Official Email)
+        </div>
+        <div class="receipt-email-row">
+          <span id="cfg_official_email" class="receipt-email-val">harvestermusicproduction@gmail.com</span>
+          <button type="button" class="sketch-copy-btn" onclick="copyPresetText((document.getElementById('cfg_official_email').innerText || document.getElementById('cfg_official_email').textContent || '').trim(), this)" title="复制邮箱地址">
+            <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>复制邮箱</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 建议邮件格式 -->
+      <div class="receipt-info-block">
+        <div class="receipt-template-header">
+          <div class="receipt-block-title">
+            <i class="fas fa-list-check" style="color:var(--gold);"></i> 建议邮件附带信息 (Email Template)
+          </div>
+          <button type="button" class="sketch-copy-btn" style="padding: 4px 10px; font-size: 0.8rem;" onclick="copyPresetText(getReceiptEmailTemplate(), this)" title="复制邮件格式文本">
+            <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>复制格式</span>
+          </button>
+        </div>
+        <div class="receipt-template-box" id="receiptTemplateText">1. 奉献者/机构全名 (Donor Name / Entity): 
+2. 联络电话 (Contact Phone): 
+3. 奉献日期与金额 (Offering Date & Amount): 
+4. 奉献用途 (Purpose): 奉献 / Offering
+5. 电子收据接收邮箱 (Email for E-Receipt): 
+---------------------------------------------
+📎 请随邮件附件附上：银行转账凭证/截图 (Payment Slip)</div>
+      </div>
+
+      <!-- 弹窗底部操作按钮 -->
+      <div class="receipt-modal-actions">
+        <a id="receiptMailtoLink" href="#" class="btn-mail-action" onclick="handleMailtoClick(event)">
+          <i class="fas fa-paper-plane"></i> 打开邮件客户端发送
+        </a>
+        <button type="button" class="btn-secondary-action" onclick="closeReceiptModal()">
+          完成 / 关闭
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="index.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
       <img src="assets/logo.png" alt="Harvester" style="height: 20px; display: block; margin: 0 auto 1.2rem;">
     </a>
@@ -550,21 +948,21 @@
   <script src="config.js?v=22.0.0"></script>
   <script src="app.js?v=34.0.0"></script>
   <script>
-    function copyTextFromElement(targetId, btnEl) {
-      const el = document.getElementById(targetId);
-      if (!el) return;
-      const rawText = (el.innerText || el.textContent || '').trim();
-      if (!rawText || rawText === '...') return;
-
+    function copyPresetText(text, btnEl) {
+      if (!text) return;
       const doSuccess = () => {
         const originalHTML = btnEl.innerHTML;
         btnEl.classList.add('copied');
-        btnEl.innerHTML = `
-          <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-          <span>已复制 Copied!</span>
-        `;
+        if (btnEl.classList.contains('remark-tag-pill')) {
+          btnEl.innerHTML = `<i class="fas fa-check"></i> 已复制「奉献」!`;
+        } else {
+          btnEl.innerHTML = `
+            <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>已复制 Copied!</span>
+          `;
+        }
         setTimeout(() => {
           btnEl.classList.remove('copied');
           btnEl.innerHTML = originalHTML;
@@ -572,12 +970,20 @@
       };
 
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(rawText).then(doSuccess).catch(() => {
-          fallbackCopy(rawText, doSuccess);
+        navigator.clipboard.writeText(text).then(doSuccess).catch(() => {
+          fallbackCopy(text, doSuccess);
         });
       } else {
-        fallbackCopy(rawText, doSuccess);
+        fallbackCopy(text, doSuccess);
       }
+    }
+
+    function copyTextFromElement(targetId, btnEl) {
+      const el = document.getElementById(targetId);
+      if (!el) return;
+      const rawText = (el.innerText || el.textContent || '').trim();
+      if (!rawText || rawText === '...') return;
+      copyPresetText(rawText, btnEl);
     }
 
     function fallbackCopy(text, cb) {
@@ -594,6 +1000,53 @@
         console.warn('Copy fallback failed', e);
       }
       document.body.removeChild(ta);
+    }
+
+    function getOfficialReceiptEmail() {
+      const emailEl = document.getElementById('cfg_official_email');
+      let email = (emailEl ? (emailEl.innerText || emailEl.textContent || '') : '').trim();
+      if (!email || !email.includes('@')) {
+        email = 'harvestermusicproduction@gmail.com';
+      }
+      return email;
+    }
+
+    function getReceiptEmailTemplate() {
+      return `【Harvester 奉献凭证提交 / 收据索取】\n\n1. 奉献者/机构全名 (Donor Name / Entity): \n2. 联络电话 (Contact Phone): \n3. 奉献日期与金额 (Offering Date & Amount): \n4. 奉献用途 (Purpose): 奉献 / Offering\n5. 电子收据接收邮箱 (Email for E-Receipt): \n\n---------------------------------------------\n📎 请随邮件附件附上：银行转账凭证/截图 (Payment Slip)`;
+    }
+
+    function openReceiptModal() {
+      const modal = document.getElementById('receiptModal');
+      if (!modal) return;
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeReceiptModal() {
+      const modal = document.getElementById('receiptModal');
+      if (!modal) return;
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    function closeReceiptModalOnBackdrop(e) {
+      if (e.target.id === 'receiptModal') {
+        closeReceiptModal();
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeReceiptModal();
+      }
+    });
+
+    function handleMailtoClick(e) {
+      e.preventDefault();
+      const email = getOfficialReceiptEmail();
+      const subject = encodeURIComponent('【Harvester 收割机音乐】奉献收据索取与凭证提交');
+      const body = encodeURIComponent(getReceiptEmailTemplate());
+      window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
     }
   </script>
 </body>

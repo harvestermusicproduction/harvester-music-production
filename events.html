@@ -410,6 +410,19 @@
       letter-spacing: 1px;
     }
 
+    .event-time-badge {
+      font-size: 0.76rem;
+      color: var(--gold);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 3px;
+      font-family: var(--font-times-new-roman), serif;
+      line-height: 1.2;
+    }
+
     /* Center: Event Info Block */
     .event-info-block {
       flex: 1;
@@ -451,6 +464,34 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .event-strip-time {
+      color: var(--gold);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .event-strip-dot {
+      color: rgba(255, 255, 255, 0.25);
+      margin: 0 4px;
+      flex-shrink: 0;
+    }
+
+    .event-strip-loc {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     /* Top-Left Small Status Badges (左上角精致微标签) */
@@ -505,10 +546,10 @@
     .event-action-block {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       justify-content: flex-end;
       flex-shrink: 0;
-      min-width: 220px;
+      min-width: auto;
     }
 
     .event-strip-link {
@@ -604,6 +645,10 @@
       .event-year {
         font-size: 0.7rem;
       }
+      .event-time-badge {
+        font-size: 0.68rem;
+        margin-top: 2px;
+      }
       .event-info-block {
         flex: 1;
         gap: 3px;
@@ -618,6 +663,10 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+      .event-strip-time {
+        font-size: 0.74rem;
+        gap: 3px;
       }
       .event-tag-badge-wrap {
         margin-bottom: 2px;
@@ -676,16 +725,255 @@
       .event-year {
         font-size: 0.65rem;
       }
+      .event-time-badge {
+        font-size: 0.62rem;
+      }
       .event-strip-title {
         font-size: 0.98rem;
       }
       .event-strip-venue {
         font-size: 0.72rem;
       }
+      .event-strip-time {
+        font-size: 0.7rem;
+      }
       .btn-strip-remind {
         width: 32px;
         height: 32px;
         font-size: 0.75rem;
+      }
+    }
+
+    /* ===================================================
+       ⛪ Church Ministry Invitation Section (教会邀约服事专区)
+       =================================================== */
+    .church-invitation-section {
+      max-width: 1100px;
+      margin: 0 auto 5.5rem;
+      padding: 0 1.5rem;
+      box-sizing: border-box;
+    }
+
+    .church-invitation-card {
+      background: rgba(26, 34, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px dashed rgba(246, 210, 138, 0.35);
+      border-radius: var(--hand-radius-soft, 24px);
+      padding: 3rem 2.8rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 30px rgba(246, 210, 138, 0.05);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s ease;
+    }
+
+    .church-invitation-card::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(246, 210, 138, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+      border-radius: 50%;
+    }
+
+    .church-invitation-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 25px 65px rgba(0, 0, 0, 0.8), 0 0 35px rgba(246, 210, 138, 0.12);
+    }
+
+    .church-invitation-header {
+      text-align: center;
+      margin-bottom: 1.8rem;
+      border-bottom: 1px dashed rgba(246, 210, 138, 0.22);
+      padding-bottom: 1.5rem;
+    }
+
+    .church-invitation-title {
+      font-family: var(--font-hand-cn), serif;
+      font-size: 2.1rem;
+      color: #F6F4F0;
+      letter-spacing: 2.5px;
+      margin: 0.6rem 0 0.3rem;
+      line-height: 1.35;
+    }
+
+    .church-invitation-subtitle {
+      font-family: var(--font-hand-en), var(--font-times), serif;
+      font-size: 0.95rem;
+      color: var(--gold);
+      letter-spacing: 2px;
+      margin: 0;
+    }
+
+    .church-scripture-quote {
+      border-left: 3px solid var(--gold);
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 0 12px 12px 0;
+      padding: 1.1rem 1.4rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .church-scripture-text {
+      font-family: var(--font-hand-cn);
+      font-size: 1.15rem;
+      color: #F6F4F0;
+      line-height: 1.7;
+      letter-spacing: 1px;
+      margin: 0 0 0.3rem;
+    }
+
+    .church-scripture-ref {
+      font-family: var(--font-hand-en), serif;
+      font-size: 0.88rem;
+      color: var(--gold);
+      letter-spacing: 1.5px;
+      margin: 0;
+    }
+
+    .church-invitation-desc {
+      font-family: var(--font-hand-cn), sans-serif;
+      font-size: 1.08rem;
+      line-height: 1.85;
+      color: #ded6c8;
+      letter-spacing: 0.8px;
+      margin-bottom: 2rem;
+      text-align: justify;
+    }
+
+    .ministry-services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.4rem;
+      margin-bottom: 2.4rem;
+    }
+
+    .ministry-service-item {
+      background: rgba(0, 0, 0, 0.32);
+      border: 1px solid rgba(246, 210, 138, 0.18);
+      border-radius: 14px;
+      padding: 1.2rem 1.3rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .ministry-service-item:hover {
+      background: rgba(246, 210, 138, 0.08);
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    .ministry-service-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(246, 210, 138, 0.12);
+      border: 1px solid rgba(246, 210, 138, 0.35);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    .ministry-service-item:hover .ministry-service-icon {
+      background: var(--gold);
+      color: #1a1410;
+      transform: scale(1.08);
+    }
+
+    .ministry-service-info h4 {
+      font-family: var(--font-hand-cn), serif;
+      font-size: 1.12rem;
+      color: #F6F4F0;
+      margin: 0 0 0.3rem;
+      letter-spacing: 1px;
+    }
+
+    .ministry-service-info p {
+      font-family: var(--font-hand-cn), sans-serif;
+      font-size: 0.92rem;
+      color: #aaa196;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .church-invitation-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-church-invite {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      font-family: var(--font-hand-cn), serif;
+      font-size: 1.05rem;
+      letter-spacing: 1.2px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+    }
+
+    .btn-church-invite.whatsapp-btn {
+      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+      color: #fff;
+      border: 1.5px solid #25D366;
+    }
+
+    .btn-church-invite.whatsapp-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+      border-color: #fff;
+    }
+
+    .btn-church-invite.contact-btn {
+      background: linear-gradient(135deg, rgba(246, 210, 138, 0.15) 0%, rgba(212, 175, 55, 0.28) 100%);
+      border: 1.5px solid var(--gold, #d4af37);
+      color: #F6F4F0;
+    }
+
+    .btn-church-invite.contact-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      background: linear-gradient(135deg, rgba(246, 210, 138, 0.3) 0%, rgba(212, 175, 55, 0.45) 100%);
+      border-color: #fff;
+      box-shadow: 0 8px 25px rgba(246, 210, 138, 0.35);
+    }
+
+    @media (max-width: 768px) {
+      .church-invitation-card {
+        padding: 2rem 1.4rem;
+        border-radius: 18px;
+      }
+      .church-invitation-title {
+        font-size: 1.5rem;
+        letter-spacing: 1.5px;
+      }
+      .ministry-services-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .church-invitation-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+      .btn-church-invite {
+        width: 100%;
+        box-sizing: border-box;
       }
     }
   </style>
@@ -700,9 +988,9 @@
       <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 0.78rem;">
         <a id="cfg_nav_wa" href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry." target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a id="cfg_nav_sp" href="https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Spotify"><i class="fab fa-spotify"></i></a>
-        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
-        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
-        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+        <a id="cfg_nav_fb" href="https://www.facebook.com/harvester2025" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="https://www.instagram.com/harvestermusic.production?stkn=bzVqMGhvN2Q2OXZo&utm_source=qr" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="https://youtube.com/@harvestermusic.production?si=JvBC-9qgOsKdI3XT" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="YouTube"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
     <div class="menu-toggle" onclick="toggleMobileMenu()">
@@ -770,7 +1058,7 @@
     <a href="contact.html">联系我们</a>
   </div>
 
-  <div class="ppt-header fade-in">
+  <div class="ppt-header fade-in visible">
     <div class="ppt-line"></div>
     <h1 class="ppt-title">精彩活动</h1>
     <p class="ppt-subtitle">JOIN OUR GOSPEL JOURNEY</p>
@@ -778,7 +1066,7 @@
   </div>
 
   <!-- 🌟 精彩活动全宽横向多照片轮播走廊 (Full-Width Edge-to-Edge Panoramic Event Photo Gallery) -->
-  <section class="events-panoramic-section fade-in" id="eventsHeroSection">
+  <section class="events-panoramic-section fade-in visible" id="eventsHeroSection">
     
     <!-- 🏹 Left Navigation Arrow -->
     <button class="events-gallery-arrow prev" onclick="window.scrollEventsGallery(-1)" title="向左滚动照片" type="button">
@@ -792,7 +1080,119 @@
     <!-- 🎞️ Multi-Photo Horizontal Running Viewport & Track -->
     <div class="events-gallery-viewport" id="eventsGalleryViewport">
       <div class="events-gallery-track" id="eventsGalleryTrack">
-        <!-- Injected dynamically by app.js -->
+        <!-- 1. KL Special -->
+        <a href="event.html?id=curated_1" class="event-photo-card">
+          <div class="event-card-bg-blur" style="background-image: url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85')"></div>
+          <div class="event-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80" alt="收割敬拜之夜 · 吉隆坡特别专场" class="event-card-main-img" loading="lazy">
+          </div>
+          <div class="event-card-gradient"></div>
+          <span class="event-card-top-tag">2025.11.15</span>
+          <span class="event-card-status-pill">OPEN 报名中</span>
+          <div class="event-card-bottom-info">
+            <h3 class="event-card-title">收割敬拜之夜 · 吉隆坡特别专场</h3>
+            <div class="event-card-meta">
+              <span><i class="far fa-clock"></i> 19:30 - 21:30</span>
+              <span><i class="fas fa-map-marker-alt"></i> 吉隆坡 · 全福敬拜大厅</span>
+              <span><i class="fas fa-arrow-right"></i> 查看详情</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 2. Songwriting Camp -->
+        <a href="event.html?id=curated_2" class="event-photo-card">
+          <div class="event-card-bg-blur" style="background-image: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=85')"></div>
+          <div class="event-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=900&q=80" alt="原创赞美诗创作营 & 制作工作坊" class="event-card-main-img" loading="lazy">
+          </div>
+          <div class="event-card-gradient"></div>
+          <span class="event-card-top-tag">2025.08.20</span>
+          <span class="event-card-status-pill">HOT 热门</span>
+          <div class="event-card-bottom-info">
+            <h3 class="event-card-title">原创赞美诗创作营 & 制作工作坊</h3>
+            <div class="event-card-meta">
+              <span><i class="far fa-clock"></i> 09:30 - 17:00</span>
+              <span><i class="fas fa-map-marker-alt"></i> 新山 · 音乐创作空间</span>
+              <span><i class="fas fa-arrow-right"></i> 查看详情</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 3. Youth Fire -->
+        <a href="event.html?id=curated_3" class="event-photo-card">
+          <div class="event-card-bg-blur" style="background-image: url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=85')"></div>
+          <div class="event-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=900&q=80" alt="灵火青年敬拜节 · 赞美复兴特会" class="event-card-main-img" loading="lazy">
+          </div>
+          <div class="event-card-gradient"></div>
+          <span class="event-card-top-tag">2025.07.12</span>
+          <span class="event-card-status-pill">RECAP 精彩回顾</span>
+          <div class="event-card-bottom-info">
+            <h3 class="event-card-title">灵火青年敬拜节 · 赞美复兴特会</h3>
+            <div class="event-card-meta">
+              <span><i class="far fa-clock"></i> 19:00 - 22:00</span>
+              <span><i class="fas fa-map-marker-alt"></i> 槟城 · 圣爱大礼堂</span>
+              <span><i class="fas fa-arrow-right"></i> 查看详情</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 4. Gospel Tour -->
+        <a href="event.html?id=curated_4" class="event-photo-card">
+          <div class="event-card-bg-blur" style="background-image: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=85')"></div>
+          <div class="event-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=900&q=80" alt="收割者福音巡回音乐分享会" class="event-card-main-img" loading="lazy">
+          </div>
+          <div class="event-card-gradient"></div>
+          <span class="event-card-top-tag">2025.06.05</span>
+          <span class="event-card-status-pill">UPCOMING 即将开启</span>
+          <div class="event-card-bottom-info">
+            <h3 class="event-card-title">收割者福音巡回音乐分享会</h3>
+            <div class="event-card-meta">
+              <span><i class="far fa-clock"></i> 20:00 - 21:45</span>
+              <span><i class="fas fa-map-marker-alt"></i> 怡保 · 基督徒交流中心</span>
+              <span><i class="fas fa-arrow-right"></i> 查看详情</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 5. Choral & Symphony -->
+        <a href="event.html?id=curated_5" class="event-photo-card">
+          <div class="event-card-bg-blur" style="background-image: url('https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1200&q=85')"></div>
+          <div class="event-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=900&q=80" alt="赞美诗合唱与管弦乐室内交响夜" class="event-card-main-img" loading="lazy">
+          </div>
+          <div class="event-card-gradient"></div>
+          <span class="event-card-top-tag">2025.05.01</span>
+          <span class="event-card-status-pill">RECAP 精彩回顾</span>
+          <div class="event-card-bottom-info">
+            <h3 class="event-card-title">赞美诗合唱与管弦乐室内交响夜</h3>
+            <div class="event-card-meta">
+              <span><i class="far fa-clock"></i> 19:30 - 21:30</span>
+              <span><i class="fas fa-map-marker-alt"></i> 吉隆坡 · 艺术文化中心</span>
+              <span><i class="fas fa-arrow-right"></i> 查看详情</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 6. Retreat -->
+        <a href="event.html?id=curated_6" class="event-photo-card">
+          <div class="event-card-bg-blur" style="background-image: url('https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1200&q=85')"></div>
+          <div class="event-card-img-wrap">
+            <img src="https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=900&q=80" alt="收割机敬拜团同工灵修培灵会" class="event-card-main-img" loading="lazy">
+          </div>
+          <div class="event-card-gradient"></div>
+          <span class="event-card-top-tag">2025.03.18</span>
+          <span class="event-card-status-pill">ANNUAL 年度特会</span>
+          <div class="event-card-bottom-info">
+            <h3 class="event-card-title">收割机敬拜团同工灵修培灵会</h3>
+            <div class="event-card-meta">
+              <span><i class="far fa-clock"></i> 10:00 - 16:30</span>
+              <span><i class="fas fa-map-marker-alt"></i> 马六甲 · 恩典营地</span>
+              <span><i class="fas fa-arrow-right"></i> 查看详情</span>
+            </div>
+          </div>
+        </a>
       </div>
     </div>
 
@@ -803,19 +1203,252 @@
   </section>
 
   <!-- 🌟 活动列表标题分隔栏 -->
-  <div class="events-section-header fade-in">
+  <div class="events-section-header fade-in visible">
     <div class="events-header-line"></div>
     <div class="events-section-title-wrap">
       <h2 class="events-section-title"><i class="fas fa-calendar-alt"></i> 活动排期与详情</h2>
-      <p class="events-section-sub"><i class="fas fa-bell"></i> 点击活动右侧小铃铛开启提醒，不错过最新动态与开票通知</p>
+      <p class="events-section-sub"><i class="fas fa-bell"></i> 点击活动右侧小铃铛开启提醒，不错过最新动态与活动通知</p>
     </div>
     <div class="events-header-line"></div>
   </div>
 
   <!-- 🌟 横向条状活动排期列表 (Horizontal Tour Strip List) -->
   <div id="eventsContainer" class="events-strip-container">
-    <p style="text-align:center; opacity:0.5; padding: 2rem 0;">正在加载精彩活动...</p>
+    <!-- 1. KL Special -->
+    <div class="event-strip-row fade-in visible">
+      <div class="event-date-block">
+        <span class="event-day">15</span>
+        <div class="event-month-year">
+          <span class="event-month">11 月</span>
+          <span class="event-year">2025</span>
+          <span class="event-time-badge"><i class="far fa-clock"></i> 19:30 - 21:30</span>
+        </div>
+      </div>
+      <div class="event-info-block">
+        <div class="event-tag-badge-wrap"><span class="event-strip-badge open">OPEN 报名中</span></div>
+        <h3 class="event-strip-title"><a href="event.html?id=curated_1">收割敬拜之夜 · 吉隆坡特别专场</a></h3>
+        <p class="event-strip-venue">
+          <span class="event-strip-time"><i class="far fa-clock"></i> 19:30 - 21:30</span><span class="event-strip-dot">·</span>
+          <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> 吉隆坡 · 全福敬拜大厅 (Kuala Lumpur)</span>
+        </p>
+      </div>
+      <div class="event-action-block">
+        <a href="event.html?id=curated_1" class="event-strip-link">查看详情 <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>
+        <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('curated_1', '收割敬拜之夜 · 吉隆坡特别专场', '2025.11.15 19:30 - 21:30')">
+          <i class="fas fa-bell"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. Songwriting Camp -->
+    <div class="event-strip-row fade-in visible">
+      <div class="event-date-block">
+        <span class="event-day">20</span>
+        <div class="event-month-year">
+          <span class="event-month">08 月</span>
+          <span class="event-year">2025</span>
+          <span class="event-time-badge"><i class="far fa-clock"></i> 09:30 - 17:00</span>
+        </div>
+      </div>
+      <div class="event-info-block">
+        <div class="event-tag-badge-wrap"><span class="event-strip-badge hot">HOT 热门</span></div>
+        <h3 class="event-strip-title"><a href="event.html?id=curated_2">原创赞美诗创作营 &amp; 制作工作坊</a></h3>
+        <p class="event-strip-venue">
+          <span class="event-strip-time"><i class="far fa-clock"></i> 09:30 - 17:00</span><span class="event-strip-dot">·</span>
+          <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> 新山 · 音乐创作空间 (Johor Bahru)</span>
+        </p>
+      </div>
+      <div class="event-action-block">
+        <a href="event.html?id=curated_2" class="event-strip-link">查看详情 <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>
+        <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('curated_2', '原创赞美诗创作营 &amp; 制作工作坊', '2025.08.20 09:30 - 17:00')">
+          <i class="fas fa-bell"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. Youth Festival -->
+    <div class="event-strip-row fade-in visible">
+      <div class="event-date-block">
+        <span class="event-day">12</span>
+        <div class="event-month-year">
+          <span class="event-month">07 月</span>
+          <span class="event-year">2025</span>
+          <span class="event-time-badge"><i class="far fa-clock"></i> 19:00 - 22:00</span>
+        </div>
+      </div>
+      <div class="event-info-block">
+        <div class="event-tag-badge-wrap"><span class="event-strip-badge cancelled">RECAP 精彩回顾</span></div>
+        <h3 class="event-strip-title"><a href="event.html?id=curated_3">灵火青年敬拜节 · 赞美复兴特会</a></h3>
+        <p class="event-strip-venue">
+          <span class="event-strip-time"><i class="far fa-clock"></i> 19:00 - 22:00</span><span class="event-strip-dot">·</span>
+          <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> 槟城 · 圣爱大礼堂 (Penang)</span>
+        </p>
+      </div>
+      <div class="event-action-block">
+        <a href="event.html?id=curated_3" class="event-strip-link">查看详情 <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>
+        <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('curated_3', '灵火青年敬拜节 · 赞美复兴特会', '2025.07.12 19:00 - 22:00')">
+          <i class="fas fa-bell"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. Gospel Tour -->
+    <div class="event-strip-row fade-in visible">
+      <div class="event-date-block">
+        <span class="event-day">05</span>
+        <div class="event-month-year">
+          <span class="event-month">06 月</span>
+          <span class="event-year">2025</span>
+          <span class="event-time-badge"><i class="far fa-clock"></i> 20:00 - 21:45</span>
+        </div>
+      </div>
+      <div class="event-info-block">
+        <div class="event-tag-badge-wrap"><span class="event-strip-badge open">UPCOMING 即将开启</span></div>
+        <h3 class="event-strip-title"><a href="event.html?id=curated_4">收割者福音巡回音乐分享会</a></h3>
+        <p class="event-strip-venue">
+          <span class="event-strip-time"><i class="far fa-clock"></i> 20:00 - 21:45</span><span class="event-strip-dot">·</span>
+          <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> 怡保 · 基督徒交流中心 (Ipoh)</span>
+        </p>
+      </div>
+      <div class="event-action-block">
+        <a href="event.html?id=curated_4" class="event-strip-link">查看详情 <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>
+        <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('curated_4', '收割者福音巡回音乐分享会', '2025.06.05 20:00 - 21:45')">
+          <i class="fas fa-bell"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 5. Symphony Night -->
+    <div class="event-strip-row fade-in visible">
+      <div class="event-date-block">
+        <span class="event-day">01</span>
+        <div class="event-month-year">
+          <span class="event-month">05 月</span>
+          <span class="event-year">2025</span>
+          <span class="event-time-badge"><i class="far fa-clock"></i> 19:30 - 21:30</span>
+        </div>
+      </div>
+      <div class="event-info-block">
+        <div class="event-tag-badge-wrap"><span class="event-strip-badge cancelled">RECAP 精彩回顾</span></div>
+        <h3 class="event-strip-title"><a href="event.html?id=curated_5">赞美诗合唱与管弦乐室内交响夜</a></h3>
+        <p class="event-strip-venue">
+          <span class="event-strip-time"><i class="far fa-clock"></i> 19:30 - 21:30</span><span class="event-strip-dot">·</span>
+          <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> 吉隆坡 · 艺术文化中心 (Kuala Lumpur)</span>
+        </p>
+      </div>
+      <div class="event-action-block">
+        <a href="event.html?id=curated_5" class="event-strip-link">查看详情 <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>
+        <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('curated_5', '赞美诗合唱与管弦乐室内交响夜', '2025.05.01 19:30 - 21:30')">
+          <i class="fas fa-bell"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 6. Retreat Camp -->
+    <div class="event-strip-row fade-in visible">
+      <div class="event-date-block">
+        <span class="event-day">18</span>
+        <div class="event-month-year">
+          <span class="event-month">03 月</span>
+          <span class="event-year">2025</span>
+          <span class="event-time-badge"><i class="far fa-clock"></i> 10:00 - 16:30</span>
+        </div>
+      </div>
+      <div class="event-info-block">
+        <div class="event-tag-badge-wrap"><span class="event-strip-badge open">ANNUAL 年度特会</span></div>
+        <h3 class="event-strip-title"><a href="event.html?id=curated_6">收割机敬拜团同工灵修培灵会</a></h3>
+        <p class="event-strip-venue">
+          <span class="event-strip-time"><i class="far fa-clock"></i> 10:00 - 16:30</span><span class="event-strip-dot">·</span>
+          <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> 马六甲 · 恩典营地 (Melaka)</span>
+        </p>
+      </div>
+      <div class="event-action-block">
+        <a href="event.html?id=curated_6" class="event-strip-link">查看详情 <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>
+        <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('curated_6', '收割机敬拜团同工灵修培灵会', '2025.03.18 10:00 - 16:30')">
+          <i class="fas fa-bell"></i>
+        </button>
+      </div>
+    </div>
   </div>
+
+  <!-- ===================================================
+       ⛪ 呼吁教会与团契邀约服事专区 (Church Ministry Invitation Section)
+       =================================================== -->
+  <section class="church-invitation-section fade-in visible">
+    <div class="church-invitation-card">
+      <div class="church-invitation-header">
+        <span class="sketch-pill">🕊️ Ministry Invitation · 事工邀约</span>
+        <h2 class="church-invitation-title">欢 迎 各 地 教 会 · 团 契 邀 约 服 事</h2>
+        <p class="church-invitation-subtitle">Partner With Us · Sowing The Seeds of Worship & Praise</p>
+      </div>
+
+      <div class="church-scripture-quote">
+        <p class="church-scripture-text">
+          「我们传扬他，是用诸般的智慧，劝戒各人，教导各人，要把各人在基督里完完全全地引到神面前。」
+        </p>
+        <p class="church-scripture-ref">—— 歌罗西书 1:28 · Colossians 1:28</p>
+      </div>
+
+      <p class="church-invitation-desc">
+        收割机音乐创作工作坊（Harvester Music）渴望走出录音室，走进各地方教会与弟兄姊妹同心敬拜。无论是主日崇拜、福音布道特会、青年营会赞美之夜，或是敬拜团队音乐培训，我们非常乐意前往您的堂会，以原创诗歌与生命见证一同服事主！
+      </p>
+
+      <!-- 4大服事类型卡片 (4 Key Ministry Services) -->
+      <div class="ministry-services-grid">
+        <div class="ministry-service-item">
+          <div class="ministry-service-icon">
+            <i class="fas fa-church"></i>
+          </div>
+          <div class="ministry-service-info">
+            <h4>主日崇拜 & 敬拜带领</h4>
+            <p>主日崇拜主领、敬拜团队司琴与乐手配搭、原创赞美诗歌分享与灵里敬拜。</p>
+          </div>
+        </div>
+
+        <div class="ministry-service-item">
+          <div class="ministry-service-icon">
+            <i class="fas fa-microphone-lines"></i>
+          </div>
+          <div class="ministry-service-info">
+            <h4>音乐布道 & 福音特会</h4>
+            <p>量身定制福音音乐会、诗歌背后的见证故事分享与决志呼召。</p>
+          </div>
+        </div>
+
+        <div class="ministry-service-item">
+          <div class="ministry-service-icon">
+            <i class="fas fa-fire-flame-curved"></i>
+          </div>
+          <div class="ministry-service-info">
+            <h4>青年特会 & 营会专场</h4>
+            <p>现代流行敬拜（CCM）、青年赞美复兴之夜、年轻人信仰激励与同行。</p>
+          </div>
+        </div>
+
+        <div class="ministry-service-item">
+          <div class="ministry-service-icon">
+            <i class="fas fa-music"></i>
+          </div>
+          <div class="ministry-service-info">
+            <h4>敬拜工作坊 & 创作培训</h4>
+            <p>诗歌创作指导、乐队编曲配搭、敬拜主领心志与技巧实战分享。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 邀约联系操作按钮 (Actions) -->
+      <div class="church-invitation-actions">
+        <a href="https://wa.me/60187755581?text=%E4%BD%A0%E5%A5%BD%20Harvester%20%E6%94%B6%E5%89%B2%E6%9C%BA%E9%9F%B3%E4%B9%90%EF%BC%8C%E6%88%91%E4%BB%AC%E6%95%99%E4%BC%9A%2F%E5%9B%A2%E5%A5%91%E6%83%B3%E8%AF%A2%E9%97%AE%E4%BA%8B%E5%B7%A5%E6%9C%8D%E4%BA%8B%E9%82%80%E7%BA%A6%E4%B8%8E%E6%A1%A3%E6%9C%9F%E9%85%8D%E6%90%AD%EF%BC%81" target="_blank" class="btn-church-invite whatsapp-btn">
+          <i class="fab fa-whatsapp" style="font-size:1.2rem;"></i>
+          <span>WhatsApp 立即邀约 / 洽询档期</span>
+        </a>
+        <a href="contact.html?purpose=ministry#contactForm" class="btn-church-invite contact-btn">
+          <i class="fas fa-paper-plane"></i>
+          <span>填写邀约表单 (Contact Us)</span>
+        </a>
+      </div>
+    </div>
+  </section>
 
   <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
@@ -826,7 +1459,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=16.1.0"></script>
-  <script src="app.js?v=34.0.0"></script>
+  <script src="app.js?v=36.0.0"></script>
 
 
 </body>

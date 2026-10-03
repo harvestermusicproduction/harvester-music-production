@@ -670,6 +670,7 @@
       margin-top: 10px;
       font-size: 0.78rem;
       color: #555;
+      gap: 8px;
     }
     .team-card-bottom .team-bottom-role {
       font-family: var(--font-songti), serif;
@@ -679,15 +680,24 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 60%;
+      flex: 1;
+      min-width: 0;
     }
     .team-card-bottom .team-bottom-sub {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-size: 0.72rem;
       color: #888;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       white-space: nowrap;
       text-transform: uppercase;
+      flex-shrink: 0;
+      max-width: 45%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: right;
+    }
+    .team-card-bottom .team-bottom-sub:empty {
+      display: none;
     }
 
     /* 🕊️ Pastoral Advisory Team Card (牧师顾问团 / 属灵遮盖与监督) */
@@ -861,9 +871,9 @@
       <div class="header-socials" style="display: flex; gap: 1.2rem; font-size: 0.78rem;">
         <a id="cfg_nav_wa" href="https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry." target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a id="cfg_nav_sp" href="https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Spotify"><i class="fab fa-spotify"></i></a>
-        <a id="cfg_nav_fb" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-facebook-f"></i></a>
-        <a id="cfg_nav_ig" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
-        <a id="cfg_nav_yt" href="#" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+        <a id="cfg_nav_fb" href="https://www.facebook.com/harvester2025" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a id="cfg_nav_ig" href="https://www.instagram.com/harvestermusic.production?stkn=bzVqMGhvN2Q2OXZo&utm_source=qr" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a id="cfg_nav_yt" href="https://youtube.com/@harvestermusic.production?si=JvBC-9qgOsKdI3XT" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="YouTube"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
     <div class="menu-toggle" onclick="toggleMobileMenu()">
@@ -1260,7 +1270,7 @@
           </div>
           <div class="team-card-bottom">
             <span class="team-bottom-role" id="about_team_r1_t">创作平台创办启发人</span>
-            <span class="team-bottom-sub">Founder —</span>
+            <span class="team-bottom-sub" id="about_team_r1_te"></span>
           </div>
         </div>
 
@@ -1276,7 +1286,7 @@
           </div>
           <div class="team-card-bottom">
             <span class="team-bottom-role" id="about_team_r2_t">创作</span>
-            <span class="team-bottom-sub">Creative —</span>
+            <span class="team-bottom-sub" id="about_team_r2_te"></span>
           </div>
         </div>
 
@@ -1292,7 +1302,7 @@
           </div>
           <div class="team-card-bottom">
             <span class="team-bottom-role" id="about_team_r3_t">制作</span>
-            <span class="team-bottom-sub">Production —</span>
+            <span class="team-bottom-sub" id="about_team_r3_te"></span>
           </div>
         </div>
       </div>
@@ -1311,7 +1321,7 @@
           </div>
           <div class="team-card-bottom">
             <span class="team-bottom-role" id="about_team_r4_t">拍摄 / 影视</span>
-            <span class="team-bottom-sub">Filming —</span>
+            <span class="team-bottom-sub" id="about_team_r4_te"></span>
           </div>
         </div>
 
@@ -1327,7 +1337,7 @@
           </div>
           <div class="team-card-bottom">
             <span class="team-bottom-role" id="about_team_r5_t">宣传 / 企划</span>
-            <span class="team-bottom-sub">Promotion —</span>
+            <span class="team-bottom-sub" id="about_team_r5_te"></span>
           </div>
         </div>
 
@@ -1343,7 +1353,7 @@
           </div>
           <div class="team-card-bottom">
             <span class="team-bottom-role" id="about_team_r6_t">行政</span>
-            <span class="team-bottom-sub">Admin —</span>
+            <span class="team-bottom-sub" id="about_team_r6_te"></span>
           </div>
         </div>
 
@@ -1359,7 +1369,7 @@
           </div>
           <div class="team-card-bottom">
             <span class="team-bottom-role" id="about_team_r7_t">依歌曲而定</span>
-            <span class="team-bottom-sub">Singers —</span>
+            <span class="team-bottom-sub" id="about_team_r7_te"></span>
           </div>
         </div>
       </div>
@@ -1507,13 +1517,13 @@
           <a id="cfg_social_sp" href="https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS?si=aAqsxnpMRyif9zvd2IXecQ" target="_blank" class="btn-premium btn-social-pill" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="Spotify">
             <i class="fab fa-spotify" style="font-size: 1.3rem;"></i>
           </a>
-          <a id="cfg_social_fb" href="#" target="_blank" class="btn-premium btn-social-pill" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="Facebook">
+          <a id="cfg_social_fb" href="https://www.facebook.com/harvester2025" target="_blank" class="btn-premium btn-social-pill" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="Facebook">
             <i class="fab fa-facebook-f" style="font-size: 1.2rem;"></i>
           </a>
-          <a id="cfg_social_ig" href="#" target="_blank" class="btn-premium btn-social-pill" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="Instagram">
+          <a id="cfg_social_ig" href="https://www.instagram.com/harvestermusic.production?stkn=bzVqMGhvN2Q2OXZo&utm_source=qr" target="_blank" class="btn-premium btn-social-pill" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="Instagram">
             <i class="fab fa-instagram" style="font-size: 1.2rem;"></i>
           </a>
-          <a id="cfg_social_yt" href="#" target="_blank" class="btn-premium btn-youtube-premium" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="YouTube">
+          <a id="cfg_social_yt" href="https://youtube.com/@harvestermusic.production?si=JvBC-9qgOsKdI3XT" target="_blank" class="btn-premium btn-youtube-premium" style="min-width: 55px; width: 55px; height: 55px; padding: 0;" title="YouTube">
             <i class="fab fa-youtube" style="font-size: 1.2rem;"></i>
           </a>
         </div>
