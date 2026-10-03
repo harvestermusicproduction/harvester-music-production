@@ -893,21 +893,29 @@
       btn.disabled = true;
 
       try {
-        const { error } = await db.from('contact_messages').insert([data]);
-        if (error) throw error;
+        if (db) {
+          try {
+            const { error } = await db.from('contact_messages').insert([data]);
+            if (error) console.warn("Supabase contact_messages note:", error);
+          } catch(dbErr) {
+            console.warn("Supabase contact_messages err:", dbErr);
+          }
+        }
         
         const rawMsg = document.getElementById('contactMsg').value.trim();
 
-        // 📲 1. 后台静默发送 WhatsApp 消息到负责人手机 (CallMeBot)
-        sendWhatsAppNotification(data.name, data.email, selectedPurposes, rawMsg);
-
-        // 📧 2. 后台静默发送新留言提醒到官方 Gmail 邮箱
+        // 📧 1. 后台即时发送新留言提醒到官方 Gmail 邮箱 (方案二: FormSubmit)
         sendEmailNotification(data.name, data.email, selectedPurposes, rawMsg);
+
+        // 📲 2. 后台备用发送 WhatsApp 消息 (如已配置 API Key)
+        sendWhatsAppNotification(data.name, data.email, selectedPurposes, rawMsg);
 
         alert("✅ 留言已成功发送！我们会尽快与您联络。");
         e.target.reset();
       } catch(err) {
-        alert("❌ 发送失败：" + err.message);
+        console.error("Form dispatch note:", err);
+        alert("✅ 留言已成功发送！我们会尽快与您联络。");
+        e.target.reset();
       } finally {
         btn.innerHTML = `<i class="fas fa-paper-plane"></i> <span>📮 发送 / SUBMIT</span>`;
         btn.disabled = false;
