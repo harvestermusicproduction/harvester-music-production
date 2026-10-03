@@ -639,6 +639,14 @@
         <input type="text" id="in_signatory" value="Harvester Music Admin 财务服事部" oninput="updatePreview()">
       </div>
 
+      <!-- 财务核账安全确认 -->
+      <div style="background: rgba(212, 175, 55, 0.08); border: 1px dashed var(--gold); border-radius: 8px; padding: 12px; margin-top: 2px;">
+        <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; color: #f6d28a; font-size: 0.82rem; line-height: 1.5;">
+          <input type="checkbox" id="in_verified_chk" checked style="margin-top: 2px; accent-color: #d4af37; width: 16px; height: 16px;">
+          <span><strong>财务对账核实 (Reconciliation):</strong> 已登录银行 App / Maybank 线上账户，核对该笔款项与单号已实际入账。</span>
+        </label>
+      </div>
+
       <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
         <button type="button" class="btn btn-gold" style="justify-content:center; padding:12px;" onclick="window.print()">
           <i class="fas fa-file-pdf"></i> 立即导出 / 打印 PDF 收据
