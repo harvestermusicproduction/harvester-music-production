@@ -83,20 +83,25 @@ async function fetchArtists() {
           const customTeam = typeof cfg.value === 'string' ? JSON.parse(cfg.value) : cfg.value;
           
           if (customTeam && Array.isArray(customTeam.about_team_list) && customTeam.about_team_list.length > 0) {
-            coreStaffList = customTeam.about_team_list.map((item, idx) => ({
-              id: item.id || `custom_staff_${idx + 1}`,
-              name: (item.names || item.name || `服事同工 ${idx + 1}`).replace(/\n/g, ' & '),
-              category: "core",
-              role: item.role || item.roleTitle || "主要服事同工",
-              role_en: item.role_en || item.roleTitleEn || "",
-              image_url: item.image_url || item.img || "assets/logo.png",
-              img_pos: item.img_pos || item.pos || "50% 20%",
-              img_zoom: item.img_zoom || item.zoom || 1.0,
-              bio: `${item.role || '主要服事同工'}：${(item.names || item.name || '').replace(/\n/g, '、')}\n\n忠心服事神国度，将恩赐化为敬拜的赞美与见证。`
-            }));
+            coreStaffList = customTeam.about_team_list
+              .filter(item => !item.hidden && !item.is_hidden && item.hidden !== 'true')
+              .map((item, idx) => ({
+                id: item.id || `custom_staff_${idx + 1}`,
+                name: (item.names || item.name || `服事同工 ${idx + 1}`).replace(/\n/g, ' & '),
+                category: "core",
+                role: item.role || item.roleTitle || "主要服事同工",
+                role_en: item.role_en || item.roleTitleEn || "",
+                image_url: item.image_url || item.img || "assets/logo.png",
+                img_pos: item.img_pos || item.pos || "50% 20%",
+                img_zoom: item.img_zoom || item.zoom || 1.0,
+                bio: `${item.role || '主要服事同工'}：${(item.names || item.name || '').replace(/\n/g, '、')}\n\n忠心服事神国度，将恩赐化为敬拜的赞美与见证。`
+              }));
           } else if (customTeam) {
             const dynamicCore = [];
             for (let i = 1; i <= 20; i++) {
+              const isHidden = customTeam[`about_team_r${i}_hidden`] === true || customTeam[`about_team_r${i}_hidden`] === 'true';
+              if (isHidden) continue;
+
               const roleTitle = customTeam[`about_team_r${i}_t`];
               const roleTitleEn = customTeam[`about_team_r${i}_te`];
               const names = customTeam[`about_team_r${i}_names`];
@@ -130,10 +135,19 @@ async function fetchArtists() {
         }
       }
 
-      // 2. Fetch custom singers and coworkers from singers table
+      // 2. Fetch custom singers and coworkers from singers table & check hidden list
+      const { data: hiddenCfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
+      let hiddenSingerIds = [];
+      if (hiddenCfg && hiddenCfg.value) {
+        try {
+          hiddenSingerIds = typeof hiddenCfg.value === 'string' ? JSON.parse(hiddenCfg.value) : hiddenCfg.value;
+        } catch(e) {}
+      }
+      if (!Array.isArray(hiddenSingerIds)) hiddenSingerIds = [];
+
       const { data: singersData, error } = await db.from('singers').select('*').order('display_order', { ascending: true });
       if (!error && singersData) {
-        remoteSingers = singersData;
+        remoteSingers = singersData.filter(s => !hiddenSingerIds.includes(s.id) && !s.hidden && !s.is_hidden && s.status !== 'hidden');
       }
     }
     

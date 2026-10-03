@@ -591,9 +591,15 @@
         <input type="text" id="in_donor_name" value="陈弟兄 / Brother Tan" placeholder="例如：陈弟兄 / 主恩堂" oninput="updatePreview()">
       </div>
 
-      <div class="form-group">
-        <label>奉献者邮箱 (Donor Email) <span style="font-size:0.75rem; color:#777;">(用于一键回信)</span></label>
-        <input type="email" id="in_donor_email" value="" placeholder="donor@example.com" oninput="updatePreview()">
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>身份证/护照/注册号 (NRIC/SSM 选填)</label>
+          <input type="text" id="in_donor_ic" value="" placeholder="例如：900101-14-1234" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>奉献者邮箱 (Donor Email) <span style="font-size:0.75rem; color:#777;">(用于一键回信)</span></label>
+          <input type="email" id="in_donor_email" value="" placeholder="donor@example.com" oninput="updatePreview()">
+        </div>
       </div>
 
       <div class="form-row-2">
@@ -717,6 +723,7 @@
             <tr>
               <td>
                 <div style="font-weight:700; font-size:1.05rem; margin-bottom:4px;" id="prev_donor_name">陈弟兄 / Brother Tan</div>
+                <div style="color:#555; font-size:0.84rem; margin-bottom:4px; display:none;" id="prev_donor_ic_wrap"><span style="color:#777;">证件/注册号 (NRIC/SSM No.):</span> <span id="prev_donor_ic" style="font-weight:600; color:#222;">-</span></div>
                 <div style="color:#666; font-size:0.88rem;" id="prev_purpose">自由奉献 / General Offering</div>
                 <div style="font-size:0.75rem; color:#888; margin-top:4px;">感谢您对收割机福音音乐事工的奉献与同行</div>
               </td>
@@ -773,11 +780,26 @@
   </div>
 
   <script>
-    // Set initial date to today
+    // Set initial date to today & parse URL params
     window.addEventListener('DOMContentLoaded', () => {
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('in_date').value = today;
       generateReceiptNo();
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('name')) document.getElementById('in_donor_name').value = params.get('name');
+      if (params.get('email')) document.getElementById('in_donor_email').value = params.get('email');
+      if (params.get('id_no') || params.get('ic') || params.get('nric')) {
+        document.getElementById('in_donor_ic').value = params.get('id_no') || params.get('ic') || params.get('nric');
+      }
+      if (params.get('amount')) {
+        const amt = parseFloat(params.get('amount').replace(/[^0-9.]/g, ''));
+        if (!isNaN(amt)) document.getElementById('in_amount').value = amt.toFixed(2);
+      }
+      if (params.get('date')) document.getElementById('in_date').value = params.get('date');
+      if (params.get('purpose')) document.getElementById('in_purpose').value = params.get('purpose');
+      if (params.get('ref')) document.getElementById('in_ref_no').value = params.get('ref');
+
       updatePreview();
     });
 
@@ -823,6 +845,7 @@
     function updatePreview() {
       const receiptNo = document.getElementById('in_receipt_no').value || 'HMP-000';
       const donorName = document.getElementById('in_donor_name').value || '奉献者 / Donor';
+      const donorIc = (document.getElementById('in_donor_ic')?.value || '').trim();
       const amountVal = parseFloat(document.getElementById('in_amount').value) || 0;
       const dateVal = document.getElementById('in_date').value || new Date().toISOString().split('T')[0];
       const purposeVal = document.getElementById('in_purpose').value;
@@ -832,6 +855,17 @@
 
       document.getElementById('prev_receipt_no').innerText = receiptNo;
       document.getElementById('prev_donor_name').innerText = donorName;
+      
+      const icWrap = document.getElementById('prev_donor_ic_wrap');
+      if (icWrap) {
+        if (donorIc) {
+          icWrap.style.display = 'block';
+          document.getElementById('prev_donor_ic').innerText = donorIc;
+        } else {
+          icWrap.style.display = 'none';
+        }
+      }
+
       document.getElementById('prev_amount').innerText = `RM ${amountVal.toFixed(2)}`;
       document.getElementById('prev_date').innerText = dateVal;
       document.getElementById('prev_purpose').innerText = purposeVal;
@@ -844,9 +878,12 @@
     function getThankYouEmailText() {
       const receiptNo = document.getElementById('in_receipt_no').value;
       const donorName = document.getElementById('in_donor_name').value;
+      const donorIc = (document.getElementById('in_donor_ic')?.value || '').trim();
       const amountVal = parseFloat(document.getElementById('in_amount').value) || 0;
       const dateVal = document.getElementById('in_date').value;
       const purposeVal = document.getElementById('in_purpose').value;
+
+      let icLine = donorIc ? `• 身份证/注册号：${donorIc}\n` : '';
 
       return `平安，亲爱的 ${donorName}：
 
@@ -858,7 +895,7 @@
 🧾 【官方奉献收据明细 / Official Receipt Summary】
 • 奉献收据编号：${receiptNo}
 • 奉献者/机构：${donorName}
-• 奉献金额：RM ${amountVal.toFixed(2)}
+${icLine}• 奉献金额：RM ${amountVal.toFixed(2)}
 • 奉献日期：${dateVal}
 • 奉献用途：${purposeVal}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━

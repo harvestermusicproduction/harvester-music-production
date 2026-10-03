@@ -115,9 +115,16 @@ function buildEnvironment() {
 
 async function loadData() {
   try {
+    const { data: hiddenCfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
+    let hiddenSingerIds = [];
+    if (hiddenCfg && hiddenCfg.value) {
+      try { hiddenSingerIds = typeof hiddenCfg.value === 'string' ? JSON.parse(hiddenCfg.value) : hiddenCfg.value; } catch(e) {}
+    }
+    if (!Array.isArray(hiddenSingerIds)) hiddenSingerIds = [];
+
     const { data, error } = await db.from('singers').select('*').order('display_order', { ascending: true });
     if (error) throw error;
-    allSingers = data || [];
+    allSingers = (data || []).filter(s => !hiddenSingerIds.includes(s.id) && !s.hidden && !s.is_hidden && s.status !== 'hidden');
     
     const tab = new URLSearchParams(window.location.search).get('tab');
     if (tab === 'gospel') window.switchCategory('福音');

@@ -2405,6 +2405,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const d = (key, fallback = '') => (aboutData && aboutData[key] !== undefined && aboutData[key] !== null) ? aboutData[key] : fallback;
 
+    let hiddenSingerIds = [];
+    if (c['cfg_hidden_singer_ids']) {
+      try {
+        hiddenSingerIds = typeof c['cfg_hidden_singer_ids'] === 'string' ? JSON.parse(c['cfg_hidden_singer_ids']) : c['cfg_hidden_singer_ids'];
+      } catch(e){}
+    }
+    if (!Array.isArray(hiddenSingerIds)) hiddenSingerIds = [];
+
     const gospelSingers = (singers || []).filter(s => s.category === 'gospel');
     const worshipSingers = (singers || []).filter(s => s.category === 'worship');
     const coWorkersList = getCoWorkersListFromConfig(aboutData);
@@ -2413,7 +2421,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:15px;">
         <div>
           <h1 style="color:var(--gold); margin:0;">🎙️ 主要同工与歌手管理 (Co-workers & Singers)</h1>
-          <p style="color:#888; font-size:0.85rem; margin-top:5px;">自由管理主要服事同工团队、福音歌手及敬拜赞美歌手名册。</p>
+          <p style="color:#888; font-size:0.85rem; margin-top:5px;">自由管理主要服事同工团队、福音歌手及敬拜赞美歌手名册，支持随时隐藏未公布的同工与歌手。</p>
         </div>
         <div style="display:flex; gap:10px;">
           ${currentSingerSubTab === 'core' 
@@ -2439,12 +2447,12 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       ${currentSingerSubTab === 'core' ? `
-        <!-- 👥 主要同工管理 (自由增减同工职务) -->
+        <!-- 👥 主要同工管理 (自由增减同工职务 & 隐藏控制) -->
         <div style="background:#0a0a0a; border:1px solid #1f1f1f; border-radius:12px; padding:25px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #222; padding-bottom:12px; flex-wrap:wrap; gap:10px;">
             <div>
               <h3 style="color:var(--gold); margin:0;">主要同工职务与拍立得相片管理</h3>
-              <span style="color:#777; font-size:0.8rem;">可随时添加新职务或删除同工，保存后将实时同步更新至前台「主要同工」与「关于我们」页面</span>
+              <span style="color:#777; font-size:0.8rem;">可随时添加新职务、隐藏未公开同工或删除同工，保存后将实时同步更新至前台页面</span>
             </div>
             <button class="btn btn-tiny" style="background:rgba(246,210,138,0.15); border:1px solid var(--gold); color:var(--gold); padding:8px 18px; font-weight:bold;" onclick="addCoWorkerCard()">
               + 添加新同工职务 (Add Role)
@@ -2467,20 +2475,33 @@ document.addEventListener('DOMContentLoaded', () => {
       ` : `
         <!-- 歌手名册列表 (Gospel or Worship) -->
         <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
-          ${(currentSingerSubTab === 'gospel' ? gospelSingers : worshipSingers).map(s => `
-            <div style="background:#111; padding:20px; border-radius:12px; border:1px solid #222; display:flex; flex-direction:column; justify-content:space-between;">
+          ${(currentSingerSubTab === 'gospel' ? gospelSingers : worshipSingers).map(s => {
+            const isHidden = (hiddenSingerIds || []).includes(s.id);
+            return `
+            <div style="background:#111; padding:20px; border-radius:12px; border:1px solid ${isHidden ? '#552222' : '#222'}; opacity:${isHidden ? '0.78' : '1'}; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
               <div>
-                <img src="${s.image_url || 'assets/logo.png'}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:8px; margin-bottom:15px; border:1px solid #333;" onerror="this.src='assets/logo.png'">
+                <div style="position:relative; margin-bottom:15px;">
+                  <img src="${s.image_url || 'assets/logo.png'}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:8px; border:1px solid #333;" onerror="this.src='assets/logo.png'">
+                  <div style="position:absolute; top:8px; right:8px;">
+                    <span style="background:${isHidden ? 'rgba(230,57,70,0.9)' : 'rgba(46,213,115,0.9)'}; color:#fff; padding:3px 9px; border-radius:12px; font-size:0.7rem; font-weight:bold; box-shadow:0 2px 6px rgba(0,0,0,0.5);">
+                      ${isHidden ? '🙈 已隐藏 (未公布)' : '👁️ 公开展出'}
+                    </span>
+                  </div>
+                </div>
                 <h3 style="margin:0; color:var(--gold); font-size:1.15rem;">${s.name}</h3>
                 <p style="color:#888; font-size:0.85rem; margin:6px 0 10px;">${s.role || 'Gospel Singer'} <span style="background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-left:8px; color:#aaa;">${s.category === 'worship' ? '敬拜赞美' : '福音歌手'}</span></p>
                 <p style="color:#666; font-size:0.8rem; line-height:1.4; max-height:45px; overflow:hidden;">${s.bio || ''}</p>
               </div>
-              <div style="display:flex; gap:10px; margin-top:20px; padding-top:12px; border-top:1px solid #1a1a1a;">
-                <button class="btn-tiny" style="flex:1; color:var(--gold); border-color:var(--gold);" onclick="editSinger('${s.id}')">⚙️ 编辑档案</button>
+              <div style="display:flex; gap:8px; margin-top:20px; padding-top:12px; border-top:1px solid #1a1a1a; flex-wrap:wrap;">
+                <button class="btn-tiny" style="flex:1; min-width:85px; ${isHidden ? 'color:#2ed573; border-color:#2ed573;' : 'color:#ff6b6b; border-color:#ff6b6b;'}" onclick="toggleSingerHidden('${s.id}', ${!isHidden})" title="切换前台公开或隐藏">
+                  ${isHidden ? '👁️ 设为公开' : '🙈 设为隐藏'}
+                </button>
+                <button class="btn-tiny" style="flex:1; min-width:80px; color:var(--gold); border-color:var(--gold);" onclick="editSinger('${s.id}')">⚙️ 编辑</button>
                 <button class="btn-tiny danger" onclick="deleteItem('singers', '${s.id}')">🗑️ 删除</button>
               </div>
             </div>
-          `).join('') || `<p style="grid-column:1/-1; text-align:center; color:#555; padding:60px;">暂无该分类歌手，点击右上角「+ 邀请新歌手」添加</p>`}
+            `;
+          }).join('') || `<p style="grid-column:1/-1; text-align:center; color:#555; padding:60px;">暂无该分类歌手，点击右上角「+ 邀请新歌手」添加</p>`}
         </div>
       `}
     `;
@@ -2696,7 +2717,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.getCoWorkersListFromConfig = function(aboutData) {
     if (aboutData && Array.isArray(aboutData.about_team_list) && aboutData.about_team_list.length > 0) {
-      return aboutData.about_team_list;
+      return aboutData.about_team_list.map(item => ({
+        ...item,
+        hidden: item.hidden === true || item.is_hidden === true || item.hidden === 'true'
+      }));
     }
     const list = [];
     for (let i = 1; i <= 20; i++) {
@@ -2706,6 +2730,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const img = aboutData[`about_team_r${i}_img`];
       const pos = aboutData[`about_team_r${i}_pos`];
       const zoom = aboutData[`about_team_r${i}_zoom`];
+      const hidden = aboutData[`about_team_r${i}_hidden`] === true || aboutData[`about_team_r${i}_hidden`] === 'true';
       if (role || names || img) {
         list.push({
           id: `staff_${i}`,
@@ -2714,20 +2739,21 @@ document.addEventListener('DOMContentLoaded', () => {
           names: names || '',
           image_url: img || 'assets/logo.png',
           img_pos: pos || '50% 20%',
-          img_zoom: zoom ? parseFloat(zoom) : 1.0
+          img_zoom: zoom ? parseFloat(zoom) : 1.0,
+          hidden: hidden
         });
       }
     }
     if (list.length > 0) return list;
 
     return [
-      { id: "staff_1", role: "创作平台创办启发人", role_en: "", names: "汤小康\nWarren 沈自强", image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_2", role: "创作", role_en: "", names: "Warren 沈自强\n汤小康\nNatasha", image_url: "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_3", role: "制作", role_en: "", names: "汤小康\nWarren 沈自强\nEdward", image_url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_4", role: "拍摄", role_en: "", names: "陈宏亮", image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_5", role: "宣传", role_en: "", names: "Sherlyn", image_url: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_6", role: "行政", role_en: "", names: "梁苡乐", image_url: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 },
-      { id: "staff_7", role: "歌手与主领", role_en: "", names: "依歌曲需求而定", image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0 }
+      { id: "staff_1", role: "创作平台创办启发人", role_en: "", names: "汤小康\nWarren 沈自强", image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0, hidden: false },
+      { id: "staff_2", role: "创作", role_en: "", names: "Warren 沈自强\n汤小康\nNatasha", image_url: "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0, hidden: false },
+      { id: "staff_3", role: "制作", role_en: "", names: "汤小康\nWarren 沈自强\nEdward", image_url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0, hidden: false },
+      { id: "staff_4", role: "拍摄", role_en: "", names: "陈宏亮", image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0, hidden: false },
+      { id: "staff_5", role: "宣传", role_en: "", names: "Sherlyn", image_url: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0, hidden: false },
+      { id: "staff_6", role: "行政", role_en: "", names: "梁苡乐", image_url: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0, hidden: false },
+      { id: "staff_7", role: "歌手与主领", role_en: "", names: "依歌曲需求而定", image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80", img_pos: "50% 20%", img_zoom: 1.0, hidden: false }
     ];
   };
 
@@ -2741,14 +2767,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const posX = getCoworkerXPercent(imgPos);
       const posY = getCoworkerYPercent(imgPos);
       const zoomPct = Math.round(imgZoom * 100);
+      const isHidden = item.hidden === true || item.is_hidden === true || item.hidden === 'true';
 
       return `
-        <div class="coworker-item-card" data-id="${itemId}" style="background:#121212; padding:18px; border-radius:10px; border:1px solid #222; position:relative; display:flex; flex-direction:column; justify-content:space-between;">
+        <div class="coworker-item-card" data-id="${itemId}" style="background:#121212; padding:18px; border-radius:10px; border:${isHidden ? '1.5px dashed #662222' : '1px solid #222'}; opacity:${isHidden ? '0.85' : '1'}; position:relative; display:flex; flex-direction:column; justify-content:space-between; transition:all 0.2s ease;">
           <div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
               <span class="coworker-badge" style="color:var(--gold); font-size:0.82rem; font-weight:bold;">${numStr} 职务与成员</span>
-              <button class="btn-tiny danger" style="padding:2px 8px; font-size:0.75rem;" onclick="removeCoWorkerCard(this)" title="删除此同工职务">🗑️ 删除</button>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span class="cw-status-badge" style="background:${isHidden ? 'rgba(230,57,70,0.9)' : 'rgba(46,213,115,0.9)'}; color:#fff; padding:2px 7px; border-radius:10px; font-size:0.68rem; font-weight:bold;">
+                  ${isHidden ? '🙈 已隐藏' : '👁️ 公开'}
+                </span>
+                <button type="button" class="btn-tiny cw-visibility-btn" style="padding:2px 7px; font-size:0.72rem; ${isHidden ? 'color:#2ed573; border-color:#2ed573;' : 'color:#ff6b6b; border-color:#ff6b6b;'}" onclick="toggleCoWorkerVisibility(this)" title="切换前台公开或隐藏">
+                  ${isHidden ? '👁️ 设为公开' : '🙈 设为隐藏'}
+                </button>
+                <button type="button" class="btn-tiny danger" style="padding:2px 7px; font-size:0.72rem;" onclick="removeCoWorkerCard(this)" title="删除此同工职务">🗑️ 删除</button>
+              </div>
             </div>
+            <input type="hidden" class="coworker-hidden-val" value="${isHidden ? 'true' : 'false'}">
             
             <label style="font-size:0.75rem; color:#aaa;">中文职务名称 (Role Title) *</label>
             <input type="text" class="coworker-role-input" value="${item.role || ''}" placeholder="例如：创作平台创办启发人" style="width:100%; margin:4px 0 8px; font-size:0.85rem; padding:7px 10px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; border-radius:4px;">
@@ -2837,13 +2873,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const newCard = document.createElement('div');
     newCard.className = 'coworker-item-card';
     newCard.dataset.id = 'staff_' + uid;
-    newCard.style = "background:#121212; padding:18px; border-radius:10px; border:1.5px dashed var(--gold); position:relative; display:flex; flex-direction:column; justify-content:space-between; animation:fadeIn 0.3s ease;";
+    newCard.style = "background:#121212; padding:18px; border-radius:10px; border:1.5px dashed var(--gold); position:relative; display:flex; flex-direction:column; justify-content:space-between; animation:fadeIn 0.3s ease; transition:all 0.2s ease;";
     newCard.innerHTML = `
       <div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
           <span class="coworker-badge" style="color:var(--gold); font-size:0.82rem; font-weight:bold;">${numStr} 新增职务与同工</span>
-          <button class="btn-tiny danger" style="padding:2px 8px; font-size:0.75rem;" onclick="removeCoWorkerCard(this)" title="删除此同工职务">🗑️ 删除</button>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span class="cw-status-badge" style="background:rgba(46,213,115,0.9); color:#fff; padding:2px 7px; border-radius:10px; font-size:0.68rem; font-weight:bold;">
+              👁️ 公开
+            </span>
+            <button type="button" class="btn-tiny cw-visibility-btn" style="padding:2px 7px; font-size:0.72rem; color:#ff6b6b; border-color:#ff6b6b;" onclick="toggleCoWorkerVisibility(this)" title="切换前台公开或隐藏">
+              🙈 设为隐藏
+            </button>
+            <button type="button" class="btn-tiny danger" style="padding:2px 7px; font-size:0.72rem;" onclick="removeCoWorkerCard(this)" title="删除此同工职务">🗑️ 删除</button>
+          </div>
         </div>
+        <input type="hidden" class="coworker-hidden-val" value="false">
         
         <label style="font-size:0.75rem; color:#aaa;">中文职务名称 (Role Title) *</label>
         <input type="text" class="coworker-role-input" value="" placeholder="例如：诗歌编曲组" style="width:100%; margin:4px 0 8px; font-size:0.85rem; padding:7px 10px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; border-radius:4px;">
@@ -2916,6 +2961,41 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCoWorkerBadges();
   };
 
+  window.toggleCoWorkerVisibility = function(btn) {
+    const card = btn.closest('.coworker-item-card');
+    if (!card) return;
+    const hiddenInput = card.querySelector('.coworker-hidden-val');
+    const statusBadge = card.querySelector('.cw-status-badge');
+    if (!hiddenInput) return;
+
+    const willBeHidden = hiddenInput.value !== 'true';
+    hiddenInput.value = willBeHidden ? 'true' : 'false';
+
+    if (willBeHidden) {
+      btn.innerText = '👁️ 设为公开';
+      btn.style.color = '#2ed573';
+      btn.style.borderColor = '#2ed573';
+      if (statusBadge) {
+        statusBadge.innerText = '🙈 已隐藏';
+        statusBadge.style.background = 'rgba(230,57,70,0.9)';
+      }
+      card.style.borderColor = '#662222';
+      card.style.borderStyle = 'dashed';
+      card.style.opacity = '0.85';
+    } else {
+      btn.innerText = '🙈 设为隐藏';
+      btn.style.color = '#ff6b6b';
+      btn.style.borderColor = '#ff6b6b';
+      if (statusBadge) {
+        statusBadge.innerText = '👁️ 公开';
+        statusBadge.style.background = 'rgba(46,213,115,0.9)';
+      }
+      card.style.borderColor = '#222';
+      card.style.borderStyle = 'solid';
+      card.style.opacity = '1';
+    }
+  };
+
   window.removeCoWorkerCard = function(btn) {
     if (!confirm("确定要删除这个职务与同工吗？保存后前台将不再显示。")) return;
     const card = btn.closest('.coworker-item-card');
@@ -2958,6 +3038,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const img = card.querySelector('.coworker-img-val')?.value || '';
       const pos = card.querySelector('.coworker-pos-val')?.value || '50% 20%';
       const zoom = parseFloat(card.querySelector('.coworker-zoom-val')?.value) || 1.0;
+      const isHidden = card.querySelector('.coworker-hidden-val')?.value === 'true';
       const id = card.dataset.id || `staff_${i+1}`;
       teamList.push({
         id,
@@ -2966,7 +3047,8 @@ document.addEventListener('DOMContentLoaded', () => {
         names,
         image_url: img,
         img_pos: pos,
-        img_zoom: zoom
+        img_zoom: zoom,
+        hidden: isHidden
       });
 
       // Maintain backwards compatibility
@@ -2976,6 +3058,7 @@ document.addEventListener('DOMContentLoaded', () => {
       aboutData[`about_team_r${i+1}_img`] = img;
       aboutData[`about_team_r${i+1}_pos`] = pos;
       aboutData[`about_team_r${i+1}_zoom`] = zoom;
+      aboutData[`about_team_r${i+1}_hidden`] = isHidden;
     });
 
     for (let k = teamList.length + 1; k <= 30; k++) {
@@ -2985,6 +3068,7 @@ document.addEventListener('DOMContentLoaded', () => {
       delete aboutData[`about_team_r${k}_img`];
       delete aboutData[`about_team_r${k}_pos`];
       delete aboutData[`about_team_r${k}_zoom`];
+      delete aboutData[`about_team_r${k}_hidden`];
     }
 
     aboutData.about_team_list = teamList;
@@ -2995,10 +3079,38 @@ document.addEventListener('DOMContentLoaded', () => {
         value: JSON.stringify(aboutData)
       }, { onConflict: 'key' });
 
-      alert("🎉 主要服事同工与职务名册（含照片裁剪焦点）已成功保存并实时生效！");
+      alert("🎉 主要服事同工与职务名册（含照片裁剪焦点与展示状态）已成功保存并实时生效！");
       renderCMS();
     } catch(err) {
       alert("保存失败: " + err.message);
+    }
+  };
+
+  window.toggleSingerHidden = async (singerId, makeHidden) => {
+    try {
+      const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
+      let hiddenSingerIds = [];
+      if (cfg && cfg.value) {
+        try {
+          hiddenSingerIds = typeof cfg.value === 'string' ? JSON.parse(cfg.value) : cfg.value;
+        } catch(e){}
+      }
+      if (!Array.isArray(hiddenSingerIds)) hiddenSingerIds = [];
+
+      if (makeHidden) {
+        if (!hiddenSingerIds.includes(singerId)) hiddenSingerIds.push(singerId);
+      } else {
+        hiddenSingerIds = hiddenSingerIds.filter(id => id !== singerId);
+      }
+
+      await db.from('site_config').upsert({
+        key: 'cfg_hidden_singer_ids',
+        value: JSON.stringify(hiddenSingerIds)
+      }, { onConflict: 'key' });
+
+      renderCMS();
+    } catch(err) {
+      alert("修改歌手展示状态失败: " + err.message);
     }
   };
 
@@ -3044,6 +3156,13 @@ document.addEventListener('DOMContentLoaded', () => {
           <option value="gospel" ${defaultCat==='gospel'?'selected':''}>福音歌手 Gospel</option>
           <option value="worship" ${defaultCat==='worship'?'selected':''}>敬拜赞美歌手 Worship</option>
         </select>
+
+        <label style="color:#aaa; font-size:0.8rem; display:block; margin-bottom:4px;">展示状态 (Visibility)</label>
+        <select id="s_hidden_new" style="width:100%; margin-bottom:15px; background: #181818; color: #F6F4F0; padding: 10px; border: 1px solid #333; border-radius:6px;">
+          <option value="false">👁️ 正常公开展出 (Visible)</option>
+          <option value="true">🙈 暂时隐藏 / 未公布 (Hidden)</option>
+        </select>
+
         <div style="margin-top:20px; display:flex; gap:10px;">
           <button class="btn btn-submit" style="flex:2;" onclick="submitNewSinger(this)">确认创建</button>
           <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.parentElement.remove()">取消</button>
@@ -3059,12 +3178,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const bio = document.getElementById('s_bio_new').value.trim();
     const category = document.getElementById('s_cat_new').value;
     const image_url = document.getElementById('surl_new').value;
+    const img_pos = document.getElementById('s_pos_new')?.value || '50% 20%';
+    const img_zoom = parseFloat(document.getElementById('s_zoom_new')?.value) || 1.0;
+    const isHidden = document.getElementById('s_hidden_new')?.value === 'true';
+
     if(!name) return alert("请输入姓名");
     
     try {
       if(btn) btn.innerText = "处理中...";
-      const { error } = await db.from('singers').insert([{ name, role, bio, category, image_url }]);
+      const { data: inserted, error } = await db.from('singers').insert([{
+        name,
+        role,
+        bio,
+        category,
+        image_url,
+        img_pos,
+        img_zoom
+      }]).select();
       if (error) throw error;
+
+      if (isHidden && inserted && inserted[0]) {
+        const newId = inserted[0].id;
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
+        let hiddenSingerIds = [];
+        if (cfg && cfg.value) {
+          try { hiddenSingerIds = typeof cfg.value === 'string' ? JSON.parse(cfg.value) : cfg.value; } catch(e){}
+        }
+        if (!Array.isArray(hiddenSingerIds)) hiddenSingerIds = [];
+        if (!hiddenSingerIds.includes(newId)) hiddenSingerIds.push(newId);
+        await db.from('site_config').upsert({
+          key: 'cfg_hidden_singer_ids',
+          value: JSON.stringify(hiddenSingerIds)
+        }, { onConflict: 'key' });
+      }
+
       if(btn) btn.closest('div').parentElement.parentElement.remove();
       renderCMS();
     } catch (e) {
@@ -3075,6 +3222,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.editSinger = async(id) => {
     const { data: s } = await db.from('singers').select('*').eq('id', id).single();
+    if (!s) return alert("未找到该歌手");
+
+    const { data: hiddenCfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
+    let hiddenSingerIds = [];
+    if (hiddenCfg && hiddenCfg.value) {
+      try { hiddenSingerIds = typeof hiddenCfg.value === 'string' ? JSON.parse(hiddenCfg.value) : hiddenCfg.value; } catch(e){}
+    }
+    if (!Array.isArray(hiddenSingerIds)) hiddenSingerIds = [];
+    const isHidden = hiddenSingerIds.includes(id) || s.hidden === true || s.is_hidden === true || s.status === 'hidden';
+
     const modal = document.createElement('div');
     modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center; overflow-y:auto; padding:20px;";
     modal.innerHTML = `
@@ -3116,8 +3273,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <option value="gospel" ${s.category === 'gospel' ? 'selected' : ''}>福音歌手 Gospel</option>
           <option value="worship" ${s.category === 'worship' ? 'selected' : ''}>敬拜歌手 Worship</option>
         </select>
-        
-        <!-- Details removed as per request -->
+
+        <label>前台展示状态 Visibility</label>
+        <select id="shidden" style="width:100%; margin-bottom:15px; background: #222; color: #F6F4F0; padding: 10px; border: 1px solid #444;">
+          <option value="false" ${!isHidden ? 'selected' : ''}>👁️ 正常公开展出 (Visible)</option>
+          <option value="true" ${isHidden ? 'selected' : ''}>🙈 暂时隐藏 / 未公布 (Hidden)</option>
+        </select>
         
         <label>排位顺序 Order (越小越靠前)</label>
         <input type="number" id="so" value="${s.display_order || 0}" style="width:100%; margin-bottom:20px;">
@@ -3132,6 +3293,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   window.saveSinger = async(id, btn) => {
+    const isHidden = document.getElementById('shidden')?.value === 'true';
     const p = {
       name: document.getElementById('sn').value,
       bio: document.getElementById('sb').value,
@@ -3146,6 +3308,26 @@ document.addEventListener('DOMContentLoaded', () => {
       if(btn) btn.innerText = "保存中...";
       const { error } = await db.from('singers').update(p).eq('id', id);
       if (error) throw error;
+
+      // Update cfg_hidden_singer_ids in site_config
+      const { data: hiddenCfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
+      let hiddenSingerIds = [];
+      if (hiddenCfg && hiddenCfg.value) {
+        try { hiddenSingerIds = typeof hiddenCfg.value === 'string' ? JSON.parse(hiddenCfg.value) : hiddenCfg.value; } catch(e){}
+      }
+      if (!Array.isArray(hiddenSingerIds)) hiddenSingerIds = [];
+
+      if (isHidden) {
+        if (!hiddenSingerIds.includes(id)) hiddenSingerIds.push(id);
+      } else {
+        hiddenSingerIds = hiddenSingerIds.filter(x => x !== id);
+      }
+
+      await db.from('site_config').upsert({
+        key: 'cfg_hidden_singer_ids',
+        value: JSON.stringify(hiddenSingerIds)
+      }, { onConflict: 'key' });
+
       if(btn) btn.closest('div').parentElement.parentElement.remove();
       renderCMS();
     } catch(e) {

@@ -1078,6 +1078,7 @@
             <!-- 汇总表格 -->
             <div class="ack-summary-grid">
               <div class="ack-item"><span class="ack-k">奉献者全名：</span><strong class="ack-v" id="ack_name_val">-</strong></div>
+              <div class="ack-item" id="ack_id_no_wrap" style="display:none;"><span class="ack-k">证件/注册号：</span><span class="ack-v" id="ack_id_no_val">-</span></div>
               <div class="ack-item"><span class="ack-k">奉献金额：</span><strong class="ack-v" style="color:#f6d28a;" id="ack_amount_val">-</strong></div>
               <div class="ack-item"><span class="ack-k">奉献日期：</span><span class="ack-v" id="ack_date_val">-</span></div>
               <div class="ack-item"><span class="ack-k">交易参考号：</span><span class="ack-v" id="ack_ref_val">-</span></div>
@@ -1132,9 +1133,15 @@
         </p>
 
         <div class="receipt-form-grid">
-          <div class="receipt-form-group">
-            <label>奉献者 / 机构全名 <span style="color:#e63946;">*</span></label>
-            <input type="text" name="name" id="rf_name" required placeholder="例如：陈弟兄 / 主恩堂 / Brother Tan">
+          <div class="receipt-form-row-2">
+            <div class="receipt-form-group">
+              <label>奉献者 / 机构全名 <span style="color:#e63946;">*</span></label>
+              <input type="text" name="name" id="rf_name" required placeholder="例如：陈弟兄 / 主恩堂 / Brother Tan">
+            </div>
+            <div class="receipt-form-group">
+              <label>身份证/护照/商业注册号 (选填，供扣税记账)</label>
+              <input type="text" name="id_no" id="rf_id_no" placeholder="例如：900101-14-1234 / 202301012345">
+            </div>
           </div>
 
           <div class="receipt-form-group">
@@ -1332,6 +1339,7 @@
 
       const form = e.target;
       const nameVal = (document.getElementById('rf_name') ? document.getElementById('rf_name').value : '').trim();
+      const idNoVal = (document.getElementById('rf_id_no') ? document.getElementById('rf_id_no').value : '').trim();
       const emailVal = (document.getElementById('rf_email') ? document.getElementById('rf_email').value : '').trim();
       const amountVal = (document.getElementById('rf_amount') ? document.getElementById('rf_amount').value : '').trim();
       const dateVal = (document.getElementById('rf_date') ? document.getElementById('rf_date').value : '').trim();
@@ -1347,6 +1355,7 @@
         email: emailVal,
         _replyto: emailVal,
         '奉献者姓名': nameVal,
+        '身份证/护照/商业注册号': idNoVal || '未填写',
         '接收收据邮箱': emailVal,
         '奉献金额': amountVal,
         '奉献日期': dateVal,
@@ -1375,6 +1384,17 @@
         // 填充官方受理确认函数据
         if (document.getElementById('ack_name_disp')) document.getElementById('ack_name_disp').innerText = nameVal;
         if (document.getElementById('ack_name_val')) document.getElementById('ack_name_val').innerText = nameVal;
+        
+        const idNoWrap = document.getElementById('ack_id_no_wrap');
+        if (idNoWrap) {
+          if (idNoVal) {
+            idNoWrap.style.display = 'block';
+            document.getElementById('ack_id_no_val').innerText = idNoVal;
+          } else {
+            idNoWrap.style.display = 'none';
+          }
+        }
+
         if (document.getElementById('ack_amount_val')) document.getElementById('ack_amount_val').innerText = amountVal;
         if (document.getElementById('ack_date_val')) document.getElementById('ack_date_val').innerText = dateVal;
         if (document.getElementById('ack_ref_val')) document.getElementById('ack_ref_val').innerText = refVal;
@@ -1389,16 +1409,19 @@
 
     function copyAckLetter() {
       const name = (document.getElementById('ack_name_val') ? document.getElementById('ack_name_val').innerText : '');
+      const idNo = (document.getElementById('ack_id_no_val') ? document.getElementById('ack_id_no_val').innerText : '');
       const amount = (document.getElementById('ack_amount_val') ? document.getElementById('ack_amount_val').innerText : '');
       const date = (document.getElementById('ack_date_val') ? document.getElementById('ack_date_val').innerText : '');
       const ref = (document.getElementById('ack_ref_val') ? document.getElementById('ack_ref_val').innerText : '');
       const email = (document.getElementById('ack_email_val') ? document.getElementById('ack_email_val').innerText : '');
 
-      const text = `【Harvester 收割机音乐 · 奉献索取受理确认函】\n\n平安，亲爱的 ${name}！\n衷心感谢您对【Harvester 收割机音乐制作】的爱心奉献与代祷支持。\n\n• 奉献者姓名：${name}\n• 奉献金额：${amount}\n• 奉献日期：${date}\n• 交易参考号：${ref}\n• 收据接收邮箱：${email}\n\n※ 财务团队目前正在与银行对账核实中。一旦确认款项入账，我们将在 1–2 个工作日内 为您开具正式的官方电子收据（PDF）并发送至您的邮箱，请留意查收。\n\n“各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。” —— 哥林多后书 9:7\n\n收割机音乐制作 (Harvester Music Production)`;
+      let text = `【Harvester 收割机音乐 · 奉献索取受理确认函】\n\n平安，亲爱的 ${name}！\n衷心感谢您对【Harvester 收割机音乐制作】的爱心奉献与代祷支持。\n\n• 奉献者姓名：${name}\n`;
+      if (idNo && idNo !== '-') text += `• 身份证/注册号：${idNo}\n`;
+      text += `• 奉献金额：${amount}\n• 奉献日期：${date}\n• 交易参考号：${ref}\n• 收据接收邮箱：${email}\n\n※ 财务团队目前正在与银行对账核实中。一旦确认款项入账，我们将在 1–2 个工作日内 为您开具正式的官方电子收据（PDF）并发送至您的邮箱，请留意查收。\n\n“各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。” —— 哥林多后书 9:7\n\n收割机音乐制作 (Harvester Music Production)`;
 
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
-          alert('已复制奉献受理确认凭据信息！');
+          alert('已成功复制受理确认凭据信息！');
         }).catch(() => {
           fallbackCopy(text, () => alert('已复制奉献受理确认凭据信息！'));
         });

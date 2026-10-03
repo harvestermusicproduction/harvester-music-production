@@ -145,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (Array.isArray(aboutData.about_team_list) && aboutData.about_team_list.length > 0) {
             const teamSection = document.getElementById('section-team');
             if (teamSection) {
+              const visibleTeam = aboutData.about_team_list.filter(m => !m.hidden && !m.is_hidden && m.hidden !== 'true');
               let gridWrap = teamSection.querySelector('.team-grid-dynamic');
               if (!gridWrap) {
                 const topGrid = teamSection.querySelector('.team-grid-top');
@@ -161,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   teamSection.appendChild(gridWrap);
                 }
               }
-              gridWrap.innerHTML = aboutData.about_team_list.map((m, idx) => `
+              gridWrap.innerHTML = visibleTeam.map((m, idx) => `
                 <div class="polaroid-card">
                   <div class="team-card-upper">
                     <div class="team-card-spine">

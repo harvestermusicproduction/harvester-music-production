@@ -160,10 +160,20 @@ let currentCategory = 'all';
 async function startSpace() {
   initThreeJS();
   try {
+    const { data: hiddenCfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
+    let hiddenSingerIds = [];
+    if (hiddenCfg && hiddenCfg.value) {
+      try { hiddenSingerIds = typeof hiddenCfg.value === 'string' ? JSON.parse(hiddenCfg.value) : hiddenCfg.value; } catch(e) {}
+    }
+    if (!Array.isArray(hiddenSingerIds)) hiddenSingerIds = [];
+
     const { data: live, error } = await db.from('singers').select('*').order('display_order', { ascending: true });
     if (error) throw error;
-    if (live && live.length > 0) allRawSingers = live;
-    else allRawSingers = fallbackTeam;
+    if (live && live.length > 0) {
+      allRawSingers = live.filter(s => !hiddenSingerIds.includes(s.id) && !s.hidden && !s.is_hidden && s.status !== 'hidden');
+    } else {
+      allRawSingers = fallbackTeam;
+    }
   } catch (err) {
     console.warn("Using fallback team data:", err);
     allRawSingers = fallbackTeam;
