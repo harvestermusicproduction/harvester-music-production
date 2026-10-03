@@ -589,6 +589,127 @@
         grid-template-columns: 1fr;
       }
     }
+    /* 📜 Official Acknowledgment Letter Card (方案 A) */
+    .ack-letter-card {
+      background: #14181c;
+      border: 1.5px solid rgba(246, 210, 138, 0.4);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.4);
+      text-align: left;
+    }
+    .ack-letter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed rgba(246, 210, 138, 0.3);
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .ack-status-badge {
+      background: rgba(46, 213, 115, 0.15);
+      border: 1px solid rgba(46, 213, 115, 0.4);
+      color: #2ed573;
+      font-size: 0.78rem;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ack-letter-title {
+      font-family: var(--font-hand-cn);
+      font-size: 1.35rem;
+      color: #F6F4F0;
+      letter-spacing: 2px;
+      text-align: center;
+      margin: 6px 0 12px;
+    }
+    .ack-greeting {
+      font-family: var(--font-hand-cn);
+      font-size: 1.05rem;
+      color: #F6F4F0;
+      margin-bottom: 6px;
+    }
+    .ack-msg {
+      font-family: var(--font-hand-cn);
+      font-size: 0.92rem;
+      color: #ccc;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .ack-summary-grid {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      font-size: 0.88rem;
+      margin-bottom: 14px;
+      font-family: var(--font-hand-cn);
+    }
+    .ack-item {
+      display: flex;
+      gap: 6px;
+      align-items: baseline;
+    }
+    .ack-k {
+      color: #888;
+      font-size: 0.82rem;
+    }
+    .ack-v {
+      color: #fff;
+    }
+    .ack-recon-notice {
+      background: rgba(246, 210, 138, 0.08);
+      border-left: 3px solid var(--gold);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #dfd7ca;
+      font-family: var(--font-hand-cn);
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .ack-footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      padding-top: 10px;
+    }
+    .ack-scripture {
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #aaa;
+      font-style: italic;
+      font-family: 'Noto Serif SC', serif;
+      flex: 1;
+    }
+    .ack-seal {
+      width: 78px;
+      height: 78px;
+      border: 2px double #e63946;
+      border-radius: 50%;
+      color: #e63946;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.55rem;
+      transform: rotate(-10deg);
+      user-select: none;
+      box-shadow: inset 0 0 0 1px #e63946;
+    }
     .receipt-modal-actions {
       display: flex;
       gap: 12px;
@@ -929,22 +1050,74 @@
         <p class="receipt-modal-subtitle">Official Receipt Request & Payment Slip Submission</p>
       </div>
       
-      <!-- 提交成功视图 -->
-      <div id="receiptSuccessBox" style="display:none; text-align:center; padding: 1.2rem 0;">
-        <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(46, 213, 115, 0.15); border: 2px solid #2ed573; color: #2ed573; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1.2rem;">
-          <i class="fas fa-check"></i>
+      <!-- 提交成功视图：官方受理确认函 (方案 A) -->
+      <div id="receiptSuccessBox" style="display:none; padding: 0.5rem 0;">
+        <div class="ack-letter-card">
+          <div class="ack-letter-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <img src="assets/logo.png" alt="Harvester" style="height:22px;">
+              <div style="text-align:left;">
+                <div style="font-size:0.95rem; font-weight:bold; color:#F6F4F0; letter-spacing:1px;">收割机音乐制作 · 财务部</div>
+                <div style="font-size:0.7rem; color:var(--gold); font-family:'Cinzel', serif;">HARVESTER MUSIC PRODUCTION</div>
+              </div>
+            </div>
+            <div class="ack-status-badge">
+              <i class="fas fa-check-circle" style="color:#2ed573;"></i> 登记成功 · 待银行核账
+            </div>
+          </div>
+
+          <div class="ack-letter-body">
+            <h3 class="ack-letter-title">奉 献 索 取 受 理 确 认 函</h3>
+            
+            <p class="ack-greeting">平安，亲爱的 <strong id="ack_name_disp" style="color:var(--gold);"></strong>：</p>
+            
+            <p class="ack-msg">
+              衷心感谢您对【Harvester 收割机音乐制作】的爱心奉献与代祷同行！我们已成功收到您的收据索取请求。
+            </p>
+
+            <!-- 汇总表格 -->
+            <div class="ack-summary-grid">
+              <div class="ack-item"><span class="ack-k">奉献者全名：</span><strong class="ack-v" id="ack_name_val">-</strong></div>
+              <div class="ack-item"><span class="ack-k">奉献金额：</span><strong class="ack-v" style="color:#f6d28a;" id="ack_amount_val">-</strong></div>
+              <div class="ack-item"><span class="ack-k">奉献日期：</span><span class="ack-v" id="ack_date_val">-</span></div>
+              <div class="ack-item"><span class="ack-k">交易参考号：</span><span class="ack-v" id="ack_ref_val">-</span></div>
+              <div class="ack-item" style="grid-column: 1 / -1;"><span class="ack-k">收据接收邮箱：</span><strong class="ack-v" style="color:#64D28A;" id="ack_email_val">-</strong></div>
+            </div>
+
+            <!-- 财务对账说明 -->
+            <div class="ack-recon-notice">
+              <i class="fas fa-clock" style="color:var(--gold); margin-top:2px;"></i>
+              <div>
+                <strong>财务对账与收据开具说明：</strong><br>
+                财务团队目前正在与银行对账核实中。一旦确认款项入账，我们将在 <strong>1–2 个工作日内</strong> 为您开具正式的官方电子收据（PDF）并回寄至您的邮箱，请您留意查收。
+              </div>
+            </div>
+
+            <!-- 经文与印章 -->
+            <div class="ack-footer-row">
+              <div class="ack-scripture">
+                “各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。”
+                <div style="font-size:0.75rem; color:var(--gold); font-weight:600; margin-top:3px;">—— 哥林多后书 9:7</div>
+              </div>
+              <div class="ack-seal-box">
+                <div class="ack-seal">
+                  <span>HARVESTER</span>
+                  <span style="font-size:0.85rem; font-weight:900; border-top:1px solid #e63946; border-bottom:1px solid #e63946; padding:1px 2px; margin:1px 0;">财务受理讫</span>
+                  <span>OFFICIAL</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <h4 style="font-family: var(--font-hand-cn); font-size: 1.5rem; color: #F6F4F0; margin-bottom: 0.8rem;">收据索取已成功提交！</h4>
-        <p style="color: #cfc7ba; font-size: 0.95rem; line-height: 1.7; font-family: var(--font-hand-cn); margin-bottom: 1.2rem;">
-          官方受理确认信已秒级发送至您的邮箱：<strong style="color:var(--gold);" id="receiptSuccessEmailText"></strong>，请查收您的收件箱。<br><br>
-          我们的财务团队正在与银行核实对账，核对无误后将于 <strong>1–2 个工作日内</strong> 为您开具并寄出正式的官方电子收据 (PDF)。
-        </p>
-        <div style="font-style: italic; color: #a59b8a; font-size: 0.88rem; margin-bottom: 1.8rem;">
-          “各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。” —— 哥林多后书 9:7
+
+        <div class="receipt-modal-actions" style="margin-top:1.2rem;">
+          <button type="button" class="btn-mail-action" onclick="copyAckLetter()" style="flex:1;">
+            <i class="far fa-copy"></i> 复制受理凭据信息
+          </button>
+          <button type="button" class="btn-secondary-action" onclick="closeReceiptModal()">
+            完成 / 好的
+          </button>
         </div>
-        <button type="button" class="btn-secondary-action" onclick="closeReceiptModal()" style="width:100%; justify-content:center;">
-          完成 / 好的
-        </button>
       </div>
 
       <!-- 表单主体 -->
@@ -953,10 +1126,9 @@
         <input type="hidden" name="_subject" value="【Harvester 收割机音乐】奉献收据索取与凭证提交">
         <input type="hidden" name="_template" value="table">
         <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_autoresponse" id="formAutoresponseInput" value="">
 
         <p class="receipt-modal-intro" style="margin-bottom: 1rem;">
-          请填写您的奉献与转账资料，提交后系统将<strong>立即向您的邮箱发送受理确认信</strong>；财务团队核对入账后（1–2 个工作日内）为您寄送正式电子收据 (PDF)。
+          请填写您的奉献与转账资料，提交后系统将<strong>当场生成官方受理确认函</strong>；财务团队核对入账后（1–2 个工作日内）为您寄送正式电子收据 (PDF)。
         </p>
 
         <div class="receipt-form-grid">
@@ -1156,7 +1328,7 @@
       const btn = document.getElementById('receiptSubmitBtn');
       const originalHTML = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 正在提交中...`;
+      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 正在登记并提交中...`;
 
       const form = e.target;
       const nameVal = (document.getElementById('rf_name') ? document.getElementById('rf_name').value : '').trim();
@@ -1169,20 +1341,19 @@
       const msgVal = (document.getElementById('rf_msg') ? document.getElementById('rf_msg').value : '').trim();
 
       const payload = {
-        _subject: `【Harvester 收割机音乐】奉献收据索取与凭证提交 (来自 ${nameVal})`,
-        _autoresponse: AUTORESPONSE_RECEIPT_TEXT,
+        _subject: `【Harvester 奉献凭证新登记】来自 ${nameVal} 的收据索取`,
         _template: 'table',
         _captcha: 'false',
         email: emailVal,
         _replyto: emailVal,
-        '奉献者/机构全名': nameVal,
-        '电子收据接收邮箱': emailVal,
+        '奉献者姓名': nameVal,
+        '接收收据邮箱': emailVal,
         '奉献金额': amountVal,
         '奉献日期': dateVal,
         '奉献用途': purposeVal,
         '银行交易参考号': refVal,
         '联络电话': phoneVal || '未填写',
-        '附言说明': msgVal || '无',
+        '附言留言': msgVal || '无',
         '提交时间': new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Kuala_Lumpur' })
       };
 
@@ -1196,19 +1367,43 @@
           body: JSON.stringify(payload)
         });
       } catch (err) {
-        console.warn('FormSubmit network notice', err);
+        console.warn('FormSubmit notify notice', err);
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalHTML;
         
-        // Show success confirmation screen
+        // 填充官方受理确认函数据
+        if (document.getElementById('ack_name_disp')) document.getElementById('ack_name_disp').innerText = nameVal;
+        if (document.getElementById('ack_name_val')) document.getElementById('ack_name_val').innerText = nameVal;
+        if (document.getElementById('ack_amount_val')) document.getElementById('ack_amount_val').innerText = amountVal;
+        if (document.getElementById('ack_date_val')) document.getElementById('ack_date_val').innerText = dateVal;
+        if (document.getElementById('ack_ref_val')) document.getElementById('ack_ref_val').innerText = refVal;
+        if (document.getElementById('ack_email_val')) document.getElementById('ack_email_val').innerText = emailVal;
+
+        // 展示官方受理确认函
         form.style.display = 'none';
         const successBox = document.getElementById('receiptSuccessBox');
-        if (successBox) {
-          const emailDisplay = document.getElementById('receiptSuccessEmailText');
-          if (emailDisplay) emailDisplay.innerText = emailVal;
-          successBox.style.display = 'block';
-        }
+        if (successBox) successBox.style.display = 'block';
+      }
+    }
+
+    function copyAckLetter() {
+      const name = (document.getElementById('ack_name_val') ? document.getElementById('ack_name_val').innerText : '');
+      const amount = (document.getElementById('ack_amount_val') ? document.getElementById('ack_amount_val').innerText : '');
+      const date = (document.getElementById('ack_date_val') ? document.getElementById('ack_date_val').innerText : '');
+      const ref = (document.getElementById('ack_ref_val') ? document.getElementById('ack_ref_val').innerText : '');
+      const email = (document.getElementById('ack_email_val') ? document.getElementById('ack_email_val').innerText : '');
+
+      const text = `【Harvester 收割机音乐 · 奉献索取受理确认函】\n\n平安，亲爱的 ${name}！\n衷心感谢您对【Harvester 收割机音乐制作】的爱心奉献与代祷支持。\n\n• 奉献者姓名：${name}\n• 奉献金额：${amount}\n• 奉献日期：${date}\n• 交易参考号：${ref}\n• 收据接收邮箱：${email}\n\n※ 财务团队目前正在与银行对账核实中。一旦确认款项入账，我们将在 1–2 个工作日内 为您开具正式的官方电子收据（PDF）并发送至您的邮箱，请留意查收。\n\n“各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。” —— 哥林多后书 9:7\n\n收割机音乐制作 (Harvester Music Production)`;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert('已复制奉献受理确认凭据信息！');
+        }).catch(() => {
+          fallbackCopy(text, () => alert('已复制奉献受理确认凭据信息！'));
+        });
+      } else {
+        fallbackCopy(text, () => alert('已复制奉献受理确认凭据信息！'));
       }
     }
 
