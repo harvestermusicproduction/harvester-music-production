@@ -839,7 +839,7 @@
               <i class="fas fa-lightbulb"></i> <span>付款备注提醒 · Payment Reference</span>
             </div>
             <p class="remark-reminder-text">
-              转账或扫码支付时，请在付款备注（Recipient Reference / Remarks）注明奉献用途（例如：主日奉献、音乐事工、专辑支持等）；<strong>若无特定指定用途，请直接填写「<span class="remark-tag-pill" onclick="copyPresetText('奉献', this)" title="点击快速复制「奉献」"><i class="far fa-copy"></i> 奉献</span>」</strong>。
+              转账或扫码支付时，请在付款备注（Recipient Reference / Remarks）注明奉献用途（例如：主日奉献、音乐事工、专辑支持等）；<strong>若无特定指定用途，请直接填写「奉献」</strong>。
             </p>
           </div>
 
@@ -953,16 +953,12 @@
       const doSuccess = () => {
         const originalHTML = btnEl.innerHTML;
         btnEl.classList.add('copied');
-        if (btnEl.classList.contains('remark-tag-pill')) {
-          btnEl.innerHTML = `<i class="fas fa-check"></i> 已复制「奉献」!`;
-        } else {
-          btnEl.innerHTML = `
-            <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span>已复制 Copied!</span>
-          `;
-        }
+        btnEl.innerHTML = `
+          <svg class="sketch-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>已复制 Copied!</span>
+        `;
         setTimeout(() => {
           btnEl.classList.remove('copied');
           btnEl.innerHTML = originalHTML;
