@@ -1159,17 +1159,41 @@
       btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 正在提交中...`;
 
       const form = e.target;
-      const formData = new FormData(form);
-      const emailVal = form.email ? form.email.value : '';
+      const nameVal = (document.getElementById('rf_name') ? document.getElementById('rf_name').value : '').trim();
+      const emailVal = (document.getElementById('rf_email') ? document.getElementById('rf_email').value : '').trim();
+      const amountVal = (document.getElementById('rf_amount') ? document.getElementById('rf_amount').value : '').trim();
+      const dateVal = (document.getElementById('rf_date') ? document.getElementById('rf_date').value : '').trim();
+      const purposeVal = (document.getElementById('rf_purpose') ? document.getElementById('rf_purpose').value : '').trim();
+      const phoneVal = (document.getElementById('rf_phone') ? document.getElementById('rf_phone').value : '').trim();
+      const refVal = (document.getElementById('rf_ref') ? document.getElementById('rf_ref').value : '').trim();
+      const msgVal = (document.getElementById('rf_msg') ? document.getElementById('rf_msg').value : '').trim();
+
+      const payload = {
+        _subject: `【Harvester 收割机音乐】奉献收据索取与凭证提交 (来自 ${nameVal})`,
+        _autoresponse: AUTORESPONSE_RECEIPT_TEXT,
+        _template: 'table',
+        _captcha: 'false',
+        email: emailVal,
+        _replyto: emailVal,
+        '奉献者/机构全名': nameVal,
+        '电子收据接收邮箱': emailVal,
+        '奉献金额': amountVal,
+        '奉献日期': dateVal,
+        '奉献用途': purposeVal,
+        '银行交易参考号': refVal,
+        '联络电话': phoneVal || '未填写',
+        '附言说明': msgVal || '无',
+        '提交时间': new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Kuala_Lumpur' })
+      };
 
       try {
-        const res = await fetch('https://formsubmit.co/ajax/harvestermusicproduction@gmail.com', {
+        await fetch('https://formsubmit.co/ajax/harvestermusicproduction@gmail.com', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
-          body: JSON.stringify(Object.fromEntries(formData.entries()))
+          body: JSON.stringify(payload)
         });
       } catch (err) {
         console.warn('FormSubmit network notice', err);
