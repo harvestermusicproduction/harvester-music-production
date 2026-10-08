@@ -148,6 +148,24 @@ async function fetchArtists() {
       const { data: singersData, error } = await db.from('singers').select('*').order('display_order', { ascending: true });
       if (!error && singersData) {
         remoteSingers = singersData.filter(s => !hiddenSingerIds.includes(s.id) && !s.hidden && !s.is_hidden && s.status !== 'hidden');
+        
+        // Merge crop & focus metadata
+        try {
+          const { data: cropCfg } = await db.from('site_config').select('value').eq('key', 'cfg_singers_crop_json').maybeSingle();
+          let cropMap = {};
+          if (cropCfg?.value) {
+            try { cropMap = typeof cropCfg.value === 'string' ? JSON.parse(cropCfg.value) : cropCfg.value; } catch(e){}
+          }
+          if (cropMap && remoteSingers) {
+            remoteSingers.forEach(s => {
+              const meta = cropMap[s.id] || cropMap[s.name];
+              if (meta) {
+                if (meta.img_pos) s.img_pos = meta.img_pos;
+                if (meta.img_zoom) s.img_zoom = meta.img_zoom;
+              }
+            });
+          }
+        } catch(e){}
       }
     }
     

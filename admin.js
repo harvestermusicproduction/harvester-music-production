@@ -3242,7 +3242,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     try {
       if(btn) btn.innerText = "处理中...";
-      const { data: inserted, error } = await db.from('singers').insert([{
+      let inserted = null;
+
+      // 1. Try insert with img_pos & img_zoom
+      const { data: insData, error: insErr } = await db.from('singers').insert([{
         name,
         role,
         bio,
@@ -3251,21 +3254,58 @@ document.addEventListener('DOMContentLoaded', () => {
         img_pos,
         img_zoom
       }]).select();
-      if (error) throw error;
 
-      if (isHidden && inserted && inserted[0]) {
-        const newId = inserted[0].id;
-        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
-        let hiddenSingerIds = [];
-        if (cfg && cfg.value) {
-          try { hiddenSingerIds = typeof cfg.value === 'string' ? JSON.parse(cfg.value) : cfg.value; } catch(e){}
+      if (insErr) {
+        // Fallback without extra schema columns if not present in table
+        if (insErr.message?.includes('img_pos') || insErr.message?.includes('schema cache') || insErr.message?.includes('column')) {
+          const { data: insData2, error: insErr2 } = await db.from('singers').insert([{
+            name,
+            role,
+            bio,
+            category,
+            image_url
+          }]).select();
+          if (insErr2) throw insErr2;
+          inserted = insData2;
+        } else {
+          throw insErr;
         }
-        if (!Array.isArray(hiddenSingerIds)) hiddenSingerIds = [];
-        if (!hiddenSingerIds.includes(newId)) hiddenSingerIds.push(newId);
-        await db.from('site_config').upsert({
-          key: 'cfg_hidden_singer_ids',
-          value: JSON.stringify(hiddenSingerIds)
-        }, { onConflict: 'key' });
+      } else {
+        inserted = insData;
+      }
+
+      // 2. Persist crop & zoom to cfg_singers_crop_json in site_config
+      if (inserted && inserted[0]) {
+        const newId = inserted[0].id;
+        try {
+          const { data: cropCfg } = await db.from('site_config').select('value').eq('key', 'cfg_singers_crop_json').maybeSingle();
+          let cropMap = {};
+          if (cropCfg?.value) {
+            try { cropMap = typeof cropCfg.value === 'string' ? JSON.parse(cropCfg.value) : cropCfg.value; } catch(e){}
+          }
+          cropMap[newId] = { img_pos, img_zoom };
+          cropMap[name] = { img_pos, img_zoom };
+          await db.from('site_config').upsert({
+            key: 'cfg_singers_crop_json',
+            value: JSON.stringify(cropMap)
+          }, { onConflict: 'key' });
+        } catch(cropErr) {
+          console.warn("Crop config save note:", cropErr);
+        }
+
+        if (isHidden) {
+          const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
+          let hiddenSingerIds = [];
+          if (cfg && cfg.value) {
+            try { hiddenSingerIds = typeof cfg.value === 'string' ? JSON.parse(cfg.value) : cfg.value; } catch(e){}
+          }
+          if (!Array.isArray(hiddenSingerIds)) hiddenSingerIds = [];
+          if (!hiddenSingerIds.includes(newId)) hiddenSingerIds.push(newId);
+          await db.from('site_config').upsert({
+            key: 'cfg_hidden_singer_ids',
+            value: JSON.stringify(hiddenSingerIds)
+          }, { onConflict: 'key' });
+        }
       }
 
       if(btn) btn.closest('div').parentElement.parentElement.remove();
@@ -3279,6 +3319,20 @@ document.addEventListener('DOMContentLoaded', () => {
   window.editSinger = async(id) => {
     const { data: s } = await db.from('singers').select('*').eq('id', id).single();
     if (!s) return alert("未找到该歌手");
+
+    // Merge crop metadata
+    try {
+      const { data: cropCfg } = await db.from('site_config').select('value').eq('key', 'cfg_singers_crop_json').maybeSingle();
+      let cropMap = {};
+      if (cropCfg?.value) {
+        try { cropMap = typeof cropCfg.value === 'string' ? JSON.parse(cropCfg.value) : cropCfg.value; } catch(e){}
+      }
+      const cropMeta = cropMap[s.id] || cropMap[s.name];
+      if (cropMeta) {
+        if (cropMeta.img_pos) s.img_pos = cropMeta.img_pos;
+        if (cropMeta.img_zoom) s.img_zoom = cropMeta.img_zoom;
+      }
+    } catch(e){}
 
     const { data: hiddenCfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
     let hiddenSingerIds = [];
@@ -3350,20 +3404,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.saveSinger = async(id, btn) => {
     const isHidden = document.getElementById('shidden')?.value === 'true';
+    const name = document.getElementById('sn')?.value.trim();
+    const bio = document.getElementById('sb')?.value;
+    const role = document.getElementById('sr')?.value;
+    const category = document.getElementById('scat')?.value;
+    const image_url = document.getElementById('surl')?.value;
+    const img_pos = document.getElementById('spos')?.value || '50% 20%';
+    const img_zoom = parseFloat(document.getElementById('szoom')?.value) || 1.0;
+    const display_order = parseInt(document.getElementById('so')?.value) || 0;
+
     const p = {
-      name: document.getElementById('sn').value,
-      bio: document.getElementById('sb').value,
-      role: document.getElementById('sr').value,
-      category: document.getElementById('scat').value,
-      image_url: document.getElementById('surl').value,
-      img_pos: document.getElementById('spos')?.value || '50% 20%',
-      img_zoom: parseFloat(document.getElementById('szoom')?.value) || 1.0,
-      display_order: parseInt(document.getElementById('so').value) || 0
+      name,
+      bio,
+      role,
+      category,
+      image_url,
+      img_pos,
+      img_zoom,
+      display_order
     };
     try {
       if(btn) btn.innerText = "保存中...";
-      const { error } = await db.from('singers').update(p).eq('id', id);
-      if (error) throw error;
+      let { error } = await db.from('singers').update(p).eq('id', id);
+      if (error && (error.message?.includes('img_pos') || error.message?.includes('schema cache') || error.message?.includes('column'))) {
+        delete p.img_pos;
+        delete p.img_zoom;
+        const res2 = await db.from('singers').update(p).eq('id', id);
+        if (res2.error) throw res2.error;
+      } else if (error) {
+        throw error;
+      }
+
+      // Persist crop & zoom to cfg_singers_crop_json in site_config
+      try {
+        const { data: cropCfg } = await db.from('site_config').select('value').eq('key', 'cfg_singers_crop_json').maybeSingle();
+        let cropMap = {};
+        if (cropCfg?.value) {
+          try { cropMap = typeof cropCfg.value === 'string' ? JSON.parse(cropCfg.value) : cropCfg.value; } catch(e){}
+        }
+        cropMap[id] = { img_pos, img_zoom };
+        if (name) cropMap[name] = { img_pos, img_zoom };
+        await db.from('site_config').upsert({
+          key: 'cfg_singers_crop_json',
+          value: JSON.stringify(cropMap)
+        }, { onConflict: 'key' });
+      } catch(cropErr) {
+        console.warn("Crop config save note:", cropErr);
+      }
 
       // Update cfg_hidden_singer_ids in site_config
       const { data: hiddenCfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
