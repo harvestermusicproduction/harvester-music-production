@@ -3242,39 +3242,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     try {
       if(btn) btn.innerText = "处理中...";
-      let inserted = null;
 
-      // 1. Try insert with img_pos & img_zoom
-      const { data: insData, error: insErr } = await db.from('singers').insert([{
+      // Insert only base columns that exist in the singers database table
+      const { data: inserted, error: insErr } = await db.from('singers').insert([{
         name,
         role,
         bio,
         category,
-        image_url,
-        img_pos,
-        img_zoom
+        image_url
       }]).select();
 
-      if (insErr) {
-        // Fallback without extra schema columns if not present in table
-        if (insErr.message?.includes('img_pos') || insErr.message?.includes('schema cache') || insErr.message?.includes('column')) {
-          const { data: insData2, error: insErr2 } = await db.from('singers').insert([{
-            name,
-            role,
-            bio,
-            category,
-            image_url
-          }]).select();
-          if (insErr2) throw insErr2;
-          inserted = insData2;
-        } else {
-          throw insErr;
-        }
-      } else {
-        inserted = insData;
-      }
+      if (insErr) throw insErr;
 
-      // 2. Persist crop & zoom to cfg_singers_crop_json in site_config
+      // Persist crop & zoom to cfg_singers_crop_json in site_config
       if (inserted && inserted[0]) {
         const newId = inserted[0].id;
         try {
@@ -3413,27 +3393,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const img_zoom = parseFloat(document.getElementById('szoom')?.value) || 1.0;
     const display_order = parseInt(document.getElementById('so')?.value) || 0;
 
+    // Only update standard columns present in singers table
     const p = {
       name,
       bio,
       role,
       category,
       image_url,
-      img_pos,
-      img_zoom,
       display_order
     };
     try {
       if(btn) btn.innerText = "保存中...";
-      let { error } = await db.from('singers').update(p).eq('id', id);
-      if (error && (error.message?.includes('img_pos') || error.message?.includes('schema cache') || error.message?.includes('column'))) {
-        delete p.img_pos;
-        delete p.img_zoom;
-        const res2 = await db.from('singers').update(p).eq('id', id);
-        if (res2.error) throw res2.error;
-      } else if (error) {
-        throw error;
-      }
+      const { error } = await db.from('singers').update(p).eq('id', id);
+      if (error) throw error;
 
       // Persist crop & zoom to cfg_singers_crop_json in site_config
       try {
