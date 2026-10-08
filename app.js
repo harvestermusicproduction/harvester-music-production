@@ -347,8 +347,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Event & Album Metadata Parser ---
+  // --- Event & Album Metadata Parser ---
   function parseEventData(item) {
-    if (!item) return { id: '', title: '', dateStr: '', timeStr: '', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '', fullDateTime: '', day: '01', month: '01 月', year: '2026', cleanTitle: '', statusTag: '' };
+    if (!item) return { id: '', title: '', dateStr: '', timeStr: '', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '', fullDateTime: '', day: '01', month: '01 月', year: '2026', cleanTitle: '', statusTag: '', ticket_url: '', ticket_text: '查看详情' };
     
     let desc = (item.description || "").trim();
     let rawDate = item.event_date || item.date || item.start_date || item.eventDate || item.event_day || item.datetime || item.event_datetime || item.start_at || item.start || "";
@@ -358,6 +359,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let rawImg = item.image_url || item.cover_url || item.imageUrl || item.poster_url || item.poster || item.photo_url || "";
     let emailTemplate = item.email_template || item.emailTemplate || "";
     let order = (item.display_order !== undefined && item.display_order !== null && !isNaN(parseInt(item.display_order, 10))) ? parseInt(item.display_order, 10) : null;
+    let extUrl = item.external_url || item.ticket_url || item.ticketUrl || "";
+    let extText = item.button_text || item.ticket_text || item.ticketText || "查看详情";
+    if (extText.includes('购票') || extText.includes('索票')) extText = "查看详情";
     let meta = {};
 
     // Parse EXT_META JSON block if embedded in description
@@ -372,6 +376,11 @@ document.addEventListener('DOMContentLoaded', () => {
           if (meta.murl || meta.map_url || meta.mapUrl) rawMapUrl = meta.murl || meta.map_url || meta.mapUrl;
           if (meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url) rawImg = meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url;
           if (meta.et || meta.email_template) emailTemplate = meta.et || meta.email_template;
+          if (meta.external_url || meta.ext_url || meta.ticket_url || meta.turl) extUrl = meta.external_url || meta.ext_url || meta.ticket_url || meta.turl;
+          if (meta.button_text || meta.btn_text || meta.ticket_text || meta.ttext) {
+            extText = meta.button_text || meta.btn_text || meta.ticket_text || meta.ttext;
+            if (extText.includes('购票') || extText.includes('索票')) extText = "查看详情";
+          }
           if (meta.ord !== undefined || meta.display_order !== undefined) {
             const parsedOrd = parseInt(meta.ord ?? meta.display_order, 10);
             if (!isNaN(parsedOrd)) order = parsedOrd;
@@ -383,13 +392,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Extract time from date string if combined (e.g. 2026-08-25T19:30:00, 2026-08-25 19:30:00, 2026-08-25 19:30, 2026年8月25日 19:30)
+    // Extract time from date string if combined (e.g. 2026-08-25T19:30:00, 2026-08-25 19:30:00, 2026-08-25 19:30, 2026.11.15 19:30 - 21:30)
     let datePart = rawDate ? String(rawDate).trim() : "";
     if (datePart.includes('T')) {
       const parts = datePart.split('T');
       datePart = parts[0];
       if (!rawTime && parts[1]) {
-        const tMatch = parts[1].replace('Z', '').match(/(\d{1,2}[:：.]\d{2})/);
+        const tMatch = parts[1].replace('Z', '').match(/(\d{1,2}[:：.]\d{2}(?:\s*[-~至到to]\s*\d{1,2}[:：.]\d{2})?)/);
         if (tMatch) rawTime = tMatch[1];
       }
     } else if (/\s+/.test(datePart)) {
@@ -402,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // If time is still empty, check description for time clues (e.g. 时间：19:30, ⏰ 19:30, 7:30 PM, etc.)
+    // If time is still empty, check description for time clues (e.g. 时间：19:30, ⏰ 19:30 - 21:30, 7:30 PM, etc.)
     if (!rawTime && desc) {
       const m1 = desc.match(/(?:时间|time|⏰|时段|开场|开始)[：:\s]*([0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
       if (m1) {
@@ -415,6 +424,14 @@ document.addEventListener('DOMContentLoaded', () => {
           const m3 = desc.match(/\b([0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
           if (m3) rawTime = m3[1].trim();
         }
+      }
+    }
+
+    // Fallback: If time is still empty, check if this event matches defaultCuratedEvents by ID or title
+    if (!rawTime && (item.id || item.title)) {
+      const curMatch = defaultCuratedEvents.find(x => String(x.id) === String(item.id) || (x.title && item.title && (x.title.includes(item.title) || item.title.includes(x.title))));
+      if (curMatch && curMatch.event_time) {
+        rawTime = curMatch.event_time;
       }
     }
 
@@ -507,6 +524,8 @@ document.addEventListener('DOMContentLoaded', () => {
       location: rawLoc,
       mapUrl: rawMapUrl,
       image_url: rawImg,
+      ticket_url: extUrl,
+      ticket_text: extText,
       description: desc,
       rawDate,
       rawTime,
@@ -659,7 +678,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isCancelled) {
         actionHtml = `<span class="event-strip-disabled">已取消</span>`;
       } else {
-        actionHtml = `<a href="event.html?id=${e.id}" class="event-strip-link">查看详情 <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>`;
+        const linkUrl = (e.ticket_url && e.ticket_url.startsWith('http')) ? e.ticket_url : `event.html?id=${e.id}`;
+        const isExt = linkUrl.startsWith('http');
+        let btnText = e.ticket_text || '查看详情';
+        if (btnText.includes('购票') || btnText.includes('索票')) btnText = '查看详情';
+        actionHtml = `<a href="${linkUrl}" ${isExt ? 'target="_blank"' : ''} class="event-strip-link">${btnText} <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>`;
       }
 
       const safeTitle = (e.cleanTitle || e.title || "").replace(/'/g, "\\'");
@@ -798,15 +821,30 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const parsed = typeof cfgPostersRaw === 'string' ? JSON.parse(cfgPostersRaw) : cfgPostersRaw;
         if (Array.isArray(parsed) && parsed.length > 0) {
-          galleryItems = parsed.map(p => ({
-            id: p.id || 'poster_' + Math.random(),
-            title: p.title || 'Harvester 精彩活动',
-            image_url: p.image_url,
-            date: p.date || 'UPCOMING',
-            venue: p.venue || '各大展演空间',
-            statusTag: p.statusTag || 'HOT 热门',
-            link: p.link || `event.html?id=${p.id}`
-          })).filter(p => p.image_url);
+          galleryItems = parsed.map(p => {
+            let pTime = p.time || p.event_time || '';
+            if (!pTime && p.date) {
+              const tmMatch = p.date.match(/(\d{1,2}[:：.]\d{2}(?:\s*[-~至到to]\s*\d{1,2}[:：.]\d{2})?)/);
+              if (tmMatch) pTime = tmMatch[1];
+            }
+            if (!pTime && (p.link || p.id || p.title)) {
+              const matchedEv = events?.find(ev => (p.link && p.link.includes(ev.id)) || String(p.id) === String(ev.id) || p.title === ev.cleanTitle || p.title === ev.title)
+                || defaultCuratedEvents.find(ev => (p.link && p.link.includes(ev.id)) || String(p.id) === String(ev.id) || p.title === ev.title);
+              if (matchedEv) pTime = matchedEv.timeStr || matchedEv.event_time || matchedEv.time || '';
+            }
+            return {
+              id: p.id || 'poster_' + Math.random(),
+              title: p.title || 'Harvester 精彩活动',
+              image_url: p.image_url,
+              date: p.date || 'UPCOMING',
+              time: pTime,
+              venue: p.venue || '各大展演空间',
+              statusTag: p.statusTag || 'HOT 热门',
+              link: p.link || `event.html?id=${p.id}`,
+              img_pos: p.img_pos || '50% 50%',
+              img_zoom: p.img_zoom || 1.0
+            };
+          }).filter(p => p.image_url);
         }
       } catch(e) {
         galleryItems = [];
@@ -1103,8 +1141,16 @@ document.addEventListener('DOMContentLoaded', () => {
           if (Array.isArray(pList)) {
             const foundP = pList.find(x => String(x.id) === String(id));
             if (foundP) {
-              album = foundP;
+              album = { ...foundP };
               isEvent = true;
+              if (!album.time && !album.event_time) {
+                const matchedEv = defaultCuratedEvents.find(ev => (foundP.link && foundP.link.includes(ev.id)) || String(foundP.id) === String(ev.id) || foundP.title === ev.title);
+                if (matchedEv) {
+                  album.event_time = matchedEv.event_time;
+                  if (!album.location && matchedEv.location) album.location = matchedEv.location;
+                  if (!album.description && matchedEv.description) album.description = matchedEv.description;
+                }
+              }
             }
           }
         } catch(e){}

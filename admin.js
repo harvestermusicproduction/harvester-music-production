@@ -1400,6 +1400,7 @@ document.addEventListener('DOMContentLoaded', () => {
           title: '收割敬拜之夜 · 吉隆坡特别专场',
           image_url: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1000&q=80',
           date: '2025.11.15',
+          time: '19:30 - 21:30',
           venue: '吉隆坡 · 全福敬拜大厅',
           statusTag: '报名中 🎟️',
           link: ''
@@ -1409,6 +1410,7 @@ document.addEventListener('DOMContentLoaded', () => {
           title: '原创赞美诗创作营 & 制作工作坊',
           image_url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1000&q=80',
           date: '2025.08.20',
+          time: '09:30 - 17:00',
           venue: '新山 · 音乐创作空间',
           statusTag: 'HOT 热门 🔥',
           link: ''
@@ -1418,6 +1420,7 @@ document.addEventListener('DOMContentLoaded', () => {
           title: '灵火青年敬拜节 · 赞美特会',
           image_url: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1000&q=80',
           date: '2025.07.12',
+          time: '19:00 - 22:00',
           venue: '槟城 · 圣爱大礼堂',
           statusTag: '精彩回顾 🎞️',
           link: ''
@@ -1427,6 +1430,7 @@ document.addEventListener('DOMContentLoaded', () => {
           title: '收割者福音巡回音乐分享会',
           image_url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1000&q=80',
           date: '2025.06.05',
+          time: '20:00 - 21:45',
           venue: '怡保 · 基督徒交流中心',
           statusTag: '即将来临 ⏳',
           link: ''
@@ -1436,6 +1440,7 @@ document.addEventListener('DOMContentLoaded', () => {
           title: '赞美诗合唱与管弦乐室内交响夜',
           image_url: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1000&q=80',
           date: '2025.05.01',
+          time: '19:30 - 21:30',
           venue: '吉隆坡 · 艺术文化中心',
           statusTag: '精彩回顾 🎞️',
           link: ''
@@ -1445,6 +1450,7 @@ document.addEventListener('DOMContentLoaded', () => {
           title: '收割机敬拜团同工灵修培灵会',
           image_url: 'https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1000&q=80',
           date: '2025.03.18',
+          time: '10:00 - 16:30',
           venue: '马六甲 · 恩典营地',
           statusTag: '年度特会 ⛪',
           link: ''
@@ -1458,6 +1464,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window._currentAdminPosters = customPosters;
 
+    const defaultCuratedEventsMap = {
+      "curated_1": { time: "19:30 - 21:30" },
+      "curated_2": { time: "09:30 - 17:00" },
+      "curated_3": { time: "19:00 - 22:00" },
+      "curated_4": { time: "20:00 - 21:45" },
+      "curated_5": { time: "19:30 - 21:30" },
+      "curated_6": { time: "10:00 - 16:30" },
+      "收割敬拜之夜 · 吉隆坡特别专场": { time: "19:30 - 21:30" },
+      "原创赞美诗创作营 & 制作工作坊": { time: "09:30 - 17:00" },
+      "灵火青年敬拜节 · 赞美特会": { time: "19:00 - 22:00" },
+      "灵火青年敬拜节 · 赞美复兴特会": { time: "19:00 - 22:00" },
+      "收割者福音巡回音乐分享会": { time: "20:00 - 21:45" },
+      "赞美诗合唱与管弦乐室内交响夜": { time: "19:30 - 21:30" },
+      "收割机敬拜团同工灵修培灵会": { time: "10:00 - 16:30" }
+    };
+    window._defaultCuratedEventsMap = defaultCuratedEventsMap;
+
     // Parse metadata for maximum robustness
     const events = rawEvents.map(e => {
       let desc = e.description || "";
@@ -1469,12 +1492,9 @@ document.addEventListener('DOMContentLoaded', () => {
       let et = e.email_template || "";
       let ord = e.display_order ?? 0;
       let stag = e.status_tag || "";
-      let turl = e.ticket_url || "";
-      let ttext = e.ticket_text || "前往购票/索票/报名";
-      let reqTicket = true;
-      if (e.requires_ticket !== undefined && e.requires_ticket !== null) {
-        reqTicket = e.requires_ticket === true || e.requires_ticket === 'true' || e.requires_ticket === 1 || e.requires_ticket === '1';
-      }
+      let extUrl = e.external_url || e.ticket_url || "";
+      let extText = e.button_text || e.ticket_text || "查看详情";
+      if (extText.includes('购票') || extText.includes('索票')) extText = "查看详情";
 
       const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
       if (metaMatch) {
@@ -1488,11 +1508,9 @@ document.addEventListener('DOMContentLoaded', () => {
           et = meta.et || meta.email_template || et;
           ord = meta.ord ?? meta.display_order ?? ord;
           stag = meta.status_tag || meta.stag || stag;
-          turl = meta.ticket_url || meta.turl || turl;
-          ttext = meta.ticket_text || meta.ttext || ttext;
-          if (meta.rt !== undefined) reqTicket = meta.rt === true || meta.rt === 'true' || meta.rt === 1 || meta.rt === '1';
-          if (meta.requires_ticket !== undefined) reqTicket = meta.requires_ticket === true || meta.requires_ticket === 'true' || meta.requires_ticket === 1 || meta.requires_ticket === '1';
-          if (meta.req_ticket !== undefined) reqTicket = meta.req_ticket === true || meta.req_ticket === 'true' || meta.req_ticket === 1 || meta.req_ticket === '1';
+          extUrl = meta.external_url || meta.ext_url || meta.ticket_url || meta.turl || extUrl;
+          extText = meta.button_text || meta.btn_text || meta.ticket_text || meta.ttext || extText;
+          if (extText.includes('购票') || extText.includes('索票')) extText = "查看详情";
           desc = desc.replace(metaMatch[0], '').trim();
         } catch (err) {
           desc = desc.replace(metaMatch[0], '').trim();
@@ -1512,11 +1530,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (evDate.includes('T')) {
           const parts = evDate.split('T');
           evDate = parts[0];
-          if (parts[1]) evTime = parts[1].replace('Z', '').substring(0, 5);
+          if (parts[1]) {
+            const tmMatch = parts[1].replace('Z', '').match(/(\d{1,2}[:：.]\d{2}(?:\s*[-~至到to]\s*\d{1,2}[:：.]\d{2})?)/);
+            if (tmMatch) evTime = tmMatch[1];
+          }
         } else if (evDate.includes(' ')) {
-          const m = evDate.match(/^(.*?)[ ]+([0-9]{1,2}[:：.][0-9]{2})/);
-          if (m) { evDate = m[1].trim(); evTime = m[2].trim(); }
+          const tmMatch = evDate.match(/(\d{1,2}[:：.]\d{2}(?:\s*[-~至到to]\s*\d{1,2}[:：.]\d{2})?)/);
+          if (tmMatch) {
+            evTime = tmMatch[1];
+            evDate = evDate.replace(tmMatch[0], '').trim();
+          }
         }
+      }
+
+      if (!evTime && defaultCuratedEventsMap[e.id]) {
+        evTime = defaultCuratedEventsMap[e.id].time;
       }
 
       return {
@@ -1528,9 +1556,8 @@ document.addEventListener('DOMContentLoaded', () => {
         location: loc,
         map_url: murl,
         image_url: img,
-        ticket_url: turl,
-        ticket_text: ttext,
-        requires_ticket: reqTicket,
+        ticket_url: extUrl,
+        ticket_text: extText,
         email_template: et,
         display_order: parseInt(ord, 10) || 0,
         description: desc
@@ -1610,7 +1637,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   <div style="position:absolute; inset:0; z-index:2; background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 55%); pointer-events:none;"></div>
                   <!-- Top Left Date Badge -->
                   <span style="position:absolute; top:8px; left:8px; z-index:3; background:rgba(0,0,0,0.8); color:var(--gold); border:1px solid rgba(246,210,138,0.35); font-size:0.7rem; padding:2px 8px; border-radius:12px; font-weight:600;">
-                    ${p.date || '未定日期'}
+                    ${p.date || '未定日期'}${p.time ? ' · ' + p.time : ''}
                   </span>
                   <!-- Top Right Status Tag -->
                   <span style="position:absolute; top:8px; right:8px; z-index:3; background:${badgeBg}; color:${badgeColor}; font-size:0.68rem; font-weight:800; padding:2px 9px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.4);">
@@ -1669,7 +1696,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <th style="padding:14px; width:120px;">日期/时间</th>
                 <th style="padding:14px;">活动名称与状态</th>
                 <th style="padding:14px;">地点 / 场馆</th>
-                <th style="padding:14px;">前台提示</th>
+                <th style="padding:14px;">提醒状态</th>
                 <th style="padding:14px; text-align:right; width:150px;">操作</th>
               </tr>
             </thead>
@@ -1711,7 +1738,7 @@ document.addEventListener('DOMContentLoaded', () => {
                       ${e.location || '待定'}
                     </td>
                     <td style="padding:14px; font-size:0.8rem;">
-                      <span style="display:inline-flex; align-items:center; gap:5px; color:#aaa; background:rgba(255,255,255,0.06); padding:3px 8px; border-radius:50px; font-size:0.75rem; border:1px solid rgba(255,255,255,0.1);"><i class="fas fa-bell" style="color:var(--gold);"></i> 开启提醒 (免购票)</span>
+                      <span style="display:inline-flex; align-items:center; gap:5px; color:#aaa; background:rgba(255,255,255,0.06); padding:3px 8px; border-radius:50px; font-size:0.75rem; border:1px solid rgba(255,255,255,0.1);"><i class="fas fa-bell" style="color:var(--gold);"></i> 开启活动提醒</span>
                     </td>
                     <td style="padding:14px; text-align:right; white-space:nowrap;">
                       <button class="btn-tiny" style="margin-right:6px; border-color:var(--gold); color:var(--gold);" onclick="openEventModal('${e.id}')">✏️ 编辑</button>
@@ -1774,7 +1801,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Build options for events linking
     const evList = window._currentAdminEvents || [];
-    const eventOptions = evList.map(e => `<option value="event.html?id=${e.id}">${sanitizeEventTitle(e.title, e.status_tag)} (${e.event_date || '未定日期'})</option>`).join('');
+    const eventOptions = evList.map(e => `<option value="event.html?id=${e.id}" data-date="${e.event_date || ''}" data-time="${e.event_time || ''}" data-venue="${e.location || ''}" data-title="${sanitizeEventTitle(e.title, e.status_tag)}">${sanitizeEventTitle(e.title, e.status_tag)} (${e.event_date || '未定日期'}${e.event_time ? ' ' + e.event_time : ''})</option>`).join('');
 
     modal.innerHTML = `
       <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:620px; max-height:90vh; overflow-y:auto; position:relative; box-shadow:0 20px 60px rgba(0,0,0,1);">
@@ -1835,15 +1862,19 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- 标题与日期 -->
-        <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:15px; margin-bottom:15px;">
+        <!-- 标题、日期与时间 -->
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">海报标题 (Title)</label>
+          <input type="text" id="ev_p_title" value="${p?.title || ''}" placeholder="例如：收割敬拜之夜 · 吉隆坡特别专场" style="width:100%; padding:10px;">
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
           <div>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">海报标题 (Title)</label>
-            <input type="text" id="ev_p_title" value="${p?.title || ''}" placeholder="例如：收割敬拜之夜 · 吉隆坡特别专场" style="width:100%; padding:10px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">显示日期 (Date Tag)</label>
+            <input type="text" id="ev_p_date" value="${p?.date || ''}" placeholder="例如：2025.11.15" style="width:100%; padding:10px;">
           </div>
           <div>
-            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">显示日期/副标 (Date Tag)</label>
-            <input type="text" id="ev_p_date" value="${p?.date || ''}" placeholder="例如：2025.11.15" style="width:100%; padding:10px;">
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">活动具体时间 (Time)</label>
+            <input type="text" id="ev_p_time" value="${p?.time || ''}" placeholder="例如：19:30 或 19:30 - 21:30" style="width:100%; padding:10px;">
           </div>
         </div>
 
@@ -1860,7 +1891,20 @@ document.addEventListener('DOMContentLoaded', () => {
           
           <div style="display:flex; align-items:center; gap:8px;">
             <span style="font-size:0.75rem; color:#888; white-space:nowrap;">快速绑定活动：</span>
-            <select style="flex:1; padding:6px; font-size:0.8rem; background:#181818; color:#eee; border:1px solid #333; border-radius:4px;" onchange="if(this.value) document.getElementById('ev_p_link').value = this.value;">
+            <select style="flex:1; padding:6px; font-size:0.8rem; background:#181818; color:#eee; border:1px solid #333; border-radius:4px;" onchange="if(this.value) {
+              document.getElementById('ev_p_link').value = this.value;
+              const opt = this.options[this.selectedIndex];
+              if(opt) {
+                const optTitle = opt.getAttribute('data-title');
+                const optDate = opt.getAttribute('data-date');
+                const optTime = opt.getAttribute('data-time');
+                const optVenue = opt.getAttribute('data-venue');
+                if(optTitle && !document.getElementById('ev_p_title').value) document.getElementById('ev_p_title').value = optTitle;
+                if(optDate && !document.getElementById('ev_p_date').value) document.getElementById('ev_p_date').value = optDate;
+                if(optTime && !document.getElementById('ev_p_time').value) document.getElementById('ev_p_time').value = optTime;
+                if(optVenue && !document.getElementById('ev_p_venue').value) document.getElementById('ev_p_venue').value = optVenue;
+              }
+            }">
               <option value="">-- 选择现有活动排期以一键绑定 --</option>
               ${eventOptions}
             </select>
@@ -1916,6 +1960,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const title = document.getElementById('ev_p_title')?.value.trim();
     const tag = document.getElementById('ev_p_tag')?.value.trim() || 'HOT 热门';
     const date = document.getElementById('ev_p_date')?.value.trim() || 'FEATURED 推荐';
+    const time = document.getElementById('ev_p_time')?.value.trim() || '';
     const venue = document.getElementById('ev_p_venue')?.value.trim() || '各城各乡 · 福音巡回';
     const link = document.getElementById('ev_p_link')?.value.trim() || '';
 
@@ -1933,6 +1978,7 @@ document.addEventListener('DOMContentLoaded', () => {
       img_zoom: imgZoom,
       statusTag: tag,
       date: date,
+      time: time,
       venue: venue,
       link: link
     };
@@ -2083,11 +2129,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let desc = e.description || "";
         let stag = e.status_tag || "";
         let turl = e.ticket_url || "";
-        let ttext = e.ticket_text || "前往购票/索票/报名";
-        let reqTicket = true;
-        if (e.requires_ticket !== undefined && e.requires_ticket !== null) {
-          reqTicket = e.requires_ticket === true || e.requires_ticket === 'true' || e.requires_ticket === 1 || e.requires_ticket === '1';
-        }
+        let ttext = e.ticket_text || "查看详情";
+        if (ttext.includes('购票') || ttext.includes('索票')) ttext = "查看详情";
+        let reqTicket = false;
 
         if (desc.includes('EXT_META:')) {
            const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
@@ -2104,9 +2148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 stag = meta.status_tag || meta.stag || stag;
                 turl = meta.ticket_url || meta.turl || turl;
                 ttext = meta.ticket_text || meta.ttext || ttext;
-                if (meta.rt !== undefined) reqTicket = meta.rt === true || meta.rt === 'true' || meta.rt === 1 || meta.rt === '1';
-                if (meta.requires_ticket !== undefined) reqTicket = meta.requires_ticket === true || meta.requires_ticket === 'true' || meta.requires_ticket === 1 || meta.requires_ticket === '1';
-                if (meta.req_ticket !== undefined) reqTicket = meta.req_ticket === true || meta.req_ticket === 'true' || meta.req_ticket === 1 || meta.req_ticket === '1';
+                if (ttext.includes('购票') || ttext.includes('索票')) ttext = "查看详情";
                 desc = desc.replace(metaMatch[0], '').trim();
               } catch(err) {
                 desc = desc.replace(metaMatch[0], '').trim();
@@ -2126,11 +2168,24 @@ document.addEventListener('DOMContentLoaded', () => {
           if (evDate.includes('T')) {
             const parts = evDate.split('T');
             evDate = parts[0];
-            if (parts[1]) evTime = parts[1].replace('Z', '').substring(0, 5);
+            if (parts[1]) {
+              const tmMatch = parts[1].replace('Z', '').match(/(\d{1,2}[:：.]\d{2}(?:\s*[-~至到to]\s*\d{1,2}[:：.]\d{2})?)/);
+              if (tmMatch) evTime = tmMatch[1];
+            }
           } else if (evDate.includes(' ')) {
-            const m = evDate.match(/^(.*?)[ ]+([0-9]{1,2}[:：.][0-9]{2})/);
-            if (m) { evDate = m[1].trim(); evTime = m[2].trim(); }
+            const tmMatch = evDate.match(/(\d{1,2}[:：.]\d{2}(?:\s*[-~至到to]\s*\d{1,2}[:：.]\d{2})?)/);
+            if (tmMatch) {
+              evTime = tmMatch[1];
+              evDate = evDate.replace(tmMatch[0], '').trim();
+            }
           }
+        }
+
+        if (!evTime && window._defaultCuratedEventsMap) {
+          const map = window._defaultCuratedEventsMap;
+          if (map[e.id]) evTime = map[e.id].time;
+          else if (map[rawTitle]) evTime = map[rawTitle].time;
+          else if (map[e.title]) evTime = map[e.title].time;
         }
 
         e = {
@@ -2211,11 +2266,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动日期 (Date)</label>
-              <input type="date" id="ev_d" value="${e?.event_date || ''}" style="width:100%; padding:10px;">
+              <input type="date" id="ev_d" value="${(e?.event_date || '').replace(/\./g, '-')}" style="width:100%; padding:10px;">
             </div>
             <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">开始时间 (Time)</label>
-              <input type="time" id="ev_tm" value="${e?.event_time || ''}" style="width:100%; padding:10px;">
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动具体时间 (Time，支持时段)</label>
+              <input type="text" id="ev_tm" value="${e?.event_time || ''}" placeholder="例如：19:30 或 19:30 - 21:30" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
             </div>
           </div>
 
@@ -2231,24 +2286,23 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
 
-          <!-- 免购票开放活动说明与链接配置 -->
+          <!-- 外部跳转 / 报名链接设置 (可选) -->
           <div style="background:#0e0e0e; border:1px solid #222; border-radius:12px; padding:12px 15px; margin-bottom:15px;">
             <div style="display:flex; align-items:center; justify-content:space-between;">
-              <span style="font-size:0.85rem; color:#aaa;"><i class="fas fa-check-circle" style="color:#2ed573; margin-right:5px;"></i> 免购票开放活动（前台展示具体时间与提醒铃铛）</span>
-              <a href="javascript:void(0)" onclick="const f=document.getElementById('ev_ticket_fields'); f.style.display=f.style.display==='none'?'grid':'none';" style="font-size:0.75rem; color:var(--gold); text-decoration:none;">外部详情链接设置 ▾</a>
+              <span style="font-size:0.85rem; color:#aaa;"><i class="fas fa-link" style="color:var(--gold); margin-right:5px;"></i> 外部跳转 / 报名链接 (可选，留空则默认链接到站内详情)</span>
+              <a href="javascript:void(0)" onclick="const f=document.getElementById('ev_ext_fields'); f.style.display=f.style.display==='none'?'grid':'none'; this.innerText=f.style.display==='none'?'展开配置 ▾':'收起配置 ▴';" style="font-size:0.75rem; color:var(--gold); text-decoration:none;">${e?.ticket_url ? '收起配置 ▴' : '展开配置 ▾'}</a>
             </div>
-            <input type="checkbox" id="ev_req_ticket" style="display:none;">
           </div>
 
-          <!-- 外部链接配置 (折叠) -->
-          <div id="ev_ticket_fields" style="display:none; grid-template-columns: 2fr 1.2fr; gap:15px; margin-bottom:15px;">
+          <!-- 外部链接配置 (折叠/展开) -->
+          <div id="ev_ext_fields" style="display:${e?.ticket_url ? 'grid' : 'none'}; grid-template-columns: 2fr 1.2fr; gap:15px; margin-bottom:15px;">
             <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">外部活动链接 (URL)</label>
+              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">外部链接地址 (URL)</label>
               <input type="text" id="ev_turl" value="${e?.ticket_url || ''}" placeholder="https://... 留空则链接到站内详情" style="width:100%; padding:10px;">
             </div>
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">按钮文字 (Button Text)</label>
-              <input type="text" id="ev_ttext" value="${e?.ticket_text || '查看详情'}" placeholder="查看详情" style="width:100%; padding:10px;">
+              <input type="text" id="ev_ttext" value="${e?.ticket_text || '查看详情'}" placeholder="例如：查看详情" style="width:100%; padding:10px;">
             </div>
           </div>
 
@@ -2284,25 +2338,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const originalText = btn ? btn.innerText : '保存';
     if (btn) { btn.innerText = "⏳ 正在同步到云端..."; btn.disabled = true; }
 
-    const reqTicket = document.getElementById('ev_req_ticket').checked;
     const rawTitle = document.getElementById('ev_t').value.trim();
     const stag = document.getElementById('ev_stag').value.trim();
     const finalTitle = sanitizeEventTitle(rawTitle, stag);
+
+    const extUrl = document.getElementById('ev_turl')?.value.trim() || '';
+    let extText = document.getElementById('ev_ttext')?.value.trim() || '查看详情';
+    if (extText.includes('购票') || extText.includes('索票')) extText = '查看详情';
 
     const imgPos = document.getElementById('ev_pos')?.value.trim() || '50% 50%';
     const imgZoom = parseFloat(document.getElementById('ev_zoom')?.value) || 1.0;
     const payload = {
       title: finalTitle,
       event_date: document.getElementById('ev_d').value,
-      event_time: document.getElementById('ev_tm').value,
-      location: document.getElementById('ev_l').value,
-      map_url: document.getElementById('ev_ml').value,
-      image_url: document.getElementById('ev_url').value,
+      event_time: document.getElementById('ev_tm').value.trim(),
+      location: document.getElementById('ev_l').value.trim(),
+      map_url: document.getElementById('ev_ml').value.trim(),
+      image_url: document.getElementById('ev_url').value.trim(),
       img_pos: imgPos,
       img_zoom: imgZoom,
-      ticket_url: reqTicket ? document.getElementById('ev_turl').value.trim() : '',
-      ticket_text: reqTicket ? (document.getElementById('ev_ttext').value.trim() || '前往购票/索票/报名') : '',
-      requires_ticket: reqTicket,
+      ticket_url: extUrl,
+      ticket_text: extText,
+      requires_ticket: false,
       status_tag: stag,
       email_template: document.getElementById('ev_email').value,
       description: document.getElementById('ev_desc').value,
@@ -2335,9 +2392,6 @@ document.addEventListener('DOMContentLoaded', () => {
           img_zoom: payload.img_zoom,
           turl: payload.ticket_url,
           ttext: payload.ticket_text,
-          rt: payload.requires_ticket,
-          requires_ticket: payload.requires_ticket,
-          req_ticket: payload.requires_ticket,
           stag: payload.status_tag,
           et: payload.email_template,
           ord: payload.display_order
