@@ -606,8 +606,14 @@
           <a href="about.html#section-media"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M17 9.5h4M3 14.5h4M17 14.5h4"/><polygon points="10.5 10 14.5 12 10.5 14" fill="currentColor"/></svg> 视听故事</a>
         </div>
       </div>
-      <a href="support.html">支持我们</a>
-      <a href="contact.html" class="active">联系我们</a>
+      <div class="nav-dropdown">
+        <a href="contact.html" class="active">联系我们 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
+        <div class="dropdown-content">
+          <a href="contact.html#section-contact"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> 联络留言</a>
+          <a href="contact.html#section-ministry"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 🌾 事工邀约</a>
+          <a href="contact.html#echo"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2"/></svg> 回声空间</a>
+        </div>
+      </div>
     </nav>
   </header>
 
@@ -638,12 +644,18 @@
         <a href="about.html#section-media"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M17 9.5h4M3 14.5h4M17 14.5h4"/><polygon points="10.5 10 14.5 12 10.5 14" fill="currentColor"/></svg> 视听故事</a>
       </div>
     </div>
-    <a href="support.html">支持我们</a>
-    <a href="contact.html" class="active">联系我们</a>
+    <div class="mobile-dropdown">
+      <a href="javascript:void(0)" class="mobile-dropdown-toggle" onclick="event.preventDefault(); event.stopPropagation(); this.nextElementSibling.classList.toggle('show');">联系我们 <i class="fas fa-caret-down"></i></a>
+      <div class="mobile-dropdown-content">
+        <a href="contact.html#section-contact"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> 联络留言</a>
+        <a href="contact.html#section-ministry"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 🌾 事工邀约</a>
+        <a href="contact.html#echo"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2"/></svg> 回声空间</a>
+      </div>
+    </div>
   </div>
 
   <!-- 1. 联系我们板块 (Header with inline Brand Logo) -->
-  <div class="ppt-header fade-in">
+  <div class="ppt-header fade-in visible" id="section-contact">
     <div class="ppt-line"></div>
     <div class="contact-header-wrap">
       <a href="index.html" class="contact-header-logo-link" style="display: inline-flex; align-items: center; text-decoration: none; flex-shrink: 0;" title="Harvester Music Production · 返回主页">
@@ -653,6 +665,13 @@
         <h1 class="ppt-title">联系我们</h1>
         <p class="ppt-subtitle">CONTACT US · 与我们同工共建</p>
       </div>
+    </div>
+
+    <!-- 🌟 Quick Anchor Jump Pills -->
+    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap;">
+      <a href="#section-contact" class="btn-echo" style="font-size: 0.85rem; padding: 6px 16px; border-radius: 20px; text-decoration: none;">✉️ 联络表单</a>
+      <a href="#section-ministry" class="btn-echo" style="font-size: 0.85rem; padding: 6px 18px; border-radius: 20px; text-decoration: none; border-color: var(--gold); background: rgba(246, 210, 138, 0.2) !important; color: #f6d28a !important; font-weight: bold; box-shadow: 0 0 15px rgba(246, 210, 138, 0.3);">🌾 教会事工邀约 (点击直达)</a>
+      <a href="#echo" class="btn-echo" style="font-size: 0.85rem; padding: 6px 16px; border-radius: 20px; text-decoration: none;">✨ 回声空间</a>
     </div>
   </div>
 
@@ -808,7 +827,7 @@
   <!-- ===================================================
        🌾 2. 事工邀约板块 (Church Ministry Invitation Section)
        =================================================== -->
-  <div class="ppt-header fade-in" id="section-ministry" style="margin-top: 5rem;">
+  <div class="ppt-header fade-in visible" id="section-ministry" style="margin-top: 5rem;">
     <div class="ppt-line"></div>
     <div class="contact-header-wrap" style="justify-content: center;">
       <div class="contact-header-titles" style="text-align: center;">
@@ -821,7 +840,7 @@
     </div>
   </div>
 
-  <section class="fade-in" style="max-width: 1200px; margin: 0 auto 5rem; padding: 0 2rem;">
+  <section class="fade-in visible" style="max-width: 1200px; margin: 0 auto 5rem; padding: 0 2rem;">
     <div class="ministry-invitation-container" style="background: rgba(25, 20, 16, 0.88); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1.5px solid rgba(246, 210, 138, 0.3); border-radius: 28px; padding: 3rem 2.5rem; box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);">
       
       <!-- 1. 心志与前言 -->
