@@ -162,44 +162,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- SHARED Uploader ---
   window.uploadFile = async (fileInputId, targetId, previewId) => {
-    let file = document.getElementById(fileInputId).files[0];
+    const inputEl = document.getElementById(fileInputId);
+    let file = inputEl?.files?.[0];
     if(!file) return alert("请选择文件");
     
-    const btn = event.target;
-    btn.innerText = "自动压缩中...";
-    
-    if (file.type.startsWith('image/')) {
-        file = await compressImage(file);
+    const btn = window.event?.currentTarget || window.event?.target;
+    const origText = btn ? btn.innerText : '上传';
+    if (btn) {
+      btn.innerText = "自动压缩中...";
+      btn.disabled = true;
     }
+    
+    try {
+      if (file.type.startsWith('image/')) {
+        file = await compressImage(file);
+      }
 
-    const safeName = file.name.replace(/[^\w.-]/g, "_");
-    const path = `uploads/${Date.now()}-${safeName}`;
-    btn.innerText = "高速上传中...";
-    const { data, error } = await db.storage.from('harvester-media').upload(path, file);
-    if(error) return alert("上传失败: " + error.message);
-    const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
-    document.getElementById(targetId).value = publicUrl;
-    if(previewId) {
-      const prevEl = document.getElementById(previewId);
-      if(prevEl) {
-        prevEl.src = publicUrl;
-        if(prevEl.tagName === 'VIDEO' || prevEl.tagName === 'AUDIO') {
-          prevEl.style.display = 'block';
-          prevEl.load();
-        } else if (prevEl.tagName === 'IMG') {
-          const widget = document.querySelector(`.crop-controller-widget[data-target-img="${previewId}"]`);
-          if (widget) {
-            const ctrlId = widget.dataset.ctrlId;
-            if (ctrlId && typeof window.onImageCropChange === 'function') {
-              window.onImageCropChange(ctrlId);
+      const safeName = file.name.replace(/[^\w.-]/g, "_");
+      const path = `uploads/${Date.now()}-${safeName}`;
+      if (btn) btn.innerText = "高速上传中...";
+      const { data, error } = await db.storage.from('harvester-media').upload(path, file);
+      if(error) throw error;
+      const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) targetEl.value = publicUrl;
+      if(previewId) {
+        const prevEl = document.getElementById(previewId);
+        if(prevEl) {
+          prevEl.src = publicUrl;
+          if(prevEl.tagName === 'VIDEO' || prevEl.tagName === 'AUDIO') {
+            prevEl.style.display = 'block';
+            prevEl.load();
+          } else if (prevEl.tagName === 'IMG') {
+            const widget = document.querySelector(`.crop-controller-widget[data-target-img="${previewId}"]`);
+            if (widget) {
+              const ctrlId = widget.dataset.ctrlId;
+              if (ctrlId && typeof window.onImageCropChange === 'function') {
+                window.onImageCropChange(ctrlId);
+              }
             }
           }
         }
+        const bgEl = document.getElementById(previewId + '_bg');
+        if(bgEl) bgEl.style.backgroundImage = `url('${publicUrl}')`;
       }
-      const bgEl = document.getElementById(previewId + '_bg');
-      if(bgEl) bgEl.style.backgroundImage = `url('${publicUrl}')`;
+      if (btn) {
+        btn.innerText = "✅ 上传成功";
+        setTimeout(() => { if (btn) { btn.innerText = origText; btn.disabled = false; } }, 2500);
+      }
+    } catch (err) {
+      alert("上传失败: " + (err.message || err));
+      if (btn) {
+        btn.innerText = origText;
+        btn.disabled = false;
+      }
     }
-    btn.innerText = "✅ 上传成功";
   };
 
   // --- Dedicated 15s Audio Preview Uploader ---
@@ -1212,6 +1229,20 @@ document.addEventListener('DOMContentLoaded', () => {
         result = await db.from('music_works').insert([payload]).select();
       }
       
+      if (result.error && (result.error.message?.includes('schema cache') || result.error.message?.includes('column') || result.error.message?.includes('cover_pos') || result.error.message?.includes('img_pos'))) {
+        console.warn("Retrying music_works save without crop columns:", result.error);
+        const fallbackPayload = {
+          title,
+          cover_url,
+          audio_url,
+          score_url,
+          description
+        };
+        result = id 
+          ? await db.from('music_works').update(fallbackPayload).eq('id', id).select()
+          : await db.from('music_works').insert([fallbackPayload]).select();
+      }
+
       if (result.error) throw result.error;
       const savedId = id || result.data?.[0]?.id;
 
@@ -5643,6 +5674,28 @@ document.addEventListener('DOMContentLoaded', () => {
           if (Array.isArray(list)) {
             list = list.filter(x => String(x.id) !== String(id));
             await db.from('site_config').upsert({ key: 'cfg_albums_custom_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+          }
+        }
+      } catch(e){}
+    }
+
+    // 4. If deleting singers, also clean up from cfg_singers_crop_json and cfg_hidden_singer_ids
+    if (t === 'singers') {
+      try {
+        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_singers_crop_json').maybeSingle();
+        if (cfg?.value) {
+          let cropMap = typeof cfg.value === 'string' ? JSON.parse(cfg.value) : cfg.value;
+          delete cropMap[id];
+          await db.from('site_config').upsert({ key: 'cfg_singers_crop_json', value: JSON.stringify(cropMap) }, { onConflict: 'key' });
+        }
+      } catch(e){}
+      try {
+        const { data: hCfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
+        if (hCfg?.value) {
+          let hiddenList = typeof hCfg.value === 'string' ? JSON.parse(hCfg.value) : hCfg.value;
+          if (Array.isArray(hiddenList)) {
+            hiddenList = hiddenList.filter(x => String(x) !== String(id));
+            await db.from('site_config').upsert({ key: 'cfg_hidden_singer_ids', value: JSON.stringify(hiddenList) }, { onConflict: 'key' });
           }
         }
       } catch(e){}
