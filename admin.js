@@ -49,6 +49,25 @@ document.addEventListener('DOMContentLoaded', () => {
   window.logoutAdmin = () => db.auth.signOut();
   window.renderCMS = renderCMS;
 
+  // --- 🛡️ Network Glitch & Session Auto-Retry Helper ---
+  async function safeDbRequest(fn, maxRetries = 2) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (err) {
+        const msg = (err?.message || String(err)).toLowerCase();
+        const isNetwork = msg.includes('load failed') || msg.includes('failed to fetch') || msg.includes('network');
+        if (isNetwork && attempt < maxRetries) {
+          console.warn(`[Network Retry] Attempt ${attempt} encountered "${err.message}". Refreshing session and retrying in 600ms...`);
+          try { await db.auth.refreshSession(); } catch(e){}
+          await new Promise(r => setTimeout(r, 600));
+          continue;
+        }
+        throw err;
+      }
+    }
+  }
+
   async function renderCMS() {
     adminDashboard.innerHTML = `
       <div class="cms-layout" style="display:flex; height:100vh; background:#080808; color: #ffffff; overflow:hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;">
@@ -3275,15 +3294,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if(btn) btn.innerText = "处理中...";
 
       // Insert only base columns that exist in the singers database table
-      const { data: inserted, error: insErr } = await db.from('singers').insert([{
-        name,
-        role,
-        bio,
-        category,
-        image_url
-      }]).select();
-
-      if (insErr) throw insErr;
+      const res = await safeDbRequest(async () => {
+        return await db.from('singers').insert([{
+          name,
+          role,
+          bio,
+          category,
+          image_url
+        }]).select();
+      });
+      const inserted = res?.data;
+      if (res?.error) throw res.error;
 
       // Persist crop & zoom to cfg_singers_crop_json in site_config
       if (inserted && inserted[0]) {
@@ -3322,7 +3343,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if(btn) btn.closest('div').parentElement.parentElement.remove();
       renderCMS();
     } catch (e) {
-      alert("添加失败: " + e.message);
+      const msg = e?.message || String(e);
+      if (msg.includes('Load failed') || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+        alert("⚠️ 网络连接中断或超时 (Load failed)。\n\n您的输入内容已为您完整保留在当前窗口中，请再次点击「确认创建」重试。\n若频繁提示，请检查网络连接、VPN 或等待几秒后重试。");
+      } else {
+        alert("添加失败: " + msg);
+      }
       if(btn) btn.innerText = "确认创建";
     }
   };
@@ -3435,28 +3461,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     try {
       if(btn) btn.innerText = "保存中...";
-      const { error } = await db.from('singers').update(p).eq('id', id);
-      if (error) throw error;
+      
+      const res = await safeDbRequest(async () => {
+        return await db.from('singers').update(p).eq('id', id);
+      });
+      if (res?.error) throw res.error;
 
       // Persist crop & zoom to cfg_singers_crop_json in site_config
       try {
-        const { data: cropCfg } = await db.from('site_config').select('value').eq('key', 'cfg_singers_crop_json').maybeSingle();
+        const { data: cropCfg } = await safeDbRequest(async () => {
+          return await db.from('site_config').select('value').eq('key', 'cfg_singers_crop_json').maybeSingle();
+        });
         let cropMap = {};
         if (cropCfg?.value) {
           try { cropMap = typeof cropCfg.value === 'string' ? JSON.parse(cropCfg.value) : cropCfg.value; } catch(e){}
         }
         cropMap[id] = { img_pos, img_zoom };
         if (name) cropMap[name] = { img_pos, img_zoom };
-        await db.from('site_config').upsert({
-          key: 'cfg_singers_crop_json',
-          value: JSON.stringify(cropMap)
-        }, { onConflict: 'key' });
+        await safeDbRequest(async () => {
+          return await db.from('site_config').upsert({
+            key: 'cfg_singers_crop_json',
+            value: JSON.stringify(cropMap)
+          }, { onConflict: 'key' });
+        });
       } catch(cropErr) {
         console.warn("Crop config save note:", cropErr);
       }
 
       // Update cfg_hidden_singer_ids in site_config
-      const { data: hiddenCfg } = await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
+      const { data: hiddenCfg } = await safeDbRequest(async () => {
+        return await db.from('site_config').select('value').eq('key', 'cfg_hidden_singer_ids').maybeSingle();
+      });
       let hiddenSingerIds = [];
       if (hiddenCfg && hiddenCfg.value) {
         try { hiddenSingerIds = typeof hiddenCfg.value === 'string' ? JSON.parse(hiddenCfg.value) : hiddenCfg.value; } catch(e){}
@@ -3469,15 +3504,22 @@ document.addEventListener('DOMContentLoaded', () => {
         hiddenSingerIds = hiddenSingerIds.filter(x => x !== id);
       }
 
-      await db.from('site_config').upsert({
-        key: 'cfg_hidden_singer_ids',
-        value: JSON.stringify(hiddenSingerIds)
-      }, { onConflict: 'key' });
+      await safeDbRequest(async () => {
+        return await db.from('site_config').upsert({
+          key: 'cfg_hidden_singer_ids',
+          value: JSON.stringify(hiddenSingerIds)
+        }, { onConflict: 'key' });
+      });
 
       if(btn) btn.closest('div').parentElement.parentElement.remove();
       renderCMS();
     } catch(e) {
-      alert("保存失败: " + e.message);
+      const msg = e?.message || String(e);
+      if (msg.includes('Load failed') || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+        alert("⚠️ 网络连接中断或请求超时 (Load failed)。\n\n您的编辑内容已为您完整保留在输入框中，请再次点击「💾 保存档案」重试。\n若频繁提示，请检查网络连接、VPN 或等待几秒后重试。");
+      } else {
+        alert("保存失败: " + msg);
+      }
       if(btn) btn.innerText = "💾 保存档案";
     }
   };
