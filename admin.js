@@ -1350,13 +1350,13 @@ document.addEventListener('DOMContentLoaded', () => {
       (statusTag || '').trim(),
       '即将来临 ⏳', '即将来临', '即将开启', 
       'HOT 热门 🔥', 'HOT 热门', 'HOT', '热门', 
-      '报名中 🎟️', '报名中', 'OPEN 报名中', 'OPEN', 
+      '开放参与 ✨', '开放参与', 'OPEN 开放参与', 'OPEN', 
       '售罄', 'SOLD OUT', '已满额', 
       '已结束 🏁', '已结束', 
       '精彩回顾 🎞️', '精彩回顾', 'RECAP', 
       'ANNUAL 年度特会', 'ANNUAL', '年度特会', 
       '进行中 ⚡', '进行中', 
-      '⏳', '🔥', '🎟️', '🏁', '🔒', '⛪', '🎞️', '⚡'
+      '⏳', '🔥', '✨', '🏁', '🔒', '⛪', '🎞️', '⚡'
     ].filter(Boolean);
 
     let changed = true;
@@ -1454,7 +1454,7 @@ document.addEventListener('DOMContentLoaded', () => {
           date: '2025.11.15',
           time: '19:30 - 21:30',
           venue: '吉隆坡 · 全福敬拜大厅',
-          statusTag: '报名中 🎟️',
+          statusTag: '开放参与 ✨',
           link: ''
         },
         {
@@ -1544,9 +1544,6 @@ document.addEventListener('DOMContentLoaded', () => {
       let et = e.email_template || "";
       let ord = e.display_order ?? 0;
       let stag = e.status_tag || "";
-      let extUrl = e.external_url || e.ticket_url || "";
-      let extText = e.button_text || e.ticket_text || "查看详情";
-      if (extText.includes('购票') || extText.includes('索票')) extText = "查看详情";
 
       const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
       if (metaMatch) {
@@ -1560,9 +1557,6 @@ document.addEventListener('DOMContentLoaded', () => {
           et = meta.et || meta.email_template || et;
           ord = meta.ord ?? meta.display_order ?? ord;
           stag = meta.status_tag || meta.stag || stag;
-          extUrl = meta.external_url || meta.ext_url || meta.ticket_url || meta.turl || extUrl;
-          extText = meta.button_text || meta.btn_text || meta.ticket_text || meta.ttext || extText;
-          if (extText.includes('购票') || extText.includes('索票')) extText = "查看详情";
           desc = desc.replace(metaMatch[0], '').trim();
         } catch (err) {
           desc = desc.replace(metaMatch[0], '').trim();
@@ -1595,8 +1589,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      if (!evTime && defaultCuratedEventsMap[e.id]) {
-        evTime = defaultCuratedEventsMap[e.id].time;
+      if (!evTime) {
+        const knownTimes = {
+          '88d5abdd-40b2-4117-a54d-8cb21ecf89c3': '19:30 - 22:00',
+          'e48a862c-6763-450d-b43f-8549ae21a3d7': '15:00 - 17:00',
+          'e44e2f32-b755-4339-a9a4-bfe910fa9c3e': '20:15 - 22:00',
+          '7e4d246d-5046-444d-8c1a-1384ac6c59b1': '20:00 - 22:00',
+          'd638a60e-0ae9-43d3-9b43-a7360b978778': '20:00 - 22:00',
+          '49d93ede-d4bb-4af5-90d5-83be66e692a9': '19:30 - 21:30'
+        };
+        if (knownTimes[e.id]) {
+          evTime = knownTimes[e.id];
+        } else {
+          const searchStr = `${rawTitle} ${loc} ${desc}`;
+          if (/FGA|北赖|建堂/i.test(searchStr)) evTime = '19:30 - 22:00';
+          else if (/恩泉|新加坡/i.test(searchStr)) evTime = '15:00 - 17:00';
+          else if (/亚罗士打|浸信会/i.test(searchStr)) evTime = '20:15 - 22:00';
+          else if (/马口/i.test(searchStr)) evTime = '20:00 - 22:00';
+          else if (/巴生|卓越/i.test(searchStr)) evTime = '20:00 - 22:00';
+          else if (/日本|东京|活水/i.test(searchStr)) evTime = '19:30 - 21:30';
+          else if (defaultCuratedEventsMap[e.id]) evTime = defaultCuratedEventsMap[e.id].time;
+          else evTime = '19:30 - 21:30';
+        }
       }
 
       return {
@@ -1608,8 +1622,6 @@ document.addEventListener('DOMContentLoaded', () => {
         location: loc,
         map_url: murl,
         image_url: img,
-        ticket_url: extUrl,
-        ticket_text: extText,
         email_template: et,
         display_order: parseInt(ord, 10) || 0,
         description: desc
@@ -1778,7 +1790,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </td>
                     <td style="padding:14px; font-size:0.85rem; color:#ccc;">
                       <b style="color: #F6F4F0;">${e.event_date || '未定'}</b>
-                      <div style="font-size:0.75rem; color:var(--gold);"><i class="far fa-clock"></i> ${e.event_time || '未设时间'}</div>
+                      <div style="font-size:0.75rem; color:var(--gold);"><i class="far fa-clock"></i> ${e.event_time || '19:30 - 21:30'}</div>
                     </td>
                     <td style="padding:14px;">
                       <div style="font-size:1rem; font-weight:500; color: #F6F4F0; display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
@@ -1905,7 +1917,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <!-- 快捷一键点选徽章 -->
           <div style="display:flex; flex-wrap:wrap; gap:6px;">
             <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='HOT 热门 🔥'">🔥 HOT 热门</button>
-            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='报名中 🎟️'">🎟️ 报名中</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='开放参与 ✨'">✨ 开放参与</button>
             <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='即将来临 ⏳'">⏳ 即将来临</button>
             <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='进行中 ⚡'">⚡ 进行中</button>
             <button type="button" class="btn-tiny" onclick="document.getElementById('ev_p_tag').value='已满额 🔒'">🔒 已满额</button>
@@ -2180,10 +2192,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let ord = e.display_order ?? 0;
         let desc = e.description || "";
         let stag = e.status_tag || "";
-        let turl = e.ticket_url || "";
-        let ttext = e.ticket_text || "查看详情";
-        if (ttext.includes('购票') || ttext.includes('索票')) ttext = "查看详情";
-        let reqTicket = false;
 
         if (desc.includes('EXT_META:')) {
            const metaMatch = desc.match(/EXT_META:(.*?)\|\|/);
@@ -2198,9 +2206,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 et = meta.et || meta.email_template || et;
                 ord = meta.ord ?? meta.display_order ?? ord;
                 stag = meta.status_tag || meta.stag || stag;
-                turl = meta.ticket_url || meta.turl || turl;
-                ttext = meta.ticket_text || meta.ttext || ttext;
-                if (ttext.includes('购票') || ttext.includes('索票')) ttext = "查看详情";
                 desc = desc.replace(metaMatch[0], '').trim();
               } catch(err) {
                 desc = desc.replace(metaMatch[0], '').trim();
@@ -2233,11 +2238,33 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
 
-        if (!evTime && window._defaultCuratedEventsMap) {
-          const map = window._defaultCuratedEventsMap;
-          if (map[e.id]) evTime = map[e.id].time;
-          else if (map[rawTitle]) evTime = map[rawTitle].time;
-          else if (map[e.title]) evTime = map[e.title].time;
+        if (!evTime) {
+          const knownTimes = {
+            '88d5abdd-40b2-4117-a54d-8cb21ecf89c3': '19:30 - 22:00',
+            'e48a862c-6763-450d-b43f-8549ae21a3d7': '15:00 - 17:00',
+            'e44e2f32-b755-4339-a9a4-bfe910fa9c3e': '20:15 - 22:00',
+            '7e4d246d-5046-444d-8c1a-1384ac6c59b1': '20:00 - 22:00',
+            'd638a60e-0ae9-43d3-9b43-a7360b978778': '20:00 - 22:00',
+            '49d93ede-d4bb-4af5-90d5-83be66e692a9': '19:30 - 21:30'
+          };
+          if (knownTimes[e.id]) {
+            evTime = knownTimes[e.id];
+          } else {
+            const searchStr = `${rawTitle} ${loc} ${desc}`;
+            if (/FGA|北赖|建堂/i.test(searchStr)) evTime = '19:30 - 22:00';
+            else if (/恩泉|新加坡/i.test(searchStr)) evTime = '15:00 - 17:00';
+            else if (/亚罗士打|浸信会/i.test(searchStr)) evTime = '20:15 - 22:00';
+            else if (/马口/i.test(searchStr)) evTime = '20:00 - 22:00';
+            else if (/巴生|卓越/i.test(searchStr)) evTime = '20:00 - 22:00';
+            else if (/日本|东京|活水/i.test(searchStr)) evTime = '19:30 - 21:30';
+            else if (window._defaultCuratedEventsMap) {
+              const map = window._defaultCuratedEventsMap;
+              if (map[e.id]) evTime = map[e.id].time;
+              else if (map[rawTitle]) evTime = map[rawTitle].time;
+              else if (map[e.title]) evTime = map[e.title].time;
+            }
+            if (!evTime) evTime = '19:30 - 21:30';
+          }
         }
 
         e = {
@@ -2249,9 +2276,6 @@ document.addEventListener('DOMContentLoaded', () => {
           location: loc,
           map_url: murl,
           image_url: img,
-          ticket_url: turl,
-          ticket_text: ttext,
-          requires_ticket: reqTicket,
           email_template: et,
           display_order: ord,
           description: desc
@@ -2307,7 +2331,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <!-- 状态标签快捷点选 -->
           <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:15px;">
             <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='HOT 热门 🔥'">🔥 HOT 热门</button>
-            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='报名中 🎟️'">🎟️ 报名中</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='开放参与 ✨'">✨ 开放参与</button>
             <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='即将来临 ⏳'">⏳ 即将来临</button>
             <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='进行中 ⚡'">⚡ 进行中</button>
             <button type="button" class="btn-tiny" onclick="document.getElementById('ev_stag').value='已满额 🔒'">🔒 已满额</button>
@@ -2335,26 +2359,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Google Map 地图链接 (可选)</label>
               <input type="text" id="ev_ml" value="${e?.map_url || ''}" placeholder="https://maps.app.goo.gl/..." style="width:100%; padding:10px;">
-            </div>
-          </div>
-
-          <!-- 外部跳转 / 报名链接设置 (可选) -->
-          <div style="background:#0e0e0e; border:1px solid #222; border-radius:12px; padding:12px 15px; margin-bottom:15px;">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-              <span style="font-size:0.85rem; color:#aaa;"><i class="fas fa-link" style="color:var(--gold); margin-right:5px;"></i> 外部跳转 / 报名链接 (可选，留空则默认链接到站内详情)</span>
-              <a href="javascript:void(0)" onclick="const f=document.getElementById('ev_ext_fields'); f.style.display=f.style.display==='none'?'grid':'none'; this.innerText=f.style.display==='none'?'展开配置 ▾':'收起配置 ▴';" style="font-size:0.75rem; color:var(--gold); text-decoration:none;">${e?.ticket_url ? '收起配置 ▴' : '展开配置 ▾'}</a>
-            </div>
-          </div>
-
-          <!-- 外部链接配置 (折叠/展开) -->
-          <div id="ev_ext_fields" style="display:${e?.ticket_url ? 'grid' : 'none'}; grid-template-columns: 2fr 1.2fr; gap:15px; margin-bottom:15px;">
-            <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">外部链接地址 (URL)</label>
-              <input type="text" id="ev_turl" value="${e?.ticket_url || ''}" placeholder="https://... 留空则链接到站内详情" style="width:100%; padding:10px;">
-            </div>
-            <div>
-              <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">按钮文字 (Button Text)</label>
-              <input type="text" id="ev_ttext" value="${e?.ticket_text || '查看详情'}" placeholder="例如：查看详情" style="width:100%; padding:10px;">
             </div>
           </div>
 
@@ -2394,10 +2398,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const stag = document.getElementById('ev_stag').value.trim();
     const finalTitle = sanitizeEventTitle(rawTitle, stag);
 
-    const extUrl = document.getElementById('ev_turl')?.value.trim() || '';
-    let extText = document.getElementById('ev_ttext')?.value.trim() || '查看详情';
-    if (extText.includes('购票') || extText.includes('索票')) extText = '查看详情';
-
     const imgPos = document.getElementById('ev_pos')?.value.trim() || '50% 50%';
     const imgZoom = parseFloat(document.getElementById('ev_zoom')?.value) || 1.0;
     const payload = {
@@ -2409,9 +2409,6 @@ document.addEventListener('DOMContentLoaded', () => {
       image_url: document.getElementById('ev_url').value.trim(),
       img_pos: imgPos,
       img_zoom: imgZoom,
-      ticket_url: extUrl,
-      ticket_text: extText,
-      requires_ticket: false,
       status_tag: stag,
       email_template: document.getElementById('ev_email').value,
       description: document.getElementById('ev_desc').value,
@@ -2442,8 +2439,6 @@ document.addEventListener('DOMContentLoaded', () => {
           zoom: payload.img_zoom,
           img_pos: payload.img_pos,
           img_zoom: payload.img_zoom,
-          turl: payload.ticket_url,
-          ttext: payload.ticket_text,
           stag: payload.status_tag,
           et: payload.email_template,
           ord: payload.display_order

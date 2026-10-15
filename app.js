@@ -71,6 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
       fetchEvents();
       // Re-run diary to apply global FB link from config if needed
       fetchDiary(); 
+      // Re-hydrate event detail page once site configs are ready
+      if (document.getElementById('galleryContainer')) initEventGallery();
     } catch (err) { console.warn("Supabase Config Error:", err.message); }
   }
 
@@ -347,9 +349,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Event & Album Metadata Parser ---
-  // --- Event & Album Metadata Parser ---
+  const knownMinistryEventTimes = {
+    '88d5abdd-40b2-4117-a54d-8cb21ecf89c3': '19:30 - 22:00', // FGA 建堂筹款晚宴 · 北赖
+    'e48a862c-6763-450d-b43f-8549ae21a3d7': '15:00 - 17:00', // 新加坡 恩泉教会
+    'e44e2f32-b755-4339-a9a4-bfe910fa9c3e': '20:15 - 22:00', // 亚罗士打浸信会教会
+    '7e4d246d-5046-444d-8c1a-1384ac6c59b1': '20:00 - 22:00', // 马口教会
+    'd638a60e-0ae9-43d3-9b43-a7360b978778': '20:00 - 22:00', // 巴生卓越社区教会
+    '49d93ede-d4bb-4af5-90d5-83be66e692a9': '19:30 - 21:30'  // 日本 活水教会
+  };
+
   function parseEventData(item) {
-    if (!item) return { id: '', title: '', dateStr: '', timeStr: '', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '', fullDateTime: '', day: '01', month: '01 月', year: '2026', cleanTitle: '', statusTag: '', ticket_url: '', ticket_text: '查看详情' };
+    if (!item) return { id: '', title: '', dateStr: '', timeStr: '19:30 - 21:30', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '19:30 - 21:30', fullDateTime: '', day: '01', month: '01 月', year: '2026', cleanTitle: '', statusTag: '', ticket_url: '', ticket_text: '查看详情' };
     
     let desc = (item.description || "").trim();
     let rawDate = item.event_date || item.date || item.start_date || item.eventDate || item.event_day || item.datetime || item.event_datetime || item.start_at || item.start || "";
@@ -359,9 +369,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let rawImg = item.image_url || item.cover_url || item.imageUrl || item.poster_url || item.poster || item.photo_url || "";
     let emailTemplate = item.email_template || item.emailTemplate || "";
     let order = (item.display_order !== undefined && item.display_order !== null && !isNaN(parseInt(item.display_order, 10))) ? parseInt(item.display_order, 10) : null;
-    let extUrl = item.external_url || item.ticket_url || item.ticketUrl || "";
-    let extText = item.button_text || item.ticket_text || item.ticketText || "查看详情";
-    if (extText.includes('购票') || extText.includes('索票')) extText = "查看详情";
     let meta = {};
 
     // Parse EXT_META JSON block if embedded in description
@@ -376,11 +383,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (meta.murl || meta.map_url || meta.mapUrl) rawMapUrl = meta.murl || meta.map_url || meta.mapUrl;
           if (meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url) rawImg = meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url;
           if (meta.et || meta.email_template) emailTemplate = meta.et || meta.email_template;
-          if (meta.external_url || meta.ext_url || meta.ticket_url || meta.turl) extUrl = meta.external_url || meta.ext_url || meta.ticket_url || meta.turl;
-          if (meta.button_text || meta.btn_text || meta.ticket_text || meta.ttext) {
-            extText = meta.button_text || meta.btn_text || meta.ticket_text || meta.ttext;
-            if (extText.includes('购票') || extText.includes('索票')) extText = "查看详情";
-          }
           if (meta.ord !== undefined || meta.display_order !== undefined) {
             const parsedOrd = parseInt(meta.ord ?? meta.display_order, 10);
             if (!isNaN(parsedOrd)) order = parsedOrd;
@@ -427,12 +429,33 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Fallback: If time is still empty, check if this event matches defaultCuratedEvents by ID or title
+    // Fallback 1: ID-based lookup in known ministry times map
+    if (!rawTime && item.id && knownMinistryEventTimes[item.id]) {
+      rawTime = knownMinistryEventTimes[item.id];
+    }
+
+    // Fallback 2: Keyword matching across title, location & description
+    if (!rawTime) {
+      const searchStr = `${item.title || ''} ${rawLoc || ''} ${desc || ''}`;
+      if (/FGA|北赖|建堂/i.test(searchStr)) rawTime = '19:30 - 22:00';
+      else if (/恩泉|新加坡/i.test(searchStr)) rawTime = '15:00 - 17:00';
+      else if (/亚罗士打|浸信会/i.test(searchStr)) rawTime = '20:15 - 22:00';
+      else if (/马口/i.test(searchStr)) rawTime = '20:00 - 22:00';
+      else if (/巴生|卓越/i.test(searchStr)) rawTime = '20:00 - 22:00';
+      else if (/日本|东京|活水/i.test(searchStr)) rawTime = '19:30 - 21:30';
+    }
+
+    // Fallback 3: If time is still empty, check if this event matches defaultCuratedEvents by ID or title
     if (!rawTime && (item.id || item.title)) {
       const curMatch = defaultCuratedEvents.find(x => String(x.id) === String(item.id) || (x.title && item.title && (x.title.includes(item.title) || item.title.includes(x.title))));
       if (curMatch && curMatch.event_time) {
         rawTime = curMatch.event_time;
       }
+    }
+
+    // Fallback 4: Guarantee time is never empty for ministry events
+    if (!rawTime) {
+      rawTime = '19:30 - 21:30';
     }
 
     // Parse Day, Month, Year for sleek tour layout
@@ -508,8 +531,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
+    if (!timeStr) {
+      timeStr = "19:30 - 21:30";
+    }
 
-    const fullDateTime = `${dateStr}${timeStr ? ' ' + timeStr : ''}`.trim();
+    const fullDateTime = `${dateStr} ${timeStr}`.trim();
 
     return {
       id: item.id,
@@ -524,8 +550,8 @@ document.addEventListener('DOMContentLoaded', () => {
       location: rawLoc,
       mapUrl: rawMapUrl,
       image_url: rawImg,
-      ticket_url: extUrl,
-      ticket_text: extText,
+      ticket_url: '',
+      ticket_text: '查看详情',
       description: desc,
       rawDate,
       rawTime,
@@ -548,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event_date: "2025.11.15",
       event_time: "19:30 - 21:30",
       location: "吉隆坡 · 全福敬拜大厅 (Kuala Lumpur)",
-      status_tag: "OPEN 报名中",
+      status_tag: "OPEN 开放参与",
       image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85",
       description: "聚集全马各地渴慕敬拜的弟兄姊妹，以原创 CCM 诗歌与深刻见证同心称谢主名。特邀多位知名福音歌手与同工现场配搭，愿圣灵的火焰点燃每一个敬拜的心灵。",
       map_url: "https://maps.google.com"
@@ -678,11 +704,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isCancelled) {
         actionHtml = `<span class="event-strip-disabled">已取消</span>`;
       } else {
-        const linkUrl = (e.ticket_url && e.ticket_url.startsWith('http')) ? e.ticket_url : `event.html?id=${e.id}`;
-        const isExt = linkUrl.startsWith('http');
-        let btnText = e.ticket_text || '查看详情';
-        if (btnText.includes('购票') || btnText.includes('索票')) btnText = '查看详情';
-        actionHtml = `<a href="${linkUrl}" ${isExt ? 'target="_blank"' : ''} class="event-strip-link">${btnText} <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>`;
+        actionHtml = `<a href="event.html?id=${e.id}" class="event-strip-link">查看详情 <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>`;
       }
 
       const safeTitle = (e.cleanTitle || e.title || "").replace(/'/g, "\\'");
@@ -695,7 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="event-month-year">
               <span class="event-month">${e.month}</span>
               <span class="event-year">${e.year}</span>
-              ${e.timeStr ? `<span class="event-time-badge"><i class="far fa-clock"></i> ${e.timeStr}</span>` : ''}
+              <span class="event-time-badge"><i class="far fa-clock"></i> ${e.timeStr || '19:30 - 21:30'}</span>
             </div>
           </div>
 
@@ -706,7 +728,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <a href="event.html?id=${e.id}">${e.cleanTitle}</a>
             </h3>
             <p class="event-strip-venue">
-              ${e.timeStr ? `<span class="event-strip-time"><i class="far fa-clock"></i> ${e.timeStr}</span><span class="event-strip-dot">·</span>` : ''}
+              <span class="event-strip-time"><i class="far fa-clock"></i> ${e.timeStr || '19:30 - 21:30'}</span><span class="event-strip-dot">·</span>
               <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> ${e.location || 'HARVESTER MUSIC PRODUCTION'}</span>
             </p>
           </div>
@@ -894,7 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="event-card-bottom-info">
           <h3 class="event-card-title">${item.title}</h3>
           <div class="event-card-meta">
-            ${item.time ? `<span><i class="far fa-clock"></i> ${item.time}</span>` : ''}
+            <span><i class="far fa-clock"></i> ${item.time || '19:30 - 21:30'}</span>
             <span><i class="fas fa-map-marker-alt"></i> ${item.venue}</span>
             <span><i class="fas fa-arrow-right"></i> 查看详情</span>
           </div>
@@ -1207,7 +1229,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let html = '';
         if (parsed.dateStr) html += `<span><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.dateStr}</span>`;
-        if (parsed.timeStr) html += `<span><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${parsed.timeStr}</span>`;
+        html += `<span><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${parsed.timeStr || '19:30 - 21:30'}</span>`;
         if (parsed.location) html += `<span><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.location}</span>`;
         
         dateEl.innerHTML = html;
