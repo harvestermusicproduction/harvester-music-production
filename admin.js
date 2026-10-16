@@ -3288,14 +3288,16 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       if(btn) btn.innerText = "处理中...";
 
-      // Insert only base columns that exist in the singers database table
+      // Insert singer record with image crop & focus columns
       const res = await safeDbRequest(async () => {
         return await db.from('singers').insert([{
           name,
           role,
           bio,
           category,
-          image_url
+          image_url,
+          img_pos,
+          img_zoom
         }]).select();
       });
       const inserted = res?.data;
@@ -3452,6 +3454,8 @@ document.addEventListener('DOMContentLoaded', () => {
       role,
       category,
       image_url,
+      img_pos,
+      img_zoom,
       display_order
     };
     try {
