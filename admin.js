@@ -1350,8 +1350,8 @@ document.addEventListener('DOMContentLoaded', () => {
       (statusTag || '').trim(),
       '即将来临 ⏳', '即将来临', '即将开启', 
       'HOT 热门 🔥', 'HOT 热门', 'HOT', '热门', 
-      '开放参与 ✨', '开放参与', 'OPEN 开放参与', 'OPEN', 
-      '售罄', 'SOLD OUT', '已满额', 
+      '开放参与 ✨', '开放参与', 'OPEN 开放参与', 
+      '已满额 🔒', '已满额', 
       '已结束 🏁', '已结束', 
       '精彩回顾 🎞️', '精彩回顾', 'RECAP', 
       'ANNUAL 年度特会', 'ANNUAL', '年度特会', 
@@ -1771,9 +1771,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 let tagBadge = '';
                 if (e.status_tag) {
                   const tagUpper = e.status_tag.toUpperCase();
-                  const isSold = tagUpper.includes('SOLD') || tagUpper.includes('售罄');
+                  const isEnded = tagUpper.includes('已结束') || tagUpper.includes('回顾') || tagUpper.includes('RECAP');
+                  const isFull = tagUpper.includes('满额') || tagUpper.includes('FULL') || tagUpper.includes('已满');
                   const isCancel = tagUpper.includes('取消') || tagUpper.includes('CANCEL');
-                  tagBadge = `<span style="padding:2px 8px; border-radius:4px; font-size:0.75rem; font-weight:bold; margin-right:6px; background:${isSold ? 'rgba(255,107,129,0.15)' : (isCancel ? 'rgba(164,176,190,0.15)' : 'rgba(46,213,115,0.15)')}; color:${isSold ? '#ff6b81' : (isCancel ? '#a4b0be' : '#2ed573')}; border:1px solid ${isSold ? 'rgba(255,107,129,0.3)' : (isCancel ? 'rgba(164,176,190,0.3)' : 'rgba(46,213,115,0.3)')};">${e.status_tag}</span>`;
+                  const isHot = tagUpper.includes('HOT') || tagUpper.includes('热门');
+                  let bBg = 'rgba(46,213,115,0.15)'; let bColor = '#2ed573'; let bBorder = 'rgba(46,213,115,0.3)';
+                  if (isCancel || isEnded) {
+                    bBg = 'rgba(164,176,190,0.15)'; bColor = '#a4b0be'; bBorder = 'rgba(164,176,190,0.3)';
+                  } else if (isFull) {
+                    bBg = 'rgba(255,107,129,0.15)'; bColor = '#ff6b81'; bBorder = 'rgba(255,107,129,0.3)';
+                  } else if (isHot) {
+                    bBg = 'rgba(255,165,2,0.15)'; bColor = '#ffa502'; bBorder = 'rgba(255,165,2,0.3)';
+                  }
+                  tagBadge = `<span style="padding:2px 8px; border-radius:4px; font-size:0.75rem; font-weight:bold; margin-right:6px; background:${bBg}; color:${bColor}; border:1px solid ${bBorder};">${e.status_tag}</span>`;
                 }
 
                 return `

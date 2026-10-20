@@ -311,13 +311,13 @@ document.addEventListener('DOMContentLoaded', () => {
       (statusTag || '').trim(),
       '即将来临 ⏳', '即将来临', '即将开启', 
       'HOT 热门 🔥', 'HOT 热门', 'HOT', '热门', 
-      '报名中 🎟️', '报名中', 'OPEN 报名中', 'OPEN', 
-      '售罄', 'SOLD OUT', '已满额', 
+      '开放参与 ✨', '开放参与', 'OPEN 开放参与', 
+      '已满额 🔒', '已满额', 
       '已结束 🏁', '已结束', 
       '精彩回顾 🎞️', '精彩回顾', 'RECAP', 
       'ANNUAL 年度特会', 'ANNUAL', '年度特会', 
       '进行中 ⚡', '进行中', 
-      '⏳', '🔥', '🎟️', '🏁', '🔒', '⛪', '🎞️', '⚡'
+      '⏳', '🔥', '✨', '🏁', '🔒', '⛪', '🎞️', '⚡'
     ].filter(Boolean);
 
     let changed = true;
@@ -350,20 +350,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Event & Album Metadata Parser ---
   const knownMinistryEventTimes = {
-    '88d5abdd-40b2-4117-a54d-8cb21ecf89c3': '19:30 - 22:00', // FGA 建堂筹款晚宴 · 北赖
     'e48a862c-6763-450d-b43f-8549ae21a3d7': '15:00 - 17:00', // 新加坡 恩泉教会
     'e44e2f32-b755-4339-a9a4-bfe910fa9c3e': '20:15 - 22:00', // 亚罗士打浸信会教会
     '7e4d246d-5046-444d-8c1a-1384ac6c59b1': '20:00 - 22:00', // 马口教会
     'd638a60e-0ae9-43d3-9b43-a7360b978778': '20:00 - 22:00', // 巴生卓越社区教会
-    '49d93ede-d4bb-4af5-90d5-83be66e692a9': '19:30 - 21:30'  // 日本 活水教会
+    '49d93ede-d4bb-4af5-90d5-83be66e692a9': '19:30 - 21:30', // 日本 活水教会
+    'poster_banner_1': '20:00 - 22:00',
+    'poster_e44e2f32': '20:15 - 22:00',
+    'poster_7e4d246d': '20:00 - 22:00',
+    'poster_d638a60e': '20:00 - 22:00',
+    'poster_49d93ede': '19:30 - 21:30'
   };
 
   function parseEventData(item) {
-    if (!item) return { id: '', title: '', dateStr: '', timeStr: '19:30 - 21:30', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '19:30 - 21:30', fullDateTime: '', day: '01', month: '01 月', year: '2026', cleanTitle: '', statusTag: '', ticket_url: '', ticket_text: '查看详情' };
+    if (!item) return { id: '', title: '', dateStr: '', timeStr: '20:00 - 22:00', location: '', mapUrl: '', image_url: '', description: '', rawDate: '', rawTime: '20:00 - 22:00', fullDateTime: '', day: '01', month: '01 月', year: '2026', cleanTitle: '', statusTag: '' };
     
     let desc = (item.description || "").trim();
     let rawDate = item.event_date || item.date || item.start_date || item.eventDate || item.event_day || item.datetime || item.event_datetime || item.start_at || item.start || "";
     let rawTime = item.event_time || item.time || item.start_time || item.eventTime || item.event_hour || item.time_str || item.event_time_str || item.timing || "";
+    if (rawTime && !/\d/.test(rawTime)) {
+      rawTime = "";
+    }
     let rawLoc = item.location || item.loc || item.place || item.venue || item.address || "";
     let rawMapUrl = item.map_url || item.mapUrl || item.murl || item.google_map || "";
     let rawImg = item.image_url || item.cover_url || item.imageUrl || item.poster_url || item.poster || item.photo_url || "";
@@ -378,7 +385,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           meta = JSON.parse(metaMatch[1]) || {};
           if (meta.d || meta.date || meta.event_date) rawDate = meta.d || meta.date || meta.event_date;
-          if (meta.tm || meta.time || meta.event_time || meta.start_time || meta.t) rawTime = meta.tm || meta.time || meta.event_time || meta.start_time || meta.t;
+          if (meta.tm || meta.time || meta.event_time || meta.start_time || meta.t) {
+            const mTime = meta.tm || meta.time || meta.event_time || meta.start_time || meta.t;
+            if (mTime && /\d/.test(mTime)) rawTime = mTime;
+          }
           if (meta.loc || meta.location || meta.place || meta.venue || meta.address) rawLoc = meta.loc || meta.location || meta.place || meta.venue || meta.address;
           if (meta.murl || meta.map_url || meta.mapUrl) rawMapUrl = meta.murl || meta.map_url || meta.mapUrl;
           if (meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url) rawImg = meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url;
@@ -420,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rawTime = m1[1].trim();
       } else {
         const m2 = desc.match(/(?:时间|time|⏰)[：:\s]*([^\r\n,，。|]+)/i);
-        if (m2) {
+        if (m2 && /\d/.test(m2[1])) {
           rawTime = m2[1].trim();
         } else {
           const m3 = desc.match(/\b([0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?(?:\s*[-~至到to]\s*[0-9]{1,2}[:：.][0-9]{2}(?:\s*(?:am|pm|AM|PM))?)?)/i);
@@ -437,12 +447,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fallback 2: Keyword matching across title, location & description
     if (!rawTime) {
       const searchStr = `${item.title || ''} ${rawLoc || ''} ${desc || ''}`;
-      if (/FGA|北赖|建堂/i.test(searchStr)) rawTime = '19:30 - 22:00';
-      else if (/恩泉|新加坡/i.test(searchStr)) rawTime = '15:00 - 17:00';
-      else if (/亚罗士打|浸信会/i.test(searchStr)) rawTime = '20:15 - 22:00';
+      if (/恩泉|新加坡/i.test(searchStr)) rawTime = '15:00 - 17:00';
+      else if (/亚罗士打|浸信会|咖啡/i.test(searchStr)) rawTime = '20:15 - 22:00';
       else if (/马口/i.test(searchStr)) rawTime = '20:00 - 22:00';
       else if (/巴生|卓越/i.test(searchStr)) rawTime = '20:00 - 22:00';
       else if (/日本|东京|活水/i.test(searchStr)) rawTime = '19:30 - 21:30';
+      else if (/全年巡回|巡回|特会/i.test(searchStr)) rawTime = '20:00 - 22:00';
     }
 
     // Fallback 3: If time is still empty, check if this event matches defaultCuratedEvents by ID or title
@@ -455,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fallback 4: Guarantee time is never empty for ministry events
     if (!rawTime) {
-      rawTime = '19:30 - 21:30';
+      rawTime = '20:00 - 22:00';
     }
 
     // Parse Day, Month, Year for sleek tour layout
@@ -550,8 +560,6 @@ document.addEventListener('DOMContentLoaded', () => {
       location: rawLoc,
       mapUrl: rawMapUrl,
       image_url: rawImg,
-      ticket_url: '',
-      ticket_text: '查看详情',
       description: desc,
       rawDate,
       rawTime,
@@ -569,69 +577,58 @@ document.addEventListener('DOMContentLoaded', () => {
   // =========================================================================
   const defaultCuratedEvents = [
     {
-      id: "curated_1",
-      title: "收割敬拜之夜 · 吉隆坡特别专场",
-      event_date: "2025.11.15",
+      id: "e44e2f32-b755-4339-a9a4-bfe910fa9c3e",
+      title: "音乐见证布道会 · 亚罗士打浸信会教会",
+      event_date: "2026.10.25",
+      event_time: "20:15 - 22:00",
+      location: "亚罗士打浸信会教会 (咖啡牧师教会)",
+      status_tag: "即将来临 ⏳",
+      image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg",
+      description: "汤小康老师与收割机敬拜音乐团队亲临亚罗士打浸信会教会，以动人 CCM 诗歌与深刻生命见证带来福音飨宴。",
+      map_url: "https://maps.google.com"
+    },
+    {
+      id: "7e4d246d-5046-444d-8c1a-1384ac6c59b1",
+      title: "音乐见证布道会 · 马口教会",
+      event_date: "2026.11.08",
+      event_time: "20:00 - 22:00",
+      location: "马口教会",
+      status_tag: "即将来临 ⏳",
+      image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg",
+      description: "收割机福音巡回前往森美兰马口教会，分享音乐创作历程与神恩典奇妙作为。",
+      map_url: "https://maps.google.com"
+    },
+    {
+      id: "d638a60e-0ae9-43d3-9b43-a7360b978778",
+      title: "音乐见证布道会 · 巴生卓越社区教会",
+      event_date: "2026.11.22",
+      event_time: "20:00 - 22:00",
+      location: "巴生卓越社区教会",
+      status_tag: "即将来临 ⏳",
+      image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg",
+      description: "巴生卓越社区教会专场音乐见证布道会，欢迎携同未信主亲友出席。",
+      map_url: "https://maps.google.com"
+    },
+    {
+      id: "49d93ede-d4bb-4af5-90d5-83be66e692a9",
+      title: "音乐见证布道会 · 日本东京活水教会",
+      event_date: "2026.12.17",
       event_time: "19:30 - 21:30",
-      location: "吉隆坡 · 全福敬拜大厅 (Kuala Lumpur)",
-      status_tag: "OPEN 开放参与",
-      image_url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85",
-      description: "聚集全马各地渴慕敬拜的弟兄姊妹，以原创 CCM 诗歌与深刻见证同心称谢主名。特邀多位知名福音歌手与同工现场配搭，愿圣灵的火焰点燃每一个敬拜的心灵。",
+      location: "日本 活水教会",
+      status_tag: "即将来临 ⏳",
+      image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg",
+      description: "Harvester 国际巡回站：日本东京活水教会音乐见证分享会。跨越国界播种福音。",
       map_url: "https://maps.google.com"
     },
     {
-      id: "curated_2",
-      title: "原创赞美诗创作营 & 制作工作坊",
-      event_date: "2025.08.20",
-      event_time: "09:30 - 17:00",
-      location: "新山 · 音乐创作空间 (Johor Bahru)",
-      status_tag: "HOT 热门",
-      image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=85",
-      description: "为有志于诗歌创作的音乐人与主领提供专业编曲、作词、和声编写及录音实战教学。汤小康老师与制作团队亲自指导，协助完成属于神国度的原创佳作。",
-      map_url: "https://maps.google.com"
-    },
-    {
-      id: "curated_3",
-      title: "灵火青年敬拜节 · 赞美复兴特会",
-      event_date: "2025.07.12",
-      event_time: "19:00 - 22:00",
-      location: "槟城 · 圣爱大礼堂 (Penang)",
-      status_tag: "RECAP 精彩回顾",
-      image_url: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=85",
-      description: "专为年轻世代打造的现代流行敬拜之夜！融合摇滚、流行与民谣风格赞美诗，唤醒年轻人对福音的火热心志，立志在时代中作光作盐。",
-      map_url: "https://maps.google.com"
-    },
-    {
-      id: "curated_4",
-      title: "收割者福音巡回音乐分享会",
-      event_date: "2025.06.05",
-      event_time: "20:00 - 21:45",
-      location: "怡保 · 基督徒交流中心 (Ipoh)",
-      status_tag: "UPCOMING 即将开启",
-      image_url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=85",
-      description: "深入各地堂会与团契，以纯粹的木吉他与琴声讲述创作背后的属灵历程与恩典见证，用音乐播种爱与盼望。",
-      map_url: "https://maps.google.com"
-    },
-    {
-      id: "curated_5",
-      title: "赞美诗合唱与管弦乐室内交响夜",
-      event_date: "2025.05.01",
-      event_time: "19:30 - 21:30",
-      location: "吉隆坡 · 艺术文化中心 (Kuala Lumpur)",
-      status_tag: "RECAP 精彩回顾",
-      image_url: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1200&q=85",
-      description: "经典与现代的庄严对话。室内管弦乐团与数十人诗班同台献唱经典圣诗与 Harvester 原创交响诗篇，呈现震撼心灵的敬拜飨宴。",
-      map_url: "https://maps.google.com"
-    },
-    {
-      id: "curated_6",
-      title: "收割机敬拜团同工灵修培灵会",
-      event_date: "2025.03.18",
-      event_time: "10:00 - 16:30",
-      location: "马六甲 · 恩典营地 (Melaka)",
-      status_tag: "ANNUAL 年度特会",
-      image_url: "https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=1200&q=85",
-      description: "收割机全职与义工同工年度退修会，重温呼召与使命，在安静、祷告与彼此代祷中重新得力，整装待发。",
+      id: "e48a862c-6763-450d-b43f-8549ae21a3d7",
+      title: "音乐见证布道会 · 新加坡恩泉教会",
+      event_date: "2026.10.08",
+      event_time: "15:00 - 17:00",
+      location: "新加坡 恩泉教会",
+      status_tag: "已结束 🏁",
+      image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg",
+      description: "新加坡恩泉教会下午专场音乐见证布道会。活动已圆满举行。",
       map_url: "https://maps.google.com"
     }
   ];
@@ -845,6 +842,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (Array.isArray(parsed) && parsed.length > 0) {
           galleryItems = parsed.map(p => {
             let pTime = p.time || p.event_time || '';
+            if (pTime && !/\d/.test(pTime)) pTime = '';
             if (!pTime && p.date) {
               const tmMatch = p.date.match(/(\d{1,2}[:：.]\d{2}(?:\s*[-~至到to]\s*\d{1,2}[:：.]\d{2})?)/);
               if (tmMatch) pTime = tmMatch[1];
@@ -854,11 +852,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 || defaultCuratedEvents.find(ev => (p.link && p.link.includes(ev.id)) || String(p.id) === String(ev.id) || p.title === ev.title);
               if (matchedEv) pTime = matchedEv.timeStr || matchedEv.event_time || matchedEv.time || '';
             }
+            if (!pTime) {
+              pTime = '20:00 - 22:00';
+            }
             return {
               id: p.id || 'poster_' + Math.random(),
               title: p.title || 'Harvester 精彩活动',
               image_url: p.image_url,
-              date: p.date || 'UPCOMING',
+              date: p.date || '2026 全年巡回',
               time: pTime,
               venue: p.venue || '各大展演空间',
               statusTag: p.statusTag || 'HOT 热门',
@@ -911,12 +912,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${item.image_url}" alt="${item.title}" class="event-card-main-img" loading="lazy" style="object-position: ${item.img_pos || '50% 50%'}; transform: scale(${item.img_zoom || 1.0}); transform-origin: ${item.img_pos || '50% 50%'};" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
         </div>
         <div class="event-card-gradient"></div>
-        <span class="event-card-top-tag">${item.date}</span>
+        <span class="event-card-top-tag">${item.date}${item.time ? ' · ' + item.time : ''}</span>
         <span class="event-card-status-pill">${item.statusTag}</span>
         <div class="event-card-bottom-info">
           <h3 class="event-card-title">${item.title}</h3>
           <div class="event-card-meta">
-            <span><i class="far fa-clock"></i> ${item.time || '19:30 - 21:30'}</span>
+            <span class="event-card-time"><i class="far fa-clock"></i> ${item.time || '19:30 - 21:30'}</span>
             <span><i class="fas fa-map-marker-alt"></i> ${item.venue}</span>
             <span><i class="fas fa-arrow-right"></i> 查看详情</span>
           </div>
@@ -1228,9 +1229,9 @@ document.addEventListener('DOMContentLoaded', () => {
         dateEl.style.flexWrap = 'wrap';
 
         let html = '';
-        if (parsed.dateStr) html += `<span><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.dateStr}</span>`;
-        html += `<span><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${parsed.timeStr || '19:30 - 21:30'}</span>`;
-        if (parsed.location) html += `<span><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.location}</span>`;
+        if (parsed.dateStr) html += `<span class="event-meta-pill"><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.dateStr}</span>`;
+        html += `<span class="event-meta-pill event-time-pill"><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${parsed.timeStr || '19:30 - 21:30'}</span>`;
+        if (parsed.location) html += `<span class="event-meta-pill"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.location}</span>`;
         
         dateEl.innerHTML = html;
       }
