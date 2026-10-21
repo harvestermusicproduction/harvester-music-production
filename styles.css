@@ -3926,6 +3926,9 @@ section[id], div[id^="section-"] {
   z-index: 10;
   gap: 15px;
   flex-shrink: 0;
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
 }
 
 .unified-header-left {
@@ -4371,6 +4374,9 @@ body.page-music footer {
   position: relative;
   z-index: 5;
   flex-shrink: 0;
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
 }
 
 .cf-nav-btn {

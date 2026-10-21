@@ -348,7 +348,7 @@ You have set my feet upon the rock!`
 
   // Initialize Engine
   async function init() {
-    await fetchSupabaseSongs();
+    // ⚡ 1. Render layout IMMEDIATELY with initial albums for instant 0ms appearance!
     allAlbums = allAlbums.map((a, idx) => {
       const pal = a.palette || getMorandiFivePalette(a, idx);
       return {
@@ -366,6 +366,29 @@ You have set my feet upon the rock!`
     setupInteractiveDrag();
     renderMiniPlayer();
     startPhysicsLoop();
+
+    // ⚡ 2. Silently fetch dynamic CMS songs in background and update smoothly
+    fetchSupabaseSongs().then(() => {
+      allAlbums = allAlbums.map((a, idx) => {
+        const pal = a.palette || getMorandiFivePalette(a, idx);
+        return {
+          ...a,
+          palette: pal,
+          theme_color: a.theme_color || pal.theme_color,
+          spine_bg: a.spine_bg || pal.spine_bg,
+          glow: pal.glow
+        };
+      });
+      allAlbums = sortAlbumsByYear(allAlbums);
+      if (currentYearFilter === 'ALL') {
+        albums = [...allAlbums];
+      } else {
+        albums = allAlbums.filter(a => String(a.year || '2025') === String(currentYearFilter));
+      }
+      renderCarouselBoxes();
+      render3DCoverflow();
+      updateMetaBar();
+    }).catch(err => console.warn("Background song sync note:", err));
   }
 
   // Fetch Dynamic CMS Songs and Map 1:1 to 3D Albums with Morandi Artwork
@@ -464,7 +487,7 @@ You have set my feet upon the rock!`
 
     stage.innerHTML = `
       <!-- 1. Unified Parallel Header (Title + Dynamic Year Filters + Search) -->
-      <div class="music-unified-header fade-in">
+      <div class="music-unified-header">
         <div class="unified-header-left">
           <div class="ppt-line"></div>
           <h1 class="ppt-title">音乐与歌谱集</h1>
@@ -494,7 +517,7 @@ You have set my feet upon the rock!`
         </div>
 
         <!-- Shelf Meta Caption -->
-        <div class="coverflow-meta-bar fade-in">
+        <div class="coverflow-meta-bar">
           <button class="cf-nav-btn prev" onclick="navigateCoverFlow(-1)" title="上一首"><i class="fas fa-chevron-left"></i></button>
           <div class="active-album-info" id="activeAlbumInfo">
             <span class="cf-tag font-eng-title" id="cfAlbumYear">${albums[currentIndex]?.year || '2025'} RELEASE</span>
@@ -1226,9 +1249,9 @@ You have set my feet upon the rock!`
           boxShadow: '-20px 0 35px rgba(0,0,0,0.7)' 
         });
 
-        const tl = gsap.timeline({ delay: 0.32 });
+        const tl = gsap.timeline({ delay: 0.06 });
 
-        // Step 1: Fold 2 smoothly unfolds towards the right from Fold 1 (physical swing & unroll, NO fade-in)
+        // Step 1: Fold 2 smoothly unfolds towards the right from Fold 1
         tl.to(panel2, { 
           width: 340, 
           flexBasis: "340px", 
@@ -1236,10 +1259,10 @@ You have set my feet upon the rock!`
           paddingRight: 26, 
           rotateY: 0, 
           boxShadow: '-6px 0 20px rgba(0,0,0,0.35)', 
-          duration: 0.85, 
+          duration: 0.38, 
           ease: "power2.out" 
         })
-        // Step 2: Fold 3 smoothly unfolds from Fold 2 towards the right (physical swing & unroll, NO fade-in)
+        // Step 2: Fold 3 smoothly unfolds from Fold 2 towards the right
         .to(panel3, { 
           width: 340, 
           flexBasis: "340px", 
@@ -1247,9 +1270,9 @@ You have set my feet upon the rock!`
           paddingRight: 26, 
           rotateY: 0, 
           boxShadow: '-6px 0 20px rgba(0,0,0,0.35)', 
-          duration: 0.85, 
+          duration: 0.38, 
           ease: "power2.out" 
-        }, "-=0.20");
+        }, "-=0.15");
       }
     }
   };
