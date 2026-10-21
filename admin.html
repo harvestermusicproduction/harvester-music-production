@@ -6,6 +6,17 @@
   <link rel="preload" href="assets/fonts/ChenYuluoyan-SC.woff2" as="font" type="font/woff2" crossorigin>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script>
+    // Safari / iOS BFCache Buster: If page is restored from memory cache or back-forward navigation, force reload
+    window.addEventListener('pageshow', function(e) {
+      if (e.persisted) {
+        window.location.reload();
+      }
+    });
+  </script>
   <title>CMS 后台管理</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -259,7 +270,7 @@
     })();
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js?v=23.0.0"></script>
-  <script src="admin.js?v=70.0.0"></script>
+  <script src="config.js?v=20261021_01"></script>
+  <script src="admin.js?v=20261021_01"></script>
 </body>
 </html>

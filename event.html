@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=59.0.0">
+  <link rel="stylesheet" href="styles.css?v=60.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .event-meta-pill {
@@ -27,15 +27,22 @@
       transition: all 0.3s ease;
     }
     .event-meta-pill.event-time-pill {
-      border-color: rgba(246, 210, 138, 0.55);
-      background: rgba(246, 210, 138, 0.12);
+      border: 1.5px solid rgba(246, 210, 138, 0.75);
+      background: rgba(246, 210, 138, 0.18);
       color: var(--gold);
-      font-weight: 600;
-      box-shadow: 0 4px 15px rgba(246, 210, 138, 0.1);
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 4px 18px rgba(246, 210, 138, 0.22);
+      letter-spacing: 0.5px;
+    }
+    .event-meta-pill.event-time-pill i {
+      color: var(--gold);
+      margin-right: 6px;
+      font-size: 1rem;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js?v=23.0.0"></script>
+  <script src="config.js?v=24.0.0"></script>
 </head>
 <body class="event-body page-event">
   <canvas id="bgParticles"></canvas>
@@ -121,15 +128,26 @@
   <main style="padding-top: 100px;">
     <section>
       <div id="eventHeader" class="text-center mb-4" style="padding: 0 1rem;">
-        <!-- Title, Date/Time, and Description injected by JS -->
-        <h1 class="text-gold" id="eventTitle">...</h1>
-        <div id="eventDate" style="letter-spacing: 1px; font-size: 1rem; opacity: 0.9; display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; margin-top: 10px;"></div>
-        <div id="eventDesc" style="max-width: 650px; margin: 1.5rem auto 0; color: #ddd; font-size: 0.95rem; line-height: 1.8; text-align: center; display: none;"></div>
+        <!-- Title, Date/Time, and Description (Pre-hydrated default prevents blank state) -->
+        <h1 class="text-gold" id="eventTitle">音乐见证布道会 · 亚罗士打浸信会教会</h1>
+        <div id="eventDate" style="letter-spacing: 1px; font-size: 1rem; opacity: 0.95; display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+          <span class="event-meta-pill"><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>2026年10月25日</span>
+          <span class="event-meta-pill event-time-pill"><i class="fas fa-clock"></i>20:15 - 22:00</span>
+          <span class="event-meta-pill"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>亚罗士打浸信会教会 (咖啡牧师教会)</span>
+        </div>
+        <div id="eventDesc" style="max-width: 650px; margin: 1.5rem auto 0; color: #ddd; font-size: 0.95rem; line-height: 1.8; text-align: center; display: block;">汤小康老师与收割机敬拜音乐团队亲临亚罗士打浸信会教会，以动人 CCM 诗歌与深刻生命见证带来福音飨宴。欢迎各界会友携亲友出席。</div>
+        <div id="event_remind_btn_wrap" style="width:100%; display:flex; justify-content:center; margin-top:20px;">
+          <button class="btn-frosted-gold" style="min-width:180px; max-width:260px; padding:12px 24px; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:50px; cursor:pointer; font-weight:600; font-size:0.95rem; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="openReminderModal('e44e2f32-b755-4339-a9a4-bfe910fa9c3e', '音乐见证布道会 · 亚罗士打浸信会教会', '2026年10月25日 20:15 - 22:00')"><i class="fas fa-bell"></i> 提醒我</button>
+        </div>
       </div>
 
       <div id="galleryContainer" class="event-poster-view-container">
-        <!-- Enlarged Poster & Photos injected here -->
-        <div class="loading-pulse" style="text-align:center; padding:3rem; opacity:0.6;"><i class="fas fa-circle-notch fa-spin"></i> 正在加载海报与活动详情...</div>
+        <div class="event-single-poster-wrap">
+          <div class="event-poster-card" onclick="openLightbox('https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg')" title="点击查看高清海报">
+            <img src="https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg" class="event-poster-full-img" alt="音乐见证布道会 · 亚罗士打浸信会教会" draggable="false" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85'">
+            <div class="event-poster-hover-hint"><i class="fas fa-search-plus"></i> 点击查看高清原图</div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -139,14 +157,14 @@
     <img id="lightboxImg" class="lightbox-img" src="">
   </div>
 
-    <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+  <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
       <img src="assets/logo.png" alt="Harvester" style="height: 20px; display: block; margin: 0 auto 1.2rem;">
     </a>
     <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
   </footer>
 
-  <script src="app.js?v=40.0.0"></script>
+  <script src="app.js?v=41.0.0"></script>
   <script>
     // Specific initialization for this page
     document.addEventListener('DOMContentLoaded', () => {

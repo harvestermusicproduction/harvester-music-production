@@ -68,6 +68,192 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ==========================================
+  // 🎚️ 统一照片裁剪/焦点与缩放控制器 (Universal Image Focal & Crop System - Hoisted)
+  // ==========================================
+  function parseImageCropPosition(posStr) {
+    if (!posStr) return { x: 50, y: 50 };
+    const parts = String(posStr).trim().split(/\s+/);
+    let x = 50, y = 50;
+    if (parts.length >= 1) {
+      if (parts[0] === 'left') x = 0;
+      else if (parts[0] === 'center') x = 50;
+      else if (parts[0] === 'right') x = 100;
+      else {
+        const n = parseInt(parts[0], 10);
+        if (!isNaN(n)) x = Math.max(0, Math.min(100, n));
+      }
+    }
+    if (parts.length >= 2) {
+      if (parts[1] === 'top') y = 0;
+      else if (parts[1] === 'center') y = 50;
+      else if (parts[1] === 'bottom') y = 100;
+      else {
+        const n = parseInt(parts[1], 10);
+        if (!isNaN(n)) y = Math.max(0, Math.min(100, n));
+      }
+    } else if (parts.length === 1 && (parts[0] === 'top' || parts[0] === 'bottom')) {
+      y = parts[0] === 'top' ? 0 : 100;
+      x = 50;
+    }
+    return { x, y };
+  }
+  window.parseImageCropPosition = parseImageCropPosition;
+
+  function getCoworkerXPercent(posStr) {
+    return parseImageCropPosition(posStr).x;
+  }
+  window.getCoworkerXPercent = getCoworkerXPercent;
+
+  function getCoworkerYPercent(posStr) {
+    return parseImageCropPosition(posStr).y;
+  }
+  window.getCoworkerYPercent = getCoworkerYPercent;
+
+  function renderImageCropControllerHTML({
+    id,
+    targetImgId,
+    posVal = '50% 50%',
+    zoomVal = 1.0,
+    posInputId,
+    zoomInputId,
+    label = '调整照片呈现区域与焦点 (Crop Focus & Zoom)',
+    hint = '因照片与方框比例不同，可微调上下/左右位置或放大，让照片主体完美呈现'
+  }) {
+    const { x, y } = parseImageCropPosition(posVal);
+    const zoom = zoomVal ? Math.max(1.0, Math.min(2.5, parseFloat(zoomVal))) : 1.0;
+    const zoomPct = Math.round(zoom * 100);
+    const pId = posInputId || `in_pos_${id}`;
+    const zId = zoomInputId || `in_zoom_${id}`;
+
+    return `
+      <div class="crop-controller-widget" data-ctrl-id="${id}" data-target-img="${targetImgId}" data-pos-id="${pId}" data-zoom-id="${zId}"
+           style="background:#141414; padding:12px 14px; border-radius:10px; border:1px solid #282828; margin-top:10px; text-align:left; animation:fadeIn 0.2s ease;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:0.75rem; color:var(--gold); font-weight:bold; display:flex; align-items:center; gap:6px;">
+            <i class="fas fa-crop-alt"></i> ${label}
+          </span>
+          <span id="pos_val_badge_${id}" style="font-size:0.68rem; color:#aaa; font-family:monospace; background:#222; padding:2px 6px; border-radius:4px; border:1px solid #333;">${x}% ${y}% · ${zoomPct}%</span>
+        </div>
+        
+        ${hint ? `<p style="font-size:0.68rem; color:#777; margin:0 0 8px 0; line-height:1.3;">${hint}</p>` : ''}
+
+        <!-- 5 快捷焦点预设按钮 -->
+        <div style="display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap;">
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 50, 10, ${zoom})" title="对齐人物面部/头部/顶部">⬆️ 偏上(头部)</button>
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 50, 50, ${zoom})" title="画面正中居中">🎯 居中</button>
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 50, 90, ${zoom})" title="对齐底部">⬇️ 偏下</button>
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 10, 50, ${zoom})" title="偏左对齐">⬅️ 偏左</button>
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 90, 50, ${zoom})" title="偏右对齐">➡️ 偏右</button>
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#1c1c1c; border-color:#383838; color:#888;" onclick="setImageCropPreset('${id}', 50, 50, 1.0)" title="重置位置与缩放">↺ 还原</button>
+        </div>
+
+        <!-- 上下垂直位置滑块 -->
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+          <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">↕️ 上下:</span>
+          <input type="range" min="0" max="100" value="${y}" 
+                 id="crop_sl_y_${id}" 
+                 style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                 oninput="onImageCropChange('${id}')">
+          <span id="crop_txt_y_${id}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right; font-family:monospace;">${y}%</span>
+        </div>
+
+        <!-- 左右水平位置滑块 -->
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+          <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">↔️ 左右:</span>
+          <input type="range" min="0" max="100" value="${x}" 
+                 id="crop_sl_x_${id}" 
+                 style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                 oninput="onImageCropChange('${id}')">
+          <span id="crop_txt_x_${id}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right; font-family:monospace;">${x}%</span>
+        </div>
+
+        <!-- 画面缩放滑块 -->
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">🔍 缩放:</span>
+          <input type="range" min="100" max="250" value="${zoomPct}" 
+                 id="crop_sl_z_${id}" 
+                 style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
+                 oninput="onImageCropChange('${id}')">
+          <span id="crop_txt_z_${id}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right; font-family:monospace;">${zoomPct}%</span>
+        </div>
+
+        <input type="hidden" id="${pId}" value="${posVal || '50% 50%'}">
+        <input type="hidden" id="${zId}" value="${zoom}">
+      </div>
+    `;
+  }
+  window.renderImageCropControllerHTML = renderImageCropControllerHTML;
+
+  function onImageCropChange(id) {
+    const slX = document.getElementById(`crop_sl_x_${id}`);
+    const slY = document.getElementById(`crop_sl_y_${id}`);
+    const slZ = document.getElementById(`crop_sl_z_${id}`);
+    if (!slX || !slY) return;
+
+    const x = parseInt(slX.value, 10) || 50;
+    const y = parseInt(slY.value, 10) || 50;
+    const zoom = slZ ? (parseInt(slZ.value, 10) / 100) : 1.0;
+    const zoomPct = Math.round(zoom * 100);
+
+    const txtX = document.getElementById(`crop_txt_x_${id}`);
+    const txtY = document.getElementById(`crop_txt_y_${id}`);
+    const txtZ = document.getElementById(`crop_txt_z_${id}`);
+    const badge = document.getElementById(`pos_val_badge_${id}`);
+    
+    if (txtX) txtX.innerText = `${x}%`;
+    if (txtY) txtY.innerText = `${y}%`;
+    if (txtZ) txtZ.innerText = `${zoomPct}%`;
+    if (badge) badge.innerText = `${x}% ${y}% · ${zoomPct}%`;
+
+    const widget = document.querySelector(`.crop-controller-widget[data-ctrl-id="${id}"]`);
+    const targetImgId = widget?.dataset?.targetImg;
+    const posInputId = widget?.dataset?.posId || `in_pos_${id}`;
+    const zoomInputId = widget?.dataset?.zoomId || `in_zoom_${id}`;
+
+    const posStr = `${x}% ${y}%`;
+    const posInput = document.getElementById(posInputId);
+    const zoomInput = document.getElementById(zoomInputId);
+    if (posInput) posInput.value = posStr;
+    if (zoomInput) zoomInput.value = zoom;
+
+    if (targetImgId) {
+      const targetImg = document.getElementById(targetImgId);
+      if (targetImg) {
+        targetImg.style.objectFit = 'cover';
+        targetImg.style.objectPosition = posStr;
+        targetImg.style.transform = `scale(${zoom})`;
+        targetImg.style.transformOrigin = posStr;
+      }
+    }
+  }
+  window.onImageCropChange = onImageCropChange;
+
+  function setImageCropPreset(id, x, y, zoom) {
+    const slX = document.getElementById(`crop_sl_x_${id}`);
+    const slY = document.getElementById(`crop_sl_y_${id}`);
+    const slZ = document.getElementById(`crop_sl_z_${id}`);
+    if (slX) slX.value = x;
+    if (slY) slY.value = y;
+    if (slZ && zoom) slZ.value = Math.round(zoom * 100);
+    onImageCropChange(id);
+  }
+  window.setImageCropPreset = setImageCropPreset;
+
+  window.forceRefreshCMS = () => {
+    if (confirm("确定要强制清除浏览器本地缓存并重新拉取最新后台代码吗？")) {
+      try {
+        if ('caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
+      } catch(e){}
+      const cleanUrl = window.location.href.split('?')[0] + '?t=' + Date.now();
+      window.location.replace(cleanUrl);
+    }
+  };
+
   async function renderCMS() {
     adminDashboard.innerHTML = `
       <div class="cms-layout" style="display:flex; height:100vh; background:#080808; color: #ffffff; overflow:hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;">
@@ -100,8 +286,19 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="javascript:void(0)" onclick="switchModule('reminders')" class="nav-item ${currentModule==='reminders'?'active':''}">⏰ 活动订阅提醒 (Reminders)</a>
             <a href="javascript:void(0)" onclick="switchModule('config')" class="nav-item ${currentModule==='config'?'active':''}">⚙️ 全站设置与 SEO (Config)</a>
           </nav>
+
+          <!-- ⚡ Live Anti-Cache & Version Monitor -->
+          <div style="margin-top:auto; padding:12px 6px 0; border-top:1px solid #1f1f1f; font-size:0.72rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="color:#777;">⚡ 系统实时版本</span>
+              <span style="color:var(--gold); font-weight:bold; font-family:monospace;">v2026.10.21</span>
+            </div>
+            <button type="button" onclick="forceRefreshCMS()" style="width:100%; padding:6px 8px; background:#181818; border:1px solid #333; color:#aaa; font-size:0.72rem; border-radius:5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:0.2s;" onmouseover="this.style.borderColor='var(--gold)'; this.style.color='#fff';" onmouseout="this.style.borderColor='#333'; this.style.color='#aaa';">
+              <i class="fas fa-sync-alt"></i> 清除本地缓存重载
+            </button>
+          </div>
           
-          <button onclick="logoutAdmin()" style="background:none; border:none; color:#777; text-align:left; padding:10px; font-size:0.8rem; cursor:pointer; transition:0.3s; margin-top:15px; border-top:1px solid #222; display:flex; align-items:center; gap:8px;">
+          <button onclick="logoutAdmin()" style="background:none; border:none; color:#777; text-align:left; padding:10px 6px; font-size:0.8rem; cursor:pointer; transition:0.3s; margin-top:8px; border-top:1px solid #222; display:flex; align-items:center; gap:8px;">
             <i class="fas fa-sign-out-alt" style="color:#e63946;"></i> <span style="color:#bbb;">SIGN OUT (登出)</span>
           </button>
         </aside>
@@ -824,7 +1021,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.openMusicModal = async (id = null) => {
-    const btn = event.currentTarget;
+    const btn = (typeof window.event !== 'undefined' && window.event ? (window.event.currentTarget || window.event.target) : null);
     const originalText = btn ? btn.innerText : '';
     if (id && btn) { btn.innerText = "⏳ 正在拉取数据..."; btn.disabled = true; }
 
@@ -832,25 +1029,44 @@ document.addEventListener('DOMContentLoaded', () => {
       let s = null;
       let spineCustom = null;
       if (id) {
-        const { data, error } = await db.from('music_works').select('*').eq('id', id).single();
-        if (error) throw error;
-        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_latest_music_id').maybeSingle();
-        s = { ...data, force_latest: data.id === cfg?.value };
-
-        const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
-        if (albumCfg?.value) {
-          try {
-            const arr = JSON.parse(albumCfg.value);
-            spineCustom = arr.find(c => c.id === s.id || c.title === s.title);
-          } catch(e){}
+        try {
+          const { data, error } = await db.from('music_works').select('*').eq('id', id).single();
+          if (error) console.warn("Fetch music_works notice:", error);
+          if (data) {
+            let isLatest = false;
+            try {
+              const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_latest_music_id').maybeSingle();
+              isLatest = data.id === cfg?.value;
+            } catch(e){}
+            s = { ...data, force_latest: isLatest };
+          }
+        } catch(e) {
+          console.warn("DB fetch failed in openMusicModal:", e);
         }
+
+        try {
+          const { data: albumCfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
+          if (albumCfg?.value) {
+            const arr = JSON.parse(albumCfg.value);
+            if (Array.isArray(arr) && s) {
+              spineCustom = arr.find(c => c.id === s.id || c.title === s.title);
+            }
+          }
+        } catch(e){}
       }
 
       const isEdit = !!s;
-      const currentSet = getMorandiSet(spineCustom || s, 0);
-      const initialCover = s?.cover_url || spineCustom?.cover_url || childlikeDoodles[Math.floor(Math.random() * childlikeDoodles.length)];
-      const initialCoverPos = s?.img_pos || spineCustom?.img_pos || spineCustom?.cover_pos || '50% 50%';
-      const initialCoverZoom = s?.img_zoom || spineCustom?.img_zoom || spineCustom?.cover_zoom || 1.0;
+      const currentSet = (typeof getMorandiSet === 'function')
+        ? getMorandiSet(spineCustom || s, 0)
+        : ((typeof MORANDI_5_SETS !== 'undefined' && MORANDI_5_SETS.length) ? MORANDI_5_SETS[0] : { id:'palette_1_sage', theme_color:'#6d8071', spine_bg:'#48584b', spine_color:'#ffffff', name:'森林鼠尾草', nameEn:'Sage & Cedar', colors:[], fold1:{bg:'#dfd5c4',text:'#2b2b2b'}, fold2:{bg:'#5c2734',text:'#ffffff'}, fold3:{bg:'#dedad4',text:'#2b2b2b'} });
+
+      const doodles = (typeof childlikeDoodles !== 'undefined' && Array.isArray(childlikeDoodles) && childlikeDoodles.length)
+        ? childlikeDoodles
+        : ['assets/logo.png'];
+
+      const initialCover = s?.cover_url || spineCustom?.cover_url || doodles[Math.floor(Math.random() * doodles.length)] || 'assets/logo.png';
+      const initialCoverPos = s?.img_pos || s?.cover_pos || spineCustom?.img_pos || spineCustom?.cover_pos || '50% 50%';
+      const initialCoverZoom = s?.img_zoom || s?.cover_zoom || spineCustom?.img_zoom || spineCustom?.cover_zoom || 1.0;
       const spotifyUrl = spineCustom?.spotify_url || s?.spotify_url || '';
       let previewAudio = spineCustom?.preview_audio_url || '';
       let youtubeUrl = spineCustom?.youtube_url || '';
@@ -875,8 +1091,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const vocals = spineCustom?.vocals || "";
       const mixing = spineCustom?.mixing || "";
       const photo1 = spineCustom?.photo_1 || initialCover;
-      const photo2 = spineCustom?.photo_2 || childlikeDoodles[1];
-      const photo3 = spineCustom?.photo_3 || childlikeDoodles[2];
+      const photo2 = spineCustom?.photo_2 || doodles[1] || initialCover;
+      const photo3 = spineCustom?.photo_3 || doodles[2] || initialCover;
 
       const modal = document.createElement('div');
       modal.id = 'musicEditModal';
@@ -1180,22 +1396,24 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   window.saveMusic = async(id) => {
-    const btn = event.target;
-    const originalText = btn.innerText;
-    btn.innerText = "⏳ 正在保存...";
-    btn.disabled = true;
+    const btn = (typeof window.event !== 'undefined' && window.event ? (window.event.target || window.event.currentTarget) : null) || document.querySelector('#musicEditModal .btn-submit');
+    const originalText = btn ? btn.innerText : '💾 保存单曲与歌谱档案';
+    if (btn) {
+      btn.innerText = "⏳ 正在保存...";
+      btn.disabled = true;
+    }
 
     try {
-      const isLatest = document.getElementById('m_latest').checked;
-      const title = document.getElementById('m_t').value.trim();
+      const isLatest = document.getElementById('m_latest')?.checked || false;
+      const title = document.getElementById('m_t')?.value.trim() || '';
       const title_en = document.getElementById('m_title_en')?.value.trim() || "Harvester Single";
-      const artist = document.getElementById('m_artist').value.trim() || 'Harvester Worship';
+      const artist = document.getElementById('m_artist')?.value.trim() || 'Harvester Worship';
       const year = document.getElementById('m_year')?.value.trim() || "2025";
       const genre = document.getElementById('m_genre')?.value.trim() || "Worship / CCM · 2025";
 
       // 🎨 Read selected Morandi Set
       const selectedSetId = document.getElementById('m_selected_morandi_set')?.value || 'palette_1_sage';
-      const selectedSet = MORANDI_5_SETS.find(set => set.id === selectedSetId) || MORANDI_5_SETS[0];
+      const selectedSet = (typeof MORANDI_5_SETS !== 'undefined') ? (MORANDI_5_SETS.find(set => set.id === selectedSetId) || MORANDI_5_SETS[0]) : { id: selectedSetId, theme_color:'#6d8071', spine_bg:'#48584b', spine_color:'#ffffff', name:'森林鼠尾草' };
 
       const theme_color = selectedSet.theme_color;
       const spine_bg = selectedSet.spine_bg;
@@ -1204,14 +1422,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const palette_id = selectedSet.id;
       const palette_name = selectedSet.name;
 
-      const cover_url = document.getElementById('m_url').value.trim();
+      const cover_url = document.getElementById('m_url')?.value.trim() || '';
       const cover_pos = document.getElementById('m_cover_pos')?.value.trim() || '50% 50%';
       const cover_zoom = parseFloat(document.getElementById('m_cover_zoom')?.value) || 1.0;
       const preview_audio_url = document.getElementById('m_preview_audio')?.value.trim() || '';
       const youtube_url = document.getElementById('m_yt')?.value.trim() || '';
       const spotify_url = document.getElementById('m_sp')?.value.trim() || '';
-      const score_url = document.getElementById('m_s').value.trim();
-      const description = document.getElementById('m_d').value.trim();
+      const score_url = document.getElementById('m_s')?.value.trim() || '';
+      const description = document.getElementById('m_d')?.value.trim() || '';
 
       const key_bpm = document.getElementById('m_key_bpm')?.value.trim() || "KEY: C · 72 BPM";
       const scripture = document.getElementById('m_scripture')?.value.trim() || "";
@@ -1335,9 +1553,12 @@ document.addEventListener('DOMContentLoaded', () => {
       renderCMS();
     } catch (err) {
       console.error("Save error:", err);
-      alert("❌ 保存失败: " + err.message);
-      btn.innerText = originalText;
-      btn.disabled = false;
+      alert("❌ 保存失败: " + (err.message || err));
+    } finally {
+      if (btn) {
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
     }
   };
 
@@ -1686,7 +1907,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const tag = p.statusTag || 'UPCOMING';
             const tagUpper = tag.toUpperCase();
             const isHot = tagUpper.includes('HOT') || tagUpper.includes('热门');
-            const isReg = tagUpper.includes('报名') || tagUpper.includes('OPEN');
+            const isReg = tagUpper.includes('开放') || tagUpper.includes('OPEN') || tagUpper.includes('进行中');
             const isRecap = tagUpper.includes('回顾') || tagUpper.includes('RECAP');
             const isEnded = tagUpper.includes('结束') || tagUpper.includes('ENDED');
             const badgeBg = isHot ? 'rgba(255,107,129,0.9)' : (isReg ? 'rgba(46,213,115,0.9)' : (isRecap ? 'rgba(164,176,190,0.9)' : (isEnded ? 'rgba(100,100,100,0.9)' : 'rgba(246,210,138,0.9)')));
@@ -1922,7 +2143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <!-- 状态标签设置 -->
         <div style="margin-bottom:16px;">
           <label style="display:block; margin-bottom:6px; color:#aaa; font-size:0.8rem; font-weight:600;">状态徽章标签 (Status Tag - 位于海报右上角)</label>
-          <input type="text" id="ev_p_tag" value="${p?.statusTag || 'HOT 热门 🔥'}" placeholder="例如：HOT 热门、报名中、即将来临" style="width:100%; padding:10px; margin-bottom:8px;">
+          <input type="text" id="ev_p_tag" value="${p?.statusTag || 'HOT 热门 🔥'}" placeholder="例如：HOT 热门、即将来临 ⏳、进行中 ⚡" style="width:100%; padding:10px; margin-bottom:8px;">
           
           <!-- 快捷一键点选徽章 -->
           <div style="display:flex; flex-wrap:wrap; gap:6px;">
@@ -1961,7 +2182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <!-- 跳转链接与快速绑定 -->
         <div style="margin-bottom:20px; background:#0e0e0e; padding:14px; border-radius:10px; border:1px solid #222;">
           <label style="display:block; margin-bottom:6px; color:#aaa; font-size:0.8rem; font-weight:600;">点击跳转链接 (Target Link)</label>
-          <input type="text" id="ev_p_link" value="${p?.link || ''}" placeholder="例如：event.html?id=... 或外部报名链接 https://..." style="width:100%; padding:9px 10px; margin-bottom:8px;">
+          <input type="text" id="ev_p_link" value="${p?.link || ''}" placeholder="例如：event.html?id=... 或相关详情链接 https://..." style="width:100%; padding:9px 10px; margin-bottom:8px;">
           
           <div style="display:flex; align-items:center; gap:8px;">
             <span style="font-size:0.75rem; color:#888; white-space:nowrap;">快速绑定活动：</span>
@@ -1999,10 +2220,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById(fileInputId);
     const file = fileInput?.files?.[0];
     if(!file) return alert("请先选择图片文件");
-    const btn = event.currentTarget;
-    const origText = btn.innerText;
-    btn.innerText = "⏳ 上传中...";
-    btn.disabled = true;
+    const btn = (typeof window.event !== 'undefined' && window.event ? (window.event.currentTarget || window.event.target) : null) || document.getElementById('btnUploadEvP');
+    const origText = btn ? btn.innerText : '📤 上传并同步';
+    if (btn) {
+      btn.innerText = "⏳ 上传中...";
+      btn.disabled = true;
+    }
     try {
       let uploadFileObj = file;
       if (file.type.startsWith('image/')) {
@@ -2014,17 +2237,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if(error) throw error;
       const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
       
-      document.getElementById(targetId).value = publicUrl;
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) targetEl.value = publicUrl;
       const prevEl = document.getElementById(previewId);
       if(prevEl) prevEl.src = publicUrl;
       const bgEl = document.getElementById(previewId + '_bg');
       if (bgEl) bgEl.style.backgroundImage = `url('${publicUrl}')`;
       alert("✅ 海报图片上传成功！");
     } catch(err) {
-      alert("上传失败: " + err.message);
+      alert("上传失败: " + (err.message || err));
     } finally {
-      btn.innerText = origText;
-      btn.disabled = false;
+      if (btn) {
+        btn.innerText = origText;
+        btn.disabled = false;
+      }
     }
   };
 
@@ -2168,8 +2394,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
   window.triggerBlast = async () => {
     if(!confirm("确定要立即发送所有处于‘未发送’状态的活动提醒邮件吗？")) return;
-    const originalText = event.currentTarget.innerText;
-    event.currentTarget.innerText = "⏳ 正在发送中...";
+    const btn = (typeof window.event !== 'undefined' && window.event ? (window.event.currentTarget || window.event.target) : null);
+    const originalText = btn ? btn.innerText : '🚀 立即发送所有待发邮件';
+    if (btn) btn.innerText = "⏳ 正在发送中...";
     try {
       const res = await fetch('/api/blast');
       const data = await res.json();
@@ -2177,21 +2404,25 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch(e) {
       alert("发送失败: " + e.message);
     } finally {
-      event.currentTarget.innerText = originalText;
+      if (btn) btn.innerText = originalText;
     }
   };
   
   window.openEventModal = async (id = null) => {
-    const btn = event.currentTarget;
+    const btn = (typeof window.event !== 'undefined' && window.event ? (window.event.currentTarget || window.event.target) : null);
     const originalText = btn ? btn.innerText : '';
     if (id && btn) { btn.innerText = "⏳ 正在拉取..."; btn.disabled = true; }
 
     try {
       let e = null;
       if (id) {
-        const { data, error } = await db.from('events').select('*').eq('id', id).single();
-        if (error) throw error;
-        e = data;
+        try {
+          const { data, error } = await db.from('events').select('*').eq('id', id).single();
+          if (error) console.warn("Fetch events error:", error);
+          if (data) e = data;
+        } catch(err) {
+          console.warn("Fetch events error:", err);
+        }
 
         let evDate = e.event_date || e.date || "";
         let evTime = e.event_time || e.time || "";
@@ -2335,7 +2566,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">状态标签 (Tag)</label>
-              <input type="text" id="ev_stag" value="${e?.status_tag || ''}" placeholder="如 HOT 热门、报名中" style="width:100%; padding:10px;">
+              <input type="text" id="ev_stag" value="${e?.status_tag || ''}" placeholder="如 即将来临 ⏳、进行中 ⚡、HOT 热门 🔥" style="width:100%; padding:10px;">
             </div>
           </div>
           <!-- 状态标签快捷点选 -->
@@ -2618,171 +2849,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  // ==========================================
-  // 🎚️ 统一照片裁剪/焦点与缩放控制器 (Universal Image Focal & Crop System)
-  // ==========================================
-  window.parseImageCropPosition = function(posStr) {
-    if (!posStr) return { x: 50, y: 50 };
-    const parts = String(posStr).trim().split(/\s+/);
-    let x = 50, y = 50;
-    if (parts.length >= 1) {
-      if (parts[0] === 'left') x = 0;
-      else if (parts[0] === 'center') x = 50;
-      else if (parts[0] === 'right') x = 100;
-      else {
-        const n = parseInt(parts[0], 10);
-        if (!isNaN(n)) x = Math.max(0, Math.min(100, n));
-      }
-    }
-    if (parts.length >= 2) {
-      if (parts[1] === 'top') y = 0;
-      else if (parts[1] === 'center') y = 50;
-      else if (parts[1] === 'bottom') y = 100;
-      else {
-        const n = parseInt(parts[1], 10);
-        if (!isNaN(n)) y = Math.max(0, Math.min(100, n));
-      }
-    } else if (parts.length === 1 && (parts[0] === 'top' || parts[0] === 'bottom')) {
-      y = parts[0] === 'top' ? 0 : 100;
-      x = 50;
-    }
-    return { x, y };
-  };
 
-  window.getCoworkerXPercent = function(posStr) {
-    return window.parseImageCropPosition(posStr).x;
-  };
-
-  window.getCoworkerYPercent = function(posStr) {
-    return window.parseImageCropPosition(posStr).y;
-  };
-
-  window.renderImageCropControllerHTML = function({
-    id,
-    targetImgId,
-    posVal = '50% 50%',
-    zoomVal = 1.0,
-    posInputId,
-    zoomInputId,
-    label = '调整照片呈现区域与焦点 (Crop Focus & Zoom)',
-    hint = '因照片与方框比例不同，可微调上下/左右位置或放大，让照片主体完美呈现'
-  }) {
-    const { x, y } = window.parseImageCropPosition(posVal);
-    const zoom = zoomVal ? Math.max(1.0, Math.min(2.5, parseFloat(zoomVal))) : 1.0;
-    const zoomPct = Math.round(zoom * 100);
-    const pId = posInputId || `in_pos_${id}`;
-    const zId = zoomInputId || `in_zoom_${id}`;
-
-    return `
-      <div class="crop-controller-widget" data-ctrl-id="${id}" data-target-img="${targetImgId}" data-pos-id="${pId}" data-zoom-id="${zId}"
-           style="background:#141414; padding:12px 14px; border-radius:10px; border:1px solid #282828; margin-top:10px; text-align:left; animation:fadeIn 0.2s ease;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <span style="font-size:0.75rem; color:var(--gold); font-weight:bold; display:flex; align-items:center; gap:6px;">
-            <i class="fas fa-crop-alt"></i> ${label}
-          </span>
-          <span id="pos_val_badge_${id}" style="font-size:0.68rem; color:#aaa; font-family:monospace; background:#222; padding:2px 6px; border-radius:4px; border:1px solid #333;">${x}% ${y}% · ${zoomPct}%</span>
-        </div>
-        
-        ${hint ? `<p style="font-size:0.68rem; color:#777; margin:0 0 8px 0; line-height:1.3;">${hint}</p>` : ''}
-
-        <!-- 5 快捷焦点预设按钮 -->
-        <div style="display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap;">
-          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 50, 10, ${zoom})" title="对齐人物面部/头部/顶部">⬆️ 偏上(头部)</button>
-          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 50, 50, ${zoom})" title="画面正中居中">🎯 居中</button>
-          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 50, 90, ${zoom})" title="对齐底部">⬇️ 偏下</button>
-          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 10, 50, ${zoom})" title="偏左对齐">⬅️ 偏左</button>
-          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 90, 50, ${zoom})" title="偏右对齐">➡️ 偏右</button>
-          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#1c1c1c; border-color:#383838; color:#888;" onclick="setImageCropPreset('${id}', 50, 50, 1.0)" title="重置位置与缩放">↺ 还原</button>
-        </div>
-
-        <!-- 上下垂直位置滑块 -->
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
-          <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">↕️ 上下:</span>
-          <input type="range" min="0" max="100" value="${y}" 
-                 id="crop_sl_y_${id}" 
-                 style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
-                 oninput="onImageCropChange('${id}')">
-          <span id="crop_txt_y_${id}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right; font-family:monospace;">${y}%</span>
-        </div>
-
-        <!-- 左右水平位置滑块 -->
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
-          <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">↔️ 左右:</span>
-          <input type="range" min="0" max="100" value="${x}" 
-                 id="crop_sl_x_${id}" 
-                 style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
-                 oninput="onImageCropChange('${id}')">
-          <span id="crop_txt_x_${id}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right; font-family:monospace;">${x}%</span>
-        </div>
-
-        <!-- 画面缩放滑块 -->
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:0.7rem; color:#aaa; width:48px; flex-shrink:0;">🔍 缩放:</span>
-          <input type="range" min="100" max="250" value="${zoomPct}" 
-                 id="crop_sl_z_${id}" 
-                 style="flex:1; accent-color:var(--gold); height:4px; cursor:pointer;"
-                 oninput="onImageCropChange('${id}')">
-          <span id="crop_txt_z_${id}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right; font-family:monospace;">${zoomPct}%</span>
-        </div>
-
-        <input type="hidden" id="${pId}" value="${posVal || '50% 50%'}">
-        <input type="hidden" id="${zId}" value="${zoom}">
-      </div>
-    `;
-  };
-
-  window.onImageCropChange = function(id) {
-    const slX = document.getElementById(`crop_sl_x_${id}`);
-    const slY = document.getElementById(`crop_sl_y_${id}`);
-    const slZ = document.getElementById(`crop_sl_z_${id}`);
-    if (!slX || !slY) return;
-
-    const x = parseInt(slX.value, 10) || 50;
-    const y = parseInt(slY.value, 10) || 50;
-    const zoom = slZ ? (parseInt(slZ.value, 10) / 100) : 1.0;
-    const zoomPct = Math.round(zoom * 100);
-
-    const txtX = document.getElementById(`crop_txt_x_${id}`);
-    const txtY = document.getElementById(`crop_txt_y_${id}`);
-    const txtZ = document.getElementById(`crop_txt_z_${id}`);
-    const badge = document.getElementById(`pos_val_badge_${id}`);
-    
-    if (txtX) txtX.innerText = `${x}%`;
-    if (txtY) txtY.innerText = `${y}%`;
-    if (txtZ) txtZ.innerText = `${zoomPct}%`;
-    if (badge) badge.innerText = `${x}% ${y}% · ${zoomPct}%`;
-
-    const widget = document.querySelector(`.crop-controller-widget[data-ctrl-id="${id}"]`);
-    const targetImgId = widget?.dataset?.targetImg;
-    const posInputId = widget?.dataset?.posId || `in_pos_${id}`;
-    const zoomInputId = widget?.dataset?.zoomId || `in_zoom_${id}`;
-
-    const posStr = `${x}% ${y}%`;
-    const posInput = document.getElementById(posInputId);
-    const zoomInput = document.getElementById(zoomInputId);
-    if (posInput) posInput.value = posStr;
-    if (zoomInput) zoomInput.value = zoom;
-
-    if (targetImgId) {
-      const targetImg = document.getElementById(targetImgId);
-      if (targetImg) {
-        targetImg.style.objectFit = 'cover';
-        targetImg.style.objectPosition = posStr;
-        targetImg.style.transform = `scale(${zoom})`;
-        targetImg.style.transformOrigin = posStr;
-      }
-    }
-  };
-
-  window.setImageCropPreset = function(id, x, y, zoom) {
-    const slX = document.getElementById(`crop_sl_x_${id}`);
-    const slY = document.getElementById(`crop_sl_y_${id}`);
-    const slZ = document.getElementById(`crop_sl_z_${id}`);
-    if (slX) slX.value = x;
-    if (slY) slY.value = y;
-    if (slZ && zoom) slZ.value = Math.round(zoom * 100);
-    window.onImageCropChange(id);
-  };
 
   // Backward compatibility aliases for coworkers
   window.onCoworkerCropChange = function(idx) {
@@ -3299,7 +3366,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(btn) btn.innerText = "处理中...";
 
       // Insert singer record with image crop & focus columns
-      const res = await safeDbRequest(async () => {
+      let res = await safeDbRequest(async () => {
         return await db.from('singers').insert([{
           name,
           role,
@@ -3310,6 +3377,18 @@ document.addEventListener('DOMContentLoaded', () => {
           img_zoom
         }]).select();
       });
+      if (res?.error && (res.error.message?.includes('column') || res.error.message?.includes('img_pos') || res.error.message?.includes('img_zoom') || res.error.message?.includes('schema cache'))) {
+        console.warn("Retrying singers insert without crop columns:", res.error);
+        res = await safeDbRequest(async () => {
+          return await db.from('singers').insert([{
+            name,
+            role,
+            bio,
+            category,
+            image_url
+          }]).select();
+        });
+      }
       const inserted = res?.data;
       if (res?.error) throw res.error;
 
@@ -3471,9 +3550,16 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       if(btn) btn.innerText = "保存中...";
       
-      const res = await safeDbRequest(async () => {
+      let res = await safeDbRequest(async () => {
         return await db.from('singers').update(p).eq('id', id);
       });
+      if (res?.error && (res.error.message?.includes('column') || res.error.message?.includes('img_pos') || res.error.message?.includes('img_zoom') || res.error.message?.includes('schema cache'))) {
+        console.warn("Retrying singers update without crop columns:", res.error);
+        const fallbackP = { name, bio, role, category, image_url, display_order };
+        res = await safeDbRequest(async () => {
+          return await db.from('singers').update(fallbackP).eq('id', id);
+        });
+      }
       if (res?.error) throw res.error;
 
       // Persist crop & zoom to cfg_singers_crop_json in site_config

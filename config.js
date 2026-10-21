@@ -10,8 +10,15 @@ const CLOUDINARY_CONFIG = {
   CLOUD_NAME: "your-cloud-name"
 };
 
-// Initialize Supabase Client
-const supabaseClient = supabase.createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY);
+// Initialize Supabase Client (Protected Fail-Safe)
+let supabaseClient = null;
+try {
+  if (typeof supabase !== 'undefined' && supabase && typeof supabase.createClient === 'function') {
+    supabaseClient = supabase.createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY);
+  }
+} catch (e) {
+  console.warn("Supabase init deferred/failed:", e);
+}
 window.supabase = supabaseClient; // Ensure global availability
 
 // --- 2. Global Tracking Logic ---

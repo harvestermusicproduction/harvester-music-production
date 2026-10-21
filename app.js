@@ -468,6 +468,15 @@ document.addEventListener('DOMContentLoaded', () => {
       rawTime = '20:00 - 22:00';
     }
 
+    // Fallback 5: If description or location empty, check defaultCuratedEvents
+    if ((!desc || !rawLoc) && (item.id || item.title)) {
+      const curMatch = defaultCuratedEvents.find(x => String(x.id) === String(item.id) || (x.title && item.title && (x.title.includes(item.title) || item.title.includes(x.title))));
+      if (curMatch) {
+        if (!desc && curMatch.description) desc = curMatch.description;
+        if (!rawLoc && curMatch.location) rawLoc = curMatch.location;
+      }
+    }
+
     // Parse Day, Month, Year for sleek tour layout
     let day = "01";
     let month = "01 月";
@@ -714,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="event-month-year">
               <span class="event-month">${e.month}</span>
               <span class="event-year">${e.year}</span>
-              <span class="event-time-badge"><i class="far fa-clock"></i> ${e.timeStr || '19:30 - 21:30'}</span>
+              <span class="event-time-badge"><i class="fas fa-clock"></i> ${e.timeStr || '20:00 - 22:00'}</span>
             </div>
           </div>
 
@@ -725,7 +734,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <a href="event.html?id=${e.id}">${e.cleanTitle}</a>
             </h3>
             <p class="event-strip-venue">
-              <span class="event-strip-time"><i class="far fa-clock"></i> ${e.timeStr || '19:30 - 21:30'}</span><span class="event-strip-dot">·</span>
+              <span class="event-strip-time"><i class="fas fa-clock"></i> ${e.timeStr || '20:00 - 22:00'}</span><span class="event-strip-dot">·</span>
               <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> ${e.location || 'HARVESTER MUSIC PRODUCTION'}</span>
             </p>
           </div>
@@ -912,12 +921,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${item.image_url}" alt="${item.title}" class="event-card-main-img" loading="lazy" style="object-position: ${item.img_pos || '50% 50%'}; transform: scale(${item.img_zoom || 1.0}); transform-origin: ${item.img_pos || '50% 50%'};" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
         </div>
         <div class="event-card-gradient"></div>
-        <span class="event-card-top-tag">${item.date}${item.time ? ' · ' + item.time : ''}</span>
+        <span class="event-card-top-tag"><i class="fas fa-clock" style="margin-right:4px;"></i>${item.date}${item.time ? ' · ' + item.time : ''}</span>
         <span class="event-card-status-pill">${item.statusTag}</span>
         <div class="event-card-bottom-info">
           <h3 class="event-card-title">${item.title}</h3>
           <div class="event-card-meta">
-            <span class="event-card-time"><i class="far fa-clock"></i> ${item.time || '19:30 - 21:30'}</span>
+            <span class="event-card-time"><i class="fas fa-clock"></i> ${item.time || '20:00 - 22:00'}</span>
             <span><i class="fas fa-map-marker-alt"></i> ${item.venue}</span>
             <span><i class="fas fa-arrow-right"></i> 查看详情</span>
           </div>
@@ -1117,12 +1126,12 @@ document.addEventListener('DOMContentLoaded', () => {
   async function initEventGallery() {
     const container = document.getElementById('galleryContainer');
     const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
+    let id = params.get('id');
     if (!container) return;
 
     if (!id) {
-      container.innerHTML = "<p style='text-align:center; opacity:0.5; padding:3rem;'>未指定活动或相册</p>";
-      return;
+      // Default to upcoming ministry tour stop instead of error screen
+      id = defaultCuratedEvents[0]?.id || "e44e2f32-b755-4339-a9a4-bfe910fa9c3e";
     }
 
     try {
@@ -1230,7 +1239,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let html = '';
         if (parsed.dateStr) html += `<span class="event-meta-pill"><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.dateStr}</span>`;
-        html += `<span class="event-meta-pill event-time-pill"><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${parsed.timeStr || '19:30 - 21:30'}</span>`;
+        html += `<span class="event-meta-pill event-time-pill"><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${parsed.timeStr || '20:00 - 22:00'}</span>`;
         if (parsed.location) html += `<span class="event-meta-pill"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.location}</span>`;
         
         dateEl.innerHTML = html;

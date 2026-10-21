@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=59.0.0">
+  <link rel="stylesheet" href="styles.css?v=60.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* --- 🌟 Full-Width Panoramic Multi-Photo Running Gallery (横向尽头多照片轮播画廊) --- */
@@ -428,21 +428,26 @@
     }
 
     .event-time-badge {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: var(--gold);
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.5px;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      margin-top: 4px;
+      gap: 5px;
+      margin-top: 5px;
       font-family: var(--font-times-new-roman), serif;
       line-height: 1.2;
       white-space: nowrap;
-      background: rgba(246, 210, 138, 0.1);
-      border: 1px solid rgba(246, 210, 138, 0.25);
+      background: rgba(246, 210, 138, 0.15);
+      border: 1px solid rgba(246, 210, 138, 0.4);
       border-radius: 4px;
-      padding: 2px 7px;
+      padding: 3px 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+    .event-time-badge i {
+      color: var(--gold);
+      font-size: 0.78rem;
     }
 
     /* Center: Event Info Block */
@@ -478,26 +483,35 @@
     }
 
     .event-strip-venue {
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       color: #aaa;
       margin: 0;
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 8px;
       min-width: 0;
     }
 
     .event-strip-time {
       color: var(--gold);
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.5px;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
       flex-shrink: 0;
       white-space: nowrap;
+      background: rgba(246, 210, 138, 0.12);
+      border: 1px solid rgba(246, 210, 138, 0.35);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: var(--font-times-new-roman), serif;
+    }
+    .event-strip-time i {
+      color: var(--gold);
+      font-size: 0.78rem;
     }
 
     .event-strip-dot {
@@ -642,88 +656,97 @@
         padding: 0 0.8rem;
       }
       .event-strip-row {
-        flex-direction: row;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
         gap: 12px;
-        padding: 0.95rem 0.5rem;
+        padding: 1.1rem 0.6rem;
       }
       .event-date-block {
-        min-width: auto;
-        gap: 8px;
+        min-width: 130px;
+        gap: 10px;
         flex-shrink: 0;
       }
       .event-day {
-        font-size: 2.1rem;
+        font-size: 2.2rem;
         letter-spacing: 0;
         line-height: 1;
       }
       .event-month-year {
-        line-height: 1.15;
+        line-height: 1.2;
       }
       .event-month {
-        font-size: 0.82rem;
+        font-size: 0.88rem;
       }
       .event-year {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
       }
       .event-time-badge {
-        font-size: 0.7rem;
-        margin-top: 3px;
-        padding: 1px 5px;
+        font-size: 0.75rem;
+        margin-top: 4px;
+        padding: 2px 7px;
         white-space: nowrap;
+        font-weight: 700;
+        border-color: rgba(246, 210, 138, 0.45);
+        background: rgba(246, 210, 138, 0.16);
       }
       .event-info-block {
-        flex: 1;
-        gap: 3px;
+        flex: 1 1 200px;
+        gap: 4px;
         min-width: 0;
       }
       .event-strip-title {
-        font-size: 1.05rem;
-        line-height: 1.3;
+        font-size: 1.08rem;
+        line-height: 1.35;
       }
       .event-strip-venue {
-        font-size: 0.78rem;
+        font-size: 0.82rem;
         flex-wrap: wrap;
-        gap: 4px;
+        gap: 6px;
       }
       .event-strip-time {
-        font-size: 0.74rem;
-        gap: 3px;
+        font-size: 0.76rem;
+        gap: 4px;
         white-space: nowrap;
         flex-shrink: 0;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-color: rgba(246, 210, 138, 0.45);
+        background: rgba(246, 210, 138, 0.16);
       }
       .event-strip-dot {
-        display: none;
+        display: inline-block;
+        color: rgba(255, 255, 255, 0.3);
       }
       .event-strip-loc {
         white-space: normal;
         word-break: break-word;
       }
       .event-tag-badge-wrap {
-        margin-bottom: 2px;
+        margin-bottom: 3px;
       }
       .event-strip-badge {
-        font-size: 0.62rem;
-        padding: 1px 6px;
+        font-size: 0.65rem;
+        padding: 2px 7px;
       }
       .event-action-block {
         min-width: auto;
         flex-shrink: 0;
         flex-direction: row;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         padding-top: 0;
         justify-content: flex-end;
+        margin-left: auto;
       }
       .event-strip-link,
       .event-strip-disabled {
-        font-size: 0.75rem;
+        font-size: 0.82rem;
       }
       .btn-strip-remind {
-        width: 34px;
-        height: 34px;
-        font-size: 0.8rem;
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
       }
     }
 
@@ -743,38 +766,39 @@
       }
       .event-strip-row {
         gap: 10px;
-        padding: 0.85rem 0.3rem;
+        padding: 1rem 0.4rem;
       }
       .event-date-block {
-        gap: 6px;
+        min-width: 110px;
+        gap: 8px;
       }
       .event-day {
-        font-size: 1.85rem;
+        font-size: 1.95rem;
       }
       .event-month {
-        font-size: 0.76rem;
+        font-size: 0.8rem;
       }
       .event-year {
-        font-size: 0.65rem;
+        font-size: 0.68rem;
       }
       .event-time-badge {
-        font-size: 0.65rem;
-        padding: 1px 4px;
+        font-size: 0.7rem;
+        padding: 2px 5px;
         white-space: nowrap;
       }
       .event-strip-title {
-        font-size: 0.98rem;
+        font-size: 1.02rem;
       }
       .event-strip-venue {
-        font-size: 0.72rem;
+        font-size: 0.78rem;
       }
       .event-strip-time {
-        font-size: 0.7rem;
+        font-size: 0.74rem;
       }
       .btn-strip-remind {
-        width: 32px;
-        height: 32px;
-        font-size: 0.75rem;
+        width: 34px;
+        height: 34px;
+        font-size: 0.8rem;
       }
     }
 
@@ -1126,7 +1150,7 @@
           <div class="event-card-bottom-info">
             <h3 class="event-card-title">音乐见证布道会 · 亚罗士打专场</h3>
             <div class="event-card-meta">
-              <span class="event-card-time"><i class="far fa-clock"></i> 20:15 - 22:00</span>
+              <span class="event-card-time"><i class="fas fa-clock"></i> 20:15 - 22:00</span>
               <span><i class="fas fa-map-marker-alt"></i> 亚罗士打浸信会教会 (咖啡牧师教会)</span>
               <span><i class="fas fa-arrow-right"></i> 查看详情</span>
             </div>
@@ -1145,7 +1169,7 @@
           <div class="event-card-bottom-info">
             <h3 class="event-card-title">音乐见证布道会 · 马口专场</h3>
             <div class="event-card-meta">
-              <span class="event-card-time"><i class="far fa-clock"></i> 20:00 - 22:00</span>
+              <span class="event-card-time"><i class="fas fa-clock"></i> 20:00 - 22:00</span>
               <span><i class="fas fa-map-marker-alt"></i> 马口教会</span>
               <span><i class="fas fa-arrow-right"></i> 查看详情</span>
             </div>
@@ -1164,7 +1188,7 @@
           <div class="event-card-bottom-info">
             <h3 class="event-card-title">音乐见证布道会 · 巴生专场</h3>
             <div class="event-card-meta">
-              <span class="event-card-time"><i class="far fa-clock"></i> 20:00 - 22:00</span>
+              <span class="event-card-time"><i class="fas fa-clock"></i> 20:00 - 22:00</span>
               <span><i class="fas fa-map-marker-alt"></i> 巴生卓越社区教会</span>
               <span><i class="fas fa-arrow-right"></i> 查看详情</span>
             </div>
@@ -1183,7 +1207,7 @@
           <div class="event-card-bottom-info">
             <h3 class="event-card-title">音乐见证布道会 · 日本东京专场</h3>
             <div class="event-card-meta">
-              <span class="event-card-time"><i class="far fa-clock"></i> 19:30 - 21:30</span>
+              <span class="event-card-time"><i class="fas fa-clock"></i> 19:30 - 21:30</span>
               <span><i class="fas fa-map-marker-alt"></i> 日本 · 活水教会</span>
               <span><i class="fas fa-arrow-right"></i> 查看详情</span>
             </div>
@@ -1202,7 +1226,7 @@
           <div class="event-card-bottom-info">
             <h3 class="event-card-title">Harvester 精彩活动与巡回特会</h3>
             <div class="event-card-meta">
-              <span class="event-card-time"><i class="far fa-clock"></i> 20:00 - 22:00</span>
+              <span class="event-card-time"><i class="fas fa-clock"></i> 20:00 - 22:00</span>
               <span><i class="fas fa-map-marker-alt"></i> 各城各乡 · 福音巡回</span>
               <span><i class="fas fa-arrow-right"></i> 查看详情</span>
             </div>
@@ -1236,14 +1260,14 @@
         <div class="event-month-year">
           <span class="event-month">10 月</span>
           <span class="event-year">2026</span>
-          <span class="event-time-badge"><i class="far fa-clock"></i> 20:15 - 22:00</span>
+          <span class="event-time-badge"><i class="fas fa-clock"></i> 20:15 - 22:00</span>
         </div>
       </div>
       <div class="event-info-block">
         <div class="event-tag-badge-wrap"><span class="event-strip-badge open">即将来临 ⏳</span></div>
         <h3 class="event-strip-title"><a href="event.html?id=e44e2f32-b755-4339-a9a4-bfe910fa9c3e">音乐见证布道会 · 亚罗士打浸信会教会</a></h3>
         <p class="event-strip-venue">
-          <span class="event-strip-time"><i class="far fa-clock"></i> 20:15 - 22:00</span><span class="event-strip-dot">·</span>
+          <span class="event-strip-time"><i class="fas fa-clock"></i> 20:15 - 22:00</span><span class="event-strip-dot">·</span>
           <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> 亚罗士打浸信会教会 (咖啡牧师教会)</span>
         </p>
       </div>
@@ -1262,14 +1286,14 @@
         <div class="event-month-year">
           <span class="event-month">11 月</span>
           <span class="event-year">2026</span>
-          <span class="event-time-badge"><i class="far fa-clock"></i> 20:00 - 22:00</span>
+          <span class="event-time-badge"><i class="fas fa-clock"></i> 20:00 - 22:00</span>
         </div>
       </div>
       <div class="event-info-block">
         <div class="event-tag-badge-wrap"><span class="event-strip-badge open">即将来临 ⏳</span></div>
         <h3 class="event-strip-title"><a href="event.html?id=7e4d246d-5046-444d-8c1a-1384ac6c59b1">音乐见证布道会 · 马口教会</a></h3>
         <p class="event-strip-venue">
-          <span class="event-strip-time"><i class="far fa-clock"></i> 20:00 - 22:00</span><span class="event-strip-dot">·</span>
+          <span class="event-strip-time"><i class="fas fa-clock"></i> 20:00 - 22:00</span><span class="event-strip-dot">·</span>
           <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> 马口教会 (Bahau)</span>
         </p>
       </div>
@@ -1288,14 +1312,14 @@
         <div class="event-month-year">
           <span class="event-month">11 月</span>
           <span class="event-year">2026</span>
-          <span class="event-time-badge"><i class="far fa-clock"></i> 20:00 - 22:00</span>
+          <span class="event-time-badge"><i class="fas fa-clock"></i> 20:00 - 22:00</span>
         </div>
       </div>
       <div class="event-info-block">
         <div class="event-tag-badge-wrap"><span class="event-strip-badge open">即将来临 ⏳</span></div>
         <h3 class="event-strip-title"><a href="event.html?id=d638a60e-0ae9-43d3-9b43-a7360b978778">音乐见证布道会 · 巴生卓越社区教会</a></h3>
         <p class="event-strip-venue">
-          <span class="event-strip-time"><i class="far fa-clock"></i> 20:00 - 22:00</span><span class="event-strip-dot">·</span>
+          <span class="event-strip-time"><i class="fas fa-clock"></i> 20:00 - 22:00</span><span class="event-strip-dot">·</span>
           <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> 巴生卓越社区教会 (Klang)</span>
         </p>
       </div>
@@ -1314,14 +1338,14 @@
         <div class="event-month-year">
           <span class="event-month">12 月</span>
           <span class="event-year">2026</span>
-          <span class="event-time-badge"><i class="far fa-clock"></i> 19:30 - 21:30</span>
+          <span class="event-time-badge"><i class="fas fa-clock"></i> 19:30 - 21:30</span>
         </div>
       </div>
       <div class="event-info-block">
         <div class="event-tag-badge-wrap"><span class="event-strip-badge open">即将来临 ⏳</span></div>
         <h3 class="event-strip-title"><a href="event.html?id=49d93ede-d4bb-4af5-90d5-83be66e692a9">音乐见证布道会 · 日本东京活水教会</a></h3>
         <p class="event-strip-venue">
-          <span class="event-strip-time"><i class="far fa-clock"></i> 19:30 - 21:30</span><span class="event-strip-dot">·</span>
+          <span class="event-strip-time"><i class="fas fa-clock"></i> 19:30 - 21:30</span><span class="event-strip-dot">·</span>
           <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> 日本 · 活水教会 (Tokyo, Japan)</span>
         </p>
       </div>
@@ -1340,14 +1364,14 @@
         <div class="event-month-year">
           <span class="event-month">10 月</span>
           <span class="event-year">2026</span>
-          <span class="event-time-badge"><i class="far fa-clock"></i> 15:00 - 17:00</span>
+          <span class="event-time-badge"><i class="fas fa-clock"></i> 15:00 - 17:00</span>
         </div>
       </div>
       <div class="event-info-block">
         <div class="event-tag-badge-wrap"><span class="event-strip-badge ended">已结束 🏁</span></div>
         <h3 class="event-strip-title"><a href="event.html?id=e48a862c-6763-450d-b43f-8549ae21a3d7">音乐见证布道会 · 新加坡恩泉教会</a></h3>
         <p class="event-strip-venue">
-          <span class="event-strip-time"><i class="far fa-clock"></i> 15:00 - 17:00</span><span class="event-strip-dot">·</span>
+          <span class="event-strip-time"><i class="fas fa-clock"></i> 15:00 - 17:00</span><span class="event-strip-dot">·</span>
           <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> 新加坡 恩泉教会 (Grace Assembly of God)</span>
         </p>
       </div>
@@ -1368,8 +1392,8 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js?v=23.0.0"></script>
-  <script src="app.js?v=40.0.0"></script>
+  <script src="config.js?v=24.0.0"></script>
+  <script src="app.js?v=41.0.0"></script>
 
 
 </body>
