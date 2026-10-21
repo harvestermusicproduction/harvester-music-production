@@ -717,13 +717,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       return `
         <div class="event-strip-row fade-in">
-          <!-- Left: Date & Time -->
+          <!-- Left: Date Block -->
           <div class="event-date-block">
             <span class="event-day">${e.day}</span>
             <div class="event-month-year">
               <span class="event-month">${e.month}</span>
               <span class="event-year">${e.year}</span>
-              <span class="event-time-badge"><i class="fas fa-clock"></i> ${e.timeStr || '20:00 - 22:00'}</span>
             </div>
           </div>
 
