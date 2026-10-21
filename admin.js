@@ -435,14 +435,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // --- Dedicated 15s Audio Preview Uploader ---
+  // --- Dedicated Audio Preview Uploader ---
   window.uploadAudioFile = async (fileInputId, targetId, previewId) => {
     const inputEl = document.getElementById(fileInputId);
     const file = inputEl?.files?.[0];
     if (!file) return alert("请先选择音频文件 (MP3, WAV, M4A, AAC, OGG, FLAC 等)");
 
     const btn = event.currentTarget || event.target;
-    const originalText = btn ? btn.innerText : '📤 上传 15s 试听音频';
+    const originalText = btn ? btn.innerText : '📤 上传试听版音频';
     if (btn) {
       btn.innerText = "⏳ 正在上传试听音频...";
       btn.disabled = true;
@@ -916,7 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; flex-wrap:wrap; gap:15px;">
         <div>
           <h1 style="color:var(--gold); margin:0; font-size:1.8rem;">🎵 音乐与歌谱集 (Music & Scores)</h1>
-          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理原创诗歌单曲、3D 展架唱片、15秒试听音频、PDF 歌谱与风琴折档案（按年份归类管理）。</p>
+          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理原创诗歌单曲、3D 展架唱片、试听音频、PDF 歌谱与风琴折档案（按年份归类管理）。</p>
         </div>
         <button class="btn btn-submit" style="width:auto; padding:12px 28px; font-weight:700;" onclick="openMusicModal()">+ 发布新单曲 / 歌谱</button>
       </div>
@@ -973,7 +973,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p style="margin:4px 0 0; color:#888; font-size:0.8rem;">${s.customMatch?.artist || s.artist || 'Harvester Worship'}</p>
                         <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
                           <span style="font-size:0.72rem; color:${s.previewAudio ? '#f6d28a' : '#666'}; background:${s.previewAudio ? 'rgba(246,210,138,0.12)' : 'rgba(255,255,255,0.04)'}; border:1px solid ${s.previewAudio ? 'rgba(246,210,138,0.3)' : 'rgba(255,255,255,0.08)'}; padding:2px 7px; border-radius:4px; display:inline-flex; align-items:center; gap:4px;">
-                            <i class="fas fa-headphones"></i> ${s.previewAudio ? '15s 试听就绪' : '未传试听'}
+                            <i class="fas fa-headphones"></i> ${s.previewAudio ? '试听版就绪' : '未传试听'}
                           </span>
                           <span style="font-size:0.72rem; color:${s.score_url ? '#2ed573' : '#666'}; background:${s.score_url ? 'rgba(46,213,115,0.1)' : 'rgba(255,255,255,0.04)'}; border:1px solid ${s.score_url ? 'rgba(46,213,115,0.3)' : 'rgba(255,255,255,0.08)'}; padding:2px 7px; border-radius:4px; display:inline-flex; align-items:center; gap:4px;">
                             <i class="fas fa-file-pdf"></i> ${s.score_url ? '歌谱就绪' : '无歌谱'}
@@ -1256,16 +1256,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <!-- 4. 视听音频、外链与歌谱资源 -->
           <div style="background:#0a0a0a; border:1.5px solid rgba(246,210,138,0.25); border-radius:12px; padding:18px; margin-bottom:15px;">
-            <label style="display:block; margin-bottom:12px; color:var(--gold); font-size:0.9rem; font-weight:bold;">🎧 15秒试听音频、外链与歌谱资源 (Audio & Media)</label>
+            <label style="display:block; margin-bottom:12px; color:var(--gold); font-size:0.9rem; font-weight:bold;">🎧 试听音频、外链与歌谱资源 (Preview Audio & Media)</label>
 
-            <!-- 15秒试听音频专属上传与设置 -->
+            <!-- 试听音频专属上传与设置 -->
             <div style="background:#141414; border:1px solid rgba(246,210,138,0.2); border-radius:10px; padding:14px; margin-bottom:16px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
-                <label style="color:#f6d28a; font-size:0.85rem; font-weight:bold;">🎵 15秒试听音频文件 (15s Preview Audio)</label>
+                <label style="color:#f6d28a; font-size:0.85rem; font-weight:bold;">🎵 试听版音频文件 (Preview Audio)</label>
                 <span style="font-size:0.72rem; color:#888;">供前台 3D 展架与浮动胶囊播放器直接调用</span>
               </div>
               <p style="font-size:0.75rem; color:#aaa; margin:0 0 10px 0; line-height:1.4;">
-                支持直接上传 MP3、WAV、M4A、AAC 等音频文件。上传后前台底部胶囊播放器即可直接播放 15 秒精选片段。
+                支持直接上传 MP3、WAV、M4A、AAC 等音频文件。上传后前台底部胶囊播放器与唱片内页即可直接播放试听版。
               </p>
               
               <!-- Inline Audio Player Preview -->
@@ -1278,7 +1278,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                 <input type="file" id="mf_audio" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac" style="font-size:0.78rem; color:#aaa; flex:1; min-width:200px;">
                 <button type="button" class="btn-tiny" style="background:rgba(246,210,138,0.18); border-color:var(--gold); color:var(--gold); font-weight:bold; padding:8px 16px; border-radius:6px;" onclick="uploadAudioFile('mf_audio', 'm_preview_audio', 'prev_audio_el')">
-                  📤 上传 15s 试听音频
+                  📤 上传试听版音频
                 </button>
               </div>
             </div>

@@ -41,7 +41,7 @@
     "genre": ["Christian", "Worship", "Gospel", "Pop"]
   }
   </script>
-  <link rel="stylesheet" href="styles.css?v=53.0.0">
+  <link rel="stylesheet" href="styles.css?v=59.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
     window.onerror = function(msg, url, line) {
@@ -185,9 +185,9 @@
       <div style="text-align: center;">
         <p class="section-subtitle font-hand-en" style="margin-top: 0; margin-bottom: 0.8rem; line-height: 1.4;">~ Latest Harvest Music ~</p>
         <h2 style="font-size: 2.5rem; color: #F6F4F0; margin-bottom: 2.5rem; margin-top: 0; line-height: 1.2; font-family: var(--font-chn-title);"><span class="hand-underline">最新歌曲</span></h2>
-        <!-- 🤍 Modern White 3D Hi-Fi Turntable (白色 3D 唱片机 · 自动放臂试听15秒) -->
+        <!-- 🤍 Modern White 3D Hi-Fi Turntable (白色 3D 唱片机 · 自动放臂试听) -->
         <div class="turntable-container" id="homeTurntable">
-          <div class="white-turntable-chassis" id="turntableChassis" onclick="toggleHomeTurntable(event)" title="点击播放 / 暂停 15 秒试听">
+          <div class="white-turntable-chassis" id="turntableChassis" onclick="toggleHomeTurntable(event)" title="点击播放 / 暂停试听">
             <!-- 4 Corner Precision Screws -->
             <div class="chassis-screw screw-tl"></div>
             <div class="chassis-screw screw-tr"></div>
@@ -275,7 +275,7 @@
             <div class="turntable-bottom-strip">
               <button type="button" class="turntable-action-btn" id="ttActionBtn" onclick="toggleHomeTurntable(event)">
                 <i class="fas fa-play" id="ttPlayIcon"></i>
-                <span id="ttBtnText">START 15s PREVIEW</span>
+                <span id="ttBtnText">START PREVIEW</span>
               </button>
               <div class="turntable-status-bubble">
                 <span class="status-pulse-dot" id="ttStatusDot"></span>
@@ -394,7 +394,7 @@
     let ttAudioElement = null;
     let ttCountdownTimer = null;
     let ttNotesInterval = null;
-    const TT_MAX_SECONDS = 15;
+    const TT_FALLBACK_SECONDS = 30;
     let currentPreviewUrl = '';
     let currentSongTitle = '';
     let audioCtx = null;
@@ -445,7 +445,7 @@
           const chord = chords[loop % chords.length];
           chord.forEach((freq, idx) => {
             const time = audioCtx.currentTime + noteDelay + (idx * 0.22);
-            if (time - audioCtx.currentTime > TT_MAX_SECONDS) return;
+            if (time - audioCtx.currentTime > TT_FALLBACK_SECONDS) return;
 
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
@@ -520,7 +520,7 @@
       if (statusDot) statusDot.classList.add('pulsing');
       if (actionBtn) actionBtn.classList.add('playing');
       if (playIcon) playIcon.className = 'fas fa-pause';
-      if (btnText) btnText.innerText = 'PAUSE (15s)';
+      if (btnText) btnText.innerText = 'PAUSE';
       if (statusText) statusText.innerText = '唱臂落针中...';
 
       // 2. Needle lands on groove after mechanical swing (~380ms)
@@ -529,7 +529,7 @@
 
         // Start vinyl rotation
         if (disc) disc.classList.add('spinning');
-        if (statusText) statusText.innerText = '正在试听 15s...';
+        if (statusText) statusText.innerText = '正在播放试听版...';
 
         // Play real preview audio or graceful fallback
         if (ttAudioElement && currentPreviewUrl) {
@@ -553,21 +553,25 @@
         spawnTurntableNote();
         ttNotesInterval = setInterval(spawnTurntableNote, 650);
 
-        // 15-second countdown timer & progress bar
+        // Dynamic timer & progress bar
         const intervalStep = 100;
-        const totalSteps = (TT_MAX_SECONDS * 1000) / intervalStep;
         let stepCount = 0;
 
         ttCountdownTimer = setInterval(() => {
           stepCount++;
-          const progressPercent = Math.min(100, (stepCount / totalSteps) * 100);
-          if (progressBar) progressBar.style.width = `${progressPercent}%`;
+          if (ttAudioElement && currentPreviewUrl && !isNaN(ttAudioElement.duration) && ttAudioElement.duration > 0) {
+            const progressPercent = Math.min(100, (ttAudioElement.currentTime / ttAudioElement.duration) * 100);
+            if (progressBar) progressBar.style.width = `${progressPercent}%`;
+            if (statusText) statusText.innerText = '正在播放试听版...';
+          } else {
+            const maxFallbackSteps = (TT_FALLBACK_SECONDS * 1000) / intervalStep;
+            const progressPercent = Math.min(100, (stepCount / maxFallbackSteps) * 100);
+            if (progressBar) progressBar.style.width = `${progressPercent}%`;
+            if (statusText) statusText.innerText = '正在播放试听版...';
 
-          const remaining = Math.max(0, Math.ceil(TT_MAX_SECONDS - (stepCount * intervalStep / 1000)));
-          if (statusText) statusText.innerText = `正在试听 ${remaining}s...`;
-
-          if (stepCount >= totalSteps) {
-            stopTurntablePlayback(true);
+            if (stepCount >= maxFallbackSteps) {
+              stopTurntablePlayback(true);
+            }
           }
         }, intervalStep);
 
@@ -614,7 +618,7 @@
       if (statusDot) statusDot.classList.remove('pulsing');
       if (actionBtn) actionBtn.classList.remove('playing');
       if (playIcon) playIcon.className = 'fas fa-play';
-      if (btnText) btnText.innerText = 'START 15s PREVIEW';
+      if (btnText) btnText.innerText = 'START PREVIEW';
 
       if (progressBar) {
         progressBar.style.width = isCompleted ? '100%' : '0%';

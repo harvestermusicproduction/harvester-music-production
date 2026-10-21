@@ -303,24 +303,14 @@ You have set my feet upon the rock!`
   let hasMovedFar = false;
   let isPhysicsRunning = false;
 
-  // Audio Event Listeners (15s Preview Limit & UI Lifecycle)
-  audioPlayer.addEventListener('timeupdate', () => {
-    // Exact 15-second preview cap as requested by user
-    if (isPlaying && audioPlayer.currentTime >= 15.5) {
-      audioPlayer.pause();
-      audioPlayer.currentTime = 0;
-      isPlaying = false;
-      updatePlayerUI();
-      if (typeof window.showMorandiToast === 'function') {
-        window.showMorandiToast('✨ 15 秒试听结束，欢迎翻开唱片内页查看完整作品与歌谱');
-      }
-    }
-  });
-
+  // Audio Event Listeners (Preview Mode & UI Lifecycle)
   audioPlayer.addEventListener('ended', () => {
     isPlaying = false;
     audioPlayer.currentTime = 0;
     updatePlayerUI();
+    if (typeof window.showMorandiToast === 'function') {
+      window.showMorandiToast('✨ 试听结束，欢迎翻开唱片内页查看完整作品与歌谱');
+    }
   });
 
   audioPlayer.addEventListener('error', (e) => {
@@ -561,7 +551,7 @@ You have set my feet upon the rock!`
           <img id="miniCover" src="${albums[0]?.cover_url || childlikeDoodles[0]}" alt="Cover">
           <div class="mini-meta">
             <span id="miniTrackTitle" class="mini-track-name">${albums[0]?.title || ''}</span>
-            <span id="miniTrackArtist" class="mini-track-artist">${albums[0]?.artist || 'Harvester Worship'} · 15秒试听</span>
+            <span id="miniTrackArtist" class="mini-track-artist">${albums[0]?.artist || 'Harvester Worship'} · 试听版</span>
           </div>
         </div>
         <div class="mini-right">
@@ -1004,7 +994,7 @@ You have set my feet upon the rock!`
         const miniArtist = document.getElementById('miniTrackArtist');
         if (miniCover) miniCover.src = cur.cover_url;
         if (miniTitle) miniTitle.innerText = cur.title;
-        if (miniArtist) miniArtist.innerText = `${cur.artist || 'Harvester Worship'} · 15秒试听`;
+        if (miniArtist) miniArtist.innerText = `${cur.artist || 'Harvester Worship'} · 试听版`;
       }
     }
   }
@@ -1465,7 +1455,7 @@ ${activeSong.lyrics}
                 <div style="border-top:1px solid rgba(0,0,0,0.12); padding-top:14px; display:flex; justify-content:space-between; align-items:center;">
                   <span style="font-family:var(--font-times); font-size:0.75rem; color:${pal.fold3_text}; opacity:0.8;">PDF SCORES</span>
                   <button onclick="toggleAudioPlay()" class="imm-pill-btn" style="background:${pal.primary}; color:#F6F4F0; border:none; font-size:0.82rem; padding:7px 16px; font-family:var(--font-times); box-shadow:0 4px 12px rgba(0,0,0,0.25);">
-                    <i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停试听' : '15s 试听'}
+                    <i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停试听' : '试听版'}
                   </button>
                 </div>
               </div>
@@ -1477,7 +1467,7 @@ ${activeSong.lyrics}
     `;
   }
 
-  // Audio Playback Engine (15s Preview Mode)
+  // Audio Playback Engine (Preview Mode)
   window.toggleAudioPlay = function() {
     if (!albums || albums.length === 0) return;
     const M = albums.length;
@@ -1501,7 +1491,7 @@ ${activeSong.lyrics}
           isPlaying = true;
           updatePlayerUI();
           if (typeof window.showMorandiToast === 'function') {
-            window.showMorandiToast(`🎵 正在试听：《${cur.title}》（15秒精选片段）`);
+            window.showMorandiToast(`🎵 正在试听：《${cur.title}》（试听版）`);
           }
         }).catch(err => {
           console.warn("Audio playback error:", err);
@@ -1515,9 +1505,9 @@ ${activeSong.lyrics}
         isPlaying = false;
         updatePlayerUI();
         if (typeof window.showMorandiToast === 'function') {
-          window.showMorandiToast('🎵 该单曲暂未上传 15 秒试听音频，请在后台“音乐与歌谱集”上传');
+          window.showMorandiToast('🎵 该单曲暂未上传试听版音频，请在后台“音乐与歌谱集”上传');
         } else {
-          alert('🎵 该单曲暂未上传 15 秒试听音频，请在后台“音乐与歌谱集”上传');
+          alert('🎵 该单曲暂未上传试听版音频，请在后台“音乐与歌谱集”上传');
         }
       }
     }
@@ -1535,7 +1525,7 @@ ${activeSong.lyrics}
     if (lyricsPlayBtnIcon) {
       lyricsPlayBtnIcon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
       if (lyricsPlayBtnIcon.parentElement) {
-        lyricsPlayBtnIcon.parentElement.innerHTML = `<i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '15s 试听'}`;
+        lyricsPlayBtnIcon.parentElement.innerHTML = `<i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '试听版'}`;
       }
     }
     if (miniEqBars) miniEqBars.classList.toggle('playing', isPlaying);
@@ -1547,7 +1537,7 @@ ${activeSong.lyrics}
       if (cur) {
         if (miniCover) miniCover.src = cur.cover_url;
         if (miniTitle) miniTitle.innerText = cur.title;
-        if (miniArtist) miniArtist.innerText = `${cur.artist || 'Harvester Worship'} · 15秒试听`;
+        if (miniArtist) miniArtist.innerText = `${cur.artist || 'Harvester Worship'} · 试听版`;
       }
     }
   }
