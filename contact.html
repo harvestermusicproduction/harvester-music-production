@@ -349,60 +349,6 @@
     .btn-rubber-stamp:active {
       transform: scale(0.96) rotate(-1deg) !important;
     }
-    /* --- 🌌 3D Echo Universe & Interactive Styles --- */
-    .echo-universe-section {
-      position: relative;
-      min-height: 85vh;
-      margin: 4rem auto 2rem;
-      max-width: 1200px;
-      padding: 0 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    #echo-canvas-wrap {
-      position: relative;
-      width: 100%;
-      min-height: 650px;
-      border-radius: 36px;
-      overflow: hidden;
-      background: radial-gradient(circle at 50% 50%, rgba(26, 21, 18, 0.95) 0%, rgba(10, 8, 7, 0.98) 100%);
-      border: 1.5px solid rgba(246, 210, 138, 0.25);
-      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    #echo3DCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: auto;
-      z-index: 1;
-    }
-    .interactive-card {
-      position: relative;
-      z-index: 10;
-      background: rgba(25, 20, 16, 0.88) !important;
-      backdrop-filter: blur(25px) !important;
-      -webkit-backdrop-filter: blur(25px) !important;
-      border: 2px dashed rgba(246, 210, 138, 0.45) !important;
-      border-radius: 255px 25px 225px 25px / 25px 225px 25px 255px;
-      padding: 2.8rem 2.5rem;
-      width: 90%;
-      max-width: 540px;
-      text-align: center;
-      pointer-events: auto;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 25px rgba(246, 210, 138, 0.15);
-      transition: 0.4s ease;
-    }
-    .interactive-card:hover { 
-      border-color: var(--gold) !important;
-      box-shadow: 0 35px 90px rgba(0,0,0,0.8), 0 0 35px rgba(246, 210, 138, 0.25);
-    }
     .btn-echo {
       background: rgba(35, 29, 23, 0.85) !important;
       border: 1.8px solid rgba(246, 210, 138, 0.45) !important;
@@ -423,27 +369,6 @@
       border-color: var(--gold) !important;
       color: #F6F4F0 !important;
       box-shadow: 0 0 18px rgba(246, 210, 138, 0.4);
-    }
-    .input-box {
-      width: 100%;
-      background: rgba(20, 26, 33, 0.88);
-      border: 2px solid rgba(246, 210, 138, 0.45);
-      border-radius: 255px 18px 225px 15px / 15px 225px 18px 255px;
-      padding: 16px 22px;
-      color: #F6F4F0;
-      margin-top: 1.2rem;
-      font-size: 1.15rem;
-      outline: none;
-      box-sizing: border-box;
-      font-family: var(--font-handwriting), 'American Typewriter', cursive, serif !important;
-      box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
-      transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-    }
-    .input-box:focus {
-      border-color: var(--gold);
-      background: rgba(26, 34, 42, 0.96);
-      box-shadow: 0 0 18px rgba(246, 210, 138, 0.35), inset 0 0 8px rgba(246, 210, 138, 0.15);
-      transform: scale(1.008) rotate(-0.3deg);
     }
 
     /* 📱 Tablet & iPad Responsive (600px ~ 960px) */
@@ -611,7 +536,6 @@
         <div class="dropdown-content">
           <a href="contact.html#section-contact"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> 联络留言</a>
           <a href="contact.html#section-ministry"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 🌾 事工邀约</a>
-          <a href="contact.html#echo"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2"/></svg> 回声空间</a>
         </div>
       </div>
     </nav>
@@ -649,7 +573,6 @@
       <div class="mobile-dropdown-content">
         <a href="contact.html#section-contact"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> 联络留言</a>
         <a href="contact.html#section-ministry"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 🌾 事工邀约</a>
-        <a href="contact.html#echo"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2"/></svg> 回声空间</a>
       </div>
     </div>
   </div>
@@ -671,7 +594,6 @@
     <div style="display: flex; justify-content: center; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap;">
       <a href="#section-contact" class="btn-echo" style="font-size: 0.85rem; padding: 6px 16px; border-radius: 20px; text-decoration: none;">✉️ 联络表单</a>
       <a href="#section-ministry" class="btn-echo" style="font-size: 0.85rem; padding: 6px 18px; border-radius: 20px; text-decoration: none; border-color: var(--gold); background: rgba(246, 210, 138, 0.2) !important; color: #f6d28a !important; font-weight: bold; box-shadow: 0 0 15px rgba(246, 210, 138, 0.3);">🌾 教会事工邀约 (点击直达)</a>
-      <a href="#echo" class="btn-echo" style="font-size: 0.85rem; padding: 6px 16px; border-radius: 20px; text-decoration: none;">✨ 回声空间</a>
     </div>
   </div>
 
@@ -988,53 +910,6 @@
     </div>
   </section>
 
-  <!-- 3. 回声空间板块 (合并于联系我们下方) -->
-  <div class="ppt-header fade-in" id="echo" style="margin-top: 5rem;">
-    <div class="ppt-line"></div>
-    <h2 class="ppt-title font-hand-cn">回 声 空 间</h2>
-    <p class="ppt-subtitle font-hand-en">~ ECHO SPACE · 写下你的感悟，留下属于你的回声 ~</p>
-  </div>
-
-  <section class="fade-in echo-universe-section">
-    <div id="echo-canvas-wrap">
-      <div id="echo3DCanvas"></div>
-
-      <div class="interactive-card">
-        <div class="ppt-header" style="margin:0 0 1.2rem 0; padding:0; max-width:none; border:none; text-align: center;">
-          <div class="ppt-meta" style="margin-bottom:0; justify-content:center; border:none;">
-            <span class="font-hand-cn" style="font-size: 1.8rem; letter-spacing: 4px; color: var(--gold); font-weight: normal;">共 鸣 留 言</span>
-          </div>
-        </div>
-        
-        <div id="reaction-group" style="display: flex; justify-content: center; gap: 10px; margin-top: 1rem; flex-wrap: wrap;">
-          <button class="btn-echo" onclick="postReaction('❤️', '被触动')">❤️ 被触动</button>
-          <button class="btn-echo" onclick="postReaction('🙏', '被安慰')">🙏 被安慰</button>
-          <button class="btn-echo" onclick="postReaction('🔥', '很真实')">🔥 很真实</button>
-          <button class="btn-echo" onclick="postReaction('🎧', '单曲循环')">🎧 单曲循环</button>
-          <button class="btn-echo" id="btnCustomTrigger" onclick="toggleCustomUI()">➕ 自定义</button>
-        </div>
-
-        <!-- Custom Reaction UI -->
-        <div id="customReactionUI" style="display: none; margin-top: 1.2rem;">
-          <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
-            <input id="customEmoji" placeholder="😊" style="width: 60px; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(246,210,138,0.3); border-radius: 15px; padding: 10px; color: #F6F4F0; text-align: center; outline: none; font-size: 1.2rem;">
-            <input id="customText" placeholder="写个短语..." style="flex:1; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(246,210,138,0.3); border-radius: 15px; padding: 10px; color: #F6F4F0; outline: none; font-family: var(--font-hand-cn);">
-            <button class="btn-echo" style="padding: 10px 18px; border-color: var(--gold);" onclick="handleCustomSubmit()">🔥 触发</button>
-          </div>
-        </div>
-
-        <div class="input-area">
-          <input id="echoInput" class="input-box" maxlength="20" placeholder="写下你的感悟，融入这片回声..." />
-          <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 1.2rem 0;">
-            <input type="checkbox" id="echoAnon" checked style="width:auto; transform: scale(1.2);">
-            <label for="echoAnon" class="font-hand-cn" style="color:#b8ac9f; font-size: 1.1rem; cursor: pointer;">匿名共吟</label>
-          </div>
-          <button class="btn-frosted-gold" style="width: 100%; border-radius: 50px; padding: 14px; font-size: 1.15rem; color: #f6d28a !important; text-align: center; border: 1.5px solid rgba(246, 210, 138, 0.4); background: rgba(35, 29, 23, 0.9);" onclick="postEcho()">发 布 回 声</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
       <img src="assets/logo.png" alt="Harvester" style="height: 25px; display: block; margin: 0 auto 1.2rem;">
@@ -1042,10 +917,9 @@
     <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=16.1.0"></script>
-  <script src="app.js?v=36.0.0"></script>
+  <script src="app.js?v=47.0.0"></script>
   <script>
     // --- 📨 Contact Form Handler ---
     document.getElementById('contactForm')?.addEventListener('submit', async (e) => {
@@ -1170,285 +1044,6 @@
     } else {
       checkUrlPurposeParam();
     }
-
-    // --- 🔮 3D Echo Universe Engine ---
-    let echoScene, echoCamera, echoRenderer, echoStarField;
-    let echoMouseX = 0, echoMouseY = 0;
-    const MAX_ECHOES = 25;
-    window.currentEchoes = [];
-
-    function init3DEchoUniverse() {
-      const container = document.getElementById('echo-canvas-wrap');
-      if (!container) return;
-
-      const width = container.clientWidth || 1000;
-      const height = container.clientHeight || 650;
-      const isMobile = window.innerWidth <= 768;
-
-      echoScene = new THREE.Scene();
-      echoCamera = new THREE.PerspectiveCamera(isMobile ? 80 : 65, width / height, 1, 4000);
-      echoCamera.position.z = isMobile ? 750 : 500;
-
-      echoRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      echoRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      echoRenderer.setSize(width, height);
-      
-      const targetDiv = document.getElementById('echo3DCanvas');
-      targetDiv.innerHTML = '';
-      targetDiv.appendChild(echoRenderer.domElement);
-
-      // Starfield
-      const starGeo = new THREE.BufferGeometry();
-      const starCoords = [];
-      for (let i = 0; i < 4000; i++) {
-        starCoords.push((Math.random() - 0.5) * 2200, (Math.random() - 0.5) * 2200, (Math.random() - 0.5) * 2500);
-      }
-      starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
-      const starMat = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: isMobile ? 1.5 : 1.0,
-        transparent: true,
-        opacity: 0.8,
-        blending: THREE.AdditiveBlending
-      });
-      echoStarField = new THREE.Points(starGeo, starMat);
-      echoScene.add(echoStarField);
-
-      // Warm Point Light
-      const light = new THREE.PointLight(0xf6d28a, 0.8, 2200);
-      light.position.set(0, 0, 500);
-      echoScene.add(light);
-
-      container.addEventListener('mousemove', (e) => {
-        const rect = container.getBoundingClientRect();
-        echoMouseX = (e.clientX - rect.left - width / 2) * 0.05;
-        echoMouseY = (e.clientY - rect.top - height / 2) * 0.05;
-      });
-
-      animateEchoUniverse();
-    }
-
-    function createEchoSprite(message, isPrimary = false) {
-      if (!echoScene) return;
-      const isMobile = window.innerWidth <= 768;
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = 2400;
-      canvas.height = 450;
-      
-      // 超大字体与手绘感描边
-      const fontSize = isPrimary ? 240 : 170;
-      ctx.font = `bold ${fontSize}px 'ChenYuluoyan', 'Gaegu', sans-serif`;
-      
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-
-      if (isPrimary) {
-        ctx.shadowBlur = 45;
-        ctx.shadowColor = 'rgba(246, 210, 138, 1.0)';
-        ctx.fillStyle = '#f6d28a';
-      } else {
-        ctx.shadowBlur = 35;
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.75)';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-      }
-      
-      ctx.fillText(message, 1200, 225);
-
-      const texture = new THREE.CanvasTexture(canvas);
-      const material = new THREE.SpriteMaterial({ 
-        map: texture, 
-        transparent: true,
-        opacity: 0,
-        blending: THREE.AdditiveBlending
-      });
-      
-      const sprite = new THREE.Sprite(material);
-      const scaleBase = isMobile ? 1.8 : 3.6;
-      
-      // 飘出来的字体大幅放大
-      sprite.scale.set(
-        isPrimary ? (28 * scaleBase) : (18 * scaleBase), 
-        isPrimary ? (5.5 * scaleBase) : (3.4 * scaleBase), 
-        1
-      );
-      
-      const boundX = isMobile ? 600 : 1300;
-      const boundY = isMobile ? 700 : 850;
-
-      if (isPrimary) {
-        sprite.position.set((Math.random() - 0.5) * 80, (Math.random() - 0.5) * 100, 330);
-        sprite.userData = { speed: 0.18, drift: (Math.random() - 0.5) * 0.15 };
-      } else {
-        sprite.position.set((Math.random() - 0.5) * boundX, (Math.random() - 0.5) * boundY, (Math.random() - 0.5) * 800);
-        sprite.userData = { speed: Math.random() * 0.05 + 0.03, drift: (Math.random() - 0.5) * 0.04 };
-      }
-
-      echoScene.add(sprite);
-      window.currentEchoes.push(sprite);
-      
-      // 保证背景最多活跃回声
-      if (window.currentEchoes.length > MAX_ECHOES) {
-        const old = window.currentEchoes.shift();
-        echoScene.remove(old);
-      }
-    }
-
-    function animateEchoUniverse() {
-      requestAnimationFrame(animateEchoUniverse);
-      if (!echoScene || !echoRenderer || !echoCamera) return;
-
-      const isMobile = window.innerWidth <= 768;
-      echoScene.rotation.y += (echoMouseX * 0.0001) + 0.0002;
-      echoScene.rotation.x += (echoMouseY * 0.0001) + 0.0001;
-
-      if(echoStarField) echoStarField.rotation.z += 0.0001;
-
-      if(window.currentEchoes) {
-        window.currentEchoes.forEach(e => {
-          e.position.x += e.userData.speed || 0.04;
-          e.position.y += e.userData.drift || 0;
-          if(e.material.opacity < 1) e.material.opacity += 0.03;
-
-          const resetBound = isMobile ? 550 : 1100;
-          if(e.position.x > resetBound) {
-            e.position.x = -resetBound;
-            e.position.y = (Math.random()-0.5) * (isMobile ? 800 : 700);
-          }
-        });
-      }
-
-      echoRenderer.render(echoScene, echoCamera);
-    }
-
-    function toggleCustomUI() {
-      const ui = document.getElementById('customReactionUI');
-      ui.style.display = ui.style.display === 'none' ? 'block' : 'none';
-      if(ui.style.display === 'block') document.getElementById('customEmoji').focus();
-    }
-
-    function handleCustomSubmit() {
-      const emoji = document.getElementById('customEmoji').value.trim() || '✨';
-      const text = document.getElementById('customText').value.trim();
-      if(!text) return alert("请写一点感悟短语吧");
-      
-      postReaction(emoji, text);
-      toggleCustomUI(); 
-      document.getElementById('customEmoji').value = '';
-      document.getElementById('customText').value = '';
-    }
-
-    // --- 📊 记录按钮点击数并在前端立即发射大字 ---
-    async function postReaction(emoji, text = "") {
-      const fullText = text ? (emoji + " " + text) : emoji;
-      createEchoSprite(fullText, true);
-
-      // 后台异步记录点击数据
-      const db = window.supabase;
-      if (!db) return;
-      try {
-        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_echo_reactions_stats').maybeSingle();
-        let stats = { total: 0, reactions: {} };
-        if (cfg?.value) {
-          try { stats = JSON.parse(cfg.value); } catch(err){}
-        }
-        if (!stats.reactions) stats.reactions = {};
-        stats.total = (stats.total || 0) + 1;
-        stats.reactions[fullText] = (stats.reactions[fullText] || 0) + 1;
-
-        await db.from('site_config').upsert({
-          key: 'cfg_echo_reactions_stats',
-          value: JSON.stringify(stats)
-        }, { onConflict: 'key' });
-      } catch(e) {
-        console.warn("Reaction stat update failed", e);
-      }
-    }
-
-    // --- 📝 用户提交长留言（需后台审核才永久悬浮） ---
-    async function postEcho() {
-      const input = document.getElementById("echoInput");
-      const text = input.value.trim();
-      const isAnon = document.getElementById("echoAnon").checked;
-      if(!text) return;
-
-      const db = window.supabase;
-      const data = { 
-        name: isAnon ? "匿名听众" : "音乐挚友", 
-        message: "[ECHO] " + text,
-        status: "pending"
-      };
-
-      try {
-        await db.from('contact_messages').insert([data]);
-        // 本地立即飘出一次作为即时反馈
-        createEchoSprite(text, true);
-        input.value = "";
-        alert("✨ 留言已提交！经管理员审核通过后，将永久悬浮于星空中。");
-      } catch(e) { 
-        console.error("Echo failed", e);
-        alert("提交失败，请稍后重试");
-      }
-    }
-
-    // --- 🌌 获取最多20个最新审核通过的留言永久悬浮于背景 ---
-    async function fetchEchoes() {
-      const db = window.supabase;
-      if (!db) return;
-      try {
-        // 1. 获取已批准的 IDs
-        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
-        const approvedIds = cfg?.value ? cfg.value.split(',').filter(Boolean) : [];
-        
-        let approvedEchoes = [];
-
-        // 优先从 contact_messages 查 status = 'approved' 或 ID 在 approvedIds 里的最新 20 条
-        if (approvedIds.length > 0) {
-          const { data, error } = await db.from('contact_messages')
-            .select('*')
-            .in('id', approvedIds)
-            .order('created_at', { ascending: false })
-            .limit(20);
-          if (!error && data) approvedEchoes = data;
-        }
-
-        if (approvedEchoes.length === 0) {
-          const { data, error } = await db.from('contact_messages')
-            .select('*')
-            .eq('status', 'approved')
-            .ilike('message', '[ECHO]%')
-            .order('created_at', { ascending: false })
-            .limit(20);
-          if (!error && data) approvedEchoes = data;
-        }
-
-        if (approvedEchoes.length > 0) {
-          // 最多 20 条，最新取代最旧
-          approvedEchoes.slice(0, 20).forEach(e => {
-            const cleanMessage = e.message.replace("[ECHO]", "").trim();
-            if (cleanMessage) createEchoSprite(cleanMessage, false);
-          });
-        }
-      } catch(e) { 
-        console.error("Echo fetch error:", e);
-      }
-    }
-
-    window.addEventListener('resize', () => {
-      const container = document.getElementById('echo-canvas-wrap');
-      if (container && echoCamera && echoRenderer) {
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        echoCamera.aspect = width / height;
-        echoCamera.updateProjectionMatrix();
-        echoRenderer.setSize(width, height);
-      }
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      init3DEchoUniverse();
-      fetchEchoes();
-    });
   </script>
 </body>
 </html>

@@ -4596,30 +4596,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // --- 🌌 CONTACT & ECHO SPACE CMS MODULE (联系我们与回声空间) ---
+  // --- ✉️ CONTACT CMS MODULE (联系我们) ---
   let currentContactSubTab = 'inbox';
   window.switchContactTab = (tab) => { currentContactSubTab = tab; renderContactCMS(document.getElementById('moduleBody')); };
 
   async function renderContactCMS(container) {
     const { data: contacts } = await db.from('contact_messages').select('*').order('created_at', {ascending: false});
-    const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
-    const approvedIds = cfg?.value ? cfg.value.split(',').filter(Boolean) : [];
 
     const { data: configs } = await db.from('site_config').select('*');
     const c = (configs || []).reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
 
-    const echoMessages = (contacts || []).filter(c => c.message?.includes('[ECHO]'));
-    const regularInquiries = (contacts || []).filter(c => !c.message?.includes('[ECHO]'));
+    const regularInquiries = (contacts || []).map(item => ({
+      ...item,
+      message: item.message ? item.message.replace('[ECHO]', '').trim() : ''
+    }));
 
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:15px;">
         <div>
-          <h1 style="color:var(--gold); margin:0;">🌌 联系我们与回声空间管理 (Contact & Echo Space)</h1>
-          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理来自官方联系表单的合作留言、3D 回声空间星空留言审核与官方联系方式。</p>
+          <h1 style="color:var(--gold); margin:0;">✉️ 联系我们管理 (Contact Us)</h1>
+          <p style="color:#888; font-size:0.85rem; margin-top:5px;">管理来自官方联系表单的合作与咨询信件及官方联系方式配置。</p>
         </div>
         <div style="display:flex; gap:10px;">
           <a href="contact.html" target="_blank" class="btn-tiny" style="padding:10px 16px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; color:var(--gold); border-color:var(--gold);">
-            <i class="fas fa-external-link-alt"></i> 预览联系与回声页
+            <i class="fas fa-external-link-alt"></i> 预览联系我们页面
           </a>
           ${currentContactSubTab === 'info' ? `<button class="btn btn-submit" style="width:auto; padding:10px 24px;" onclick="saveContactInfoCMS()">💾 保存官方联络信息</button>` : ''}
         </div>
@@ -4629,9 +4629,6 @@ document.addEventListener('DOMContentLoaded', () => {
       <div style="display:flex; gap:10px; margin-bottom:25px; border-bottom:1px solid #222; padding-bottom:10px; flex-wrap:wrap;">
         <button onclick="switchContactTab('inbox')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentContactSubTab==='inbox' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
           📬 官方咨询信箱 (${regularInquiries.length})
-        </button>
-        <button onclick="switchContactTab('echo')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentContactSubTab==='echo' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
-          ✨ 3D 回声空间星空审核 (${echoMessages.length})
         </button>
         <button onclick="switchContactTab('info')" class="btn-tiny" style="padding:10px 22px; font-size:0.9rem; font-weight:600; border-radius:30px; ${currentContactSubTab==='info' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : 'background:#111; color:#888;'}">
           📞 官方联系方式配置
@@ -4666,45 +4663,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   </td>
                 </tr>
               `).join('') || '<tr><td colspan="5" style="padding:50px; text-align:center; color:#555;">暂无官方咨询信件</td></tr>'}
-            </tbody>
-          </table>
-        </div>
-      ` : currentContactSubTab === 'echo' ? `
-        <!-- ✨ 3D 回声空间星空审核 -->
-        <div style="background:#0a0a0a; border-radius:12px; overflow:hidden; border:1px solid #222;">
-          <table style="width:100%; text-align:left; border-collapse:collapse;">
-            <thead>
-              <tr style="background:#151515; color:#888; font-size:0.8rem; border-bottom:1px solid #222;">
-                <th style="padding:15px;">提交日期</th>
-                <th style="padding:15px;">听众昵称</th>
-                <th style="padding:15px;">回声寄语内容</th>
-                <th style="padding:15px;">星空展示状态</th>
-                <th style="padding:15px; text-align:right;">审核操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${echoMessages.map(c => {
-                const isApproved = approvedIds.includes(String(c.id));
-                const cleanMsg = c.message.replace('[ECHO]', '').trim();
-                return `
-                  <tr style="border-bottom:1px solid #1a1a1a;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
-                    <td style="padding:15px; font-size:0.8rem; color:#666;">${new Date(c.created_at).toLocaleDateString()}</td>
-                    <td style="padding:15px; color:var(--gold); font-weight:600;">${c.name || '匿名听众'}</td>
-                    <td style="padding:15px; color:#eee; font-size:0.9rem; max-width:450px; line-height:1.6;">${cleanMsg}</td>
-                    <td style="padding:15px;">
-                      <span style="padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:bold; background:${isApproved ? 'rgba(100,210,138,0.15)' : 'rgba(255,255,255,0.05)'}; color:${isApproved ? '#64D28A' : '#666'}; border:1px solid ${isApproved ? 'rgba(100,210,138,0.3)' : 'rgba(255,255,255,0.1)'};">
-                        ${isApproved ? '✨ 星空漂浮展示中' : '🚫 审核隐藏中'}
-                      </span>
-                    </td>
-                    <td style="padding:15px; text-align:right; white-space:nowrap;">
-                      <button class="btn-tiny" style="margin-right:6px; border-color:${isApproved ? '#888' : 'var(--gold)'}; color:${isApproved ? '#aaa' : 'var(--gold)'};" onclick="toggleEchoApproval('${c.id}', ${isApproved})">
-                        ${isApproved ? '取消展示' : '🌟 批准在星空显示'}
-                      </button>
-                      <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${c.id}')">🗑️</button>
-                    </td>
-                  </tr>
-                `;
-              }).join('') || '<tr><td colspan="5" style="padding:50px; text-align:center; color:#555;">暂无回声空间留言</td></tr>'}
             </tbody>
           </table>
         </div>
@@ -4828,26 +4786,6 @@ document.addEventListener('DOMContentLoaded', () => {
       renderCMS();
     } catch(err) {
       alert("更新状态失败: " + err.message);
-    }
-  };
-
-  window.toggleEchoApproval = async(id, currentlyApproved) => {
-    try {
-      const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
-      let currentIds = cfg?.value ? cfg.value.split(',').filter(Boolean) : [];
-      
-      if (currentlyApproved) {
-        currentIds = currentIds.filter(cid => cid !== id.toString());
-        await db.from('contact_messages').update({ status: 'pending' }).eq('id', id);
-      } else {
-        if (!currentIds.includes(id.toString())) currentIds.push(id.toString());
-        await db.from('contact_messages').update({ status: 'approved' }).eq('id', id);
-      }
-      
-      await db.from('site_config').upsert({ key: 'cfg_approved_echo_ids', value: currentIds.join(',') }, { onConflict: 'key' });
-      renderCMS();
-    } catch(err) {
-      alert("操作失败: " + err.message);
     }
   };
 
@@ -6476,150 +6414,6 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch(e){}
     }
 
-    renderCMS();
-  };
-
-  async function renderEchoes(container) {
-    const { data: echoes } = await db.from('contact_messages').select('*').ilike('message', '[ECHO]%').order('created_at', {ascending: false});
-    
-    // 🛡️ Fetch approved IDs for moderation UI
-    const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_approved_echo_ids').maybeSingle();
-    const approvedIds = cfg?.value ? cfg.value.split(',').filter(Boolean) : [];
-
-    // 📊 Fetch reaction statistics
-    const { data: rCfg } = await db.from('site_config').select('value').eq('key', 'cfg_echo_reactions_stats').maybeSingle();
-    let stats = { total: 0, reactions: {} };
-    if (rCfg?.value) {
-      try { stats = JSON.parse(rCfg.value); } catch(err){}
-    }
-    const reactions = stats.reactions || {};
-    const countTouched = reactions['❤️ 被触动'] || 0;
-    const countComforted = reactions['🙏 被安慰'] || 0;
-    const countReal = reactions['🔥 很真实'] || 0;
-    const countLoop = reactions['🎧 单曲循环'] || 0;
-    
-    // Other / Custom reactions
-    const customList = Object.entries(reactions).filter(([k]) => !['❤️ 被触动', '🙏 被安慰', '🔥 很真实', '🎧 单曲循环'].includes(k));
-    const totalApproved = echoes?.filter(e => approvedIds.includes(e.id.toString()) || e.status === 'approved').length || 0;
-
-    container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-        <div>
-          <h1 style="color:var(--gold); margin:0;">🌌 回声空间管理 (Echo Space & Moderation)</h1>
-          <p style="color:#888; font-size:0.9rem; margin-top:5px;">
-            共鸣点击统计 + 留言审核后台。前台星空将实时循环展示最新的 <span style="color:var(--gold); font-weight:bold;">20 条已审核留言</span>（最新自动取代最旧，后台历史数据永久保留）。
-          </p>
-        </div>
-        <button class="btn-tiny danger" onclick="resetReactionStats()" style="padding: 8px 16px;">🔄 重置点击数据</button>
-      </div>
-
-      <!-- 1. 📊 共鸣互动点击统计卡片 (Reaction Analytics) -->
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:15px; margin-bottom: 2.5rem;">
-        <div style="background: linear-gradient(135deg, rgba(246,210,138,0.15) 0%, rgba(20,20,20,0.8) 100%); border: 1px solid rgba(246,210,138,0.3); border-radius: 12px; padding: 20px;">
-          <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;">总互动点击次数</div>
-          <div style="font-size:2.2rem; font-weight:bold; color:var(--gold); margin-top:5px;">${stats.total || 0}</div>
-        </div>
-
-        <div style="background:#0e0e0e; border: 1px solid #222; border-radius: 12px; padding: 20px;">
-          <div style="font-size:0.75rem; color:#888;">❤️ 被触动</div>
-          <div style="font-size:1.8rem; font-weight:bold; color:#ff6b81; margin-top:5px;">${countTouched}</div>
-        </div>
-
-        <div style="background:#0e0e0e; border: 1px solid #222; border-radius: 12px; padding: 20px;">
-          <div style="font-size:0.75rem; color:#888;">🙏 被安慰</div>
-          <div style="font-size:1.8rem; font-weight:bold; color:#70a1ff; margin-top:5px;">${countComforted}</div>
-        </div>
-
-        <div style="background:#0e0e0e; border: 1px solid #222; border-radius: 12px; padding: 20px;">
-          <div style="font-size:0.75rem; color:#888;">🔥 很真实</div>
-          <div style="font-size:1.8rem; font-weight:bold; color:#ffa502; margin-top:5px;">${countReal}</div>
-        </div>
-
-        <div style="background:#0e0e0e; border: 1px solid #222; border-radius: 12px; padding: 20px;">
-          <div style="font-size:0.75rem; color:#888;">🎧 单曲循环</div>
-          <div style="font-size:1.8rem; font-weight:bold; color:#2ed573; margin-top:5px;">${countLoop}</div>
-        </div>
-
-        <div style="background:#0e0e0e; border: 1px solid #222; border-radius: 12px; padding: 20px;">
-          <div style="font-size:0.75rem; color:#888;">✨ 自定义/其他短语</div>
-          <div style="font-size:1.8rem; font-weight:bold; color:#eccc68; margin-top:5px;">${customList.reduce((acc, [, v]) => acc + v, 0)}</div>
-        </div>
-      </div>
-
-      ${customList.length > 0 ? `
-        <div style="background:#0a0a0a; border: 1px solid #1a1a1a; border-radius: 10px; padding: 15px; margin-bottom: 2.5rem;">
-          <p style="font-size:0.8rem; color:#888; margin:0 0 10px 0;">自定义触发短语明细：</p>
-          <div style="display:flex; flex-wrap:wrap; gap:8px;">
-            ${customList.map(([k, v]) => `
-              <span style="background:#151515; border:1px solid #333; padding:4px 10px; border-radius:20px; font-size:0.75rem; color:#ccc;">
-                ${k}: <b style="color:var(--gold);">${v}</b> 次
-              </span>
-            `).join('')}
-          </div>
-        </div>
-      ` : ''}
-
-      <!-- 2. 📝 留言审核与展示列表 (Moderation Table) -->
-      <div style="background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:20px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
-          <div style="font-size:0.9rem; color:#aaa;">
-            全部记录: <b style="color: #F6F4F0;">${echoes?.length || 0}</b> 条 ｜ 
-            已批准展示: <b style="color:#64D28A;">${totalApproved}</b> 条 
-            <span style="font-size:0.75rem; color:#666; margin-left:10px;">(前台星空背景将自动漂浮最新的前 20 条已批准留言)</span>
-          </div>
-        </div>
-
-        <div style="overflow-x:auto;">
-          <table style="width:100%; border-collapse:collapse; color:#eee; min-width:650px;">
-            <thead>
-              <tr style="border-bottom:1px solid #333; text-align:left; background:#111;">
-                <th style="padding:15px; font-size:0.8rem; color:#666; width:130px;">提交时间</th>
-                <th style="padding:15px; font-size:0.8rem; color:#666; width:120px;">昵称/身份</th>
-                <th style="padding:15px; font-size:0.8rem; color:#666;">回声感悟留言内容</th>
-                <th style="padding:15px; font-size:0.8rem; color:#666; width:140px;">当前状态</th>
-                <th style="padding:15px; font-size:0.8rem; color:#666; text-align:right; width:170px;">审核与管理</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${echoes?.map(e => {
-                const isApproved = approvedIds.includes(e.id.toString()) || e.status === 'approved';
-                const cleanMsg = e.message ? e.message.replace('[ECHO]', '').trim() : '';
-                return `
-                  <tr style="border-bottom:1px solid #1a1a1a; transition:0.3s;" onmouseover="this.style.background='#111'" onmouseout="this.style.background='transparent'">
-                    <td style="padding:15px; font-size:0.8rem; color:#666;">${new Date(e.created_at).toLocaleString()}</td>
-                    <td style="padding:15px; color:var(--gold); font-weight:500;">${e.name || '匿名听众'}</td>
-                    <td style="padding:15px; font-style:italic; color: #F6F4F0; font-size:0.95rem; font-family:'ChenYuluoyan', sans-serif, system-ui;">
-                      "${cleanMsg}"
-                    </td>
-                    <td style="padding:15px;">
-                      <span style="padding:5px 12px; border-radius:50px; font-size:0.75rem; font-weight:bold; display:inline-flex; align-items:center; gap:5px; background:${isApproved ? 'rgba(100,210,138,0.12)' : 'rgba(255,165,2,0.1)'}; color:${isApproved ? '#64D28A' : '#ffa502'}; border:1px solid ${isApproved ? 'rgba(100,210,138,0.3)' : 'rgba(255,165,2,0.3)'};">
-                        ${isApproved ? '● 已批准 (星空展示中)' : '○ 待审核 (前台隐藏)'}
-                      </span>
-                    </td>
-                    <td style="padding:15px; text-align:right; white-space:nowrap;">
-                      <button class="btn-tiny" style="margin-right:6px; border-color:${isApproved ? '#555' : 'var(--gold)'}; color:${isApproved ? '#aaa' : 'var(--gold)'}; background:${isApproved ? 'transparent' : 'rgba(246,210,138,0.1)'};" onclick="toggleEchoApproval('${e.id}', ${isApproved})">
-                        ${isApproved ? '🚫 撤回隐藏' : '✅ 批准发布'}
-                      </button>
-                      <button class="btn-tiny danger" onclick="deleteItem('contact_messages', '${e.id}')" title="删除记录">🗑️</button>
-                    </td>
-                  </tr>
-                `;
-              }).join('') || '<tr><td colspan="5" style="padding:50px; text-align:center; color:#555;">暂无回声留言记录...</td></tr>'}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `;
-  }
-
-  window.resetReactionStats = async () => {
-    if (!confirm("⚠️ 确定要重置所有共鸣互动点击计数吗？")) return;
-    const initialStats = { total: 0, reactions: {} };
-    await db.from('site_config').upsert({
-      key: 'cfg_echo_reactions_stats',
-      value: JSON.stringify(initialStats)
-    }, { onConflict: 'key' });
-    alert("✅ 点击数据已重置！");
     renderCMS();
   };
 });
