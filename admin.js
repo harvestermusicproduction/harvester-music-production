@@ -3805,10 +3805,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="hidden" class="coworker-hidden-val" value="${isHidden ? 'true' : 'false'}">
             
             <label style="font-size:0.75rem; color:#aaa;">中文职务名称 (Role Title) *</label>
-            <input type="text" class="coworker-role-input" value="${item.role || ''}" placeholder="例如：创作平台创办启发人" style="width:100%; margin:4px 0 8px; font-size:0.85rem; padding:7px 10px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; border-radius:4px;">
+            <input type="text" class="coworker-role-input" value="${escAttr(item.role || '')}" placeholder="例如：创作平台创办启发人" style="width:100%; margin:4px 0 8px; font-size:0.85rem; padding:7px 10px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; border-radius:4px;">
             
             <label style="font-size:0.75rem; color:#aaa;">英文职务 (Role EN, 可选)</label>
-            <input type="text" class="coworker-role-en-input" value="${item.role_en || ''}" placeholder="例如：Founding Inspirer" style="width:100%; margin:4px 0 8px; font-size:0.8rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color:#aaa; border-radius:4px;">
+            <input type="text" class="coworker-role-en-input" value="${escAttr(item.role_en || '')}" placeholder="例如：Founding Inspirer" style="width:100%; margin:4px 0 8px; font-size:0.8rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color:#aaa; border-radius:4px;">
 
             <label style="font-size:0.75rem; color:#aaa;">同工姓名 (成员名单，换行分隔)</label>
             <textarea class="coworker-names-input" placeholder="输入同工名字，如：汤小康&#10;Warren 沈自强" style="width:100%; height:55px; margin:4px 0 8px; font-size:0.85rem; padding:6px 10px; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; border-radius:4px;">${item.names || ''}</textarea>
@@ -3817,14 +3817,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="margin-top:4px;">
               <!-- 实时预览框 (Exact Polaroid Aspect Ratio) -->
               <div style="position:relative; width:100%; height:140px; overflow:hidden; border-radius:6px; background:#080808; border:1px solid #333; margin-bottom:6px;">
-                <img id="prev_cw_${idx}" class="coworker-prev-img" src="${item.image_url || 'assets/logo.png'}" 
+                <img id="prev_cw_${idx}" class="coworker-prev-img" src="${escAttr(item.image_url || 'assets/logo.png')}" 
                      style="width:100%; height:100%; object-fit:cover; object-position:${imgPos}; transform:scale(${imgZoom}); transition:all 0.15s ease;" 
                      onerror="this.src='assets/logo.png'">
               </div>
 
               <input type="file" id="f_cw_${idx}" style="font-size:0.75rem; width:100%; color:#888;">
               <button class="btn-tiny" style="width:100%; margin-top:4px;" onclick="uploadFile('f_cw_${idx}', 'in_cw_${idx}', 'prev_cw_${idx}')">📤 更换相片</button>
-              <input type="hidden" id="in_cw_${idx}" class="coworker-img-val" value="${item.image_url || ''}">
+              <input type="hidden" id="in_cw_${idx}" class="coworker-img-val" value="${escAttr(item.image_url || '')}">
 
               <!-- 🎚️ 裁剪显示区域与焦点调整 (Crop & Position Controller) -->
               <div style="background:#161616; padding:10px 12px; border-radius:6px; border:1px solid #282828; margin-top:8px;">
@@ -3872,8 +3872,8 @@ document.addEventListener('DOMContentLoaded', () => {
                   <span id="val_z_${idx}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right;">${zoomPct}%</span>
                 </div>
 
-                <input type="hidden" id="in_cw_pos_${idx}" class="coworker-pos-val" value="${imgPos}">
-                <input type="hidden" id="in_cw_zoom_${idx}" class="coworker-zoom-val" value="${imgZoom}">
+                <input type="hidden" id="in_cw_pos_${idx}" class="coworker-pos-val" value="${escAttr(imgPos)}">
+                <input type="hidden" id="in_cw_zoom_${idx}" class="coworker-zoom-val" value="${escAttr(imgZoom)}">
               </div>
             </div>
           </div>
@@ -4097,10 +4097,10 @@ document.addEventListener('DOMContentLoaded', () => {
         value: JSON.stringify(aboutData)
       }, { onConflict: 'key' });
 
-      alert("🎉 主要服事同工与职务名册（含照片裁剪焦点与展示状态）已成功保存并实时生效！");
+      window.showAdminToast("🎉 主要服事同工与职务名册（含照片裁剪焦点与展示状态）已成功保存并实时生效！", "success");
       renderCMS();
     } catch(err) {
-      alert("保存失败: " + err.message);
+      window.showAdminToast("保存失败: " + err.message, "error");
     }
   };
 
@@ -4126,14 +4126,16 @@ document.addEventListener('DOMContentLoaded', () => {
         value: JSON.stringify(hiddenSingerIds)
       }, { onConflict: 'key' });
 
+      window.showAdminToast(makeHidden ? "🙈 已设为隐藏" : "👁️ 已设为公开展示", "info", 2200);
       renderCMS();
     } catch(err) {
-      alert("修改歌手展示状态失败: " + err.message);
+      window.showAdminToast("修改歌手展示状态失败: " + err.message, "error");
     }
   };
 
   window.addSinger = async(defaultCat = 'gospel') => {
     const modal = document.createElement('div');
+    modal.id = 'singerAddModal';
     modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; display:flex; justify-content:center; align-items:center; padding:20px; backdrop-filter:blur(10px);";
     modal.innerHTML = `
       <div style="background:#111; border:1.5px solid var(--gold); border-radius:16px; padding:2.2rem; width:100%; max-width:550px; max-height:90vh; overflow-y:auto;">
@@ -4183,7 +4185,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <div style="margin-top:20px; display:flex; gap:10px;">
           <button class="btn btn-submit" style="flex:2;" onclick="submitNewSinger(this)">确认创建</button>
-          <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.parentElement.remove()">取消</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#singerAddModal').remove()">取消</button>
         </div>
       </div>
     `;
@@ -4200,7 +4202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const img_zoom = parseFloat(document.getElementById('s_zoom_new')?.value) || 1.0;
     const isHidden = document.getElementById('s_hidden_new')?.value === 'true';
 
-    if(!name) return alert("请输入姓名");
+    if(!name) return window.showAdminToast("请输入姓名", "error");
     
     try {
       if(btn) btn.innerText = "处理中...";
@@ -4266,14 +4268,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      if(btn) btn.closest('div').parentElement.parentElement.remove();
+      if(btn) btn.closest('#singerAddModal')?.remove();
+      window.showAdminToast("✅ 新歌手档案已创建成功！", "success");
       renderCMS();
     } catch (e) {
       const msg = e?.message || String(e);
       if (msg.includes('Load failed') || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
-        alert("⚠️ 网络连接中断或超时 (Load failed)。\n\n您的输入内容已为您完整保留在当前窗口中，请再次点击「确认创建」重试。\n若频繁提示，请检查网络连接、VPN 或等待几秒后重试。");
+        window.showAdminToast("⚠️ 网络连接中断或超时，您的输入内容已保留，请重试。", "error", 5000);
       } else {
-        alert("添加失败: " + msg);
+        window.showAdminToast("添加失败: " + msg, "error");
       }
       if(btn) btn.innerText = "确认创建";
     }
@@ -4281,7 +4284,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.editSinger = async(id) => {
     const { data: s } = await db.from('singers').select('*').eq('id', id).single();
-    if (!s) return alert("未找到该歌手");
+    if (!s) return window.showAdminToast("未找到该歌手", "error");
 
     // Merge crop metadata
     try {
@@ -4306,6 +4309,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isHidden = hiddenSingerIds.includes(id) || s.hidden === true || s.is_hidden === true || s.status === 'hidden';
 
     const modal = document.createElement('div');
+    modal.id = 'singerEditModal';
     modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center; overflow-y:auto; padding:20px;";
     modal.innerHTML = `
       <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:600px; margin:auto;">
@@ -4313,11 +4317,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         <div style="margin-bottom:20px; text-align:center; background:#0a0a0a; padding:15px; border-radius:10px; border:1px solid #222;">
           <div style="width:130px; height:160px; margin:0 auto 10px; overflow:hidden; border-radius:8px; background:#181818; border:1px solid #333; display:flex; align-items:center; justify-content:center;">
-            <img id="sprev" src="${s.image_url || 'assets/logo.png'}" style="width:100%; height:100%; object-fit:cover; object-position:${s.img_pos || s.pos || '50% 20%'}; transform:scale(${s.img_zoom || s.zoom || 1.0}); transform-origin:${s.img_pos || s.pos || '50% 20%'}; transition:all 0.1s ease;" onerror="this.src='assets/logo.png'">
+            <img id="sprev" src="${escAttr(s.image_url || 'assets/logo.png')}" style="width:100%; height:100%; object-fit:cover; object-position:${s.img_pos || s.pos || '50% 20%'}; transform:scale(${s.img_zoom || s.zoom || 1.0}); transform-origin:${s.img_pos || s.pos || '50% 20%'}; transition:all 0.1s ease;" onerror="this.src='assets/logo.png'">
           </div>
           <input type="file" id="sfup" style="display:block; margin:0 auto; font-size:0.8rem; color:#aaa; width:100%;">
           <button class="btn-tiny" style="margin-top:10px; width:100%;" onclick="uploadFile('sfup', 'surl', 'sprev')">📤 上传照片</button>
-          <input type="hidden" id="surl" value="${s.image_url || ''}">
+          <input type="hidden" id="surl" value="${escAttr(s.image_url || '')}">
 
           <!-- 🎚️ 歌手相片焦点与裁剪调整 -->
           ${renderImageCropControllerHTML({
@@ -4333,10 +4337,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <label>姓名 Name</label>
-        <input type="text" id="sn" value="${s.name}" style="width:100%; margin-bottom:15px;">
+        <input type="text" id="sn" value="${escAttr(s.name)}" style="width:100%; margin-bottom:15px;">
         
         <label>短简介 Bio (显示在卡片上)</label>
-        <input type="text" id="sr" value="${s.role || ''}" style="width:100%; margin-bottom:15px;">
+        <input type="text" id="sr" value="${escAttr(s.role || '')}" style="width:100%; margin-bottom:15px;">
 
         <label>详细介绍 Description (显示在弹窗里)</label>
         <textarea id="sb" style="width:100%; height:120px; margin-bottom:15px; background:#222; color: #F6F4F0; border:1px solid #444; padding:10px;">${s.bio || ''}</textarea>
@@ -4354,11 +4358,11 @@ document.addEventListener('DOMContentLoaded', () => {
         </select>
         
         <label>排位顺序 Order (越小越靠前)</label>
-        <input type="number" id="so" value="${s.display_order || 0}" style="width:100%; margin-bottom:20px;">
+        <input type="number" id="so" value="${escAttr(s.display_order || 0)}" style="width:100%; margin-bottom:20px;">
 
         <div style="display:flex; gap:10px;">
           <button class="btn btn-submit" style="flex:2;" onclick="saveSinger('${id}', this)">💾 保存档案</button>
-          <button class="btn-tiny" style="flex:1;" onclick="this.closest('div').parentElement.parentElement.remove()">取消</button>
+          <button class="btn-tiny" style="flex:1;" onclick="this.closest('#singerEditModal').remove()">取消</button>
         </div>
       </div>
     `;
@@ -4446,14 +4450,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { onConflict: 'key' });
       });
 
-      if(btn) btn.closest('div').parentElement.parentElement.remove();
+      if(btn) btn.closest('#singerEditModal')?.remove();
+      window.showAdminToast("✅ 歌手档案已保存成功！", "success");
       renderCMS();
     } catch(e) {
       const msg = e?.message || String(e);
       if (msg.includes('Load failed') || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
-        alert("⚠️ 网络连接中断或请求超时 (Load failed)。\n\n您的编辑内容已为您完整保留在输入框中，请再次点击「💾 保存档案」重试。\n若频繁提示，请检查网络连接、VPN 或等待几秒后重试。");
+        window.showAdminToast("⚠️ 网络连接中断或请求超时，您的编辑内容已保留，请重试。", "error", 5000);
       } else {
-        alert("保存失败: " + msg);
+        window.showAdminToast("保存失败: " + msg, "error");
       }
       if(btn) btn.innerText = "💾 保存档案";
     }
@@ -4466,12 +4471,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if(btn) { btn.innerText = "🚀 疯狂发信中..."; btn.disabled = true; }
     
     try {
-      const res = await fetch('/api/blast', { method: 'POST' });
+      const { data: { session } } = await db.auth.getSession();
+      const res = await fetch('/api/blast', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + (session?.access_token || ''),
+          'Content-Type': 'application/json'
+        }
+      });
       const data = await res.json();
-      alert(data.message || data.error);
+      if (!res.ok) throw new Error(data.error || data.message || `HTTP ${res.status}`);
+      window.showAdminToast(data.message || data.error || "✅ 群发完成！", "success");
       renderCMS();
     } catch(e) {
-      alert("发信系统出错: " + e.message);
+      window.showAdminToast("发信系统出错: " + e.message, "error");
       if(btn) { btn.innerText = "🚀 一键群发所有待发提醒"; btn.disabled = false; }
     }
   };
@@ -4480,10 +4493,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const { data: reminders } = await db.from('event_reminders').select('*').order('created_at', {ascending: false});
     
     container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-        <h1 style="color:var(--gold);">⏰ 提醒订阅管理 (Event Reminders)</h1>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:12px;">
+        <h1 style="color:var(--gold); margin:0;">⏰ 提醒订阅管理 (Event Reminders)</h1>
         <div>
-           <button id="blastBtn" class="btn btn-submit" style="padding:10px 20px; background:linear-gradient(135deg, #64D28A 0%, #3ca85f 100%); margin-right:10px;" onclick="triggerEmailBlast()">🚀 一键群发所有待发提醒</button>
+           <button id="blastBtn" class="btn btn-submit" style="padding:10px 20px; width:auto; background:linear-gradient(135deg, #64D28A 0%, #3ca85f 100%); color:#000; margin-right:10px;" onclick="triggerEmailBlast()">🚀 一键群发所有待发提醒</button>
            <button class="btn-tiny" onclick="switchModule('reminders')" style="padding:10px;">刷新数据</button>
         </div>
       </div>
@@ -4560,27 +4573,27 @@ document.addEventListener('DOMContentLoaded', () => {
           <h3 style="color:var(--gold); margin-top:0; display:flex; align-items:center; gap:8px;">
             <span>💳</span> 奉献账户与 DuitNow / QR Code
           </h3>
-          <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-top:15px;">
+          <div class="admin-grid-1-2" style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-top:15px;">
             <div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">银行名称 (Bank Name)</label>
-                <input type="text" id="in_support_bank" value="${c['cfg_support_bank'] || 'Maybank'}" placeholder="例如：Maybank" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+                <input type="text" id="in_support_bank" value="${escAttr(c['cfg_support_bank'] || 'Maybank')}" placeholder="例如：Maybank" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">账户户名 (Account Name)</label>
-                <input type="text" id="in_support_acc_name" value="${c['cfg_support_acc_name'] || 'HARVESTER MUSIC PRODUCTION'}" placeholder="例如：HARVESTER MUSIC PRODUCTION" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+                <input type="text" id="in_support_acc_name" value="${escAttr(c['cfg_support_acc_name'] || 'HARVESTER MUSIC PRODUCTION')}" placeholder="例如：HARVESTER MUSIC PRODUCTION" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">银行账号 (Account Number)</label>
-                <input type="text" id="in_support_acc_no" value="${c['cfg_support_acc_no'] || '5123 4567 8901'}" placeholder="例如：5123 4567 8901" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+                <input type="text" id="in_support_acc_no" value="${escAttr(c['cfg_support_acc_no'] || '5123 4567 8901')}" placeholder="例如：5123 4567 8901" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
             </div>
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
               <label style="display:block; color:var(--gold); font-size:0.85rem; font-weight:bold; margin-bottom:10px;">DuitNow / 收款二维码图片</label>
-              <img id="prev_support_qr" src="${c['cfg_support_qr'] || 'assets/logo.png'}" style="width:160px; height:160px; object-fit:contain; background:#fff; border-radius:8px; padding:6px; margin-bottom:10px; border:1px solid #444;">
+              <img id="prev_support_qr" src="${escAttr(c['cfg_support_qr'] || 'assets/logo.png')}" style="width:160px; height:160px; object-fit:contain; background:#fff; border-radius:8px; padding:6px; margin-bottom:10px; border:1px solid #444;">
               <input type="file" id="f_support_qr" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:8px;">
               <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_support_qr', 'in_support_qr', 'prev_support_qr')">📤 上传新二维码图片</button>
-              <input type="hidden" id="in_support_qr" value="${c['cfg_support_qr'] || ''}">
+              <input type="hidden" id="in_support_qr" value="${escAttr(c['cfg_support_qr'] || '')}">
             </div>
           </div>
         </div>
@@ -4590,7 +4603,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <h3 style="color:#64D28A; margin-top:0; display:flex; align-items:center; gap:8px;">
             <span>🎨</span> 左侧插画图与奉献寄语说明
           </h3>
-          <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-top:15px;">
+          <div class="admin-grid-1-2" style="display:grid; grid-template-columns: 1.2fr 1fr; gap:25px; margin-top:15px;">
             <div>
               <div style="margin-bottom:15px;">
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">奉献致谢与支持说明文案</label>
@@ -4599,10 +4612,10 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
               <label style="display:block; color:#64D28A; font-size:0.85rem; font-weight:bold; margin-bottom:10px;">支持页面左侧插画/展示图 (Illustration Image)</label>
-              <img id="prev_support_banner" src="${c['cfg_support_banner'] || 'assets/illustrations/qsl-support-radio.jpg'}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin-bottom:10px; border:1px solid #222;">
+              <img id="prev_support_banner" src="${escAttr(c['cfg_support_banner'] || 'assets/illustrations/qsl-support-radio.jpg')}" style="width:100%; height:130px; object-fit:cover; border-radius:6px; margin-bottom:10px; border:1px solid #222;">
               <input type="file" id="f_support_banner" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:8px;">
               <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_support_banner', 'in_support_banner', 'prev_support_banner')">📤 上传插画图片</button>
-              <input type="hidden" id="in_support_banner" value="${c['cfg_support_banner'] || ''}">
+              <input type="hidden" id="in_support_banner" value="${escAttr(c['cfg_support_banner'] || '')}">
             </div>
           </div>
         </div>
@@ -4626,10 +4639,10 @@ document.addEventListener('DOMContentLoaded', () => {
       for (const item of payload) {
         await db.from('site_config').upsert(item, { onConflict: 'key' });
       }
-      alert("🎉 支持我们页面设置已成功保存并实时生效！");
+      window.showAdminToast("🎉 支持我们页面设置已成功保存并实时生效！", "success");
       renderCMS();
     } catch(err) {
-      alert("保存失败: " + err.message);
+      window.showAdminToast("保存失败: " + err.message, "error");
     }
   };
 
@@ -4723,7 +4736,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <div>
                 <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">提交作品按钮跳转链接 (表单 / WhatsApp)</label>
-                <input type="text" id="in_submit_btn_link" value="${c['cfg_submit_btn_link'] || 'https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20submit%20my%20song.'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+                <input type="text" id="in_submit_btn_link" value="${escAttr(c['cfg_submit_btn_link'] || 'https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20submit%20my%20song.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
               </div>
             </div>
             <div style="background:#111; padding:20px; border-radius:10px; border:1px dashed #333; text-align:center;">
@@ -4731,7 +4744,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <img id="prev_submit_poster" src="${c['cfg_submit_poster'] || 'assets/illustrations/morandi-bird-sky.png'}" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:10px; border:1px solid #222;">
               <input type="file" id="f_submit_poster" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:8px;">
               <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_submit_poster', 'in_submit_poster', 'prev_submit_poster')">📤 上传海报图片</button>
-              <input type="hidden" id="in_submit_poster" value="${c['cfg_submit_poster'] || 'assets/illustrations/morandi-bird-sky.png'}">
+              <input type="hidden" id="in_submit_poster" value="${escAttr(c['cfg_submit_poster'] || 'assets/illustrations/morandi-bird-sky.png')}">
             </div>
           </div>
           <button class="btn btn-submit" style="width:100%; padding:14px; margin-top:20px;" onclick="saveSubmitPageCMS()">💾 立即保存投稿须知设置</button>
@@ -4752,7 +4765,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <img id="prev_about_rev_img" src="${c['cfg_about_rev_img'] || 'https://images.unsplash.com/photo-1520523839898-50712509e37b?auto=format&fit=crop&w=800&q=80'}" style="width:100%; height:140px; object-fit:cover; border-radius:6px; margin-bottom:10px; border:1px solid #222;">
               <input type="file" id="f_about_rev_img" style="font-size:0.8rem; color:#aaa; width:100%; margin-bottom:8px;">
               <button class="btn-tiny" style="width:100%;" onclick="uploadFile('f_about_rev_img', 'in_about_rev_img', 'prev_about_rev_img')">📤 更换展示配图</button>
-              <input type="hidden" id="in_about_rev_img" value="${c['cfg_about_rev_img'] || ''}">
+              <input type="hidden" id="in_about_rev_img" value="${escAttr(c['cfg_about_rev_img'] || '')}">
             </div>
           </div>
           <button class="btn btn-submit" style="width:100%; padding:14px; margin-top:20px;" onclick="saveSubmitPageCMS()">💾 立即保存分成设置</button>
@@ -4791,10 +4804,10 @@ document.addEventListener('DOMContentLoaded', () => {
       for (const item of payload) {
         await db.from('site_config').upsert(item, { onConflict: 'key' });
       }
-      alert("🎉 我要投稿页面设置已成功保存！");
+      window.showAdminToast("🎉 我要投稿页面设置已成功保存！", "success");
       renderCMS();
     } catch(err) {
-      alert("保存失败: " + err.message);
+      window.showAdminToast("保存失败: " + err.message, "error");
     }
   };
 
@@ -4875,15 +4888,15 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-top:15px;">
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">官方联络 Email</label>
-              <input type="text" id="in_official_email" value="${c['cfg_official_email'] || 'harvestermusicproduction@gmail.com'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_official_email" value="${escAttr(c['cfg_official_email'] || c['cfg_contact_email'] || 'harvestermusicproduction@gmail.com')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">官方客服 WhatsApp 号码 / 链接</label>
-              <input type="text" id="in_official_wa" value="${c['cfg_nav_wa'] || 'https://wa.me/60187755581'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_official_wa" value="${escAttr(c['cfg_nav_wa'] || 'https://wa.me/60187755581')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div style="grid-column: 1/-1;">
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">办公/事工联络地址 (可选)</label>
-              <input type="text" id="in_official_addr" value="${c['cfg_official_addr'] || 'Kuala Lumpur, Malaysia'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_official_addr" value="${escAttr(c['cfg_official_addr'] || 'Kuala Lumpur, Malaysia')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
           </div>
           <button class="btn btn-submit" style="width:100%; padding:14px; margin-top:25px;" onclick="saveContactInfoCMS()">💾 立即保存官方联络信息</button>
@@ -4909,11 +4922,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">接收提醒的 WhatsApp 号码（包含国家区号，如 +60187755581）</label>
-              <input type="text" id="in_notify_wa_phone" value="${c['cfg_notify_wa_phone'] || '+60187755581'}" placeholder="+60187755581" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_notify_wa_phone" value="${escAttr(c['cfg_notify_wa_phone'] || '+60187755581')}" placeholder="+60187755581" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;">CallMeBot WhatsApp API Key (若暂未开通可先留空)</label>
-              <input type="text" id="in_notify_wa_apikey" value="${c['cfg_notify_wa_apikey'] || ''}" placeholder="例如：123456" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_notify_wa_apikey" value="${escAttr(c['cfg_notify_wa_apikey'] || '')}" placeholder="例如：123456" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
           </div>
 
@@ -4927,8 +4940,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.saveContactInfoCMS = async () => {
+    const emailVal = document.getElementById('in_official_email').value.trim();
     const payload = [
-      { key: 'cfg_official_email', value: document.getElementById('in_official_email').value.trim() },
+      { key: 'cfg_official_email', value: emailVal },
+      { key: 'cfg_contact_email', value: emailVal },
       { key: 'cfg_nav_wa', value: document.getElementById('in_official_wa').value.trim() },
       { key: 'cfg_official_addr', value: document.getElementById('in_official_addr').value.trim() }
     ];
@@ -4936,10 +4951,10 @@ document.addEventListener('DOMContentLoaded', () => {
       for (const item of payload) {
         await db.from('site_config').upsert(item, { onConflict: 'key' });
       }
-      alert("🎉 官方联络信息已成功保存！");
+      window.showAdminToast("🎉 官方联络信息已成功保存！", "success");
       renderCMS();
     } catch(err) {
-      alert("保存失败: " + err.message);
+      window.showAdminToast("保存失败: " + err.message, "error");
     }
   };
 
@@ -4952,10 +4967,10 @@ document.addEventListener('DOMContentLoaded', () => {
       for (const item of payload) {
         await db.from('site_config').upsert(item, { onConflict: 'key' });
       }
-      alert("🎉 WhatsApp 提醒推送配置已成功保存！");
+      window.showAdminToast("🎉 WhatsApp 提醒推送配置已成功保存！", "success");
       renderCMS();
     } catch(err) {
-      alert("保存失败: " + err.message);
+      window.showAdminToast("保存失败: " + err.message, "error");
     }
   };
 
@@ -4964,7 +4979,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const apiKey = document.getElementById('in_notify_wa_apikey')?.value?.trim();
 
     if (!apiKey) {
-      alert("⚠️ 请先填写您的 CallMeBot API Key 后再进行测试！\n\n获取方式：用 WhatsApp 发送「I allow callmebot to send me messages」至 +34 644 99 26 98 获取 Key。");
+      window.showAdminToast("⚠️ 请先填写您的 CallMeBot API Key 后再进行测试！", "info");
       return;
     }
 
@@ -4974,9 +4989,9 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const beacon = new Image();
       beacon.src = url;
-      alert("🚀 测试消息请求已发出！请检查您的 WhatsApp 是否收到来自 CallMeBot 的测试提醒。");
+      window.showAdminToast("🚀 测试消息请求已发出！请检查您的 WhatsApp 是否收到来自 CallMeBot 的测试提醒。", "success");
     } catch(err) {
-      alert("发送测试请求失败: " + err.message);
+      window.showAdminToast("发送测试请求失败: " + err.message, "error");
     }
   };
 
@@ -4985,9 +5000,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const newStatus = isReplied ? 'replied' : 'pending';
       const { error } = await db.from('contact_messages').update({ status: newStatus }).eq('id', id);
       if (error) throw error;
+      window.showAdminToast(isReplied ? "✅ 已标记为已回复" : "⏳ 已标记为待回复", "info");
       renderCMS();
     } catch(err) {
-      alert("更新状态失败: " + err.message);
+      window.showAdminToast("更新状态失败: " + err.message, "error");
     }
   };
 
@@ -5026,7 +5042,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <!-- Processed / Replied Checkbox Control -->
-        <div style="background:rgba(246,210,138,0.06); border:1px solid rgba(246,210,138,0.25); border-radius:10px; padding:14px 18px; margin-bottom:1.5rem; display:flex; align-items:center; justify-content:space-between;">
+        <div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:14px 18px; margin-bottom:1.5rem; display:flex; align-items:center; justify-content:space-between;">
           <div>
             <div style="color:var(--gold); font-weight:bold; font-size:0.9rem;">回复/处理状态标记</div>
             <div style="color:#888; font-size:0.75rem;">勾选以标记此条信息是否已与对方回复/跟进处理</div>
@@ -5046,20 +5062,85 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(modal);
   };
 
+  window.updateSubmissionStatus = async (id, status) => {
+    try {
+      const { error } = await db.from('submissions').update({ status }).eq('id', id);
+      if (error) throw error;
+      const labels = { pending: '⏳ 待审核 (PENDING)', reviewed: '👀 已阅 (REVIEWED)', accepted: '✅ 已采纳 (ACCEPTED)', rejected: '❌ 未通过 (REJECTED)' };
+      window.showAdminToast(`投稿状态已更新为：${labels[status] || status.toUpperCase()}`, 'success');
+      const m = document.getElementById('subDetailModal');
+      if (m) m.remove();
+      renderCMS();
+    } catch (err) {
+      window.showAdminToast("状态更新失败: " + err.message, "error");
+    }
+  };
+
   window.viewSub = async(id) => {
     const { data: s } = await db.from('submissions').select('*').eq('id', id).single();
+    if (!s) return window.showAdminToast("无法读取该投稿记录", "error");
+    const contactStr = s.user_contact || s.email || s.contact_info || '未留';
+    const audioLink = s.audio_url || s.file_url || '';
+    const scoreLink = s.score_url || '';
+    const curStatus = s.status || 'pending';
+
+    const existing = document.getElementById('subDetailModal');
+    if (existing) existing.remove();
+
     const modal = document.createElement('div');
-    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; display:flex; justify-content:center; align-items:center;";
+    modal.id = 'subDetailModal';
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.88); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
     modal.innerHTML = `
-      <div style="background:#111; border:1px solid var(--gold); border-radius:12px; padding:2rem; width:100%; max-width:600px;">
-        <h3 style="color:var(--gold);">投稿详情</h3>
-        <p><strong>姓名:</strong> ${s.user_name}</p>
-        <p><strong>联系方式:</strong> ${s.contact_info}</p>
-        <hr style="border:0; border-top:1px solid #222; margin:15px 0;">
-        <p style="white-space:pre-wrap;">${s.message}</p>
-        ${s.file_url ? `<a href="${s.file_url}" target="_blank" class="btn-tiny" style="display:inline-block; margin-top:10px;">查看附件</a>` : ''}
-        <div style="margin-top:20px;">
-          <button class="btn btn-submit" onclick="this.closest('div').parentElement.parentElement.remove()">关闭</button>
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:650px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.95);">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #222; padding-bottom:12px; margin-bottom:16px;">
+          <h3 style="color:var(--gold); margin:0; font-size:1.25rem;">🎵 投稿作品详情 ·《${s.song_title || '未命名作品'}》</h3>
+          <span style="font-size:0.75rem; color:#888;">${new Date(s.created_at).toLocaleString()}</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; background:#161616; padding:14px; border-radius:10px; border:1px solid #282828; margin-bottom:16px;">
+          <div>
+            <label style="font-size:0.75rem; color:#888; margin-bottom:2px;">投稿人姓名</label>
+            <div style="color:var(--gold); font-weight:bold; font-size:1rem;">${s.user_name || '匿名创作者'}</div>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:#888; margin-bottom:2px;">联系方式</label>
+            <div style="color:#F6F4F0; font-size:0.92rem; word-break:break-all;">${contactStr}</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <label style="font-size:0.78rem; color:#a0a0a0; margin-bottom:6px;">歌词 / 创作说明</label>
+          <div style="background:#0a0a0a; border:1px solid #222; border-radius:10px; padding:14px; max-height:220px; overflow-y:auto; color:#eee; font-size:0.9rem; line-height:1.65; white-space:pre-wrap;">${s.message || s.lyrics || '（无文字说明）'}</div>
+        </div>
+
+        ${audioLink ? `
+          <div style="background:#161616; padding:14px; border-radius:10px; border:1px solid #282828; margin-bottom:14px;">
+            <label style="font-size:0.78rem; color:var(--gold); margin-bottom:8px;">🎧 投稿音频试听与下载</label>
+            <audio src="${audioLink}" controls style="width:100%; height:38px; margin-bottom:8px;"></audio>
+            <div>
+              <a href="${audioLink}" target="_blank" download class="btn-tiny" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; color:var(--gold); border-color:var(--gold);">📥 打开 / 下载音频文件</a>
+            </div>
+          </div>
+        ` : ''}
+
+        ${scoreLink ? `
+          <div style="margin-bottom:16px;">
+            <a href="${scoreLink}" target="_blank" class="btn-tiny" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; color:#64D28A; border-color:#64D28A; padding:8px 14px;">🎼 查看 / 下载乐谱附件 (Score)</a>
+          </div>
+        ` : ''}
+
+        <div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.22); border-radius:10px; padding:14px; margin-bottom:18px;">
+          <label style="font-size:0.8rem; color:var(--gold); margin-bottom:10px;">📋 审核状态变更 (点击立即切换)</label>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn-tiny" style="flex:1; min-width:110px; padding:8px; ${curStatus==='pending' ? 'background:var(--gold); color:#000; border-color:var(--gold);' : ''}" onclick="updateSubmissionStatus('${s.id}', 'pending')">⏳ 待审核 (Pending)</button>
+            <button type="button" class="btn-tiny" style="flex:1; min-width:110px; padding:8px; ${curStatus==='reviewed' ? 'background:#70a1ff; color:#000; border-color:#70a1ff;' : ''}" onclick="updateSubmissionStatus('${s.id}', 'reviewed')">👀 已阅 (Reviewed)</button>
+            <button type="button" class="btn-tiny" style="flex:1; min-width:110px; padding:8px; ${curStatus==='accepted' ? 'background:#64D28A; color:#000; border-color:#64D28A;' : ''}" onclick="updateSubmissionStatus('${s.id}', 'accepted')">✅ 采纳 (Accepted)</button>
+            <button type="button" class="btn-tiny danger" style="flex:1; min-width:110px; padding:8px; ${curStatus==='rejected' ? 'background:var(--admin-red); color:#fff; border-color:var(--admin-red);' : ''}" onclick="updateSubmissionStatus('${s.id}', 'rejected')">❌ 婉拒 (Rejected)</button>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end;">
+          <button class="btn btn-submit" style="width:auto; padding:10px 28px;" onclick="const aud=this.closest('#subDetailModal').querySelector('audio'); if(aud) aud.pause(); this.closest('#subDetailModal').remove();">完成并关闭</button>
         </div>
       </div>
     `;

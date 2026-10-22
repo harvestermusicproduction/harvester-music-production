@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.1.0/style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
-  <link rel="preload" href="assets/fonts/ChenYuluoyan-SC.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-77SDJ92ZP7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-77SDJ92ZP7');
+  </script>
   <meta name="keywords" content="收割机照片集, 敬拜之夜现场照片, 录音室诗歌配唱, 福音巡回布道会回顾, 灵火青年敬拜特会, Harvester Music 相册, 收割机创作工作坊照片">
   <meta name="description" content="浏览 Harvester Music 收割机创作工作坊的敬拜特会现场、巡回音乐见证布道会、录音室原创诗歌制作与团队退修会珍贵影像纪录。">
   <meta charset="UTF-8">
@@ -18,7 +24,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=62.0.0">
+  <link rel="stylesheet" href="styles.css?v=61.0.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=2.6.0"></script>
   <style>
@@ -48,13 +55,24 @@
         <a id="cfg_nav_yt" href="https://youtube.com/@harvestermusic.production?si=JvBC-9qgOsKdI3XT" target="_blank" style="color: #F6F4F0; opacity: 0.6; transition: 0.3s;" title="YouTube"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
-    <div class="menu-toggle" onclick="toggleMobileMenu()">
+    <div class="menu-toggle" role="button" tabindex="0" aria-label="切换导航菜单" onclick="toggleMobileMenu()">
       <span></span>
       <span></span>
       <span></span>
     </div>
-        <nav class="nav-links">
+    <nav class="nav-links">
       <a href="index.html">主页</a>
+      <a href="music.html">音乐与歌谱集</a>
+      <a href="events.html">活动</a>
+      <a href="diary.html" class="active">照片集</a>
+      <div class="nav-dropdown">
+        <a href="submit.html">我要投稿 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
+        <div class="dropdown-content">
+          <a href="submit.html#section-form"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 投稿须知与表单</a>
+          <a href="submit.html#section-profit"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="7" r="4"/><path d="M12 5v4M10.5 6.5h3M3 15h6l3 2h6a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-5M3 13v5"/></svg> 版权分成</a>
+          <a href="submit.html#section-coop"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 15l-2.5-2.5a2 2 0 0 0-2.8 0L2 16.2M13 9l2.5 2.5a2 2 0 0 0 2.8 0L22 7.8M7 11l4-4a2 2 0 0 1 2.8 0l2.2 2.2M10 14l2 2a2 2 0 0 0 2.8 0l2.2-2.2"/></svg> 合作方案</a>
+        </div>
+      </div>
       <div class="nav-dropdown">
         <a href="about.html">关于我们 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
         <div class="dropdown-content">
@@ -63,21 +81,17 @@
           <a href="about.html#section-pillars"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18M4 6l8-3 8 3M5 20h14M3 21h18M6 7v12M10 7v12M14 7v12M18 7v12"/></svg> 四大支柱</a>
           <a href="about.html#section-audience"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M15 14.5c1.8-.4 3.2.2 4.5 1.8 1 1.2 1 2.7 1 2.7"/></svg> 群体受众</a>
           <a href="about.html#section-categories"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="6.5" cy="17.5" r="2.5" fill="currentColor"/><circle cx="17.5" cy="14.5" r="2.5" fill="currentColor"/><path d="M9 17.5V6.5l11-2.5v10.5M9 10.5l11-2.5"/></svg> 创作方向</a>
-          <a href="singers.html"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="2" transform="rotate(-3 12 12)"/><rect x="6.5" y="5.5" width="11" height="9" rx="1"/><circle cx="12" cy="18" r="1.2" fill="currentColor"/></svg> 主要同工</a>
-          <a href="events.html"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 巡回活动</a>
           <a href="about.html#section-positioning"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5" stroke-dasharray="2.5 1.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> 平台定位</a>
           <a href="about.html#section-media"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M17 9.5h4M3 14.5h4M17 14.5h4"/><polygon points="10.5 10 14.5 12 10.5 14" fill="currentColor"/></svg> 视听故事</a>
         </div>
       </div>
-      <a href="music.html">音乐与歌谱</a>
-      <a href="diary.html" class="active">照片集</a>
+      <a href="singers.html">主要同工</a>
       <a href="support.html">支持我们</a>
       <div class="nav-dropdown">
         <a href="contact.html">联系我们 <i class="fas fa-caret-down" style="font-size:0.8em"></i></a>
         <div class="dropdown-content">
-          <a href="contact.html#section-contact"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> 联络留言</a>
-          <a href="contact.html#section-ministry"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 🌾 事工邀约</a>
-          <a href="submit.html"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ✍️ 我要投稿</a>
+          <a href="contact.html#section-message"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 联络留言</a>
+          <a href="contact.html#section-ministry-invite"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> 🌾 事工邀约</a>
         </div>
       </div>
     </nav>
@@ -85,6 +99,17 @@
 
     <div id="mobileNavOverlay">
     <a href="index.html">主页</a>
+    <a href="music.html">音乐与歌谱集</a>
+    <a href="events.html">活动</a>
+    <a href="diary.html" class="active">照片集</a>
+    <div class="mobile-dropdown">
+      <a href="javascript:void(0)" class="mobile-dropdown-toggle" onclick="event.preventDefault(); event.stopPropagation(); this.nextElementSibling.classList.toggle('show');">我要投稿 <i class="fas fa-caret-down"></i></a>
+      <div class="mobile-dropdown-content">
+        <a href="submit.html#section-form"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 投稿须知与表单</a>
+        <a href="submit.html#section-profit"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="7" r="4"/><path d="M12 5v4M10.5 6.5h3M3 15h6l3 2h6a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-5M3 13v5"/></svg> 版权分成</a>
+        <a href="submit.html#section-coop"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 15l-2.5-2.5a2 2 0 0 0-2.8 0L2 16.2M13 9l2.5 2.5a2 2 0 0 0 2.8 0L22 7.8M7 11l4-4a2 2 0 0 1 2.8 0l2.2 2.2M10 14l2 2a2 2 0 0 0 2.8 0l2.2-2.2"/></svg> 合作方案</a>
+      </div>
+    </div>
     <div class="mobile-dropdown">
       <a href="javascript:void(0)" class="mobile-dropdown-toggle" onclick="event.preventDefault(); event.stopPropagation(); this.nextElementSibling.classList.toggle('show');">关于我们 <i class="fas fa-caret-down"></i></a>
       <div class="mobile-dropdown-content">
@@ -94,43 +119,68 @@
         <a href="about.html#section-pillars"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18M4 6l8-3 8 3M5 20h14M3 21h18M6 7v12M10 7v12M14 7v12M18 7v12"/></svg> 四大支柱</a>
         <a href="about.html#section-audience"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M15 14.5c1.8-.4 3.2.2 4.5 1.8 1 1.2 1 2.7 1 2.7"/></svg> 群体受众</a>
         <a href="about.html#section-categories"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="6.5" cy="17.5" r="2.5" fill="currentColor"/><circle cx="17.5" cy="14.5" r="2.5" fill="currentColor"/><path d="M9 17.5V6.5l11-2.5v10.5M9 10.5l11-2.5"/></svg> 创作方向</a>
-        <a href="singers.html"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="2" transform="rotate(-3 12 12)"/><rect x="6.5" y="5.5" width="11" height="9" rx="1"/><circle cx="12" cy="18" r="1.2" fill="currentColor"/></svg> 主要同工</a>
-        <a href="events.html"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 巡回活动</a>
         <a href="about.html#section-positioning"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5" stroke-dasharray="2.5 1.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> 平台定位</a>
         <a href="about.html#section-media"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M17 9.5h4M3 14.5h4M17 14.5h4"/><polygon points="10.5 10 14.5 12 10.5 14" fill="currentColor"/></svg> 视听故事</a>
       </div>
     </div>
-    <a href="music.html">音乐与歌谱</a>
-    <a href="diary.html" class="active">照片集</a>
+    <a href="singers.html">主要同工</a>
     <a href="support.html">支持我们</a>
     <div class="mobile-dropdown">
       <a href="javascript:void(0)" class="mobile-dropdown-toggle" onclick="event.preventDefault(); event.stopPropagation(); this.nextElementSibling.classList.toggle('show');">联系我们 <i class="fas fa-caret-down"></i></a>
       <div class="mobile-dropdown-content">
-        <a href="contact.html"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> 联络留言</a>
-        <a href="contact.html#section-ministry"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 🌾 事工邀约</a>
-        <a href="submit.html"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ✍️ 我要投稿</a>
+        <a href="contact.html#section-message"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 联络留言</a>
+        <a href="contact.html#section-ministry-invite"><svg class="sketch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> 🌾 事工邀约</a>
       </div>
     </div>
   </div>
+  <!-- 1. 相册文件夹列表视图 (Folder List View) -->
+  <div id="diaryFolderView">
+    <div class="ppt-header fade-in">
+      <div class="ppt-line"></div>
+      <h1 class="ppt-title">照片集</h1>
+      <p class="ppt-subtitle">RECORD EVERY MOMENT</p>
+    </div>
 
-  <div class="ppt-header fade-in">
-    <div class="ppt-line"></div>
-    
-    <h1 class="ppt-title">照片集</h1>
-    <p class="ppt-subtitle">RECORD EVERY MOMENT</p>
+    <main style="padding-top: 0;">
+      <section>
+        <div id="diaryContainer" class="folder-grid">
+          <!-- Folders will be injected here by app.js -->
+          <div class="loading-pulse">正在整理回忆文件夹...</div>
+        </div>
+      </section>
+    </main>
   </div>
 
-  <main style="padding-top: 0;">
-    <section>
+  <!-- 2. 单个相簿照片回顾视图 (Single Album Photo Gallery View · 保持在照片集内，无提醒按钮) -->
+  <div id="diaryAlbumDetailView" style="display: none; max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 5rem; min-height: 70vh;">
+    <!-- 返回按钮与顶部面包屑 -->
+    <div style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: flex-start;">
+      <button onclick="closeDiaryAlbum()" class="btn-frosted-gold" style="padding: 9px 22px; font-size: 0.92rem; border-radius: 50px; background: rgba(246, 210, 138, 0.12); color: var(--gold); border: 1px solid rgba(246, 210, 138, 0.35); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; transition: all 0.25s ease;">
+        <i class="fas fa-arrow-left"></i> 返回照片集列表
+      </button>
+    </div>
 
-      <div id="diaryContainer" class="folder-grid">
-        <!-- Folders will be injected here by app.js -->
-        <div class="loading-pulse">正在整理回忆文件夹...</div>
+    <!-- 相簿标题、日期与说明 (纯照片回顾 · 绝对无提醒我按钮) -->
+    <div class="album-detail-header fade-in" style="text-align: center; margin: 0 0 2.8rem;">
+      <h1 id="albumDetailTitle" style="color: #F6F4F0; font-size: 2.2rem; margin: 0 0 0.9rem; font-family: var(--font-songti), serif; letter-spacing: 2px;"></h1>
+      <div id="albumDetailMeta" style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 1.2rem;">
+        <span class="event-meta-pill" id="albumDetailDate"><i class="far fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i><span></span></span>
+        <span class="event-meta-pill" id="albumDetailCount"><i class="fas fa-images" style="color:var(--gold); margin-right:6px;"></i><span></span></span>
       </div>
-    </section>
-  </main>
+      <p id="albumDetailDesc" style="max-width: 700px; margin: 0 auto; color: #bbb; font-size: 0.96rem; line-height: 1.8; display: none;"></p>
+      <div id="albumDetailFbWrap" style="margin-top: 1.2rem;"></div>
+    </div>
 
-    <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
+    <!-- 相簿内所有照片展示网格 -->
+    <div id="albumDetailPhotosGrid" class="photo-gallery fade-in" style="padding-top: 0;"></div>
+  </div>
+
+  <!-- Lightbox Overlay (高清原图弹窗放大浏览) -->
+  <div id="lightbox" class="lightbox-mode" style="display: none;" onclick="closeLightbox()">
+    <img id="lightboxImg" class="lightbox-img" src="" alt="照片放大预览">
+  </div>
+
+  <footer style="position:relative; z-index:5; padding: 4rem 2rem; text-align: center;">
     <a href="admin.html" style="display:inline-block; transition:0.3s; opacity:0.8;">
       <img src="assets/logo.png" alt="Harvester" style="height: 20px; display: block; margin: 0 auto 1.2rem;">
     </a>
@@ -147,12 +197,10 @@
     <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
   </footer>
 
-  <script src="visualizer.js"></script>
-  <script src="app.js?v=36.0.0"></script>
+  <script src="app.js?v=63.0.0"></script>
   <script>
-    // Specific initialization for this page
     document.addEventListener('DOMContentLoaded', () => {
-      // fetchDiary is called inside app.js if it detects diaryContainer
+      if (typeof fetchDiary === 'function') fetchDiary();
     });
   </script>
 </body>

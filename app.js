@@ -860,7 +860,8 @@ document.addEventListener('DOMContentLoaded', () => {
         actionHtml = `<span class="event-strip-disabled">已取消</span>`;
       }
 
-      const safeTitle = (e.cleanTitle || e.title || "").replace(/'/g, "\\'");
+      const safeTitle = (e.cleanTitle || e.title || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const safeLoc = (e.location || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
       return `
         <div class="event-strip-row fade-in">
@@ -1192,9 +1193,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   };
 
-  // 渲染相册列表 HTML
+  // 渲染相册列表 HTML (在照片集内浏览相簿，不跳转到活动页面)
   function renderDiaryAlbumsHtml(albums, container) {
     if (!container) return;
+    window._cachedDiaryAlbums = albums;
     if (!albums || albums.length === 0) {
       container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: #888;">
         <p style="font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--gold);">📷 暂无相册记录</p>
@@ -1209,7 +1211,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const photoCount = (d.photos && Array.isArray(d.photos)) ? d.photos.length : 0;
       const countBadge = photoCount > 0 ? `<span class="folder-count"><i class="fas fa-images"></i> ${photoCount} 张相片</span>` : '';
       return `
-        <div class="folder-card fade-in" onclick="location.href='event.html?id=${d.id}'">
+        <div class="folder-card fade-in" onclick="openDiaryAlbum('${d.id}')">
           <div class="folder-main">
             ${countBadge}
             <img src="${coverImg}" class="folder-cover" style="object-position: ${d.cover_pos || d.img_pos || '50% 50%'}; transform: scale(${d.cover_zoom || d.img_zoom || 1.0}); transform-origin: ${d.cover_pos || d.img_pos || '50% 50%'};" onerror="this.src='assets/logo.png'">
@@ -1224,6 +1226,158 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshObserver();
   }
 
+  // 📷 在照片集内打开相簿 (不跳到活动，绝无活动提醒我按钮)
+  window.openDiaryAlbum = async (id) => {
+    const folderView = document.getElementById('diaryFolderView');
+    const detailView = document.getElementById('diaryAlbumDetailView');
+    if (!detailView) return;
+
+    // 1. 查找相册数据
+    let album = (window._cachedDiaryAlbums || []).find(x => String(x.id) === String(id));
+    if (!album && siteConfigs['cfg_diary_albums_json']) {
+      try {
+        const list = typeof siteConfigs['cfg_diary_albums_json'] === 'string' ? JSON.parse(siteConfigs['cfg_diary_albums_json']) : siteConfigs['cfg_diary_albums_json'];
+        if (Array.isArray(list)) album = list.find(x => String(x.id) === String(id));
+      } catch(e){}
+    }
+    if (!album) {
+      album = defaultCuratedAlbums.find(x => String(x.id) === String(id));
+    }
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(id));
+    if (!album && db && isUUID) {
+      try {
+        const { data } = await db.from('diary_albums').select('*').eq('id', id).maybeSingle();
+        if (data) album = data;
+      } catch(e){}
+    }
+
+    if (!album) {
+      console.warn("未找到相簿：", id);
+      return;
+    }
+
+    // 2. 搜集相簿中的所有照片
+    let photos = [];
+    if (Array.isArray(album.photos) && album.photos.length > 0) {
+      album.photos.forEach(p => {
+        const url = (typeof p === 'string' ? p : (p?.media_url || p?.url || '')).trim();
+        if (url && !photos.some(x => (typeof x === 'string' ? x : x.media_url) === url)) {
+          photos.push({ media_url: url });
+        }
+      });
+    }
+
+    if (db && isUUID) {
+      try {
+        const { data: mData } = await db.from('diary_media').select('*').eq('album_id', id);
+        if (mData && Array.isArray(mData)) {
+          mData.forEach(p => {
+            const url = (p.media_url || '').trim();
+            if (url && !photos.some(x => (typeof x === 'string' ? x : x.media_url) === url)) {
+              photos.push({ media_url: url });
+            }
+          });
+        }
+      } catch(e){}
+    }
+
+    // 若无单独照片列表，但有相册封面，则展示封面
+    const cover = (album.cover_url || '').trim();
+    if (photos.length === 0 && cover) {
+      photos.push({ media_url: cover });
+    }
+
+    // 3. 填充头部标题、日期与说明
+    const titleEl = document.getElementById('albumDetailTitle');
+    if (titleEl) titleEl.innerText = album.title || '精彩相簿回顾';
+
+    const dateSpan = document.querySelector('#albumDetailDate span');
+    if (dateSpan) dateSpan.innerText = album.date || '精彩瞬间回顾';
+
+    const countSpan = document.querySelector('#albumDetailCount span');
+    if (countSpan) countSpan.innerText = `共 ${photos.length} 张相片`;
+
+    const descEl = document.getElementById('albumDetailDesc');
+    if (descEl) {
+      if (album.description && album.description.trim()) {
+        descEl.innerText = album.description.trim();
+        descEl.style.display = 'block';
+      } else {
+        descEl.style.display = 'none';
+      }
+    }
+
+    const fbWrap = document.getElementById('albumDetailFbWrap');
+    if (fbWrap) {
+      const fbUrl = album.fb_url || siteConfigs['cfg_diary_fb'];
+      if (fbUrl) {
+        fbWrap.innerHTML = `
+          <a href="${fbUrl}" target="_blank" class="btn-social-fb" style="display:inline-flex; width:auto; padding:6px 18px; font-size:0.82rem; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:100px; text-decoration:none; backdrop-filter:blur(5px); letter-spacing:1px; transition:0.3s; align-items:center; gap:6px;">
+            <i class="fab fa-facebook-f"></i> 在 Facebook 查看相簿动态
+          </a>
+        `;
+      } else {
+        fbWrap.innerHTML = '';
+      }
+    }
+
+    // 4. 渲染照片瀑布流网格
+    const photosGrid = document.getElementById('albumDetailPhotosGrid');
+    if (photosGrid) {
+      if (photos.length === 0) {
+        photosGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: #888;">
+          <p style="color: var(--gold);">📷 该相簿暂无上传照片</p>
+        </div>`;
+      } else {
+        photosGrid.innerHTML = photos.map((p, idx) => {
+          const url = typeof p === 'string' ? p : (p.media_url || p.url || '');
+          if (!url) return '';
+          return `
+            <div class="gallery-item fade-in" onclick="openLightbox('${url}')" title="点击查看第 ${idx + 1} 张大图">
+              <img src="${url}" class="gallery-img" loading="lazy" onerror="this.parentElement.style.display='none'">
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // 5. 切换显示视图，同步 URL 与页面标题
+    if (folderView) folderView.style.display = 'none';
+    detailView.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.title = `${album.title} | 照片集 | Harvester Music`;
+
+    try {
+      const currentUrl = new URL(window.location.href);
+      if (currentUrl.searchParams.get('id') !== String(id)) {
+        currentUrl.searchParams.set('id', id);
+        window.history.pushState({ albumId: id }, '', currentUrl.toString());
+      }
+    } catch(e){}
+
+    refreshObserver();
+  };
+
+  // 返回相册文件夹列表
+  window.closeDiaryAlbum = () => {
+    const folderView = document.getElementById('diaryFolderView');
+    const detailView = document.getElementById('diaryAlbumDetailView');
+    if (detailView) detailView.style.display = 'none';
+    if (folderView) folderView.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.title = '照片集 Record Every Moment | Harvester Music 收割机创作工作坊';
+
+    try {
+      const currentUrl = new URL(window.location.href);
+      if (currentUrl.searchParams.has('id')) {
+        currentUrl.searchParams.delete('id');
+        window.history.pushState({}, '', currentUrl.pathname);
+      }
+    } catch(e){}
+
+    refreshObserver();
+  };
+
   async function fetchDiary() {
     const container = document.getElementById('diaryContainer');
     if (!container) return;
@@ -1237,7 +1391,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (Array.isArray(parsed) && parsed.length > 0) initialAlbums = parsed;
       } catch(e){}
     }
+    window._cachedDiaryAlbums = initialAlbums;
     renderDiaryAlbumsHtml(initialAlbums, container);
+
+    // 检查 URL 是否带相册参数，若是则直接秒开指定相簿
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetAlbumId = urlParams.get('id');
+    if (targetAlbumId) {
+      openDiaryAlbum(targetAlbumId);
+    }
 
     // 2. 后台异步同步 Supabase
     try {
@@ -1269,7 +1431,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (albums.length > 0) {
         albums.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        window._cachedDiaryAlbums = albums;
         renderDiaryAlbumsHtml(albums, container);
+        if (targetAlbumId) {
+          openDiaryAlbum(targetAlbumId);
+        }
       }
     } catch (e) {
       console.warn("fetchDiary Error:", e);
@@ -1282,6 +1448,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     let id = params.get('id');
     if (!container) return;
+
+    // 若传入的是相簿 ID，则自动无缝重定向到照片集页面 (diary.html?id=...)
+    if (id) {
+      const isCuratedAlbum = defaultCuratedAlbums.some(a => String(a.id) === String(id));
+      if (isCuratedAlbum) {
+        window.location.replace('diary.html?id=' + encodeURIComponent(id));
+        return;
+      }
+      if (siteConfigs['cfg_diary_albums_json']) {
+        try {
+          const dList = typeof siteConfigs['cfg_diary_albums_json'] === 'string' ? JSON.parse(siteConfigs['cfg_diary_albums_json']) : siteConfigs['cfg_diary_albums_json'];
+          if (Array.isArray(dList) && dList.some(a => String(a.id) === String(id))) {
+            window.location.replace('diary.html?id=' + encodeURIComponent(id));
+            return;
+          }
+        } catch(e){}
+      }
+    }
 
     if (!id) {
       // Default to upcoming ministry tour stop instead of error screen
@@ -1457,19 +1641,26 @@ document.addEventListener('DOMContentLoaded', () => {
         dateEl.appendChild(link);
       }
 
-      // If it's an event (from events table or poster), add reminder button
-      const oldBtn = document.getElementById('event_remind_btn_wrap');
-      if (oldBtn) oldBtn.remove();
-      if (isEvent || album.location || parsed.location || parsed.dateStr) {
-        const cleanTitle = (cleanT || "").replace(/'/g, "\\'");
-        const btnWrap = document.createElement('div');
-        btnWrap.id = 'event_remind_btn_wrap';
-        btnWrap.style = "width:100%; display:flex; justify-content:center; margin-top:20px;";
-        btnWrap.innerHTML = `
-          <button class="btn-frosted-gold" style="min-width:180px; max-width:260px; padding:12px 24px; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:50px; cursor:pointer; font-weight:600; font-size:0.95rem; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="openReminderModal('${album.id}', '${cleanTitle}', '${parsed.fullDateTime}')"><i class="fas fa-bell"></i> 提醒我</button>
-        `;
-        const eventHeader = document.getElementById('eventHeader');
-        if (eventHeader) eventHeader.appendChild(btnWrap);
+      // 只有真正的教会/布道巡回活动且具备场次时间时，才显示“提醒我”按钮；相簿与纯图片回顾绝不显示提醒功能
+      const oldBtnWrap = document.getElementById('event_remind_btn_wrap');
+      if (oldBtnWrap) oldBtnWrap.innerHTML = '';
+      if (isEvent && (parsed.timeStr || (album.event_time && String(album.event_time).trim()))) {
+        const cleanTitle = (cleanT || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const btn = document.createElement('button');
+        btn.className = 'btn-frosted-gold';
+        btn.style = "min-width:180px; max-width:260px; padding:12px 24px; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:50px; cursor:pointer; font-weight:600; font-size:0.95rem; display:inline-flex; align-items:center; justify-content:center; gap:8px;";
+        btn.onclick = () => openReminderModal(album.id, cleanTitle, parsed.fullDateTime);
+        btn.innerHTML = `<i class="fas fa-bell"></i> 提醒我`;
+        if (oldBtnWrap) {
+          oldBtnWrap.appendChild(btn);
+        } else {
+          const btnWrap = document.createElement('div');
+          btnWrap.id = 'event_remind_btn_wrap';
+          btnWrap.style = "width:100%; display:flex; justify-content:center; margin-top:20px;";
+          btnWrap.appendChild(btn);
+          const eventHeader = document.getElementById('eventHeader');
+          if (eventHeader) eventHeader.appendChild(btnWrap);
+        }
       }
 
       // Gather photos (support multiple pictures uploaded via backend)
@@ -1583,12 +1774,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if(lb && img) { img.src = url; lb.style.display = 'flex'; }
   };
 
+  window.closeLightbox = () => {
+    const lb = document.getElementById('lightbox');
+    if (lb) lb.style.display = 'none';
+  };
+
+  // 监听浏览器前进/后退按钮 (Popstate 支持相簿优雅后退)
+  window.addEventListener('popstate', () => {
+    if (document.getElementById('diaryContainer')) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+      if (id && typeof window.openDiaryAlbum === 'function') {
+        window.openDiaryAlbum(id);
+      } else if (typeof window.closeDiaryAlbum === 'function') {
+        window.closeDiaryAlbum();
+      }
+    }
+  });
+
   // --- Runtime ---
   refreshObserver(); // Observe ALL static fade-in elements on every page immediately
   if (document.getElementById('homeNewsGrid')) renderHomeLatestNews();
   window.syncSitePromise = syncSitePromise = syncSiteContent();
   fetchMusic();
   fetchEvents();
+  if (document.getElementById('diaryContainer')) fetchDiary();
   initInteractiveTitle();
   if (document.getElementById('galleryContainer')) initEventGallery();
 });
@@ -1674,3 +1884,31 @@ function startNotes(el) { el._n = setInterval(() => {
   setTimeout(() => n.remove(), 2000);
 }, 400); }
 function stopNotes(el) { clearInterval(el._n); }
+
+// Global Escape key listener to close active modals/overlays
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const newsModal = document.getElementById('newsDetailModal');
+    if (newsModal && newsModal.style.display !== 'none') {
+      if (typeof window.closeNewsDetailModal === 'function') window.closeNewsDetailModal();
+      else newsModal.style.display = 'none';
+    }
+    const remModal = document.getElementById('reminderModal');
+    if (remModal && remModal.style.display !== 'none') {
+      remModal.style.display = 'none';
+    }
+    const detailOverlay = document.getElementById('detail-overlay');
+    if (detailOverlay && (detailOverlay.classList.contains('active') || detailOverlay.style.display === 'flex')) {
+      if (typeof window.hideOverlay === 'function') window.hideOverlay();
+      else {
+        detailOverlay.classList.remove('active');
+        detailOverlay.style.display = 'none';
+      }
+    }
+    const lb = document.getElementById('lightbox');
+    if (lb && lb.style.display !== 'none') {
+      if (typeof window.closeLightbox === 'function') window.closeLightbox();
+      else lb.style.display = 'none';
+    }
+  }
+});
