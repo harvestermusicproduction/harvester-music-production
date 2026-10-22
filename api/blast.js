@@ -1,8 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export default async function handler(req, res) {
-  // Allow GET for manual debugging/triggering
+  // Allow POST or GET for authenticated admin triggering
   if (req.method !== 'POST' && req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -12,6 +21,22 @@ export default async function handler(req, res) {
       process.env.SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY // Bypass RLS to fetch all and update
     );
+
+    // Require authentication via CRON_SECRET or Supabase Auth Bearer token
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized: Missing Bearer token' });
+    }
+
+    const isCronSecret = Boolean(process.env.CRON_SECRET && token === process.env.CRON_SECRET);
+    if (!isCronSecret) {
+      const { data: userData, error: authErr } = await supabase.auth.getUser(token);
+      if (authErr || !userData?.user) {
+        return res.status(401).json({ error: 'Unauthorized: Invalid or expired session token' });
+      }
+    }
+
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Fetch ALL reminders that haven't been sent yet! (Manually triggered Blast)
@@ -25,36 +50,61 @@ export default async function handler(req, res) {
       return res.status(200).json({ message: '没有任何等待发送的提醒邮件。' });
     }
 
-    // Attempt to pull custom email templates via EXT_META
-    const eventIds = [...new Set(reminders.map(r => r.eventId))];
-    const { data: events } = await supabase.from('events').select('id, description').in('id', eventIds);
+    // Pull custom email templates via email_template column or EXT_META fallback
+    const eventIds = [...new Set(reminders.map(r => r.eventId).filter(Boolean))];
     const emailTemplates = {};
-    events?.forEach(ev => {
-      if (ev.description?.includes('EXT_META:')) {
-        const metaMatch = ev.description.match(/EXT_META:(.*?)\\|\\|/);
-        if (metaMatch) {
-          try {
-             const meta = JSON.parse(metaMatch[1]);
-             if (meta.et) emailTemplates[ev.id] = meta.et.replace(/\\n/g, '<br>');
-          } catch(e) {}
+    if (eventIds.length > 0) {
+      const { data: events } = await supabase.from('events').select('*').in('id', eventIds);
+      events?.forEach(ev => {
+        if (ev.email_template && String(ev.email_template).trim()) {
+          emailTemplates[ev.id] = escapeHtml(ev.email_template).replace(/\n/g, '<br>');
+        } else if (ev.description?.includes('EXT_META:')) {
+          const metaMatch = ev.description.match(/EXT_META:(.*?)\|\|/);
+          if (metaMatch) {
+            try {
+              const meta = JSON.parse(metaMatch[1]);
+              if (meta.et) emailTemplates[ev.id] = escapeHtml(meta.et).replace(/\n/g, '<br>');
+            } catch (e) {}
+          }
         }
-      }
-    });
+      });
+    }
+
+    const tomorrowDateStr = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Kuala_Lumpur',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date(Date.now() + 86400000));
 
     let sentCount = 0;
     let fallbackError = '';
 
     for (const reminder of reminders) {
+      const safeTitle = escapeHtml(reminder.eventTitle || 'Harvester 活动');
+      const safeDate = escapeHtml(reminder.eventDate || '待定');
+      const safeTime = escapeHtml(reminder.eventTime || '待定');
+      const safeLocation = escapeHtml(reminder.eventLocation || '见详情页面');
+      const isTomorrow = reminder.eventDate === tomorrowDateStr;
+
+      const emailSubject = isTomorrow
+        ? `活动提醒：请准时参与明日活动《${reminder.eventTitle || 'Harvester 活动'}》`
+        : `活动温馨提醒：《${reminder.eventTitle || 'Harvester 活动'}》即将来临 (${reminder.eventDate || ''})`;
+
+      const introParagraph = isTomorrow
+        ? '<p>特此提醒您，您报名参加的活动将于明日举行，敬请您提前安排时间并准时参与。</p>'
+        : `<p>特此提醒您，您报名参加的活动即将于 <strong>${safeDate}</strong> 举行，敬请您提前安排时间并准时参与。</p>`;
+
       // Resolve content
-      const customContent = emailTemplates[reminder.eventId] 
-        ? `<div style="margin: 20px 0; padding:15px; background: #fafafa; border-left: 4px solid #c9933b;">${emailTemplates[reminder.eventId]}</div>` 
+      const customContent = emailTemplates[reminder.eventId]
+        ? `<div style="margin: 20px 0; padding:15px; background: #fafafa; border-left: 4px solid #c9933b;">${emailTemplates[reminder.eventId]}</div>`
         : `<p>温馨提醒，您报名的活动不要错过啦 🙌</p><p>非常期待您的到来！</p>`;
 
       // Send Email via Resend
       const { data: emailData, error: emailErr } = await resend.emails.send({
-        from: 'Harvester Music <office@harvestermusic.my>', 
+        from: 'Harvester Music <office@harvestermusic.my>',
         to: reminder.userEmail,
-        subject: `活动提醒：请准时参与明日活动《${reminder.eventTitle}》`,
+        subject: emailSubject,
         html: `
           <div style="font-family: 'Microsoft YaHei', sans-serif; padding: 30px; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-top: 5px solid #c9933b; border-radius: 12px; line-height: 1.8;">
             <div style="text-align: center; margin-bottom: 25px;">
@@ -63,15 +113,15 @@ export default async function handler(req, res) {
             
             <h3 style="color: #c9933b; margin-top: 0;">尊敬的参与者：</h3>
             <p>您好！</p>
-            <p>特此提醒您，您报名参加的活动将于明日举行，敬请您提前安排时间并准时参与。</p>
+            ${introParagraph}
             
             <div style="background: #fafafa; border: 1px solid #eee; border-radius: 10px; padding: 20px; margin: 25px 0;">
               <h4 style="margin-top: 0; color: #c9933b; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px;">📌 活动信息如下：</h4>
               <ul style="list-style: none; padding: 0; margin: 0; font-size: 15px;">
-                <li style="margin-bottom: 8px;"><strong>活动名称：</strong> ${reminder.eventTitle}</li>
-                <li style="margin-bottom: 8px;"><strong>日期：</strong> ${reminder.eventDate}</li>
-                <li style="margin-bottom: 8px;"><strong>时间：</strong> ${reminder.eventTime}</li>
-                <li style="margin-bottom: 8px;"><strong>地点：</strong> ${reminder.eventLocation || '见详情页面'}</li>
+                <li style="margin-bottom: 8px;"><strong>活动名称：</strong> ${safeTitle}</li>
+                <li style="margin-bottom: 8px;"><strong>日期：</strong> ${safeDate}</li>
+                <li style="margin-bottom: 8px;"><strong>时间：</strong> ${safeTime}</li>
+                <li style="margin-bottom: 8px;"><strong>地点：</strong> ${safeLocation}</li>
               </ul>
             </div>
 

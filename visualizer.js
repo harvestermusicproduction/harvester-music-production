@@ -37,8 +37,12 @@ class InfinityVisualizer {
     setupEventListeners() {
         window.addEventListener('resize', () => this.resize());
         window.addEventListener('mousemove', (e) => {
+            this.mouse.active = true;
             this.mouse.x = e.clientX;
             this.mouse.y = e.clientY;
+        });
+        window.addEventListener('mouseleave', () => {
+            this.mouse.active = false;
         });
         window.addEventListener('touchstart', (e) => {
             this.mouse.active = true;
@@ -218,8 +222,10 @@ class InfinityVisualizer {
 
     animate() {
         if (!this.isRunning) return;
-        this.update();
-        this.draw();
+        if (!document.hidden) {
+            this.update();
+            this.draw();
+        }
         requestAnimationFrame(() => this.animate());
     }
 

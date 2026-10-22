@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.1.0/style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
-  <link rel="preload" href="assets/fonts/ChenYuluoyan-SC.woff2" as="font" type="font/woff2" crossorigin>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -17,14 +14,17 @@
       }
     });
   </script>
-  <title>CMS 后台管理</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=61.0.0">
+  <title>CMS 后台管理 · Harvester Music</title>
+  <link rel="stylesheet" href="styles.css?v=59.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
+      --gold: #d4af37 !important;
+      --gold-light: #e5c158;
+      --gold-dark: #b89225;
+      --gold-glow: rgba(212, 175, 55, 0.35) !important;
+      --gold-bg: rgba(212, 175, 55, 0.12);
+      --gold-border: rgba(212, 175, 55, 0.38);
       --admin-red: #e63946;
       --admin-red-light: #ff4d4f;
       --admin-red-dark: #c92a3f;
@@ -37,14 +37,12 @@
       --admin-bg-input: #1a1a1a;
       --admin-text-main: #ffffff;
       --admin-text-sub: #dedede;
-      --admin-text-muted: #888888;
+      --admin-text-muted: #a0a0a0;
       --admin-border: #242424;
-      --gold: #e63946 !important;
-      --gold-glow: rgba(230, 57, 70, 0.35) !important;
     }
 
     body {
-      background: radial-gradient(circle at 50% 30%, #180f11 0%, #080808 100%);
+      background: radial-gradient(circle at 50% 30%, #17140d 0%, #080808 100%);
       height: 100vh;
       display: flex;
       justify-content: center;
@@ -54,14 +52,19 @@
       color: #ffffff;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
     }
+
+    label {
+      color: #a0a0a0;
+    }
+
     .auth-container {
       background: #111111;
-      border: 1.5px solid rgba(230, 57, 70, 0.4);
+      border: 1.5px solid var(--gold-border);
       border-radius: 16px;
       padding: 3rem 2.5rem;
       width: 100%;
       max-width: 400px;
-      box-shadow: 0 15px 50px rgba(0,0,0,0.9), 0 0 30px rgba(230, 57, 70, 0.12);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.9), 0 0 30px rgba(212, 175, 55, 0.12);
       position: relative;
       z-index: 10;
       text-align: center;
@@ -82,7 +85,7 @@
       margin-bottom: 2rem;
     }
     .auth-title span {
-      color: var(--admin-red);
+      color: var(--gold);
     }
     .auth-input-group {
       margin-bottom: 1.5rem;
@@ -90,7 +93,7 @@
     }
     .auth-input-group label {
       display: block;
-      color: #aaaaaa;
+      color: #a0a0a0;
       font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -107,92 +110,153 @@
       box-sizing: border-box;
     }
     .auth-input-group input:focus {
-      border-color: var(--admin-red);
-      box-shadow: 0 0 12px var(--admin-red-glow);
+      border-color: var(--gold);
+      box-shadow: 0 0 12px var(--gold-glow);
       outline: none;
     }
     .auth-error {
-      color: #ff4d4f;
+      color: var(--admin-red-light);
+      background: var(--admin-red-bg);
+      border: 1px solid var(--admin-red-border);
+      padding: 8px 12px;
+      border-radius: 6px;
       font-size: 0.85rem;
       margin-bottom: 1.5rem;
       display: none;
     }
-    .btn-login, .btn-submit {
+
+    /* Primary Positive Actions (Gold) */
+    .btn-login, .btn-submit, .btn-primary, .btn-submit-cms {
       width: 100%;
-      background: linear-gradient(135deg, #e63946 0%, #c92a3f 100%);
-      color: #ffffff;
+      background: linear-gradient(135deg, #e5c158 0%, #c49b27 100%);
+      color: #111111;
       padding: 0.9rem 1.5rem;
       border: none;
       border-radius: 8px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       cursor: pointer;
-      box-shadow: 0 4px 18px rgba(230, 57, 70, 0.4);
-      transition: all 0.3s ease;
+      box-shadow: 0 4px 18px rgba(212, 175, 55, 0.32);
+      transition: all 0.25s ease;
     }
-    .btn-login:hover, .btn-submit:hover {
-      background: #ff4d4f;
+    .btn-login:hover, .btn-submit:hover, .btn-primary:hover, .btn-submit-cms:hover {
+      background: linear-gradient(135deg, #f0cf6e 0%, #d4af37 100%);
+      color: #000000;
       transform: translateY(-2px);
-      box-shadow: 0 6px 24px rgba(230, 57, 70, 0.6);
+      box-shadow: 0 6px 24px rgba(212, 175, 55, 0.5);
     }
-    .btn-login:active, .btn-submit:active {
+    .btn-login:active, .btn-submit:active, .btn-primary:active, .btn-submit-cms:active {
       transform: translateY(1px);
     }
-    
+
+    /* Secondary / Tiny Buttons */
     .btn-tiny {
       padding: 6px 14px;
       background: #1a1a1a;
       border: 1px solid #333333;
-      color: #cccccc;
+      color: #d0d0d0;
       border-radius: 6px;
       font-size: 0.75rem;
+      font-weight: 500;
       cursor: pointer;
       transition: all 0.25s ease;
     }
     .btn-tiny:hover {
-      border-color: var(--admin-red);
+      border-color: var(--gold);
       color: #ffffff;
-      background: rgba(230, 57, 70, 0.15);
+      background: rgba(212, 175, 55, 0.14);
     }
 
-    .btn-tiny.danger {
+    /* Destructive Actions (Strictly Admin Red) */
+    .btn-tiny.danger, .btn.danger, button.danger {
       color: #ff6b6b;
-      border-color: rgba(230, 57, 70, 0.4);
+      border-color: rgba(230, 57, 70, 0.45);
+      background: rgba(230, 57, 70, 0.08);
     }
-    .btn-tiny.danger:hover {
-      background: #e63946;
-      border-color: #e63946;
+    .btn-tiny.danger:hover, .btn.danger:hover, button.danger:hover {
+      background: var(--admin-red);
+      border-color: var(--admin-red);
       color: #ffffff;
+      box-shadow: 0 4px 14px var(--admin-red-glow);
     }
-    
+
     .btn-home {
       display: block;
       margin-top: 1.5rem;
-      color: #888888;
+      color: #a0a0a0;
       font-size: 0.82rem;
       text-decoration: none;
       transition: 0.3s;
     }
     .btn-home:hover {
-      color: var(--admin-red);
+      color: var(--gold);
     }
-    
-    /* CMS Layout styles */
-    .cms-layout aside nav a {
-      font-size: 0.88rem;
-      padding: 10px 14px;
-      border-radius: 6px;
+
+    /* CMS Layout & Sidebar Navigation */
+    .cms-layout {
+      display: flex;
+      height: 100vh;
+      background: #080808;
+      color: #ffffff;
+      overflow: hidden;
+      position: relative;
+    }
+    .cms-sidebar {
+      width: 265px;
+      min-width: 265px;
+      background: #0c0c0c;
+      border-right: 1px solid #222222;
+      padding: 1.8rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      z-index: 100;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-section-title {
+      font-size: 0.65rem;
+      color: #a0a0a0;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      margin: 10px 0 6px 8px;
+      font-weight: 700;
+    }
+    .cms-layout aside nav a,
+    .nav-item {
+      color: #b0b0b0;
       text-decoration: none;
-      transition: 0.25s;
-      display: block;
-      margin-bottom: 5px;
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      transition: all 0.22s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 0.3px;
+      margin-bottom: 3px;
     }
-    .cms-layout aside nav a:hover {
-      background: rgba(255,255,255,0.06);
+    .cms-layout aside nav a:hover,
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
     }
-    
-    input[type="text"], input[type="file"], input[type="number"], select, textarea {
+    .nav-item.active {
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold-light);
+      font-weight: 600;
+      border-left: 3px solid var(--gold);
+    }
+
+    .cms-card {
+      background: #111111;
+      border: 1px solid #222222;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    input[type="text"], input[type="file"], input[type="number"], input[type="date"], input[type="email"], input[type="password"], select, textarea {
       padding: 10px 12px;
       background: #141414 !important;
       border: 1px solid #2e2e2e !important;
@@ -203,8 +267,8 @@
       transition: border-color 0.25s, box-shadow 0.25s;
     }
     input:focus, select:focus, textarea:focus {
-      border-color: var(--admin-red) !important;
-      box-shadow: 0 0 10px var(--admin-red-glow) !important;
+      border-color: var(--gold) !important;
+      box-shadow: 0 0 10px var(--gold-glow) !important;
       outline: none !important;
     }
 
@@ -218,18 +282,128 @@
     #adminDashboard.active {
       display: block;
     }
+
+    /* Mobile Header & Drawer Overlay */
+    .cms-mobile-header {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: #0c0c0c;
+      border-bottom: 1px solid #222222;
+      z-index: 90;
+    }
+    .cms-sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(3px);
+      z-index: 95;
+    }
+    .cms-sidebar-overlay.active {
+      display: block;
+    }
+
+    /* Non-Blocking Toast Notification System */
+    #adminToastContainer {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 380px;
+      width: calc(100% - 40px);
+      pointer-events: none;
+    }
+    .admin-toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      border-radius: 10px;
+      background: rgba(20, 20, 20, 0.96);
+      backdrop-filter: blur(12px);
+      color: #ffffff;
+      font-size: 0.86rem;
+      line-height: 1.45;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75);
+      border: 1px solid #333333;
+      border-left: 4px solid var(--gold);
+      transform: translateX(120%);
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+    }
+    .admin-toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .admin-toast.success {
+      border-left-color: var(--gold);
+    }
+    .admin-toast.error {
+      border-left-color: var(--admin-red);
+      background: rgba(28, 14, 16, 0.96);
+    }
+    .admin-toast.info {
+      border-left-color: #58a6ff;
+    }
+
+    /* Responsive Mobile & Tablet Styles (< 900px) */
+    @media (max-width: 900px) {
+      .cms-layout {
+        flex-direction: column;
+      }
+      .cms-mobile-header {
+        display: flex;
+      }
+      .cms-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        height: 100vh;
+        transform: translateX(-100%);
+        box-shadow: 10px 0 35px rgba(0, 0, 0, 0.85);
+      }
+      .cms-sidebar.open {
+        transform: translateX(0);
+      }
+      #moduleBody {
+        padding: 1.25rem 1rem !important;
+      }
+      .cms-card {
+        padding: 1.25rem !important;
+      }
+      #moduleBody [style*="grid-template-columns: 1fr 1fr"],
+      #moduleBody [style*="grid-template-columns:1fr 1fr"],
+      #moduleBody [style*="grid-template-columns: 1.2fr 1fr"],
+      #moduleBody [style*="grid-template-columns: 2fr 1fr"],
+      #moduleBody [style*="grid-template-columns: 240px 1fr"],
+      div[id$="Modal"] [style*="grid-template-columns: 1fr 1fr"],
+      div[id$="Modal"] [style*="grid-template-columns: 1fr 1fr 1fr"],
+      div[id$="Modal"] [style*="grid-template-columns: 2fr 1fr"] {
+        grid-template-columns: 1fr !important;
+      }
+    }
   </style>
 </head>
 <body>
 
   <!-- Loading Overlay -->
-  <div id="authLoading" style="position:fixed; z-index:999; color:var(--admin-red); font-family:var(--font-brand), sans-serif; font-weight:800; font-size:1.4rem; letter-spacing:1px;">
+  <div id="authLoading" style="position:fixed; z-index:999; color:var(--gold); font-family:var(--font-brand), sans-serif; font-weight:800; font-size:1.4rem; letter-spacing:1px;">
     验证身份中 (Authenticating)...
   </div>
 
+  <!-- Non-Blocking Toast Container -->
+  <div id="adminToastContainer" aria-live="polite"></div>
+
   <!-- Login Form -->
   <div class="auth-container hidden" id="loginBox">
-    <div class="auth-title">System Admin</div>
+    <div class="auth-title">System <span>Admin</span></div>
     <form id="loginForm">
       <div class="auth-input-group">
         <label>Email Address</label>
@@ -239,7 +413,7 @@
         <label>Password</label>
         <div style="position:relative;">
           <input type="password" id="txtPassword" required placeholder="••••••••" style="padding-right: 40px;">
-          <i class="fa-solid fa-eye" id="togglePassword" style="position:absolute; right:15px; top:50%; transform:translateY(-50%); color:#666; cursor:pointer;"></i>
+          <i class="fa-solid fa-eye" id="togglePassword" style="position:absolute; right:15px; top:50%; transform:translateY(-50%); color:#a0a0a0; cursor:pointer;"></i>
         </div>
       </div>
       <div class="auth-error" id="loginError">账号或密码错误 (Invalid Credentials)</div>
@@ -271,6 +445,6 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=20261021_01"></script>
-  <script src="admin.js?v=20261022_04"></script>
+  <script src="admin.js?v=20261022_05"></script>
 </body>
 </html>

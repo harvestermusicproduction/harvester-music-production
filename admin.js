@@ -11,10 +11,134 @@ document.addEventListener('DOMContentLoaded', () => {
   const adminDashboard = document.getElementById('adminDashboard');
   const btnLogin = document.getElementById('btnLogin');
 
-  // --- Global Error Handler ---
+  // --- HTML Attribute Escaping Helper ---
+  function escAttr(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+  window.escAttr = escAttr;
+
+  // --- Non-Blocking Toast Notification Helper ---
+  window.showAdminToast = (msg, type = 'success', duration = 3800) => {
+    let container = document.getElementById('adminToastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'adminToastContainer';
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    const validType = ['success', 'error', 'info'].includes(type) ? type : 'success';
+    toast.className = `admin-toast ${validType}`;
+    const iconHtml = validType === 'error'
+      ? '<i class="fas fa-exclamation-circle" style="color:var(--admin-red); font-size:1.1rem; flex-shrink:0;"></i>'
+      : (validType === 'info'
+        ? '<i class="fas fa-info-circle" style="color:#58a6ff; font-size:1.1rem; flex-shrink:0;"></i>'
+        : '<i class="fas fa-check-circle" style="color:var(--gold); font-size:1.1rem; flex-shrink:0;"></i>');
+    toast.innerHTML = `
+      ${iconHtml}
+      <div style="flex:1; word-break:break-word;">${String(msg || '').replace(/\n/g, '<br>')}</div>
+      <button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; color:#a0a0a0; cursor:pointer; font-size:0.95rem; padding:0 2px; line-height:1;">✕</button>
+    `;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 320);
+    }, duration);
+  };
+
+  // --- Global Error Handler (Non-Blocking) ---
   window.addEventListener('error', (e) => {
     console.error("Global Error Caught:", e);
-    alert(`⚠️ 脚本运行出错 [Global Error]:\n${e.message}\n文件: ${e.filename.split('/').pop()}\n行号: ${e.lineno}`);
+    if (e?.message) {
+      window.showAdminToast(`脚本运行异常: ${e.message}`, 'error');
+    }
+  });
+
+  // --- Password Visibility Toggle ---
+  const togglePwdBtn = document.getElementById('togglePassword');
+  if (togglePwdBtn) {
+    togglePwdBtn.addEventListener('click', () => {
+      const pwdInput = document.getElementById('txtPassword');
+      if (!pwdInput) return;
+      const isPwd = pwdInput.type === 'password';
+      pwdInput.type = isPwd ? 'text' : 'password';
+      togglePwdBtn.className = isPwd ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+    });
+  }
+
+  // --- Close Music Modal Helper (Pauses Audio) ---
+  window.closeMusicModal = () => {
+    const aud = document.getElementById('prev_audio_el');
+    if (aud) {
+      try {
+        aud.pause();
+        aud.currentTime = 0;
+      } catch (e) {}
+    }
+    const modal = document.getElementById('musicEditModal');
+    if (modal) modal.remove();
+  };
+
+  // --- Global Escape Key Handler for Modals ---
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (document.getElementById('musicEditModal')) {
+        window.closeMusicModal();
+        return;
+      }
+      const modalIds = [
+        'newsEditModal',
+        'eventPosterModal',
+        'eventEditModal',
+        'diaryAlbumModal',
+        'photoManagerModal',
+        'contactDetailModal',
+        'subDetailModal',
+        'singerEditModal'
+      ];
+      for (const mId of modalIds) {
+        const mEl = document.getElementById(mId);
+        if (mEl) {
+          mEl.querySelectorAll('audio, video').forEach(media => {
+            try { media.pause(); } catch (err) {}
+          });
+          mEl.remove();
+          return;
+        }
+      }
+      // Also close mobile sidebar drawer if open
+      window.toggleAdminSidebar?.(false);
+    }
+  });
+
+  // --- Delegated Auto-Upload on File Selection ---
+  document.addEventListener('change', (e) => {
+    const input = e.target;
+    if (!input || input.tagName !== 'INPUT' || input.type !== 'file') return;
+    if (!input.files || input.files.length === 0) return;
+    // Skip inputs that already have custom onchange handlers or deferred multi-create
+    if (input.hasAttribute('onchange') || input.id === 'daf_multi_create') return;
+
+    if (input.id === 'f_ev_photos' && typeof window.uploadEventGalleryPhotos === 'function') {
+      window.uploadEventGalleryPhotos();
+      return;
+    }
+    if (input.id === 'f_ev_p_photos' && typeof window.uploadPosterGalleryPhotos === 'function') {
+      window.uploadPosterGalleryPhotos();
+      return;
+    }
+    if (input.id) {
+      const btn = document.querySelector(`button[onclick*="'${input.id}'"]`);
+      if (btn && !btn.disabled) {
+        btn.click();
+      }
+    }
   });
 
   // --- Auth Listener ---
@@ -45,9 +169,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   let currentModule = 'dashboard';
-  window.switchModule = (m) => { currentModule = m; renderCMS(); };
+  window.switchModule = (m) => {
+    currentModule = m;
+    window.toggleAdminSidebar?.(false);
+    renderCMS();
+  };
   window.logoutAdmin = () => db.auth.signOut();
   window.renderCMS = renderCMS;
+
+  window.toggleAdminSidebar = (forceState) => {
+    const sidebar = document.getElementById('cmsSidebar');
+    const overlay = document.getElementById('cmsSidebarOverlay');
+    if (!sidebar) return;
+    const isOpen = typeof forceState === 'boolean' ? forceState : !sidebar.classList.contains('open');
+    sidebar.classList.toggle('open', isOpen);
+    if (overlay) overlay.classList.toggle('active', isOpen);
+  };
 
   // --- 🛡️ Network Glitch & Session Auto-Retry Helper ---
   async function safeDbRequest(fn, maxRetries = 2) {
@@ -136,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span id="pos_val_badge_${id}" style="font-size:0.68rem; color:#aaa; font-family:monospace; background:#222; padding:2px 6px; border-radius:4px; border:1px solid #333;">${x}% ${y}% · ${zoomPct}%</span>
         </div>
         
-        ${hint ? `<p style="font-size:0.68rem; color:#777; margin:0 0 8px 0; line-height:1.3;">${hint}</p>` : ''}
+        ${hint ? `<p style="font-size:0.68rem; color:#a0a0a0; margin:0 0 8px 0; line-height:1.3;">${hint}</p>` : ''}
 
         <!-- 5 快捷焦点预设按钮 -->
         <div style="display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap;">
@@ -145,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 50, 90, ${zoom})" title="对齐底部">⬇️ 偏下</button>
           <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 10, 50, ${zoom})" title="偏左对齐">⬅️ 偏左</button>
           <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#222; border-color:#444;" onclick="setImageCropPreset('${id}', 90, 50, ${zoom})" title="偏右对齐">➡️ 偏右</button>
-          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#1c1c1c; border-color:#383838; color:#888;" onclick="setImageCropPreset('${id}', 50, 50, 1.0)" title="重置位置与缩放">↺ 还原</button>
+          <button type="button" class="btn-tiny" style="padding:2px 7px; font-size:0.68rem; background:#1c1c1c; border-color:#383838; color:#a0a0a0;" onclick="setImageCropPreset('${id}', 50, 50, 1.0)" title="重置位置与缩放">↺ 还原</button>
         </div>
 
         <!-- 上下垂直位置滑块 -->
@@ -178,8 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <span id="crop_txt_z_${id}" style="font-size:0.7rem; color:#ccc; width:30px; text-align:right; font-family:monospace;">${zoomPct}%</span>
         </div>
 
-        <input type="hidden" id="${pId}" value="${posVal || '50% 50%'}">
-        <input type="hidden" id="${zId}" value="${zoom}">
+        <input type="hidden" id="${pId}" value="${escAttr(posVal || '50% 50%')}">
+        <input type="hidden" id="${zId}" value="${escAttr(zoom)}">
       </div>
     `;
   }
@@ -256,14 +393,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function renderCMS() {
     adminDashboard.innerHTML = `
-      <div class="cms-layout" style="display:flex; height:100vh; background:#080808; color: #ffffff; overflow:hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;">
-        <!-- Clean Professional Red/Black/White Sidebar -->
-        <aside style="width:265px; min-width:265px; background:#0c0c0c; border-right:1px solid #222222; padding:1.8rem 1.1rem; display:flex; flex-direction:column; box-sizing:border-box;">
-          <div style="margin-bottom:1.8rem; padding: 0 4px; display:flex; align-items:center; gap:10px;">
-            <img src="assets/logo.png" alt="Harvester Logo" style="height:26px; width:auto; object-fit:contain; filter:brightness(1.6); flex-shrink:0;">
-            <div style="min-width:0; flex:1; overflow:visible;">
-              <h2 style="color:#ffffff; font-size:1.22rem; letter-spacing:2px; margin:0; font-weight:800; white-space:nowrap; font-family:var(--font-brand), sans-serif;">HARVESTER</h2>
-              <p style="font-size:0.62rem; color:#e63946; margin:3px 0 0; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; white-space:nowrap;">CMS CONTROL PANEL</p>
+      <div class="cms-layout">
+        <!-- Mobile Top Navigation Bar (< 900px) -->
+        <div class="cms-mobile-header">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <button type="button" class="btn-tiny" onclick="toggleAdminSidebar()" style="padding:7px 11px; font-size:0.95rem; color:var(--gold); border-color:var(--gold);">
+              <i class="fas fa-bars"></i>
+            </button>
+            <img src="assets/logo.png" alt="Harvester Logo" style="height:22px; width:auto; object-fit:contain; filter:brightness(1.6);">
+            <span style="font-weight:800; letter-spacing:1.5px; font-size:0.95rem; color:#ffffff;">HARVESTER <span style="color:var(--gold); font-size:0.75rem;">CMS</span></span>
+          </div>
+          <button type="button" class="btn-tiny" onclick="renderCMS()" title="刷新"><i class="fas fa-sync-alt"></i></button>
+        </div>
+
+        <div id="cmsSidebarOverlay" class="cms-sidebar-overlay" onclick="toggleAdminSidebar(false)"></div>
+
+        <!-- Clean Professional Gold/Black/White Sidebar -->
+        <aside id="cmsSidebar" class="cms-sidebar">
+          <div style="margin-bottom:1.8rem; padding: 0 4px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+            <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+              <img src="assets/logo.png" alt="Harvester Logo" style="height:26px; width:auto; object-fit:contain; filter:brightness(1.6); flex-shrink:0;">
+              <div style="min-width:0; flex:1; overflow:visible;">
+                <h2 style="color:#ffffff; font-size:1.22rem; letter-spacing:2px; margin:0; font-weight:800; white-space:nowrap; font-family:var(--font-brand), sans-serif;">HARVESTER</h2>
+                <p style="font-size:0.62rem; color:var(--gold); margin:3px 0 0; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; white-space:nowrap;">CMS CONTROL PANEL</p>
+              </div>
             </div>
           </div>
           
@@ -291,47 +444,21 @@ document.addEventListener('DOMContentLoaded', () => {
           <!-- ⚡ Live Anti-Cache & Version Monitor -->
           <div style="margin-top:auto; padding:12px 6px 0; border-top:1px solid #1f1f1f; font-size:0.72rem;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="color:#777;">⚡ 系统实时版本</span>
-              <span style="color:var(--gold); font-weight:bold; font-family:monospace;">v2026.10.21</span>
+              <span style="color:#a0a0a0;">⚡ 系统实时版本</span>
+              <span style="color:var(--gold); font-weight:bold; font-family:monospace;">v2026.10.22</span>
             </div>
             <button type="button" onclick="forceRefreshCMS()" style="width:100%; padding:6px 8px; background:#181818; border:1px solid #333; color:#aaa; font-size:0.72rem; border-radius:5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:0.2s;" onmouseover="this.style.borderColor='var(--gold)'; this.style.color='#fff';" onmouseout="this.style.borderColor='#333'; this.style.color='#aaa';">
               <i class="fas fa-sync-alt"></i> 清除本地缓存重载
             </button>
           </div>
           
-          <button onclick="logoutAdmin()" style="background:none; border:none; color:#777; text-align:left; padding:10px 6px; font-size:0.8rem; cursor:pointer; transition:0.3s; margin-top:8px; border-top:1px solid #222; display:flex; align-items:center; gap:8px;">
-            <i class="fas fa-sign-out-alt" style="color:#e63946;"></i> <span style="color:#bbb;">SIGN OUT (登出)</span>
+          <button onclick="logoutAdmin()" style="background:none; border:none; color:#a0a0a0; text-align:left; padding:10px 6px; font-size:0.8rem; cursor:pointer; transition:0.3s; margin-top:8px; border-top:1px solid #222; display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-sign-out-alt" style="color:var(--admin-red);"></i> <span style="color:#bbb;">SIGN OUT (登出)</span>
           </button>
         </aside>
 
         <main id="moduleBody" style="flex:1; padding:3rem 3.5rem; overflow-y:auto; background:#080808;"></main>
       </div>
-
-      <style>
-        .nav-section-title { font-size: 0.62rem; color: #666666; text-transform: uppercase; letter-spacing: 1.8px; margin: 10px 0 6px 8px; font-weight: 700; }
-        .nav-item {
-          color: #999999;
-          text-decoration: none;
-          padding: 8px 12px;
-          border-radius: 6px;
-          font-size: 0.84rem;
-          transition: all 0.22s ease;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          letter-spacing: 0.3px;
-        }
-        .nav-item:hover { background: rgba(255,255,255,0.06); color: #ffffff; }
-        .nav-item.active { background: rgba(230, 57, 70, 0.14); color: #ffffff; font-weight: 600; border-left: 3px solid #e63946; }
-        
-        .cms-card { background: #111111; border: 1px solid #222222; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        .btn-tiny { background: #1a1a1a; border: 1px solid #333333; color: #cccccc; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; transition: 0.25s; font-weight: 500; }
-        .btn-tiny:hover { background: #262626; color: #ffffff; border-color: #e63946; }
-        .btn-tiny.danger { color: #ff6b6b; border-color: rgba(230, 57, 70, 0.4); background: rgba(230, 57, 70, 0.08); }
-        .btn-tiny.danger:hover { background: #e63946; color: #ffffff; border-color: #e63946; }
-        .btn-primary, .btn-submit-cms { background: linear-gradient(135deg, #e63946 0%, #c92a3f 100%); color: #ffffff; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.25s; box-shadow: 0 4px 15px rgba(230, 57, 70, 0.35); }
-        .btn-primary:hover, .btn-submit-cms:hover { background: #ff4d4f; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(230, 57, 70, 0.5); }
-      </style>
     `;
     const body = document.getElementById('moduleBody');
     if (currentModule === 'dashboard') renderDashboard(body);
@@ -350,10 +477,15 @@ document.addEventListener('DOMContentLoaded', () => {
     else renderDashboard(body);
   }
 
-  // --- Frontend Image Compression Helper ---
-  const compressImage = (file, maxWidth=2000, maxHeight=2000, quality=0.85) => {
-    return new Promise((resolve, reject) => {
-      if (!file.type.startsWith('image/')) return resolve(file);
+  // --- Frontend Image Compression Helper (Preserves PNG/WebP Alpha Transparency) ---
+  const compressImage = (file, maxWidth = 2000, maxHeight = 2000, quality = 0.85) => {
+    return new Promise((resolve) => {
+      if (!file || !file.type || !file.type.startsWith('image/')) return resolve(file);
+      const isPng = file.type === 'image/png';
+      const isWebp = file.type === 'image/webp';
+      const outputMime = isPng ? 'image/png' : (isWebp ? 'image/webp' : 'image/jpeg');
+      const outputExt = isPng ? '.png' : (isWebp ? '.webp' : '.jpg');
+
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = event => {
@@ -361,20 +493,29 @@ document.addEventListener('DOMContentLoaded', () => {
         img.src = event.target.result;
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          let width = img.width; let height = img.height;
-          if (width > height && width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
-          else if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; }
-          canvas.width = width; canvas.height = height;
+          let width = img.width;
+          let height = img.height;
+          if (width > height && width > maxWidth) {
+            height = Math.round(height * (maxWidth / width));
+            width = maxWidth;
+          } else if (height > maxHeight) {
+            width = Math.round(width * (maxHeight / height));
+            height = maxHeight;
+          }
+          canvas.width = width;
+          canvas.height = height;
           const ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, width, height);
           ctx.drawImage(img, 0, 0, width, height);
           canvas.toBlob(blob => {
-            if(!blob) return resolve(file);
-            resolve(new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", { type: 'image/jpeg' }));
-          }, 'image/jpeg', quality);
+            if (!blob) return resolve(file);
+            const cleanBase = file.name.replace(/\.[^/.]+$/, "");
+            resolve(new File([blob], cleanBase + outputExt, { type: outputMime }));
+          }, outputMime, isPng ? undefined : quality);
         };
-        img.onerror = error => resolve(file);
+        img.onerror = () => resolve(file);
       };
-      reader.onerror = error => resolve(file);
+      reader.onerror = () => resolve(file);
     });
   };
 
@@ -382,15 +523,18 @@ document.addEventListener('DOMContentLoaded', () => {
   window.uploadFile = async (fileInputId, targetId, previewId) => {
     const inputEl = document.getElementById(fileInputId);
     let file = inputEl?.files?.[0];
-    if(!file) return alert("请选择文件");
-    
-    const btn = window.event?.currentTarget || window.event?.target;
+    if (!file) return window.showAdminToast("请先选择要上传的文件", "info");
+
+    const rawEvtTarget = (typeof window.event !== 'undefined' && window.event) ? (window.event.currentTarget || window.event.target) : null;
+    const btn = (rawEvtTarget && rawEvtTarget.tagName === 'BUTTON')
+      ? rawEvtTarget
+      : document.querySelector(`button[onclick*="'${fileInputId}'"]`);
     const origText = btn ? btn.innerText : '上传';
     if (btn) {
-      btn.innerText = "自动压缩中...";
+      btn.innerText = "自动处理中...";
       btn.disabled = true;
     }
-    
+
     try {
       if (file.type.startsWith('image/')) {
         file = await compressImage(file);
@@ -399,17 +543,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const safeName = file.name.replace(/[^\w.-]/g, "_");
       const path = `uploads/${Date.now()}-${safeName}`;
       if (btn) btn.innerText = "高速上传中...";
-      const { data, error } = await db.storage.from('harvester-media').upload(path, file);
-      if(error) throw error;
+      const { error } = await db.storage.from('harvester-media').upload(path, file);
+      if (error) throw error;
       const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
       const targetEl = document.getElementById(targetId);
       if (targetEl) targetEl.value = publicUrl;
-      if(previewId) {
+
+      if (previewId) {
         const prevEl = document.getElementById(previewId);
-        if(prevEl) {
+        if (prevEl) {
           prevEl.src = publicUrl;
-          if(prevEl.tagName === 'VIDEO' || prevEl.tagName === 'AUDIO') {
-            prevEl.style.display = 'block';
+          prevEl.style.display = 'block';
+          if (prevEl.tagName === 'VIDEO' || prevEl.tagName === 'AUDIO') {
             prevEl.load();
           } else if (prevEl.tagName === 'IMG') {
             const widget = document.querySelector(`.crop-controller-widget[data-target-img="${previewId}"]`);
@@ -422,14 +567,30 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
         const bgEl = document.getElementById(previewId + '_bg');
-        if(bgEl) bgEl.style.backgroundImage = `url('${publicUrl}')`;
+        if (bgEl) bgEl.style.backgroundImage = `url('${publicUrl}')`;
+
+        // Automatically hide any empty-image placeholder hints
+        const hintCandidates = [
+          previewId.replace('_prev', '_no_img_hint'),
+          previewId.replace('_prev', '_no_poster_hint'),
+          'ev_no_poster_hint',
+          'news_no_img_hint'
+        ];
+        hintCandidates.forEach(hId => {
+          const hEl = document.getElementById(hId);
+          if (hEl && (!prevEl || prevEl.parentElement?.contains(hEl))) {
+            hEl.style.display = 'none';
+          }
+        });
       }
+
+      window.showAdminToast("✅ 文件上传成功！", "success");
       if (btn) {
         btn.innerText = "✅ 上传成功";
-        setTimeout(() => { if (btn) { btn.innerText = origText; btn.disabled = false; } }, 2500);
+        setTimeout(() => { if (btn) { btn.innerText = origText; btn.disabled = false; } }, 2200);
       }
     } catch (err) {
-      alert("上传失败: " + (err.message || err));
+      window.showAdminToast("上传失败: " + (err.message || err), "error");
       if (btn) {
         btn.innerText = origText;
         btn.disabled = false;
@@ -441,9 +602,12 @@ document.addEventListener('DOMContentLoaded', () => {
   window.uploadAudioFile = async (fileInputId, targetId, previewId) => {
     const inputEl = document.getElementById(fileInputId);
     const file = inputEl?.files?.[0];
-    if (!file) return alert("请先选择音频文件 (MP3, WAV, M4A, AAC, OGG, FLAC 等)");
+    if (!file) return window.showAdminToast("请先选择音频文件 (MP3, WAV, M4A, AAC, OGG, FLAC 等)", "info");
 
-    const btn = event.currentTarget || event.target;
+    const rawEvtTarget = (typeof window.event !== 'undefined' && window.event) ? (window.event.currentTarget || window.event.target) : null;
+    const btn = (rawEvtTarget && rawEvtTarget.tagName === 'BUTTON')
+      ? rawEvtTarget
+      : document.querySelector(`button[onclick*="'${fileInputId}'"]`);
     const originalText = btn ? btn.innerText : '📤 上传试听版音频';
     if (btn) {
       btn.innerText = "⏳ 正在上传试听音频...";
@@ -463,7 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
       else if (ext === 'aac') mime = 'audio/aac';
       else if (ext === 'flac') mime = 'audio/flac';
 
-      const { data, error } = await db.storage.from('harvester-media').upload(path, file, {
+      const { error } = await db.storage.from('harvester-media').upload(path, file, {
         contentType: mime,
         upsert: true
       });
@@ -482,6 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
+      window.showAdminToast("✅ 试听音频上传成功！", "success");
       if (btn) btn.innerText = "✅ 试听音频上传成功";
       setTimeout(() => {
         if (btn) {
@@ -491,7 +656,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 2500);
     } catch (err) {
       console.error("Audio upload error:", err);
-      alert("❌ 音频上传失败: " + (err.message || err));
+      window.showAdminToast("❌ 音频上传失败: " + (err.message || err), "error");
       if (btn) {
         btn.innerText = originalText;
         btn.disabled = false;
@@ -522,22 +687,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const { data: topListen } = await db.from('music_works').select('*').order('listen_count', { ascending: false }).limit(5);
 
     container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #222; padding-bottom:1.2rem; margin-bottom:2rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #222; padding-bottom:1.2rem; margin-bottom:2rem; flex-wrap:wrap; gap:12px;">
         <div>
-          <h1 style="color:#ffffff; font-size:1.85rem; margin:0; font-weight:800; letter-spacing:0.5px;">系统概览 <span style="color:#e63946;">(Dashboard)</span></h1>
-          <p style="color:#888; font-size:0.85rem; margin:4px 0 0;">欢迎进入收割机音乐后台控制中心 · Red, Black & White Edition</p>
+          <h1 style="color:#ffffff; font-size:1.85rem; margin:0; font-weight:800; letter-spacing:0.5px;">系统概览 <span style="color:var(--gold);">(Dashboard)</span></h1>
+          <p style="color:#a0a0a0; font-size:0.85rem; margin:4px 0 0;">欢迎进入收割机音乐后台控制中心 · Harvester Gold & Obsidian Edition</p>
         </div>
         <button onclick="renderCMS()" class="btn-tiny" style="display:flex; align-items:center; gap:6px;"><i class="fas fa-sync-alt"></i> 刷新数据</button>
       </div>
 
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-top:20px;">
-        <div class="cms-card" style="background:#111111; padding:1.8rem; border-radius:12px; border-left:4px solid #e63946; border:1px solid #222; border-left:4px solid #e63946;">
+        <div class="cms-card" style="background:#111111; padding:1.8rem; border-radius:12px; border:1px solid #222; border-left:4px solid var(--gold);">
           <h3 style="font-size:2.6rem; margin:0; color:#ffffff; font-weight:900;">${v||0}</h3>
-          <p style="color:#888; margin:6px 0 0; font-size:0.82rem; text-transform:uppercase; letter-spacing:1px; font-weight:600;">全站访客总数 (Total Visits)</p>
+          <p style="color:#a0a0a0; margin:6px 0 0; font-size:0.82rem; text-transform:uppercase; letter-spacing:1px; font-weight:600;">全站访客总数 (Total Visits)</p>
         </div>
-        <div class="cms-card" style="background:#111111; padding:1.8rem; border-radius:12px; border-left:4px solid #ffffff; border:1px solid #222; border-left:4px solid #ffffff;">
+        <div class="cms-card" style="background:#111111; padding:1.8rem; border-radius:12px; border:1px solid #222; border-left:4px solid #ffffff;">
           <h3 style="font-size:2.6rem; margin:0; color:#ffffff; font-weight:900;">${m||0}</h3>
-          <p style="color:#888; margin:6px 0 0; font-size:0.82rem; text-transform:uppercase; letter-spacing:1px; font-weight:600;">已发布曲目 (Live Tracks)</p>
+          <p style="color:#a0a0a0; margin:6px 0 0; font-size:0.82rem; text-transform:uppercase; letter-spacing:1px; font-weight:600;">已发布曲目 (Live Tracks)</p>
         </div>
       </div>
 
@@ -545,30 +710,30 @@ document.addEventListener('DOMContentLoaded', () => {
         <!-- Ranking 1: Downloads -->
         <div style="background:#111111; border:1px solid #222222; border-radius:12px; padding:22px; box-shadow:0 4px 20px rgba(0,0,0,0.4);">
           <h3 style="color:#ffffff; margin-top:0; border-bottom:1px solid #222; padding-bottom:12px; font-size:1.05rem; display:flex; align-items:center; gap:8px;">
-            <i class="fas fa-file-pdf" style="color:#e63946;"></i> 热门歌谱下载 (Top Scores)
+            <i class="fas fa-file-pdf" style="color:var(--gold);"></i> 热门歌谱下载 (Top Scores)
           </h3>
           <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
             ${topDownloads?.map((s, i) => `
               <div style="display:flex; justify-content:space-between; align-items:center; background:#181818; border:1px solid #262626; padding:10px 14px; border-radius:6px;">
-                <span style="color:#f0f0f0; font-size:0.88rem;"><small style="color:#e63946; font-weight:bold; margin-right:6px;">#${i+1}</small> ${s.title}</span>
-                <span style="color:#ffffff; font-weight:bold; font-size:0.82rem; background:rgba(230,57,70,0.18); border:1px solid rgba(230,57,70,0.4); padding:2px 8px; border-radius:4px;">${s.download_count||0} 📄</span>
+                <span style="color:#f0f0f0; font-size:0.88rem;"><small style="color:var(--gold); font-weight:bold; margin-right:6px;">#${i+1}</small> ${s.title}</span>
+                <span style="color:var(--gold-light); font-weight:bold; font-size:0.82rem; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.35); padding:2px 8px; border-radius:4px;">${s.download_count||0} 📄</span>
               </div>
-            `).join('') || '<p style="color:#666; font-size:0.85rem;">暂无下载数据</p>'}
+            `).join('') || '<p style="color:#a0a0a0; font-size:0.85rem;">暂无下载数据</p>'}
           </div>
         </div>
 
         <!-- Ranking 2: Listening -->
         <div style="background:#111111; border:1px solid #222222; border-radius:12px; padding:22px; box-shadow:0 4px 20px rgba(0,0,0,0.4);">
           <h3 style="color:#ffffff; margin-top:0; border-bottom:1px solid #222; padding-bottom:12px; font-size:1.05rem; display:flex; align-items:center; gap:8px;">
-            <i class="fas fa-headphones" style="color:#e63946;"></i> 热门试听曲目 (Top Listening)
+            <i class="fas fa-headphones" style="color:var(--gold);"></i> 热门试听曲目 (Top Listening)
           </h3>
           <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
             ${topListen?.map((s, i) => `
               <div style="display:flex; justify-content:space-between; align-items:center; background:#181818; border:1px solid #262626; padding:10px 14px; border-radius:6px;">
-                <span style="color:#f0f0f0; font-size:0.88rem;"><small style="color:#e63946; font-weight:bold; margin-right:6px;">#${i+1}</small> ${s.title}</span>
+                <span style="color:#f0f0f0; font-size:0.88rem;"><small style="color:var(--gold); font-weight:bold; margin-right:6px;">#${i+1}</small> ${s.title}</span>
                 <span style="color:#ffffff; font-weight:bold; font-size:0.82rem; background:rgba(255,255,255,0.08); border:1px solid #333; padding:2px 8px; border-radius:4px;">${s.listen_count||0} 🎧</span>
               </div>
-            `).join('') || '<p style="color:#666; font-size:0.85rem;">暂无试听数据</p>'}
+            `).join('') || '<p style="color:#a0a0a0; font-size:0.85rem;">暂无试听数据</p>'}
           </div>
         </div>
       </div>
@@ -663,23 +828,23 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:15px;">
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-whatsapp" style="color:#25D366;"></i> WhatsApp 咨询链接</label>
-              <input type="text" id="in_nav_wa" value="${c['cfg_nav_wa'] || 'https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry.'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_wa" value="${escAttr(c['cfg_nav_wa'] || 'https://wa.me/60187755581?text=Hi%20Harvester%2C%20I%20would%20like%20to%20make%20an%20enquiry.')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-spotify" style="color:#1DB954;"></i> Spotify 艺人主页</label>
-              <input type="text" id="in_nav_sp" value="${c['cfg_nav_sp'] || 'https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_sp" value="${escAttr(c['cfg_nav_sp'] || 'https://open.spotify.com/artist/3b6hpAaCK8ylIO0ylbdhHS')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-facebook" style="color:#1877F2;"></i> Facebook 专页</label>
-              <input type="text" id="in_nav_fb" value="${c['cfg_nav_fb'] && c['cfg_nav_fb'] !== '#' ? c['cfg_nav_fb'] : 'https://www.facebook.com/harvester2025'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_fb" value="${escAttr((c['cfg_nav_fb'] && c['cfg_nav_fb'] !== '#' ? c['cfg_nav_fb'] : '') || (c['cfg_social_fb'] && c['cfg_social_fb'] !== '#' ? c['cfg_social_fb'] : '') || 'https://www.facebook.com/harvester2025')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div>
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-instagram" style="color:#E1306C;"></i> Instagram 账号</label>
-              <input type="text" id="in_nav_ig" value="${c['cfg_nav_ig'] && c['cfg_nav_ig'] !== '#' ? c['cfg_nav_ig'] : 'https://www.instagram.com/harvestermusic.production?stkn=bzVqMGhvN2Q2OXZo&utm_source=qr'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_ig" value="${escAttr((c['cfg_nav_ig'] && c['cfg_nav_ig'] !== '#' ? c['cfg_nav_ig'] : '') || (c['cfg_social_ig'] && c['cfg_social_ig'] !== '#' ? c['cfg_social_ig'] : '') || 'https://www.instagram.com/harvestermusic.production?stkn=bzVqMGhvN2Q2OXZo&utm_source=qr')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
             <div style="grid-column: 1/-1;">
               <label style="display:block; color:#aaa; font-size:0.8rem; margin-bottom:5px;"><i class="fab fa-youtube" style="color:#FF0000;"></i> YouTube 官方频道</label>
-              <input type="text" id="in_nav_yt" value="${c['cfg_nav_yt'] && c['cfg_nav_yt'] !== '#' ? c['cfg_nav_yt'] : 'https://youtube.com/@harvestermusic.production?si=JvBC-9qgOsKdI3XT'}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
+              <input type="text" id="in_nav_yt" value="${escAttr((c['cfg_nav_yt'] && c['cfg_nav_yt'] !== '#' ? c['cfg_nav_yt'] : '') || (c['cfg_social_yt'] && c['cfg_social_yt'] !== '#' ? c['cfg_social_yt'] : '') || 'https://youtube.com/@harvestermusic.production?si=JvBC-9qgOsKdI3XT')}" style="width:100%; background:#1a1a1a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:6px;">
             </div>
           </div>
         </div>
@@ -690,23 +855,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.saveHomeCMS = async () => {
+    const fbVal = document.getElementById('in_nav_fb')?.value.trim() || '';
+    const igVal = document.getElementById('in_nav_ig')?.value.trim() || '';
+    const ytVal = document.getElementById('in_nav_yt')?.value.trim() || '';
     const payload = [
       { key: 'cfg_latest_music_id', value: document.getElementById('in_latest_music_id')?.value.trim() || '' },
       { key: 'cfg_nav_wa', value: document.getElementById('in_nav_wa')?.value.trim() || '' },
       { key: 'cfg_nav_sp', value: document.getElementById('in_nav_sp')?.value.trim() || '' },
-      { key: 'cfg_nav_fb', value: document.getElementById('in_nav_fb')?.value.trim() || '' },
-      { key: 'cfg_nav_ig', value: document.getElementById('in_nav_ig')?.value.trim() || '' },
-      { key: 'cfg_nav_yt', value: document.getElementById('in_nav_yt')?.value.trim() || '' }
+      { key: 'cfg_nav_fb', value: fbVal },
+      { key: 'cfg_social_fb', value: fbVal },
+      { key: 'cfg_nav_ig', value: igVal },
+      { key: 'cfg_social_ig', value: igVal },
+      { key: 'cfg_nav_yt', value: ytVal },
+      { key: 'cfg_social_yt', value: ytVal }
     ];
 
     try {
       for (const item of payload) {
         await db.from('site_config').upsert(item, { onConflict: 'key' });
       }
-      alert("🎉 主页配置已成功保存并实时生效！");
+      window.showAdminToast("🎉 主页配置已成功保存并实时生效！", "success");
       renderCMS();
     } catch(err) {
-      alert("保存失败: " + err.message);
+      window.showAdminToast("保存失败: " + err.message, "error");
     }
   };
 
@@ -1053,10 +1224,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <input type="file" id="f_news_file" style="font-size:0.8rem; color:#888;">
           <div style="display:flex; gap:8px; margin-top:10px;">
-            <button type="button" class="btn-tiny" style="flex:1; padding:8px;" onclick="uploadFile('f_news_file', 'news_img_val', 'news_prev'); setTimeout(()=>{ const img=document.getElementById('news_prev'); if(img){img.style.display='block';} const hint=document.getElementById('news_no_img_hint'); if(hint){hint.style.display='none';} }, 1200);">📤 上传封面配图</button>
+            <button type="button" class="btn-tiny" style="flex:1; padding:8px;" onclick="uploadFile('f_news_file', 'news_img_val', 'news_prev');">📤 上传封面配图</button>
             <button type="button" class="btn-tiny" style="padding:8px 14px; background:rgba(255,59,48,0.15); color:#ff6b6b; border:1px solid rgba(255,59,48,0.3); cursor:pointer;" onclick="document.getElementById('news_img_val').value=''; const p=document.getElementById('news_prev'); if(p){p.src=''; p.style.display='none';} const bg=document.getElementById('news_prev_bg'); if(bg) bg.style.backgroundImage='none'; const hint=document.getElementById('news_no_img_hint'); if(hint) hint.style.display='block';">🗑️ 清除图片 (纯文字消息)</button>
           </div>
-          <input type="hidden" id="news_img_val" value="${existing?.image_url || ''}">
+          <input type="hidden" id="news_img_val" value="${escAttr(existing?.image_url || '')}">
 
           <!-- 图片焦点与裁剪 -->
           ${renderImageCropControllerHTML({
@@ -1074,18 +1245,18 @@ document.addEventListener('DOMContentLoaded', () => {
         <!-- 标题 -->
         <div style="margin-bottom:15px;">
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">消息标题 (Title) *</label>
-          <input type="text" id="news_title" value="${existing?.title || ''}" placeholder="例如：《创世纪》30秒翻唱挑战正式开启！" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
+          <input type="text" id="news_title" value="${escAttr(existing?.title || '')}" placeholder="例如：《创世纪》30秒翻唱挑战正式开启！" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
         </div>
 
         <!-- 标签与日期 -->
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:10px;">
+        <div class="admin-grid-2" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:10px;">
           <div>
             <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">分类标签 (Tag)</label>
-            <input type="text" id="news_tag" value="${existing?.tag || '✨ 开放参与'}" placeholder="例如：✨ 开放参与、⚡ 巡回特会" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
+            <input type="text" id="news_tag" value="${escAttr(existing?.tag || '✨ 开放参与')}" placeholder="例如：✨ 开放参与、⚡ 巡回特会" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
           </div>
           <div>
             <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">发布日期 (Date)</label>
-            <input type="text" id="news_date" value="${existing?.date || defaultDate}" placeholder="格式如 2026.10.22" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
+            <input type="text" id="news_date" value="${escAttr(existing?.date || defaultDate)}" placeholder="格式如 2026.10.22" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
           </div>
         </div>
 
@@ -1108,7 +1279,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <!-- 目标跳转链接 (可选) -->
         <div style="margin-bottom:15px;">
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">点击卡片跳转链接 (Action URL - 可选)</label>
-          <input type="text" id="news_link" value="${existing?.link || ''}" placeholder="例如：events.html 或 https://..." style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
+          <input type="text" id="news_link" value="${escAttr(existing?.link || '')}" placeholder="例如：events.html 或 https://..." style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
           <!-- 快捷链接按钮 -->
           <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;">
             <button type="button" class="btn-tiny" onclick="document.getElementById('news_link').value='events.html'">活动总览页 (events.html)</button>
@@ -1139,7 +1310,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const title = document.getElementById('news_title').value.trim();
     if (!title) {
-      alert("请输入消息标题！");
+      window.showAdminToast("请输入消息标题！", "error");
       if (btn) { btn.innerText = originalText; btn.disabled = false; }
       return;
     }
@@ -1176,11 +1347,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const modal = document.getElementById('newsEditModal');
       if (modal) modal.remove();
 
-      alert("✅ 最新消息已成功保存并实时发布！");
+      window.showAdminToast("✅ 最新消息已成功保存并实时发布！", "success");
       renderNewsCMS(document.getElementById('moduleBody'));
     } catch(err) {
       console.error("saveNewsItem Fail:", err);
-      alert("❌ 保存失败: " + (err.message || err));
+      window.showAdminToast("❌ 保存失败: " + (err.message || err), "error");
       if (btn) { btn.innerText = originalText; btn.disabled = false; }
     }
   };
@@ -1198,10 +1369,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (error) throw error;
 
       adminNewsList = list;
-      alert("✅ 消息已成功删除！");
+      window.showAdminToast("✅ 消息已成功删除！", "success");
       renderNewsCMS(document.getElementById('moduleBody'));
     } catch(err) {
-      alert("删除失败: " + (err.message || err));
+      window.showAdminToast("删除失败: " + (err.message || err), "error");
     }
   };
 
@@ -1223,9 +1394,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (error) throw error;
 
       adminNewsList = list;
+      window.showAdminToast("✨ 排序已更新", "info", 2000);
       renderNewsCMS(document.getElementById('moduleBody'));
     } catch(err) {
-      alert("排序更新失败: " + (err.message || err));
+      window.showAdminToast("排序更新失败: " + (err.message || err), "error");
     }
   };
 
@@ -1466,14 +1638,14 @@ document.addEventListener('DOMContentLoaded', () => {
               <h2 style="color:var(--gold); margin:0; font-size:1.4rem;">${isEdit ? '编辑单曲与歌谱档案' : '发布新单曲与歌谱'}</h2>
               <p style="color:#888; font-size:0.8rem; margin:4px 0 0;">可完整自定义前台 3D 展台、立体书脊、PDF 歌谱与莫兰迪风琴折内页所有内容</p>
             </div>
-            <button class="btn-tiny" onclick="this.closest('#musicEditModal').remove()">✕ 关闭</button>
+            <button class="btn-tiny" onclick="closeMusicModal()">✕ 关闭</button>
           </div>
           
           <!-- 1. 封面管理与童趣手绘预设 -->
           <div style="margin-bottom:20px; background:#0a0a0a; padding:18px; border-radius:12px; border:1px solid #222; text-align:center;">
             <label style="display:block; margin-bottom:8px; color:var(--gold); font-size:0.85rem; font-weight:bold;">📸 单曲主封面 (Single Cover / Poster Sticker)</label>
             <div style="width:150px; height:150px; margin:0 auto 12px; overflow:hidden; border-radius:12px; border:1.5px solid rgba(246,210,138,0.3); background:#181818; display:flex; align-items:center; justify-content:center;">
-              <img id="m_prev" src="${initialCover}" style="width:100%; height:100%; object-fit:cover; object-position:${initialCoverPos}; transform:scale(${initialCoverZoom}); transform-origin:${initialCoverPos}; transition:all 0.1s ease;" onerror="this.src='assets/logo.png'">
+              <img id="m_prev" src="${escAttr(initialCover)}" style="width:100%; height:100%; object-fit:cover; object-position:${initialCoverPos}; transform:scale(${initialCoverZoom}); transform-origin:${initialCoverPos}; transition:all 0.1s ease;" onerror="this.src='assets/logo.png'">
             </div>
             
             <div style="display:flex; gap:10px; justify-content:center; margin-bottom:10px;">
@@ -1484,7 +1656,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <input type="file" id="mf_up" style="font-size:0.8rem; color:#aaa; margin-bottom:8px; width:100%;">
             <button type="button" class="btn-tiny" style="width:100%; padding:8px;" onclick="uploadFile('mf_up', 'm_url', 'm_prev')">📤 上传自定义封面图片</button>
-            <input type="hidden" id="m_url" value="${initialCover}">
+            <input type="hidden" id="m_url" value="${escAttr(initialCover)}">
 
             <!-- 🎚️ 单曲封面焦点与裁剪调整 -->
             ${renderImageCropControllerHTML({
@@ -1503,29 +1675,29 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="background:#0a0a0a; border:1px solid #222; border-radius:10px; padding:15px; margin-bottom:15px;">
             <label style="display:block; margin-bottom:12px; color:var(--gold); font-size:0.85rem; font-weight:bold;">🏷️ 基础信息 (Basic Information)</label>
             
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:12px;">
+            <div class="admin-grid-2" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:12px;">
               <div>
                 <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">歌曲中文名称 (Title) *</label>
-                <input type="text" id="m_t" value="${s?.title || ''}" placeholder="例如：更新敬拜" style="width:100%; padding:10px;">
+                <input type="text" id="m_t" value="${escAttr(s?.title || '')}" placeholder="例如：更新敬拜" style="width:100%; padding:10px;">
               </div>
               <div>
                 <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">英文译名 / 副标题 (English Title)</label>
-                <input type="text" id="m_title_en" value="${titleEn}" placeholder="例如：Renewed Worship" style="width:100%; padding:10px;">
+                <input type="text" id="m_title_en" value="${escAttr(titleEn)}" placeholder="例如：Renewed Worship" style="width:100%; padding:10px;">
               </div>
             </div>
 
-            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
+            <div class="admin-grid-3" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
               <div>
                 <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">所属歌手 / 团队</label>
-                <input type="text" id="m_artist" value="${spineCustom?.artist || s?.artist || 'Harvester Worship'}" placeholder="例如：Harvester Worship" style="width:100%; padding:8px;">
+                <input type="text" id="m_artist" value="${escAttr(spineCustom?.artist || s?.artist || 'Harvester Worship')}" placeholder="例如：Harvester Worship" style="width:100%; padding:8px;">
               </div>
               <div>
                 <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">发行年份 (Year)</label>
-                <input type="text" id="m_year" value="${year}" placeholder="2025" style="width:100%; padding:8px;">
+                <input type="text" id="m_year" value="${escAttr(year)}" placeholder="2025" style="width:100%; padding:8px;">
               </div>
               <div>
                 <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">音乐流派 (Genre)</label>
-                <input type="text" id="m_genre" value="${genre}" placeholder="Worship / CCM · 2025" style="width:100%; padding:8px;">
+                <input type="text" id="m_genre" value="${escAttr(genre)}" placeholder="Worship / CCM · 2025" style="width:100%; padding:8px;">
               </div>
             </div>
           </div>
@@ -1542,10 +1714,10 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <!-- 绑定字段（隐藏存储） -->
-            <input type="hidden" id="m_selected_morandi_set" value="${currentSet.id}">
-            <input type="hidden" id="m_theme_clr_hex" value="${currentSet.theme_color}">
-            <input type="hidden" id="m_spine_bg_hex" value="${currentSet.spine_bg}">
-            <input type="hidden" id="m_spine_clr_hex" value="${currentSet.spine_color}">
+            <input type="hidden" id="m_selected_morandi_set" value="${escAttr(currentSet.id)}">
+            <input type="hidden" id="m_theme_clr_hex" value="${escAttr(currentSet.theme_color)}">
+            <input type="hidden" id="m_spine_bg_hex" value="${escAttr(currentSet.spine_bg)}">
+            <input type="hidden" id="m_spine_clr_hex" value="${escAttr(currentSet.spine_color)}">
             <input type="hidden" id="m_spine_t" value="">
 
             <!-- 5 大高定色系单选卡片 -->
@@ -1631,10 +1803,10 @@ document.addEventListener('DOMContentLoaded', () => {
               </p>
               
               <!-- Inline Audio Player Preview -->
-              <audio id="prev_audio_el" controls style="width:100%; height:36px; margin-bottom:10px; display:${previewAudio ? 'block' : 'none'}; background:#222; border-radius:6px;" src="${previewAudio}"></audio>
+              <audio id="prev_audio_el" controls style="width:100%; height:36px; margin-bottom:10px; display:${previewAudio ? 'block' : 'none'}; background:#222; border-radius:6px;" src="${escAttr(previewAudio)}"></audio>
 
               <div style="margin-bottom:8px;">
-                <input type="text" id="m_preview_audio" value="${previewAudio}" placeholder="上传音频后自动填入直链，或直接粘贴音频 .mp3/.wav 文件直链" style="width:100%; padding:9px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px; font-size:0.82rem;" oninput="updateAdminAudioPreview(this.value)">
+                <input type="text" id="m_preview_audio" value="${escAttr(previewAudio)}" placeholder="上传音频后自动填入直链，或直接粘贴音频 .mp3/.wav 文件直链" style="width:100%; padding:9px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px; font-size:0.82rem;" oninput="updateAdminAudioPreview(this.value)">
               </div>
 
               <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
@@ -1648,19 +1820,19 @@ document.addEventListener('DOMContentLoaded', () => {
             <!-- YouTube Video Link -->
             <div style="margin-bottom:12px;">
               <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">▶️ YouTube 官方 MV / 完整音频链接 (YouTube URL)</label>
-              <input type="text" id="m_yt" value="${youtubeUrl}" placeholder="https://www.youtube.com/watch?v=..." style="width:100%; padding:8px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px;">
+              <input type="text" id="m_yt" value="${escAttr(youtubeUrl)}" placeholder="https://www.youtube.com/watch?v=..." style="width:100%; padding:8px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px;">
             </div>
 
             <!-- Spotify Track Link -->
             <div style="margin-bottom:12px;">
               <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">🟢 Spotify 官方试听链接 (Spotify Track URL)</label>
-              <input type="text" id="m_sp" value="${spotifyUrl}" placeholder="https://open.spotify.com/track/..." style="width:100%; padding:8px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px;">
+              <input type="text" id="m_sp" value="${escAttr(spotifyUrl)}" placeholder="https://open.spotify.com/track/..." style="width:100%; padding:8px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px;">
             </div>
 
             <!-- PDF Score Upload -->
             <div style="margin-top:14px; padding-top:12px; border-top:1px solid #222;">
               <label style="display:block; margin-bottom:4px; color:#aaa; font-size:0.8rem;">📄 PDF 歌谱链接 / 文件上传 (Score PDF)</label>
-              <input type="text" id="m_s" value="${s?.score_url || ''}" placeholder="可直接在下方上传 PDF 或粘贴链接" style="width:100%; padding:8px; margin-bottom:8px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px;">
+              <input type="text" id="m_s" value="${escAttr(s?.score_url || '')}" placeholder="可直接在下方上传 PDF 或粘贴链接" style="width:100%; padding:8px; margin-bottom:8px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:6px;">
               <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                 <input type="file" id="mf_score" style="font-size:0.78rem; color:#aaa; flex:1; min-width:200px;" accept=".pdf">
                 <button type="button" class="btn-tiny" style="padding:8px 16px;" onclick="uploadFile('mf_score', 'm_s')">📤 上传歌谱 PDF 文件</button>
@@ -1677,11 +1849,18 @@ document.addEventListener('DOMContentLoaded', () => {
               <span style="color:#dfd5c4; font-weight:bold; font-size:0.85rem; display:block; margin-bottom:6px;">📂 折页一 (沙色)：完整歌词与曲速调号</span>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#888; display:block;">调号与速度 (Key & BPM)</label>
-                <input type="text" id="m_key_bpm" value="${keyBpm}" placeholder="KEY: C · 72 BPM" style="width:100%; padding:6px;">
+                <input type="text" id="m_key_bpm" value="${escAttr(keyBpm)}" placeholder="KEY: C · 72 BPM" style="width:100%; padding:6px;">
               </div>
-              <div style="margin-bottom:8px;">
-                <label style="font-size:0.75rem; color:#888; display:block;">折页一顶部拍立得照片 URL</label>
-                <input type="text" id="m_photo1" value="${photo1}" style="width:100%; padding:6px;">
+              <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:#888; display:block; margin-bottom:4px;">折页一顶部拍立得照片 (URL 或直接上传)</label>
+                <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+                  <img id="m_photo1_prev" src="${escAttr(photo1)}" style="width:46px; height:46px; object-fit:cover; border-radius:6px; border:1px solid #333; background:#111; flex-shrink:0;" onerror="this.src='assets/logo.png'">
+                  <input type="text" id="m_photo1" value="${escAttr(photo1)}" style="flex:1; padding:6px;" oninput="const p=document.getElementById('m_photo1_prev'); if(p) p.src=this.value.trim()||'assets/logo.png';">
+                </div>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                  <input type="file" id="mf_photo1" accept="image/*" style="font-size:0.74rem; color:#aaa; flex:1; min-width:160px;">
+                  <button type="button" class="btn-tiny" onclick="uploadFile('mf_photo1', 'm_photo1', 'm_photo1_prev')">📤 上传折页一照片</button>
+                </div>
               </div>
               <div>
                 <label style="font-size:0.75rem; color:#888; display:block;">完整歌词 (换行保留)</label>
@@ -1694,11 +1873,18 @@ document.addEventListener('DOMContentLoaded', () => {
               <span style="color:#e28299; font-weight:bold; font-size:0.85rem; display:block; margin-bottom:6px;">📂 折页二 (勃艮第红)：创作心得与经文灵修</span>
               <div style="margin-bottom:8px;">
                 <label style="font-size:0.75rem; color:#888; display:block;">核心圣经经文 (Scripture)</label>
-                <input type="text" id="m_scripture" value="${scripture}" placeholder="「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24" style="width:100%; padding:6px;">
+                <input type="text" id="m_scripture" value="${escAttr(scripture)}" placeholder="「神是个灵，所以拜他的必须用心灵和诚实拜他。」—— 约翰福音 4:24" style="width:100%; padding:6px;">
               </div>
-              <div style="margin-bottom:8px;">
-                <label style="font-size:0.75rem; color:#888; display:block;">折页二底部艺术配图 URL</label>
-                <input type="text" id="m_photo2" value="${photo2}" style="width:100%; padding:6px;">
+              <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:#888; display:block; margin-bottom:4px;">折页二底部艺术配图 (URL 或直接上传)</label>
+                <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+                  <img id="m_photo2_prev" src="${escAttr(photo2)}" style="width:46px; height:46px; object-fit:cover; border-radius:6px; border:1px solid #333; background:#111; flex-shrink:0;" onerror="this.src='assets/logo.png'">
+                  <input type="text" id="m_photo2" value="${escAttr(photo2)}" style="flex:1; padding:6px;" oninput="const p=document.getElementById('m_photo2_prev'); if(p) p.src=this.value.trim()||'assets/logo.png';">
+                </div>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                  <input type="file" id="mf_photo2" accept="image/*" style="font-size:0.74rem; color:#aaa; flex:1; min-width:160px;">
+                  <button type="button" class="btn-tiny" onclick="uploadFile('mf_photo2', 'm_photo2', 'm_photo2_prev')">📤 上传折页二照片</button>
+                </div>
               </div>
               <div>
                 <label style="font-size:0.75rem; color:#888; display:block;">创作背景与灵修故事 (Worship Notes)</label>
@@ -1709,11 +1895,18 @@ document.addEventListener('DOMContentLoaded', () => {
             <!-- Fold 3 -->
             <div style="background:#141414; padding:12px; border-radius:8px; border-left:3px solid #dedad4;">
               <span style="color:#dedad4; font-weight:bold; font-size:0.85rem; display:block; margin-bottom:6px;">📂 折页三 (浅灰麻布)：同工团队与制作人员名单</span>
-              <div style="margin-bottom:8px;">
-                <label style="font-size:0.75rem; color:#888; display:block;">折页三顶部幕后相片 URL</label>
-                <input type="text" id="m_photo3" value="${photo3}" style="width:100%; padding:6px;">
+              <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:#888; display:block; margin-bottom:4px;">折页三顶部幕后相片 (URL 或直接上传)</label>
+                <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+                  <img id="m_photo3_prev" src="${escAttr(photo3)}" style="width:46px; height:46px; object-fit:cover; border-radius:6px; border:1px solid #333; background:#111; flex-shrink:0;" onerror="this.src='assets/logo.png'">
+                  <input type="text" id="m_photo3" value="${escAttr(photo3)}" style="flex:1; padding:6px;" oninput="const p=document.getElementById('m_photo3_prev'); if(p) p.src=this.value.trim()||'assets/logo.png';">
+                </div>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                  <input type="file" id="mf_photo3" accept="image/*" style="font-size:0.74rem; color:#aaa; flex:1; min-width:160px;">
+                  <button type="button" class="btn-tiny" onclick="uploadFile('mf_photo3', 'm_photo3', 'm_photo3_prev')">📤 上传折页三照片</button>
+                </div>
               </div>
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+              <div class="admin-grid-2" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div>
                   <label style="font-size:0.75rem; color:#888; display:block; margin-bottom:3px;">词曲创作 (支持 Enter 换行)</label>
                   <textarea id="m_composer" placeholder="Harvester Worship&#10;可按 Enter 键换行输入人员分工" style="width:100%; height:82px; padding:7px 8px; font-size:0.82rem; line-height:1.45; background:#1a1a1a; color:#fff; border:1px solid #333; border-radius:6px; resize:vertical; font-family:inherit;">${composer}</textarea>
@@ -1744,14 +1937,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <div style="display:flex; gap:15px; margin-top:20px; position:sticky; bottom:0; padding-top:10px; background:#111; border-top:1px solid #222;">
             <button class="btn btn-submit" style="flex:2; padding:12px;" onclick="saveMusic('${s?.id || ''}')">💾 保存单曲与歌谱档案</button>
-            <button class="btn-tiny" style="flex:1;" onclick="this.closest('#musicEditModal').remove()">取消</button>
+            <button class="btn-tiny" style="flex:1;" onclick="closeMusicModal()">取消</button>
           </div>
         </div>
       `;
       document.body.appendChild(modal);
     } catch (err) {
       console.error("openMusicModal Fail:", err);
-      alert("❌ 无法加载数据: " + (err.message || err));
+      window.showAdminToast("❌ 无法加载数据: " + (err.message || err), "error");
     } finally {
       if (id && btn) { btn.innerText = originalText; btn.disabled = false; }
     }
@@ -1909,13 +2102,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      alert("✅ 单曲与 3D 唱片档案已成功保存并实时同步全站！");
-      const modal = document.getElementById('musicEditModal');
-      if(modal) modal.remove();
+      window.showAdminToast("✅ 单曲与 3D 唱片档案已成功保存并实时同步全站！", "success");
+      closeMusicModal();
       renderCMS();
     } catch (err) {
       console.error("Save error:", err);
-      alert("❌ 保存失败: " + (err.message || err));
+      window.showAdminToast("❌ 保存失败: " + (err.message || err), "error");
     } finally {
       if (btn) {
         btn.innerText = originalText;
@@ -2440,7 +2632,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       renderCMS();
     } catch(err) {
-      alert("排序更新失败: " + err.message);
+      window.showAdminToast("排序更新失败: " + err.message, "error");
     }
   };
 
@@ -2461,7 +2653,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Build options for events linking
     const evList = window._currentAdminEvents || [];
-    const eventOptions = evList.map(e => `<option value="event.html?id=${e.id}" data-date="${e.event_date || ''}" data-time="${e.event_time || ''}" data-venue="${e.location || ''}" data-title="${sanitizeEventTitle(e.title, e.status_tag)}">${sanitizeEventTitle(e.title, e.status_tag)} (${e.event_date || '未定日期'}${e.event_time ? ' ' + e.event_time : ''})</option>`).join('');
+    const eventOptions = evList.map(e => `<option value="event.html?id=${e.id}" data-date="${escAttr(e.event_date || '')}" data-time="${escAttr(e.event_time || '')}" data-venue="${escAttr(e.location || '')}" data-title="${escAttr(sanitizeEventTitle(e.title, e.status_tag))}">${sanitizeEventTitle(e.title, e.status_tag)} (${e.event_date || '未定日期'}${e.event_time ? ' ' + e.event_time : ''})</option>`).join('');
 
     modal.innerHTML = `
       <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:620px; max-height:90vh; overflow-y:auto; position:relative; box-shadow:0 20px 60px rgba(0,0,0,1);">
@@ -2474,8 +2666,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <span style="font-size:0.72rem; color:var(--gold);">✨ 完美自适应横版及竖版（打直）海报</span>
           </div>
           <div style="width:100%; height:220px; border-radius:8px; overflow:hidden; border:1px solid #333; background:#080808; margin-bottom:10px; display:flex; align-items:center; justify-content:center; position:relative;">
-            <div id="ev_p_prev_bg" style="position:absolute; inset:-10px; background-image:url('${p?.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'}'); background-size:cover; background-position:center; filter:blur(20px) brightness(0.35); opacity:0.85;"></div>
-            <img id="ev_p_prev" src="${p?.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'}" style="position:relative; z-index:1; width:100%; height:100%; object-fit:cover; object-position:${posterPos}; transform:scale(${posterZoom}); transform-origin:${posterPos}; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85)); transition:all 0.1s ease;" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
+            <div id="ev_p_prev_bg" style="position:absolute; inset:-10px; background-image:url('${escAttr(p?.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80')}'); background-size:cover; background-position:center; filter:blur(20px) brightness(0.35); opacity:0.85;"></div>
+            <img id="ev_p_prev" src="${escAttr(p?.image_url || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80')}" style="position:relative; z-index:1; width:100%; height:100%; object-fit:cover; object-position:${posterPos}; transform:scale(${posterZoom}); transform-origin:${posterPos}; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85)); transition:all 0.1s ease;" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
           </div>
 
           <div style="display:flex; flex-direction:column; gap:8px;">
@@ -2488,7 +2680,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div>
               <label style="display:block; font-size:0.75rem; color:#888; margin-bottom:4px;">方式二：直接输入海报图片 URL 链接</label>
-              <input type="text" id="ev_p_img" value="${p?.image_url || ''}" placeholder="https://..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px; font-size:0.85rem;" oninput="document.getElementById('ev_p_prev').src = this.value.trim() || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'; const bgEl = document.getElementById('ev_p_prev_bg'); if (bgEl) bgEl.style.backgroundImage = 'url(' + (this.value.trim() || '') + ')';">
+              <input type="text" id="ev_p_img" value="${escAttr(p?.image_url || '')}" placeholder="https://..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px; font-size:0.85rem;" oninput="document.getElementById('ev_p_prev').src = this.value.trim() || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'; const bgEl = document.getElementById('ev_p_prev_bg'); if (bgEl) bgEl.style.backgroundImage = 'url(' + (this.value.trim() || '') + ')';">
             </div>
           </div>
 
@@ -2508,7 +2700,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <!-- 状态标签设置 -->
         <div style="margin-bottom:16px;">
           <label style="display:block; margin-bottom:6px; color:#aaa; font-size:0.8rem; font-weight:600;">状态徽章标签 (Status Tag - 位于海报右上角)</label>
-          <input type="text" id="ev_p_tag" value="${p?.statusTag || 'HOT 热门 🔥'}" placeholder="例如：HOT 热门、即将来临 ⏳、进行中 ⚡" style="width:100%; padding:10px; margin-bottom:8px;">
+          <input type="text" id="ev_p_tag" value="${escAttr(p?.statusTag || 'HOT 热门 🔥')}" placeholder="例如：HOT 热门、即将来临 ⏳、进行中 ⚡" style="width:100%; padding:10px; margin-bottom:8px;">
           
           <!-- 快捷一键点选徽章 -->
           <div style="display:flex; flex-wrap:wrap; gap:6px;">
@@ -2525,29 +2717,29 @@ document.addEventListener('DOMContentLoaded', () => {
         <!-- 标题、日期与时间 -->
         <div style="margin-bottom:15px;">
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">海报标题 (Title)</label>
-          <input type="text" id="ev_p_title" value="${p?.title || ''}" placeholder="例如：收割敬拜之夜 · 吉隆坡特别专场" style="width:100%; padding:10px;">
+          <input type="text" id="ev_p_title" value="${escAttr(p?.title || '')}" placeholder="例如：收割敬拜之夜 · 吉隆坡特别专场" style="width:100%; padding:10px;">
         </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+        <div class="admin-grid-2" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
           <div>
             <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">显示日期 (Date Tag)</label>
-            <input type="text" id="ev_p_date" value="${p?.date || ''}" placeholder="例如：2025.11.15" style="width:100%; padding:10px;">
+            <input type="text" id="ev_p_date" value="${escAttr(p?.date || '')}" placeholder="例如：2025.11.15" style="width:100%; padding:10px;">
           </div>
           <div>
             <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">活动具体时间 (Time)</label>
-            <input type="text" id="ev_p_time" value="${p?.time || ''}" placeholder="例如：19:30 或 19:30 - 21:30" style="width:100%; padding:10px;">
+            <input type="text" id="ev_p_time" value="${escAttr(p?.time || '')}" placeholder="例如：19:30 或 19:30 - 21:30" style="width:100%; padding:10px;">
           </div>
         </div>
 
         <!-- 地点与场馆 -->
         <div style="margin-bottom:15px;">
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">活动地点 / 场馆 / 副标 (Venue)</label>
-          <input type="text" id="ev_p_venue" value="${p?.venue || ''}" placeholder="例如：吉隆坡 · 全福敬拜大厅" style="width:100%; padding:10px;">
+          <input type="text" id="ev_p_venue" value="${escAttr(p?.venue || '')}" placeholder="例如：吉隆坡 · 全福敬拜大厅" style="width:100%; padding:10px;">
         </div>
 
         <!-- 跳转链接与快速绑定 -->
         <div style="margin-bottom:16px; background:#0e0e0e; padding:14px; border-radius:10px; border:1px solid #222;">
           <label style="display:block; margin-bottom:6px; color:#aaa; font-size:0.8rem; font-weight:600;">点击跳转链接 (Target Link)</label>
-          <input type="text" id="ev_p_link" value="${p?.link || ''}" placeholder="留空则自动跳转到该海报详情页 (event.html?id=...)" style="width:100%; padding:9px 10px; margin-bottom:8px;">
+          <input type="text" id="ev_p_link" value="${escAttr(p?.link || '')}" placeholder="留空则自动跳转到该海报详情页 (event.html?id=...)" style="width:100%; padding:9px 10px; margin-bottom:8px;">
           
           <div style="display:flex; align-items:center; gap:8px;">
             <span style="font-size:0.75rem; color:#888; white-space:nowrap;">快速绑定活动：</span>
@@ -2633,7 +2825,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = typeof item === 'string' ? item : (item.media_url || item.url || '');
       return `
         <div style="position:relative; width:100%; aspect-ratio:1/1; border-radius:8px; overflow:hidden; border:1px solid rgba(246,210,138,0.3); background:#050505; box-shadow:0 4px 10px rgba(0,0,0,0.5);">
-          <img src="${url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
+          <img src="${escAttr(url)}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
           <button type="button" onclick="removePosterPhoto(${idx})" style="position:absolute; top:3px; right:3px; background:rgba(0,0,0,0.85); color:#ff6b6b; border:1px solid rgba(255,107,107,0.4); border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer; line-height:1;" title="移除此相片">✕</button>
         </div>
       `;
@@ -2644,7 +2836,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.uploadPosterGalleryPhotos = async () => {
     const fileInput = document.getElementById('f_ev_p_photos');
     const files = Array.from(fileInput?.files || []).filter(f => f.type.startsWith('image/'));
-    if (files.length === 0) return alert("请先选择图片文件");
+    if (files.length === 0) return window.showAdminToast("请先选择图片文件", "error");
 
     const stat = document.getElementById('ev_p_photos_upload_stat');
     const btn = document.getElementById('btnUploadPosterPhotos');
@@ -2679,6 +2871,7 @@ document.addEventListener('DOMContentLoaded', () => {
       stat.innerText = `✅ 成功上传 ${count} 张图片！`;
       setTimeout(() => { if (stat) stat.style.display = 'none'; }, 2500);
     }
+    window.showAdminToast(`✅ 成功上传 ${count} 张海报图片！`, "success");
     if (btn) { btn.innerText = origText; btn.disabled = false; }
     renderPosterPhotosGrid();
   };
@@ -2686,7 +2879,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addPosterPhotoByUrl = () => {
     const input = document.getElementById('ev_p_photo_url');
     const url = input?.value.trim();
-    if (!url) return alert("请输入图片链接");
+    if (!url) return window.showAdminToast("请输入图片链接", "error");
     if (!window._currentEditingPosterPhotos) window._currentEditingPosterPhotos = [];
     window._currentEditingPosterPhotos.push({ media_url: url });
     if (input) input.value = '';
@@ -2703,8 +2896,8 @@ document.addEventListener('DOMContentLoaded', () => {
   window.uploadPosterPhoto = async (fileInputId, targetId, previewId) => {
     const fileInput = document.getElementById(fileInputId);
     const file = fileInput?.files?.[0];
-    if(!file) return alert("请先选择图片文件");
-    const btn = (typeof window.event !== 'undefined' && window.event ? (window.event.currentTarget || window.event.target) : null) || document.getElementById('btnUploadEvP');
+    if(!file) return window.showAdminToast("请先选择图片文件", "error");
+    const btn = document.getElementById('btnUploadEvP') || (typeof window.event !== 'undefined' && window.event && window.event.target?.tagName === 'BUTTON' ? window.event.target : null);
     const origText = btn ? btn.innerText : '📤 上传并同步';
     if (btn) {
       btn.innerText = "⏳ 上传中...";
@@ -2727,9 +2920,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if(prevEl) prevEl.src = publicUrl;
       const bgEl = document.getElementById(previewId + '_bg');
       if (bgEl) bgEl.style.backgroundImage = `url('${publicUrl}')`;
-      alert("✅ 海报图片上传成功！");
+      window.showAdminToast("✅ 海报图片上传成功！", "success");
     } catch(err) {
-      alert("上传失败: " + (err.message || err));
+      window.showAdminToast("上传失败: " + (err.message || err), "error");
     } finally {
       if (btn) {
         btn.innerText = origText;
@@ -2748,8 +2941,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const venue = document.getElementById('ev_p_venue')?.value.trim() || '各城各乡 · 福音巡回';
     const link = document.getElementById('ev_p_link')?.value.trim() || '';
 
-    if (!imgUrl) return alert("请上传或填入海报图片链接");
-    if (!title) return alert("请输入海报标题");
+    if (!imgUrl) return window.showAdminToast("请上传或填入海报图片链接", "error");
+    if (!title) return window.showAdminToast("请输入海报标题", "error");
 
     const list = window._currentAdminPosters || [];
     const imgPos = document.getElementById('ev_p_pos')?.value.trim() || '50% 50%';
@@ -2795,10 +2988,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const modal = document.getElementById('eventPosterModal');
       if (modal) modal.remove();
-      alert("✅ 走廊海报设置已成功保存！");
+      window.showAdminToast("✅ 走廊海报设置已成功保存！", "success");
       renderCMS();
     } catch(err) {
-      alert("保存失败: " + err.message);
+      window.showAdminToast("保存失败: " + err.message, "error");
     }
   };
 
@@ -2826,9 +3019,10 @@ document.addEventListener('DOMContentLoaded', () => {
         await db.from('site_config').upsert({ key: 'cfg_events_banner', value: list[0].image_url }, { onConflict: 'key' });
       }
 
+      window.showAdminToast("✨ 海报顺序已更新", "info", 2000);
       renderCMS();
     } catch(err) {
-      alert("海报排序保存失败: " + err.message);
+      window.showAdminToast("海报排序保存失败: " + err.message, "error");
     }
   };
 
@@ -2851,10 +3045,10 @@ document.addEventListener('DOMContentLoaded', () => {
         await db.from('site_config').upsert({ key: 'cfg_events_banner', value: '' }, { onConflict: 'key' });
       }
 
-      alert("✅ 已成功移除海报！");
+      window.showAdminToast("✅ 已成功移除海报！", "success");
       renderCMS();
     } catch(err) {
-      alert("移除失败: " + err.message);
+      window.showAdminToast("移除失败: " + err.message, "error");
     }
   };
 
@@ -2871,10 +3065,10 @@ document.addEventListener('DOMContentLoaded', () => {
         await db.from('site_config').upsert({ key: 'cfg_events_banner', value: list[0].image_url }, { onConflict: 'key' });
       }
 
-      alert("✅ 全部走廊海报设置已成功同步到云端！");
+      window.showAdminToast("✅ 全部走廊海报设置已成功同步到云端！", "success");
       renderCMS();
     } catch(err) {
-      alert("保存失败: " + err.message);
+      window.showAdminToast("保存失败: " + err.message, "error");
     }
   };
   
@@ -2884,11 +3078,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const originalText = btn ? btn.innerText : '🚀 立即发送所有待发邮件';
     if (btn) btn.innerText = "⏳ 正在发送中...";
     try {
-      const res = await fetch('/api/blast');
+      const { data: { session } } = await db.auth.getSession();
+      const res = await fetch('/api/blast', {
+        headers: {
+          'Authorization': 'Bearer ' + (session?.access_token || ''),
+          'Content-Type': 'application/json'
+        }
+      });
       const data = await res.json();
-      alert(data.message || "发送指令已下达！");
+      if (!res.ok) throw new Error(data.error || data.message || `HTTP ${res.status}`);
+      window.showAdminToast(data.message || "✅ 发送指令已下达！", "success");
     } catch(e) {
-      alert("发送失败: " + e.message);
+      window.showAdminToast("发送失败: " + e.message, "error");
     } finally {
       if (btn) btn.innerText = originalText;
     }
@@ -3039,16 +3240,16 @@ document.addEventListener('DOMContentLoaded', () => {
               <span style="font-size:0.72rem; color:var(--gold);">✨ 支持横版及打直/竖版海报完整展示</span>
             </div>
             <div style="width:100%; height:220px; border-radius:8px; overflow:hidden; border:1px solid #333; background:#080808; margin-bottom:10px; display:flex; align-items:center; justify-content:center; position:relative;">
-              <div id="ev_prev_bg" style="position:absolute; inset:-10px; background-image:${e?.image_url ? `url('${e.image_url}')` : 'none'}; background-size:cover; background-position:center; filter:blur(20px) brightness(0.35); opacity:0.85;"></div>
-              <img id="ev_prev" src="${e?.image_url || ''}" style="position:relative; z-index:1; width:100%; height:100%; object-fit:cover; object-position:${e?.img_pos || e?.pos || '50% 50%'}; transform:scale(${e?.img_zoom || e?.zoom || 1.0}); transform-origin:${e?.img_pos || e?.pos || '50% 50%'}; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85)); transition:all 0.1s ease; display:${e?.image_url ? 'block' : 'none'};" onerror="this.style.display='none'; document.getElementById('ev_no_poster_hint').style.display='block';">
+              <div id="ev_prev_bg" style="position:absolute; inset:-10px; background-image:${e?.image_url ? `url('${escAttr(e.image_url)}')` : 'none'}; background-size:cover; background-position:center; filter:blur(20px) brightness(0.35); opacity:0.85;"></div>
+              <img id="ev_prev" src="${escAttr(e?.image_url || '')}" style="position:relative; z-index:1; width:100%; height:100%; object-fit:cover; object-position:${e?.img_pos || e?.pos || '50% 50%'}; transform:scale(${e?.img_zoom || e?.zoom || 1.0}); transform-origin:${e?.img_pos || e?.pos || '50% 50%'}; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85)); transition:all 0.1s ease; display:${e?.image_url ? 'block' : 'none'};" onerror="this.style.display='none'; document.getElementById('ev_no_poster_hint').style.display='block';">
               <div id="ev_no_poster_hint" style="position:relative; z-index:2; color:#777; font-size:0.85rem; text-align:center; display:${e?.image_url ? 'none' : 'block'};"><i class="fas fa-image" style="font-size:1.8rem; display:block; margin-bottom:6px; opacity:0.35;"></i>暂无海报 (纯文字活动)</div>
             </div>
             <input type="file" id="f_ev" style="font-size:0.8rem; color:#888;">
             <div style="display:flex; gap:8px; margin-top:10px;">
-              <button type="button" class="btn-tiny" style="flex:1; padding:8px;" onclick="uploadFile('f_ev', 'ev_url', 'ev_prev'); setTimeout(()=>{ const img=document.getElementById('ev_prev'); if(img){img.style.display='block';} const hint=document.getElementById('ev_no_poster_hint'); if(hint){hint.style.display='none';} }, 1200);">📤 上传活动海报图片</button>
-              <button type="button" class="btn-tiny" style="padding:8px 14px; background:rgba(255,59,48,0.15); color:#ff6b6b; border:1px solid rgba(255,59,48,0.3); cursor:pointer;" onclick="document.getElementById('ev_url').value=''; const p=document.getElementById('ev_prev'); if(p){p.src=''; p.style.display='none';} const bg=document.getElementById('ev_prev_bg'); if(bg) bg.style.backgroundImage='none'; const hint=document.getElementById('ev_no_poster_hint'); if(hint) hint.style.display='block'; alert('已移除海报！点击最下方【保存活动信息】即可生效。');">🗑️ 移除/清除海报</button>
+              <button type="button" class="btn-tiny" style="flex:1; padding:8px;" onclick="uploadFile('f_ev', 'ev_url', 'ev_prev');">📤 上传活动海报图片</button>
+              <button type="button" class="btn-tiny" style="padding:8px 14px; background:rgba(255,59,48,0.15); color:#ff6b6b; border:1px solid rgba(255,59,48,0.3); cursor:pointer;" onclick="document.getElementById('ev_url').value=''; const p=document.getElementById('ev_prev'); if(p){p.src=''; p.style.display='none';} const bg=document.getElementById('ev_prev_bg'); if(bg) bg.style.backgroundImage='none'; const hint=document.getElementById('ev_no_poster_hint'); if(hint) hint.style.display='block'; window.showAdminToast('已移除海报！点击下方【保存活动信息】即可生效。', 'info');">🗑️ 移除/清除海报</button>
             </div>
-            <input type="hidden" id="ev_url" value="${e?.image_url || ''}">
+            <input type="hidden" id="ev_url" value="${escAttr(e?.image_url || '')}">
 
             <!-- 🎚️ 活动海报焦点与裁剪 -->
             ${renderImageCropControllerHTML({
@@ -3064,14 +3265,14 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <!-- 标题与状态标签 -->
-          <div style="display:grid; grid-template-columns: 2fr 1fr; gap:15px; margin-bottom:10px;">
+          <div class="admin-grid-2" style="display:grid; grid-template-columns: 2fr 1fr; gap:15px; margin-bottom:10px;">
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动名称 (Title)</label>
-              <input type="text" id="ev_t" value="${sanitizeEventTitle(e?.title || '', e?.status_tag || '')}" placeholder="例如：东京敬拜赞美节庆" style="width:100%; padding:10px;">
+              <input type="text" id="ev_t" value="${escAttr(sanitizeEventTitle(e?.title || '', e?.status_tag || ''))}" placeholder="例如：东京敬拜赞美节庆" style="width:100%; padding:10px;">
             </div>
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">状态标签 (Tag)</label>
-              <input type="text" id="ev_stag" value="${e?.status_tag || ''}" placeholder="如 即将来临 ⏳、进行中 ⚡、HOT 热门 🔥" style="width:100%; padding:10px;">
+              <input type="text" id="ev_stag" value="${escAttr(e?.status_tag || '')}" placeholder="如 即将来临 ⏳、进行中 ⚡、HOT 热门 🔥" style="width:100%; padding:10px;">
             </div>
           </div>
           <!-- 状态标签快捷点选 -->
@@ -3085,33 +3286,33 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <!-- 日期与时间 -->
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+          <div class="admin-grid-2" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动日期 (Date)</label>
-              <input type="date" id="ev_d" value="${(e?.event_date || '').replace(/\./g, '-')}" style="width:100%; padding:10px;">
+              <input type="date" id="ev_d" value="${escAttr((e?.event_date || '').replace(/\./g, '-'))}" style="width:100%; padding:10px;">
             </div>
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动具体时间 (Time，支持时段)</label>
-              <input type="text" id="ev_tm" value="${e?.event_time || ''}" placeholder="例如：19:30 或 19:30 - 21:30" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
+              <input type="text" id="ev_tm" value="${escAttr(e?.event_time || '')}" placeholder="例如：19:30 或 19:30 - 21:30" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
             </div>
           </div>
 
           <!-- 地点与地图 -->
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+          <div class="admin-grid-2" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">地点/场馆 (Venue - City)</label>
-              <input type="text" id="ev_l" value="${e?.location || ''}" placeholder="例如：YOHAN TOKYO CHRIST CHURCH - 东京" style="width:100%; padding:10px;">
+              <input type="text" id="ev_l" value="${escAttr(e?.location || '')}" placeholder="例如：YOHAN TOKYO CHRIST CHURCH - 东京" style="width:100%; padding:10px;">
             </div>
             <div>
               <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">Google Map 地图链接 (可选)</label>
-              <input type="text" id="ev_ml" value="${e?.map_url || ''}" placeholder="https://maps.app.goo.gl/..." style="width:100%; padding:10px;">
+              <input type="text" id="ev_ml" value="${escAttr(e?.map_url || '')}" placeholder="https://maps.app.goo.gl/..." style="width:100%; padding:10px;">
             </div>
           </div>
 
           <!-- 排位顺序 -->
           <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">显示排序序号 Order (数值越小排在越前面)</label>
-            <input type="number" id="ev_order" value="${e?.display_order || 0}" style="width:100%; padding:10px;">
+            <input type="number" id="ev_order" value="${escAttr(e?.display_order || 0)}" style="width:100%; padding:10px;">
           </div>
 
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">活动详情描述 (Description)</label>
@@ -3165,7 +3366,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderEventPhotosGrid();
     } catch (err) {
       console.error("openEventModal Fail:", err);
-      alert("😰 无法加载活动数据: " + (err.message || err));
+      window.showAdminToast("😰 无法加载活动数据: " + (err.message || err), "error");
     } finally {
       if (id && btn) { btn.innerText = originalText; btn.disabled = false; }
     }
@@ -3188,7 +3389,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = typeof item === 'string' ? item : (item.media_url || item.url || '');
       return `
         <div style="position:relative; width:100%; aspect-ratio:1/1; border-radius:8px; overflow:hidden; border:1px solid rgba(246,210,138,0.3); background:#050505; box-shadow:0 4px 10px rgba(0,0,0,0.5);">
-          <img src="${url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
+          <img src="${escAttr(url)}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
           <button type="button" onclick="removeEventPhoto(${idx})" style="position:absolute; top:3px; right:3px; background:rgba(0,0,0,0.85); color:#ff6b6b; border:1px solid rgba(255,107,107,0.4); border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer; line-height:1;" title="移除此相片">✕</button>
         </div>
       `;
@@ -3199,7 +3400,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.uploadEventGalleryPhotos = async () => {
     const fileInput = document.getElementById('f_ev_photos');
     const files = Array.from(fileInput?.files || []).filter(f => f.type.startsWith('image/'));
-    if (files.length === 0) return alert("请先选择图片文件");
+    if (files.length === 0) return window.showAdminToast("请先选择图片文件", "error");
 
     const stat = document.getElementById('ev_photos_upload_stat');
     const btn = document.getElementById('btnUploadEventPhotos');
@@ -3234,6 +3435,7 @@ document.addEventListener('DOMContentLoaded', () => {
       stat.innerText = `✅ 成功上传 ${count} 张图片！`;
       setTimeout(() => { if (stat) stat.style.display = 'none'; }, 2500);
     }
+    window.showAdminToast(`✅ 成功上传 ${count} 张活动图片！`, "success");
     if (btn) { btn.innerText = origText; btn.disabled = false; }
     renderEventPhotosGrid();
   };
@@ -3241,7 +3443,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventPhotoByUrl = () => {
     const input = document.getElementById('ev_photo_url_input');
     const url = input?.value.trim();
-    if (!url) return alert("请输入图片链接");
+    if (!url) return window.showAdminToast("请输入图片链接", "error");
     if (!window._currentEditingEventPhotos) window._currentEditingEventPhotos = [];
     window._currentEditingEventPhotos.push({ media_url: url });
     if (input) input.value = '';
@@ -3284,7 +3486,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (!payload.title) {
-      alert("请输入活动名称");
+      window.showAdminToast("请输入活动名称", "error");
       if (btn) { btn.innerText = originalText; btn.disabled = false; }
       return;
     }
@@ -3360,11 +3562,11 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const modal = document.getElementById('eventEditModal');
       if(modal) modal.remove();
-      alert("✅ 活动信息已成功保存并同步！");
+      window.showAdminToast("✅ 活动信息已成功保存并同步！", "success");
       renderCMS();
     } catch(err) {
       console.error("Save error:", err);
-      alert("❌ 保存失败: " + err.message);
+      window.showAdminToast("❌ 保存失败: " + err.message, "error");
       if (btn) { btn.innerText = originalText; btn.disabled = false; }
     }
   };

@@ -521,16 +521,21 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
+    body:not(.auth-verified) .workspace-container,
+    body:not(.auth-verified) .top-nav {
+      display: none !important;
+    }
+
     /* 🖨️ Print Styles (Optimized for single page A4 PDF) */
     @media print {
       body {
         background: #fff !important;
         color: #000 !important;
       }
-      .top-nav, .input-panel, .preview-toolbar, .toast-msg {
+      .top-nav, .input-panel, .preview-toolbar, .toast-msg, #receiptAuthGate {
         display: none !important;
       }
-      .workspace-container {
+      body.auth-verified .workspace-container {
         display: block !important;
         padding: 0 !important;
         margin: 0 !important;
@@ -582,39 +587,39 @@
       </div>
 
       <div class="form-group">
-        <label>收据编号 (Receipt No.)</label>
+        <label for="in_receipt_no">收据编号 (Receipt No.)</label>
         <input type="text" id="in_receipt_no" value="" oninput="updatePreview()">
       </div>
 
       <div class="form-group">
-        <label>奉献者 / 机构全名 (Donor / Church / Entity)</label>
+        <label for="in_donor_name">奉献者 / 机构全名 (Donor / Church / Entity)</label>
         <input type="text" id="in_donor_name" value="陈弟兄 / Brother Tan" placeholder="例如：陈弟兄 / 主恩堂" oninput="updatePreview()">
       </div>
 
       <div class="form-row-2">
         <div class="form-group">
-          <label>身份证/护照/注册号 (NRIC/SSM 选填)</label>
+          <label for="in_donor_ic">身份证/护照/注册号 (NRIC/SSM 选填)</label>
           <input type="text" id="in_donor_ic" value="" placeholder="例如：900101-14-1234" oninput="updatePreview()">
         </div>
         <div class="form-group">
-          <label>奉献者邮箱 (Donor Email) <span style="font-size:0.75rem; color:#777;">(用于一键回信)</span></label>
+          <label for="in_donor_email">奉献者邮箱 (Donor Email) <span style="font-size:0.75rem; color:#777;">(用于一键回信)</span></label>
           <input type="email" id="in_donor_email" value="" placeholder="donor@example.com" oninput="updatePreview()">
         </div>
       </div>
 
       <div class="form-row-2">
         <div class="form-group">
-          <label>奉献金额 (RM)</label>
+          <label for="in_amount">奉献金额 (RM)</label>
           <input type="number" id="in_amount" value="500.00" step="0.01" oninput="updatePreview()">
         </div>
         <div class="form-group">
-          <label>奉献日期 (Offering Date)</label>
+          <label for="in_date">奉献日期 (Offering Date)</label>
           <input type="date" id="in_date" value="" oninput="updatePreview()">
         </div>
       </div>
 
       <div class="form-group">
-        <label>奉献用途 (Purpose / Fund Category)</label>
+        <label for="in_purpose">奉献用途 (Purpose / Fund Category)</label>
         <select id="in_purpose" onchange="updatePreview()">
           <option value="自由奉献 / General Offering">自由奉献 / General Offering</option>
           <option value="音乐制作与录音事工 / Music Production Fund">音乐制作与录音事工 / Music Production Fund</option>
@@ -626,7 +631,7 @@
 
       <div class="form-row-2">
         <div class="form-group">
-          <label>支付方式 (Payment Method)</label>
+          <label for="in_method">支付方式 (Payment Method)</label>
           <select id="in_method" onchange="updatePreview()">
             <option value="DuitNow QR 扫码支付">DuitNow QR 扫码支付</option>
             <option value="Maybank 银行线上转账">Maybank 银行线上转账</option>
@@ -635,19 +640,19 @@
           </select>
         </div>
         <div class="form-group">
-          <label>银行交易单号 (Ref No.)</label>
+          <label for="in_ref_no">银行交易单号 (Ref No.)</label>
           <input type="text" id="in_ref_no" value="REF-20251003-889" placeholder="例如：20261003123456" oninput="updatePreview()">
         </div>
       </div>
 
       <div class="form-group">
-        <label>经办签署人 (Authorized Signatory)</label>
+        <label for="in_signatory">经办签署人 (Authorized Signatory)</label>
         <input type="text" id="in_signatory" value="Harvester Music Admin 财务服事部" oninput="updatePreview()">
       </div>
 
       <!-- 财务核账安全确认 -->
       <div style="background: rgba(212, 175, 55, 0.08); border: 1px dashed var(--gold); border-radius: 8px; padding: 12px; margin-top: 2px;">
-        <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; color: #f6d28a; font-size: 0.82rem; line-height: 1.5;">
+        <label for="in_verified_chk" style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; color: #f6d28a; font-size: 0.82rem; line-height: 1.5;">
           <input type="checkbox" id="in_verified_chk" checked style="margin-top: 2px; accent-color: #d4af37; width: 16px; height: 16px;">
           <span><strong>财务对账核实 (Reconciliation):</strong> 已登录银行 App / Maybank 线上账户，核对该笔款项与单号已实际入账。</span>
         </label>
@@ -773,15 +778,57 @@
 
   </main>
 
+  <!-- Auth Verification Gate Overlay -->
+  <div id="receiptAuthGate" style="position:fixed; inset:0; background:#0d0d0d; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem; text-align:center;">
+    <div id="receiptAuthContent" style="max-width:420px; background:#161616; border:1px solid #333; border-radius:12px; padding:2.5rem; box-shadow:0 15px 40px rgba(0,0,0,0.6);">
+      <i class="fas fa-shield-alt" style="font-size:2.4rem; color:var(--gold); margin-bottom:1rem;"></i>
+      <h3 style="color:var(--gold-light); margin-bottom:0.6rem;">正在验证管理员权限...</h3>
+      <p id="receiptAuthMsg" style="color:#999; font-size:0.9rem; line-height:1.6; margin-bottom:1.5rem;">
+        官方奉献收据开具系统仅限授权管理员访问。
+      </p>
+      <a href="admin.html" class="btn btn-gold" style="justify-content:center; width:100%;">
+        <i class="fas fa-lock"></i> 前往 CMS 后台登录 (Admin Login)
+      </a>
+    </div>
+  </div>
+
   <!-- Toast Message -->
   <div id="toastMsg" class="toast-msg">
     <i class="fas fa-check-circle"></i>
     <span id="toastText">已成功复制官方感谢回信！</span>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="config.js?v=20261021_01"></script>
   <script>
+    async function verifyReceiptAuth() {
+      const gate = document.getElementById('receiptAuthGate');
+      const msg = document.getElementById('receiptAuthMsg');
+      try {
+        if (!window.supabase || !window.supabase.auth) {
+          throw new Error('Supabase Auth client unavailable');
+        }
+        const { data: { session }, error } = await window.supabase.auth.getSession();
+        if (error || !session) {
+          if (msg) msg.innerText = '未检测到有效的管理员登录会话，正在跳转至后台登录页...';
+          setTimeout(() => { window.location.replace('admin.html'); }, 1200);
+          return false;
+        }
+        document.body.classList.add('auth-verified');
+        if (gate) gate.style.display = 'none';
+        return true;
+      } catch (err) {
+        if (msg) msg.innerText = '权限验证失败，请先登录 CMS 后台管理系统。';
+        setTimeout(() => { window.location.replace('admin.html'); }, 1500);
+        return false;
+      }
+    }
+
     // Set initial date to today & parse URL params
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
+      const isAuthed = await verifyReceiptAuth();
+      if (!isAuthed) return;
+
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('in_date').value = today;
       generateReceiptNo();
@@ -813,31 +860,56 @@
     }
 
     function numberToEnglishWords(num) {
-      const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
-      const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+      const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+      const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
 
       num = parseFloat(num) || 0;
       const dollars = Math.floor(num);
       const cents = Math.round((num - dollars) * 100);
 
+      function chunkToWords(n) {
+        let parts = [];
+        if (n >= 100) {
+          parts.push(ones[Math.floor(n / 100)] + ' Hundred');
+          n %= 100;
+        }
+        if (n > 0) {
+          if (n < 20) {
+            parts.push(ones[n]);
+          } else {
+            const t = tens[Math.floor(n / 10)];
+            const o = ones[n % 10];
+            parts.push(o ? t + ' ' + o : t);
+          }
+        }
+        return parts.join(' ');
+      }
+
       function inWords(n) {
-        if ((n = n.toString()).length > 9) return 'overflow';
-        let nArray = ('000000000' + n).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-        if (!nArray) return '';
-        let str = '';
-        str += (nArray[1] != 0) ? (a[Number(nArray[1])] || b[nArray[1][0]] + ' ' + a[nArray[1][1]]) + 'Crore ' : '';
-        str += (nArray[2] != 0) ? (a[Number(nArray[2])] || b[nArray[2][0]] + ' ' + a[nArray[2][1]]) + 'Lakh ' : '';
-        str += (nArray[3] != 0) ? (a[Number(nArray[3])] || b[nArray[3][0]] + ' ' + a[nArray[3][1]]) + 'Thousand ' : '';
-        str += (nArray[4] != 0) ? (a[Number(nArray[4])] || b[nArray[4][0]] + ' ' + a[nArray[4][1]]) + 'Hundred ' : '';
-        str += (nArray[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(nArray[5])] || b[nArray[5][0]] + ' ' + a[nArray[5][1]]) : '';
-        return str;
+        if (n === 0) return '';
+        if (n > 999999999) return 'Overflow';
+        const millions = Math.floor(n / 1000000);
+        const thousands = Math.floor((n % 1000000) / 1000);
+        const remainder = n % 1000;
+
+        let segments = [];
+        if (millions > 0) segments.push(chunkToWords(millions) + ' Million');
+        if (thousands > 0) segments.push(chunkToWords(thousands) + ' Thousand');
+        if (remainder > 0) {
+          if (segments.length > 0 && remainder < 100) {
+            segments.push('and ' + chunkToWords(remainder));
+          } else {
+            segments.push(chunkToWords(remainder));
+          }
+        }
+        return segments.join(' ');
       }
 
       let words = inWords(dollars);
-      if (!words) words = 'Zero ';
-      let result = 'RINGGIT MALAYSIA ' + words.toUpperCase() + 'ONLY';
+      if (!words) words = 'Zero';
+      let result = 'RINGGIT MALAYSIA ' + words.toUpperCase() + ' ONLY';
       if (cents > 0) {
-        result = 'RINGGIT MALAYSIA ' + words.toUpperCase() + 'AND ' + cents + '/100 ONLY';
+        result = 'RINGGIT MALAYSIA ' + words.toUpperCase() + ' AND ' + cents + '/100 ONLY';
       }
       return result;
     }

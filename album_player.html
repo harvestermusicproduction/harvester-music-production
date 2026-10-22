@@ -1374,9 +1374,9 @@
     }
 
     function navigateRack(dir) {
-      let nextIdx = Math.round(targetProgress) + dir;
-      nextIdx = Math.max(0, Math.min(albumsData.length - 1, nextIdx));
-      targetProgress = nextIdx;
+      const M = albumsData.length;
+      if (!M) return;
+      targetProgress = Math.round(targetProgress) + dir;
       updateActiveMeta();
     }
 
@@ -1427,8 +1427,17 @@
 
     /* ================= VIEW 2: LOAD MORANDI ACCORDION DETAIL ================= */
     function loadAlbumDetail(albumIdx) {
+      const M = albumsData.length;
+      if (!M) return;
+      albumIdx = ((albumIdx % M) + M) % M;
+      const album = albumsData[albumIdx];
       currentIndex = albumIdx;
-      targetProgress = albumIdx;
+      const curRound = Math.round(currentProgress);
+      const curMod = ((curRound % M) + M) % M;
+      let diff = albumIdx - curMod;
+      if (diff > M / 2) diff -= M;
+      if (diff < -M / 2) diff += M;
+      targetProgress = curRound + diff;
       // Overall View Background & Poster left column (Seamless, no card box)
       document.getElementById("view-detail").style.backgroundColor = album.posterBg || "#1c242d";
       document.getElementById("poster-container").style.backgroundColor = "transparent";

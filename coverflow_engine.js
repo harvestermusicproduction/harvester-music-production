@@ -290,10 +290,22 @@ You have set my feet upon the rock!`
   let activeSong = null;
   let isPlaying = false;
   let audioPlayer = new Audio();
+  const globalAudio = audioPlayer;
+  window.globalAudio = audioPlayer;
+
+  // Web Audio Acoustic Synth Fallback State (when preview audio URL is missing)
+  let synthCtx = null;
+  let synthTimer = null;
+  let synthStepTimer = null;
+  let isSynthPlaying = false;
+  let synthCurrentTime = 0;
+  const SYNTH_DURATION = 30; // 30-second gentle warm acoustic preview
 
   // Continuous Physics Drag & Animation State
   let currentProgress = 0; // Continuous floating index (e.g. 0.0 -> 1.45 -> 2.0)
   let targetProgress = 0;  // Target integer/float index
+  let lastRenderedProgress = -999;
+  let detailViewOpen = false;
   let isDragging = false;
   let dragStartX = 0;
   let dragStartProgress = 0;
@@ -303,17 +315,43 @@ You have set my feet upon the rock!`
   let hasMovedFar = false;
   let isPhysicsRunning = false;
 
+  function formatTime(sec) {
+    if (!isFinite(sec) || sec < 0) return '0:00';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  }
+
+  function updateMiniProgressUI(curSec, durSec) {
+    const fill = document.getElementById('miniProgressFill');
+    const timeEl = document.getElementById('miniTimeDisplay');
+    const pct = durSec > 0 ? Math.min(100, Math.max(0, (curSec / durSec) * 100)) : 0;
+    if (fill) fill.style.width = `${pct.toFixed(1)}%`;
+    if (timeEl) timeEl.innerText = `${formatTime(curSec)} / ${formatTime(durSec)}`;
+  }
+
   // Audio Event Listeners (Preview Mode & UI Lifecycle)
-  audioPlayer.addEventListener('ended', () => {
+  globalAudio.addEventListener('loadedmetadata', () => {
+    updateMiniProgressUI(globalAudio.currentTime || 0, globalAudio.duration || 0);
+  });
+
+  globalAudio.addEventListener('timeupdate', () => {
+    if (!isSynthPlaying) {
+      updateMiniProgressUI(globalAudio.currentTime || 0, globalAudio.duration || 0);
+    }
+  });
+
+  globalAudio.addEventListener('ended', () => {
     isPlaying = false;
-    audioPlayer.currentTime = 0;
+    globalAudio.currentTime = 0;
+    updateMiniProgressUI(0, globalAudio.duration || 0);
     updatePlayerUI();
     if (typeof window.showMorandiToast === 'function') {
       window.showMorandiToast('✨ 试听结束，欢迎翻开唱片内页查看完整作品与歌谱');
     }
   });
 
-  audioPlayer.addEventListener('error', (e) => {
+  globalAudio.addEventListener('error', (e) => {
     console.warn("Audio playback error:", e);
     isPlaying = false;
     updatePlayerUI();
@@ -542,9 +580,9 @@ You have set my feet upon the rock!`
         </div>
       </div>
 
-      <!-- 4. Floating Mini-Player Pill (Playback Only, No Modal Jump) -->
+      <!-- 4. Floating Mini-Player Pill -->
       <div class="floating-mini-player" id="floatingMiniPlayer">
-        <div class="mini-left" onclick="toggleAudioPlay()">
+        <div class="mini-left" onclick="handleMiniPlayerClick(event)" title="点击展开单曲内页与歌谱">
           <div class="mini-eq-bars" id="miniEqBars">
             <span></span><span></span><span></span>
           </div>
@@ -554,9 +592,21 @@ You have set my feet upon the rock!`
             <span id="miniTrackArtist" class="mini-track-artist">${albums[0]?.artist || 'Harvester Worship'} · 试听版</span>
           </div>
         </div>
-        <div class="mini-right">
-          <button class="mini-play-btn" onclick="event.stopPropagation(); toggleAudioPlay();" title="播放 / 暂停试听">
+        <div class="mini-center" onclick="event.stopPropagation()">
+          <div class="mini-progress-wrap" id="miniProgressWrap" onclick="seekMiniPlayer(event)" title="点击调整试听进度">
+            <div class="mini-progress-fill" id="miniProgressFill"></div>
+          </div>
+          <span class="mini-time-display" id="miniTimeDisplay">0:00 / 0:00</span>
+        </div>
+        <div class="mini-right" onclick="event.stopPropagation()">
+          <button class="mini-nav-btn" onclick="prevMiniTrack(event)" title="上一首" type="button">
+            <i class="fas fa-step-backward"></i>
+          </button>
+          <button class="mini-play-btn" onclick="event.stopPropagation(); toggleAudioPlay();" title="播放 / 暂停试听" type="button">
             <i id="miniPlayIcon" class="fas fa-play"></i>
+          </button>
+          <button class="mini-nav-btn" onclick="nextMiniTrack(event)" title="下一首" type="button">
+            <i class="fas fa-step-forward"></i>
           </button>
         </div>
       </div>
@@ -881,21 +931,30 @@ You have set my feet upon the rock!`
     isPhysicsRunning = true;
 
     function tick() {
+      const diff = targetProgress - currentProgress;
+
+      if (detailViewOpen || (Math.abs(diff) < 0.0005 && !isDragging && Math.abs(currentProgress - lastRenderedProgress) < 0.0005)) {
+        if (!isDragging && currentProgress !== targetProgress && Math.abs(diff) < 0.0005) {
+          currentProgress = targetProgress;
+        }
+        requestAnimationFrame(tick);
+        return;
+      }
+
       if (!isDragging) {
         // Continuous Spring Lerp toward targetProgress
-        const diff = targetProgress - currentProgress;
         if (Math.abs(diff) > 0.0004) {
           currentProgress += diff * 0.135;
-          render3DCoverflow();
+          render3DTransforms();
         } else if (currentProgress !== targetProgress) {
           currentProgress = targetProgress;
-          render3DCoverflow();
+          render3DTransforms();
           updateMetaBar();
         }
       } else {
         // While dragging, lerp fast for responsive direct-follow feeling
-        currentProgress += (targetProgress - currentProgress) * 0.38;
-        render3DCoverflow();
+        currentProgress += diff * 0.38;
+        render3DTransforms();
       }
 
       requestAnimationFrame(tick);
@@ -909,6 +968,7 @@ You have set my feet upon the rock!`
   function render3DCoverflow() {
     const boxes = document.querySelectorAll('.album-3d-box');
     if (!boxes.length || !albums.length) return;
+    lastRenderedProgress = currentProgress;
 
     const N = boxes.length;
     const M = albums.length;
@@ -968,6 +1028,7 @@ You have set my feet upon the rock!`
       box.style.opacity = opacity.toFixed(3);
     });
   }
+  const render3DTransforms = render3DCoverflow;
 
   // Update Meta Caption & Dynamic Ambient Background for Active Album
   function updateMetaBar() {
@@ -1134,15 +1195,22 @@ You have set my feet upon the rock!`
     window.addEventListener('keydown', (e) => {
       const view = document.getElementById('immersiveAlbumView');
       const isImmersive = view && view.style.display === 'flex';
+      const searchModal = document.getElementById('morandiSearchModal');
+      const isSearchOpen = searchModal && searchModal.classList.contains('active');
+      const isInputFocused = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
 
       if (e.key === 'Escape') {
         if (isImmersive) closeSongDetailView();
         return;
       }
 
-      if (!isImmersive) {
+      if (!isImmersive && !isSearchOpen && !isInputFocused) {
         if (e.key === 'ArrowLeft') navigateCoverFlow(-1);
         if (e.key === 'ArrowRight') navigateCoverFlow(1);
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          window.openActiveSongDetail();
+        }
       }
     });
 
@@ -1161,21 +1229,34 @@ You have set my feet upon the rock!`
   // 🌟 IMMERSIVE SINGLE SONG DETAIL VIEW (1 Album = 1 Single Track)
   // =================================================================
   window.openActiveSongDetail = function() {
-    const activeIdx = Math.max(0, Math.min(albums.length - 1, Math.round(currentProgress)));
+    const M = albums.length;
+    if (!M) return;
+    const activeIdx = ((Math.round(currentProgress) % M) + M) % M;
     window.openSongDetailView(activeIdx);
   };
 
   window.openSongDetailView = function(idx) {
+    const M = albums.length;
+    if (!M) return;
     if (typeof idx !== 'number' || isNaN(idx)) {
-      idx = Math.max(0, Math.min(albums.length - 1, Math.round(currentProgress)));
+      idx = ((Math.round(currentProgress) % M) + M) % M;
+    } else {
+      idx = ((idx % M) + M) % M;
     }
     activeSong = albums[idx] || albums[0];
     currentIndex = idx;
-    targetProgress = idx;
-    currentProgress = idx;
+
+    // Calculate nearest virtual index equivalent to idx relative to Math.round(currentProgress)
+    const curRound = Math.round(currentProgress);
+    const curMod = ((curRound % M) + M) % M;
+    let diff = idx - curMod;
+    if (diff > M / 2) diff -= M;
+    if (diff < -M / 2) diff += M;
+    targetProgress = curRound + diff;
 
     const view = document.getElementById('immersiveAlbumView');
     if (!view) return;
+    detailViewOpen = true;
 
     // Break out of parent stacking contexts (e.g. .fade-in animation) by attaching directly to document.body
     if (view.parentElement !== document.body) {
@@ -1188,6 +1269,7 @@ You have set my feet upon the rock!`
     document.body.style.overflow = 'hidden';
 
     renderSingleSongDetail();
+    updatePlayerUI();
 
     if (window.gsap) {
       gsap.set(view, { opacity: 1, scale: 1 });
@@ -1270,6 +1352,7 @@ You have set my feet upon the rock!`
   window.closeSongDetailView = function() {
     const view = document.getElementById('immersiveAlbumView');
     if (!view) return;
+    detailViewOpen = false;
     document.body.classList.remove('immersive-modal-active');
     if (window.gsap) {
       gsap.to(view, { opacity: 0, scale: 0.96, duration: 0.3, onComplete: () => {
@@ -1466,6 +1549,119 @@ ${activeSong.lyrics}
     `;
   }
 
+  // Warm Web Audio API Acoustic Chord / Harp Arpeggio Preview (when audio_url is empty)
+  function stopWarmAcousticPreview() {
+    isSynthPlaying = false;
+    if (synthTimer) {
+      clearInterval(synthTimer);
+      synthTimer = null;
+    }
+    if (synthStepTimer) {
+      clearInterval(synthStepTimer);
+      synthStepTimer = null;
+    }
+    if (synthCtx && synthCtx.state === 'running') {
+      try {
+        synthCtx.suspend();
+      } catch (e) {}
+    }
+  }
+
+  function playWarmAcousticNote(freq, startTime, duration = 2.4, gainVal = 0.08) {
+    if (!synthCtx) return;
+    try {
+      const osc1 = synthCtx.createOscillator();
+      const osc2 = synthCtx.createOscillator();
+      const filter = synthCtx.createBiquadFilter();
+      const gain = synthCtx.createGain();
+
+      osc1.type = 'triangle';
+      osc2.type = 'sine';
+      osc1.frequency.setValueAtTime(freq, startTime);
+      osc2.frequency.setValueAtTime(freq * 2, startTime);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1350, startTime);
+      filter.frequency.exponentialRampToValueAtTime(420, startTime + duration);
+
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.linearRampToValueAtTime(gainVal, startTime + 0.035);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+      const overtoneGain = synthCtx.createGain();
+      overtoneGain.gain.setValueAtTime(0.25, startTime);
+
+      osc1.connect(filter);
+      osc2.connect(overtoneGain);
+      overtoneGain.connect(filter);
+      filter.connect(gain);
+      gain.connect(synthCtx.destination);
+
+      osc1.start(startTime);
+      osc2.start(startTime);
+      osc1.stop(startTime + duration + 0.05);
+      osc2.stop(startTime + duration + 0.05);
+    } catch (e) {}
+  }
+
+  function startWarmAcousticPreview(song) {
+    stopWarmAcousticPreview();
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+
+    if (!synthCtx) {
+      synthCtx = new AudioContextClass();
+    }
+    if (synthCtx.state === 'suspended') {
+      synthCtx.resume().catch(() => {});
+    }
+
+    isSynthPlaying = true;
+    isPlaying = true;
+    synthCurrentTime = 0;
+    updateMiniProgressUI(0, SYNTH_DURATION);
+    updatePlayerUI();
+
+    // Warm Worship Chord Progression (Cadd9 -> G/B -> Am7 -> Fmaj7)
+    const chords = [
+      [261.63, 329.63, 392.00, 587.33],
+      [246.94, 293.66, 392.00, 587.33],
+      [220.00, 261.63, 329.63, 392.00],
+      [174.61, 261.63, 329.63, 440.00]
+    ];
+    let chordIdx = 0;
+
+    function triggerArpeggioChord() {
+      if (!isSynthPlaying || !synthCtx) return;
+      const now = synthCtx.currentTime;
+      const chord = chords[chordIdx % chords.length];
+      chordIdx++;
+      chord.forEach((freq, i) => {
+        playWarmAcousticNote(freq, now + i * 0.28, 2.6, 0.075);
+      });
+    }
+
+    triggerArpeggioChord();
+    synthStepTimer = setInterval(triggerArpeggioChord, 2400);
+
+    synthTimer = setInterval(() => {
+      if (!isSynthPlaying) return;
+      synthCurrentTime += 0.25;
+      if (synthCurrentTime >= SYNTH_DURATION) {
+        stopWarmAcousticPreview();
+        isPlaying = false;
+        synthCurrentTime = 0;
+        updateMiniProgressUI(0, SYNTH_DURATION);
+        updatePlayerUI();
+        if (typeof window.showMorandiToast === 'function') {
+          window.showMorandiToast('✨ 试听结束，欢迎翻开唱片内页查看完整作品与歌谱');
+        }
+        return;
+      }
+      updateMiniProgressUI(synthCurrentTime, SYNTH_DURATION);
+    }, 250);
+  }
+
   // Audio Playback Engine (Preview Mode)
   window.toggleAudioPlay = function() {
     if (!albums || albums.length === 0) return;
@@ -1474,7 +1670,8 @@ ${activeSong.lyrics}
     const cur = activeSong || albums[activeIdx];
 
     if (isPlaying) {
-      audioPlayer.pause();
+      globalAudio.pause();
+      stopWarmAcousticPreview();
       isPlaying = false;
       updatePlayerUI();
     } else {
@@ -1482,33 +1679,102 @@ ${activeSong.lyrics}
       const isValidAudio = audioSrc && !audioSrc.includes('youtube.com') && !audioSrc.includes('youtu.be');
 
       if (isValidAudio) {
-        if (audioPlayer.src !== audioSrc) {
-          audioPlayer.src = audioSrc;
-          audioPlayer.currentTime = 0;
+        stopWarmAcousticPreview();
+        if (globalAudio.src !== audioSrc) {
+          globalAudio.src = audioSrc;
+          globalAudio.currentTime = 0;
         }
-        audioPlayer.play().then(() => {
+        globalAudio.play().then(() => {
           isPlaying = true;
           updatePlayerUI();
           if (typeof window.showMorandiToast === 'function') {
             window.showMorandiToast(`🎵 正在试听：《${cur.title}》（试听版）`);
           }
         }).catch(err => {
-          console.warn("Audio playback error:", err);
-          isPlaying = false;
-          updatePlayerUI();
+          console.warn("Audio playback fallback to warm synth:", err);
+          startWarmAcousticPreview(cur);
           if (typeof window.showMorandiToast === 'function') {
-            window.showMorandiToast('⚠️ 音频无法播放，请在后台确认试听音频格式');
+            window.showMorandiToast('🎵 正在为您开启试听模式');
           }
         });
       } else {
-        isPlaying = false;
-        updatePlayerUI();
+        startWarmAcousticPreview(cur);
         if (typeof window.showMorandiToast === 'function') {
-          window.showMorandiToast('🎵 该单曲暂未上传试听版音频，请在后台“音乐与歌谱集”上传');
-        } else {
-          alert('🎵 该单曲暂未上传试听版音频，请在后台“音乐与歌谱集”上传');
+          window.showMorandiToast('🎵 正在为您开启试听模式');
         }
       }
+    }
+  };
+
+  window.prevMiniTrack = function(event) {
+    if (event) event.stopPropagation();
+    if (!albums || !albums.length) return;
+    const wasPlaying = isPlaying;
+    globalAudio.pause();
+    stopWarmAcousticPreview();
+    isPlaying = false;
+
+    const M = albums.length;
+    targetProgress = Math.round(targetProgress) - 1;
+    const nextIdx = ((Math.round(targetProgress) % M) + M) % M;
+    currentIndex = nextIdx;
+    activeSong = albums[nextIdx];
+    updateMetaBar();
+
+    if (detailViewOpen) {
+      window.openSongDetailView(nextIdx);
+    } else {
+      updateMiniProgressUI(0, 0);
+      updatePlayerUI();
+    }
+
+    if (wasPlaying) {
+      window.toggleAudioPlay();
+    }
+  };
+
+  window.nextMiniTrack = function(event) {
+    if (event) event.stopPropagation();
+    if (!albums || !albums.length) return;
+    const wasPlaying = isPlaying;
+    globalAudio.pause();
+    stopWarmAcousticPreview();
+    isPlaying = false;
+
+    const M = albums.length;
+    targetProgress = Math.round(targetProgress) + 1;
+    const nextIdx = ((Math.round(targetProgress) % M) + M) % M;
+    currentIndex = nextIdx;
+    activeSong = albums[nextIdx];
+    updateMetaBar();
+
+    if (detailViewOpen) {
+      window.openSongDetailView(nextIdx);
+    } else {
+      updateMiniProgressUI(0, 0);
+      updatePlayerUI();
+    }
+
+    if (wasPlaying) {
+      window.toggleAudioPlay();
+    }
+  };
+
+  window.seekMiniPlayer = function(event) {
+    if (event) event.stopPropagation();
+    const wrap = document.getElementById('miniProgressWrap');
+    if (!wrap) return;
+    const rect = wrap.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+
+    if (isSynthPlaying) {
+      synthCurrentTime = ratio * SYNTH_DURATION;
+      updateMiniProgressUI(synthCurrentTime, SYNTH_DURATION);
+    } else if (globalAudio.duration && isFinite(globalAudio.duration)) {
+      globalAudio.currentTime = ratio * globalAudio.duration;
+      updateMiniProgressUI(globalAudio.currentTime, globalAudio.duration);
+    } else {
+      updateMiniProgressUI(ratio * SYNTH_DURATION, SYNTH_DURATION);
     }
   };
 
@@ -1524,7 +1790,7 @@ ${activeSong.lyrics}
     if (lyricsPlayBtnIcon) {
       lyricsPlayBtnIcon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
       if (lyricsPlayBtnIcon.parentElement) {
-        lyricsPlayBtnIcon.parentElement.innerHTML = `<i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停' : '试听版'}`;
+        lyricsPlayBtnIcon.parentElement.innerHTML = `<i id="lyricsPlayBtnIcon" class="fas ${isPlaying ? 'fa-pause' : 'fa-play'}"></i> ${isPlaying ? '暂停试听' : '试听版'}`;
       }
     }
     if (miniEqBars) miniEqBars.classList.toggle('playing', isPlaying);
@@ -1545,8 +1811,16 @@ ${activeSong.lyrics}
     updatePlayerUI();
   }
 
-  window.handleMiniPlayerClick = function() {
-    openSongDetailView(Math.round(currentProgress));
+  window.handleMiniPlayerClick = function(event) {
+    if (event) event.stopPropagation();
+    const M = albums.length;
+    if (!M) return;
+    let targetIdx = ((Math.round(currentProgress) % M) + M) % M;
+    if (activeSong) {
+      const found = albums.findIndex(a => a.id === activeSong.id || a.title === activeSong.title);
+      if (found !== -1) targetIdx = found;
+    }
+    window.openSongDetailView(targetIdx);
   };
 
   window.toggleFullscreen = function() {
@@ -1717,8 +1991,14 @@ ${activeSong.lyrics}
   };
 
   window.selectSearchResult = function(realIdx) {
-    if (realIdx >= 0 && realIdx < albums.length) {
-      targetProgress = realIdx;
+    const M = albums.length;
+    if (realIdx >= 0 && realIdx < M) {
+      const curRound = Math.round(currentProgress);
+      const curMod = ((curRound % M) + M) % M;
+      let diff = realIdx - curMod;
+      if (diff > M / 2) diff -= M;
+      if (diff < -M / 2) diff += M;
+      targetProgress = curRound + diff;
       updateMetaBar();
       window.toggleSearch(false);
       window.showMorandiToast(`🎵 已定位到单曲：《${albums[realIdx].title}》`);

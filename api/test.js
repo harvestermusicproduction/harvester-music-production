@@ -1,7 +1,30 @@
+import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
 export default async function handler(req, res) {
+  if (req.method !== 'POST' && req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized: Missing Bearer token' });
+    }
+
+    const isCronSecret = Boolean(process.env.CRON_SECRET && token === process.env.CRON_SECRET);
+    if (!isCronSecret) {
+      const supabase = createClient(
+        process.env.SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY
+      );
+      const { data: userData, error: authErr } = await supabase.auth.getUser(token);
+      if (authErr || !userData?.user) {
+        return res.status(401).json({ error: 'Unauthorized: Invalid or expired session token' });
+      }
+    }
+
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const { data, error } = await resend.emails.send({
