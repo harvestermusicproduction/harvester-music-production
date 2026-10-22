@@ -1890,7 +1890,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <i class="fas fa-images"></i> 精彩活动 走廊海报多照片与属性管理 (${customPosters.length} 张展示中)
             </h3>
             <p style="margin:6px 0 0 0; color:#aaa; font-size:0.84rem; line-height:1.5;">
-              在此管理活动页面顶部<b>全宽走廊跑马灯展示的所有海报图片</b>及其属性（状态标签如 <span style="color:#ff6b81; font-weight:bold;">HOT</span>、<span style="color:#2ed573; font-weight:bold;">报名中</span>、日期、地点、标题、跳转链接）。可上传多张照片、自由调整先后顺序。
+              在此管理活动页面顶部<b>全宽走廊跑马灯展示的所有海报图片</b>及其属性（状态标签如 <span style="color:#ff6b81; font-weight:bold;">HOT</span>、<span style="color:#2ed573; font-weight:bold;">开放参与</span>、日期、地点、标题、跳转链接）。可上传多张照片、自由调整先后顺序。
             </p>
           </div>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">

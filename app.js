@@ -709,8 +709,6 @@ document.addEventListener('DOMContentLoaded', () => {
       let actionHtml = '';
       if (isCancelled) {
         actionHtml = `<span class="event-strip-disabled">已取消</span>`;
-      } else {
-        actionHtml = `<a href="event.html?id=${e.id}" class="event-strip-link">查看详情 <i class="fas fa-angle-right" style="font-size:0.8rem; margin-left:3px;"></i></a>`;
       }
 
       const safeTitle = (e.cleanTitle || e.title || "").replace(/'/g, "\\'");
@@ -723,6 +721,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="event-month-year">
               <span class="event-month">${e.month}</span>
               <span class="event-year">${e.year}</span>
+              <span class="event-time-badge"><i class="fas fa-clock"></i> ${e.timeStr || '20:00 - 22:00'}</span>
             </div>
           </div>
 
@@ -882,17 +881,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    if (galleryItems.length === 0 && events && events.length > 0) {
+    if (galleryItems.length <= 1 && events && events.length > 0) {
       events.forEach(e => {
-        if (e.image_url && !galleryItems.some(item => item.image_url === e.image_url || item.title === e.title)) {
+        if (e.image_url && !galleryItems.some(item => (item.id && item.id === e.id) || (item.title && (item.title === e.cleanTitle || item.title === e.title)))) {
           galleryItems.push({
             id: e.id,
             title: e.cleanTitle || e.title,
             image_url: e.image_url,
-            date: e.dateStr || `${e.year || '2025'}.${e.month || ''}.${e.day || ''}`,
+            date: e.dateStr || `${e.year || '2026'}.${e.month || ''}.${e.day || ''}`,
             time: e.timeStr || '',
             venue: e.location || '线下敬拜现场',
-            statusTag: e.statusTag || 'UPCOMING',
+            statusTag: e.statusTag || '即将来临 ⏳',
             link: `event.html?id=${e.id}`
           });
         }
