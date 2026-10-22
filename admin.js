@@ -5729,13 +5729,6 @@ document.addEventListener('DOMContentLoaded', () => {
       'about_cat4_t', 'about_cat4_te', 'about_cat4_d1', 'about_cat4_d2', 'about_cat4_img',
 
       'about_team_main_title', 'about_team_subtitle',
-      'about_team_r1_t', 'about_team_r1_te', 'about_team_r1_names', 'about_team_r1_img',
-      'about_team_r2_t', 'about_team_r2_te', 'about_team_r2_names', 'about_team_r2_img',
-      'about_team_r3_t', 'about_team_r3_te', 'about_team_r3_names', 'about_team_r3_img',
-      'about_team_r4_t', 'about_team_r4_te', 'about_team_r4_names', 'about_team_r4_img',
-      'about_team_r5_t', 'about_team_r5_te', 'about_team_r5_names', 'about_team_r5_img',
-      'about_team_r6_t', 'about_team_r6_te', 'about_team_r6_names', 'about_team_r6_img',
-      'about_team_r7_t', 'about_team_r7_te', 'about_team_r7_names', 'about_team_r7_names_en', 'about_team_r7_img',
       'about_pastoral_title', 'about_pastoral_subtitle', 'about_pastoral_img',
       'about_pastoral_adv_title', 'about_pastoral_adv_desc', 'about_pastoral_adv_desc_en',
       'about_pastoral_sup_title', 'about_pastoral_sup_r1', 'about_pastoral_sup_r2', 'about_pastoral_sup_r3', 'about_pastoral_sup_en',
@@ -5745,20 +5738,34 @@ document.addEventListener('DOMContentLoaded', () => {
       'about_pos_p2_t', 'about_pos_p2_d', 'about_pos_p2_de'
     ];
 
-    const payload = {};
-    for (let k of keys) {
-      const el = document.getElementById('in_' + k);
-      if (el) payload[k] = el.value;
-    }
-
     try {
-      // 1. Save JSON bundle
+      // 1. Fetch & parse existing cfg_about_content_json so about_team_list and any other co-worker keys are preserved!
+      let existingAboutData = {};
+      const { data: existingCfg } = await db.from('site_config').select('value').eq('key', 'cfg_about_content_json').maybeSingle();
+      if (existingCfg?.value) {
+        try {
+          existingAboutData = typeof existingCfg.value === 'string' ? JSON.parse(existingCfg.value) : existingCfg.value;
+        } catch(e) { console.warn("Parse existing cfg_about_content_json error:", e); }
+      }
+
+      const updatedFields = {};
+      for (let k of keys) {
+        const el = document.getElementById('in_' + k);
+        if (el) updatedFields[k] = el.value;
+      }
+
+      const mergedPayload = {
+        ...existingAboutData,
+        ...updatedFields
+      };
+
+      // 2. Save merged JSON bundle
       await db.from('site_config').upsert({
         key: 'cfg_about_content_json',
-        value: JSON.stringify(payload)
+        value: JSON.stringify(mergedPayload)
       }, { onConflict: 'key' });
 
-      // 2. Save media & text
+      // 3. Save media & text
       const vEl = document.getElementById('in_about_video');
       if (vEl) await db.from('site_config').upsert({ key: 'cfg_about_video', value: vEl.value }, { onConflict: 'key' });
 
@@ -5768,17 +5775,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const tEl = document.getElementById('in_about_text');
       if (tEl) await db.from('site_config').upsert({ key: 'cfg_about_text', value: tEl.value }, { onConflict: 'key' });
 
-      alert("🎉 关于我们所有文案与配图已成功保存并实时生效！");
+      window.showAdminToast("🎉 关于我们所有文案与配图已成功保存并实时生效！", "success");
       renderCMS();
     } catch(err) {
-      alert("保存失败: " + err.message);
+      window.showAdminToast("保存失败: " + err.message, "error");
     }
   };
 
   // --- ⚙️ CONFIG MODULE ---
   async function renderConfig(container) {
     const { data: configs } = await db.from('site_config').select('*');
-    const c = configs.reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
+    const c = (configs || []).reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
     
     container.innerHTML = `
       <h1 style="color:var(--gold); margin-bottom:2rem;">全站内容管理 (CMS Configuration)</h1>
@@ -5794,14 +5801,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <div style="margin-bottom:15px;">
             <label>联系我们邮箱 (Contact Email)</label>
-            <input type="text" id="cfg_contact_email" value="${c['cfg_contact_email']||''}" style="width:100%; background:#222; border:1px solid #444; color: #F6F4F0; padding:8px; border-radius:4px;">
+            <input type="text" id="cfg_contact_email" value="${escAttr(c['cfg_contact_email'] || c['cfg_official_email'] || '')}" style="width:100%; background:#222; border:1px solid #444; color: #F6F4F0; padding:8px; border-radius:4px;">
           </div>
 
           <div style="margin-bottom:15px; padding-top:15px; border-top:1px solid #222;">
             <h4 style="margin-bottom:10px;">社交媒体链接 (Social Links)</h4>
-            <label style="font-size:0.7rem; color:#666;">Facebook URL (Global)</label><input type="text" id="cfg_social_fb" value="${c['cfg_social_fb']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
-            <label style="font-size:0.7rem; color:#666;">Instagram URL</label><input type="text" id="cfg_social_ig" value="${c['cfg_social_ig']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
-            <label style="font-size:0.7rem; color:#666;">YouTube URL</label><input type="text" id="cfg_social_yt" value="${c['cfg_social_yt']||''}" style="width:100%; background:#222; border:1px solid #444; color: #F6F4F0;">
+            <label style="font-size:0.75rem; color:#a0a0a0;">Facebook URL (Global)</label><input type="text" id="cfg_social_fb" value="${escAttr(c['cfg_social_fb'] || c['cfg_nav_fb'] || '')}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
+            <label style="font-size:0.75rem; color:#a0a0a0;">Instagram URL</label><input type="text" id="cfg_social_ig" value="${escAttr(c['cfg_social_ig'] || c['cfg_nav_ig'] || '')}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
+            <label style="font-size:0.75rem; color:#a0a0a0;">YouTube URL</label><input type="text" id="cfg_social_yt" value="${escAttr(c['cfg_social_yt'] || c['cfg_nav_yt'] || '')}" style="width:100%; background:#222; border:1px solid #444; color: #F6F4F0;">
           </div>
 
           <button class="btn btn-submit" style="margin-top:15px; width:100%;" onclick="saveAllConfigs()">更新设置与文案</button>
@@ -5813,11 +5820,11 @@ document.addEventListener('DOMContentLoaded', () => {
           
           <div style="margin-bottom:15px;">
             <label>银行名称 (Bank Name)</label>
-            <input type="text" id="cfg_support_bank" value="${c['cfg_support_bank']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
+            <input type="text" id="cfg_support_bank" value="${escAttr(c['cfg_support_bank']||'')}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
             <label>银行账号 (Account No.)</label>
-            <input type="text" id="cfg_support_acc_no" value="${c['cfg_support_acc_no']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
+            <input type="text" id="cfg_support_acc_no" value="${escAttr(c['cfg_support_acc_no']||'')}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
             <label>户名 (Account Name)</label>
-            <input type="text" id="cfg_support_acc_name" value="${c['cfg_support_acc_name']||''}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
+            <input type="text" id="cfg_support_acc_name" value="${escAttr(c['cfg_support_acc_name']||'')}" style="width:100%; margin-bottom:10px; background:#222; border:1px solid #444; color: #F6F4F0;">
           </div>
 
           <div style="margin-bottom:15px; padding-top:15px; border-top:1px solid #222;">
@@ -5825,7 +5832,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <img id="prev_qr" src="${c['cfg_support_qr']||''}" style="width:120px; height:120px; object-fit:contain; background:#fff; border-radius:4px; margin:5px 0; display:block;">
             <input type="file" id="f_qr">
             <button class="btn-tiny" style="margin-top:5px; width:100%;" onclick="uploadFile('f_qr', 'url_qr', 'prev_qr')">上传 QR Code</button>
-            <input type="hidden" id="url_qr" value="${c['cfg_support_qr']||''}">
+            <input type="hidden" id="url_qr" value="${escAttr(c['cfg_support_qr']||'')}">
           </div>
 
           <button class="btn btn-submit" style="margin-top:15px; width:100%;" onclick="saveSupportInfo()">保存支持信息</button>
@@ -5841,12 +5848,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <video id="prev_about_v" src="${c['cfg_about_video']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0; background:#000;" muted loop playsinline controls></video>
             <input type="file" id="f_about_v">
             <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_about_v', 'url_about_v', 'prev_about_v')">上传视频</button>
-            <input type="hidden" id="url_about_v" value="${c['cfg_about_video']||''}">
+            <input type="hidden" id="url_about_v" value="${escAttr(c['cfg_about_video']||'')}">
           </div>
 
           <div class="banner-edit-item" style="grid-column: 1 / -1; border-top: 1px solid #222; padding-top: 15px;">
             <label style="color:var(--gold);"><i class="fas fa-bookmark"></i> 视频章节标记 (Video Chapters JSON)</label>
-            <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">请输入 JSON 数组。例如: <code>[{"t":0, "title":"开场"}, {"t":60, "title":"核心愿景"}]</code></p>
+            <p style="font-size:0.7rem; color:#888; margin-bottom:8px;">请输入 JSON 数组。例如: <code>[{"t":0, "title":"开场"}, {"t":60, "title":"核心愿景"}]</code></p>
             <textarea id="cfg_about_video_chapters" style="width:100%; height:80px; background:#0a0a0a; border:1px solid #333; color:var(--gold); font-family:monospace; padding:10px; font-size:0.8rem;">${c['cfg_about_video_chapters'] || '[{"t":0,"title":"开始"}]'}</textarea>
           </div>
 
@@ -5855,7 +5862,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <img id="prev_contact" src="${c['cfg_contact_banner']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0;">
             <input type="file" id="f_contact">
             <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_contact', 'url_contact', 'prev_contact')">上传背景</button>
-            <input type="hidden" id="url_contact" value="${c['cfg_contact_banner']||''}">
+            <input type="hidden" id="url_contact" value="${escAttr(c['cfg_contact_banner']||'')}">
           </div>
 
           <div class="banner-edit-item">
@@ -5863,7 +5870,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <img id="prev_events_banner" src="${c['cfg_events_banner']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0; background:#000;">
             <input type="file" id="f_events_banner">
             <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_events_banner', 'url_events_banner', 'prev_events_banner')">上传活动海报</button>
-            <input type="hidden" id="url_events_banner" value="${c['cfg_events_banner']||''}">
+            <input type="hidden" id="url_events_banner" value="${escAttr(c['cfg_events_banner']||'')}">
           </div>
 
           <div class="banner-edit-item">
@@ -5871,31 +5878,31 @@ document.addEventListener('DOMContentLoaded', () => {
             <img id="prev_submit" src="${c['cfg_submit_poster']||''}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin:10px 0;">
             <input type="file" id="f_submit">
             <button class="btn-tiny" style="width:100%; margin-top:5px;" onclick="uploadFile('f_submit', 'url_submit', 'prev_submit')">上传海报</button>
-            <input type="hidden" id="url_submit" value="${c['cfg_submit_poster']||''}">
+            <input type="hidden" id="url_submit" value="${escAttr(c['cfg_submit_poster']||'')}">
           </div>
 
           <div class="banner-edit-item" style="grid-column: 1 / -1; border-top: 1px solid #222; padding-top: 15px; margin-top:20px;">
             <label style="color:var(--gold);"><i class="fas fa-search"></i> Google 搜索关键词 (SEO Keywords)</label>
-            <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">用逗号隔开。例如: <code>收割机音乐, CCM, 基督教, 赞美诗</code></p>
-            <input type="text" id="cfg_site_keywords" value="${c['cfg_site_keywords']||''}" style="width:100%; background:#0a0a0a; border:1px solid #333; color:var(--gold); padding:10px; border-radius:4px;">
+            <p style="font-size:0.7rem; color:#888; margin-bottom:8px;">用逗号隔开。例如: <code>收割机音乐, CCM, 基督教, 赞美诗</code></p>
+            <input type="text" id="cfg_site_keywords" value="${escAttr(c['cfg_site_keywords']||'')}" style="width:100%; background:#0a0a0a; border:1px solid #333; color:var(--gold); padding:10px; border-radius:4px;">
           </div>
 
           <div class="banner-edit-item" style="grid-column: 1 / -1; border-top: 1px solid #222; padding-top: 15px;">
             <label style="color:var(--gold);"><i class="fas fa-id-card"></i> 搜索结果显示的网站简介 (Meta Description)</label>
-            <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">这段话将出现在 Google 搜索结果的标题下方。</p>
+            <p style="font-size:0.7rem; color:#888; margin-bottom:8px;">这段话将出现在 Google 搜索结果的标题下方。</p>
             <textarea id="cfg_site_description" style="width:100%; height:60px; background:#0a0a0a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:4px; font-size:0.85rem;">${c['cfg_site_description']||''}</textarea>
           </div>
 
           <div class="banner-edit-item" style="margin-top:20px; border-top:1px solid #222; padding-top:15px; grid-column: 1 / -1;">
              <label style="color:var(--gold);"><i class="fas fa-edit"></i> 投稿页面说明文字 (Submit Terms Text)</label>
-             <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">支持多行输入。换行将自动转换为 HTML &lt;br&gt;</p>
+             <p style="font-size:0.7rem; color:#888; margin-bottom:8px;">支持多行输入。换行将自动转换为 HTML &lt;br&gt;</p>
              <textarea id="cfg_submit_text" style="width:100%; height:120px; background:#0a0a0a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:4px; font-size:0.85rem; line-height:1.6;">${c['cfg_submit_text']||''}</textarea>
           </div>
 
           <div class="banner-edit-item" style="margin-top:20px; border-top:1px solid #222; padding-top:15px; grid-column: 1 / -1;">
             <label style="color:var(--gold);"><i class="fas fa-link"></i> 投稿按钮跳转链接 (Submit Button URL)</label>
-            <p style="font-size:0.7rem; color:#666; margin-bottom:8px;">点击“我要投稿”后跳转的页面地址</p>
-            <input type="text" id="cfg_submit_btn_link" value="${c['cfg_submit_btn_link']||''}" placeholder="https://..." style="width:100%; background:#0a0a0a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:4px;">
+            <p style="font-size:0.7rem; color:#888; margin-bottom:8px;">点击“我要投稿”后跳转的页面地址</p>
+            <input type="text" id="cfg_submit_btn_link" value="${escAttr(c['cfg_submit_btn_link']||'')}" placeholder="https://..." style="width:100%; background:#0a0a0a; border:1px solid #333; color: #F6F4F0; padding:10px; border-radius:4px;">
           </div>
         </div>
         <button class="btn btn-submit" style="margin-top:25px;" onclick="saveBanners()">保存所有媒体配置</button>
@@ -5904,16 +5911,35 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.saveAllConfigs = async() => {
-    const keys = ['cfg_about_text', 'cfg_contact_email', 'cfg_social_fb', 'cfg_social_ig', 'cfg_social_yt'];
-    for(let k of keys) {
-      const el = document.getElementById(k);
-      if(el) {
-        await db.from('site_config').upsert({key: k, value: el.value}, {onConflict: 'key'});
+    const aboutText = document.getElementById('cfg_about_text')?.value || '';
+    const emailVal = document.getElementById('cfg_contact_email')?.value.trim() || '';
+    const fbVal = document.getElementById('cfg_social_fb')?.value.trim() || '';
+    const igVal = document.getElementById('cfg_social_ig')?.value.trim() || '';
+    const ytVal = document.getElementById('cfg_social_yt')?.value.trim() || '';
+
+    const upserts = [
+      { key: 'cfg_about_text', value: aboutText },
+      { key: 'cfg_contact_email', value: emailVal },
+      { key: 'cfg_official_email', value: emailVal },
+      { key: 'cfg_social_fb', value: fbVal },
+      { key: 'cfg_nav_fb', value: fbVal },
+      { key: 'cfg_social_ig', value: igVal },
+      { key: 'cfg_nav_ig', value: igVal },
+      { key: 'cfg_social_yt', value: ytVal },
+      { key: 'cfg_nav_yt', value: ytVal }
+    ];
+
+    try {
+      for (const item of upserts) {
+        await db.from('site_config').upsert(item, { onConflict: 'key' });
       }
+      window.showAdminToast("🎉 配置已更新成功！您的全站设置已同步生效。", "success");
+      renderCMS();
+    } catch (err) {
+      window.showAdminToast("保存配置失败: " + err.message, "error");
     }
-    alert("配置已更新成功! 您的设计选择已生效。");
-    renderCMS();
   };
+  window.saveConfig = window.saveAllConfigs;
 
   window.saveSupportInfo = async() => {
     const data = [
@@ -5922,10 +5948,14 @@ document.addEventListener('DOMContentLoaded', () => {
       {k: 'cfg_support_acc_name', v: document.getElementById('cfg_support_acc_name').value},
       {k: 'cfg_support_qr', v: document.getElementById('url_qr').value}
     ];
-    for(let item of data) {
-      await db.from('site_config').upsert({key: item.k, value: item.v}, {onConflict: 'key'});
+    try {
+      for(let item of data) {
+        await db.from('site_config').upsert({key: item.k, value: item.v}, {onConflict: 'key'});
+      }
+      window.showAdminToast("🎉 支持信息（银行/QR Code）更新成功!", "success");
+    } catch(err) {
+      window.showAdminToast("保存失败: " + err.message, "error");
     }
-    alert("支持信息（银行/QR Code）更新成功!");
   };
 
   window.saveBanners = async() => {
@@ -5940,10 +5970,14 @@ document.addEventListener('DOMContentLoaded', () => {
       {k: 'cfg_site_keywords', v: document.getElementById('cfg_site_keywords').value},
       {k: 'cfg_site_description', v: document.getElementById('cfg_site_description').value}
     ];
-    for(let b of banners) {
-      await db.from('site_config').upsert({key: b.k, value: b.v}, {onConflict: 'key'});
+    try {
+      for(let b of banners) {
+        await db.from('site_config').upsert({key: b.k, value: b.v}, {onConflict: 'key'});
+      }
+      window.showAdminToast("🎉 所有页面海报及背景图更新成功!", "success");
+    } catch(err) {
+      window.showAdminToast("保存失败: " + err.message, "error");
     }
-    alert("所有页面海报及背景图更新成功!");
   };
 
   // --- 📂 DIARY MODULE ---
@@ -6008,11 +6042,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ${albums.map(a => {
           const photoCount = (a.photos && Array.isArray(a.photos)) ? a.photos.length : 0;
           return `
-          <div style="background:#141414; padding:20px; border-radius:14px; border:1px solid #282828; position:relative; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 8px 24px rgba(0,0,0,0.5); transition:transform 0.25s, border-color 0.25s;" onmouseover="this.style.borderColor='rgba(246,210,138,0.45)'" onmouseout="this.style.borderColor='#282828'">
+          <div style="background:#141414; padding:20px; border-radius:14px; border:1px solid #282828; position:relative; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 8px 24px rgba(0,0,0,0.5); transition:transform 0.25s, border-color 0.25s;" onmouseover="this.style.borderColor='rgba(212,175,55,0.45)'" onmouseout="this.style.borderColor='#282828'">
             <div>
               <div style="position:relative; width:100%; aspect-ratio:1.6/1; border-radius:10px; overflow:hidden; margin-bottom:15px; border:1px solid #333; background:#080808;">
                 <img src="${a.cover_url || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80'}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
-                <span style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); color:var(--gold); font-size:0.75rem; font-weight:bold; padding:4px 10px; border-radius:50px; border:1px solid rgba(246,210,138,0.3);">
+                <span style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); color:var(--gold); font-size:0.75rem; font-weight:bold; padding:4px 10px; border-radius:50px; border:1px solid rgba(212,175,55,0.3);">
                   📷 ${photoCount} 张照片
                 </span>
               </div>
@@ -6063,8 +6097,8 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div style="display:flex; flex-direction:column; gap:8px;">
             <input type="file" id="daf_up" accept="image/*" style="font-size:0.8rem; color:#888;">
-            <button class="btn-tiny" style="width:100%; padding:7px; background:rgba(246,210,138,0.15); border-color:var(--gold); color:var(--gold); font-weight:600;" onclick="uploadFile('daf_up', 'da_url', 'da_prev')">📤 上传相册封面图</button>
-            <input type="text" id="da_url" value="${a?.cover_url || ''}" placeholder="或直接粘贴封面图片 URL 链接..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#eee; border-radius:4px; font-size:0.8rem;" oninput="document.getElementById('da_prev').src = this.value.trim() || 'assets/logo.png'">
+            <button class="btn-tiny" style="width:100%; padding:7px; background:rgba(212,175,55,0.15); border-color:var(--gold); color:var(--gold); font-weight:600;" onclick="uploadFile('daf_up', 'da_url', 'da_prev')">📤 上传相册封面图</button>
+            <input type="text" id="da_url" value="${escAttr(a?.cover_url || '')}" placeholder="或直接粘贴封面图片 URL 链接..." style="width:100%; padding:8px 10px; background:#181818; border:1px solid #333; color:#eee; border-radius:4px; font-size:0.8rem;" oninput="document.getElementById('da_prev').src = this.value.trim() || 'assets/logo.png'">
           </div>
 
           <!-- 🎚️ 相册封面焦点与裁剪调整 -->
@@ -6083,23 +6117,23 @@ document.addEventListener('DOMContentLoaded', () => {
         <!-- 相册名称与日期 -->
         <div style="margin-bottom:15px;">
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">相册名称 (Album Name)</label>
-          <input type="text" id="da_title" value="${a?.title || ''}" placeholder="例如：2026 巴生谷田野调查与敬拜瞬间" style="width:100%; padding:10px;">
+          <input type="text" id="da_title" value="${escAttr(a?.title || '')}" placeholder="例如：2026 巴生谷田野调查与敬拜瞬间" style="width:100%; padding:10px;">
         </div>
 
         <div style="margin-bottom:15px;">
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">相册日期 (Album Date)</label>
-          <input type="date" id="da_date" value="${a?.date || new Date().toISOString().split('T')[0]}" style="width:100%; padding:10px;">
+          <input type="date" id="da_date" value="${escAttr(a?.date || new Date().toISOString().split('T')[0])}" style="width:100%; padding:10px;">
         </div>
 
         <!-- Facebook 关联相册链接 -->
         <div style="margin-bottom:20px;">
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem; font-weight:600;">Facebook 相册链接 (Social Link - 可选)</label>
-          <input type="text" id="da_fb" value="${a?.fb_url || ''}" placeholder="https://www.facebook.com/media/set/?set=..." style="width:100%; padding:10px;">
+          <input type="text" id="da_fb" value="${escAttr(a?.fb_url || '')}" placeholder="https://www.facebook.com/media/set/?set=..." style="width:100%; padding:10px;">
         </div>
 
         ${!isEdit ? `
           <!-- 新建时可选：直接选择第一批照片 -->
-          <div style="margin-bottom:20px; background:#161616; padding:15px; border-radius:10px; border:1px dashed rgba(246,210,138,0.3);">
+          <div style="margin-bottom:20px; background:#161616; padding:15px; border-radius:10px; border:1px dashed rgba(212,175,55,0.3);">
             <label style="display:block; margin-bottom:5px; color:var(--gold); font-size:0.8rem; font-weight:600;">
               ✨ 一键顺便上传第一批相册照片 (可选)
             </label>
@@ -6119,14 +6153,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.saveDiaryAlbum = async(id) => {
     const btn = document.getElementById('btnSaveDiaryAlbum');
-    const origText = btn ? btn.innerText : '保存';
     const title = document.getElementById('da_title')?.value.trim();
     let date = document.getElementById('da_date')?.value.trim();
     const coverUrl = document.getElementById('da_url')?.value.trim();
     const fbUrl = document.getElementById('da_fb')?.value.trim() || '';
     const multiFiles = document.getElementById('daf_multi_create')?.files;
 
-    if(!title) return alert("请输入相册名称");
+    if(!title) return window.showAdminToast("请输入相册名称", "info");
     if(!date) date = new Date().toISOString().split('T')[0];
 
     if (btn) { btn.innerText = "⏳ 正在同步中..."; btn.disabled = true; }
@@ -6209,7 +6242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 关闭模态框并刷新
     if(document.getElementById('diaryAlbumModal')) document.getElementById('diaryAlbumModal').remove();
-    alert("✅ 相册已成功保存！");
+    window.showAdminToast("✅ 相册已成功保存！", "success");
     renderCMS();
   };
 
@@ -6232,10 +6265,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      alert("✅ Facebook 链接已成功同步！");
+      window.showAdminToast("✅ Facebook 链接已成功同步！", "success");
       renderCMS();
     } catch(e) {
-      alert("同步失败：" + e.message);
+      window.showAdminToast("同步失败：" + e.message, "error");
     }
   };
   
@@ -6268,6 +6301,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    const existingModal = document.getElementById('photoManagerModal');
+    if (existingModal) existingModal.remove();
+
     const modal = document.createElement('div');
     modal.id = 'photoManagerModal';
     modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(12px); padding:20px;";
@@ -6281,18 +6317,18 @@ document.addEventListener('DOMContentLoaded', () => {
               <span>📷</span> 照片管理 ·《${album?.title || '未命名相册'}》
             </h2>
             <p style="color:#888; font-size:0.8rem; margin:4px 0 0 0;">
-              当前相册共有 <b id="photoCountHeader" style="color:var(--gold);">${allPhotos.length}</b> 张照片 · 支持批量上传与拖拽选择多图
+              当前相册共有 <b id="photoCountHeader" style="color:var(--gold);">${allPhotos.length}</b> 张照片 · 支持批量上传、拖拽选择与批量删除
             </p>
           </div>
           <button class="btn-tiny" style="padding:6px 14px; font-size:0.85rem;" onclick="this.closest('#photoManagerModal').remove(); renderCMS();">✕ 完成并关闭</button>
         </div>
 
         <!-- 🌟 Upload Area with Drag-and-Drop & Multi-select -->
-        <div id="diaryDropZone" style="background:#0a0a0a; padding:24px 20px; border-radius:14px; text-align:center; margin-bottom:20px; border:2px dashed rgba(246,210,138,0.35); transition:all 0.3s ease; position:relative; cursor:pointer;"
+        <div id="diaryDropZone" style="background:#0a0a0a; padding:24px 20px; border-radius:14px; text-align:center; margin-bottom:20px; border:2px dashed rgba(212,175,55,0.35); transition:all 0.3s ease; position:relative; cursor:pointer;"
              onclick="document.getElementById('d_up_multi').click();"
-             ondragover="event.preventDefault(); this.style.borderColor='var(--gold)'; this.style.background='rgba(246,210,138,0.08)';"
-             ondragleave="this.style.borderColor='rgba(246,210,138,0.35)'; this.style.background='#0a0a0a';"
-             ondrop="event.preventDefault(); this.style.borderColor='rgba(246,210,138,0.35)'; this.style.background='#0a0a0a'; handleDiaryFilesDrop(event, '${id}');">
+             ondragover="event.preventDefault(); this.style.borderColor='var(--gold)'; this.style.background='rgba(212,175,55,0.08)';"
+             ondragleave="this.style.borderColor='rgba(212,175,55,0.35)'; this.style.background='#0a0a0a';"
+             ondrop="event.preventDefault(); this.style.borderColor='rgba(212,175,55,0.35)'; this.style.background='#0a0a0a'; handleDiaryFilesDrop(event, '${id}');">
            
            <div style="font-size:2.2rem; margin-bottom:6px;">📤</div>
            <p style="color: #F6F4F0; font-size:0.95rem; margin:0 0 6px 0; font-weight:600;">
@@ -6324,7 +6360,7 @@ document.addEventListener('DOMContentLoaded', () => {
               🔗 批量粘贴图片链接快速加入相册
             </label>
             <textarea id="d_urls_batch" placeholder="可粘贴多行图片链接，每行一个 URL..." style="width:100%; height:60px; font-size:0.75rem; padding:8px; background:#080808; border:1px solid #333; color:#eee; border-radius:4px; margin-bottom:8px; resize:none;"></textarea>
-            <button class="btn-tiny" style="width:100%; padding:6px; background:rgba(246,210,138,0.1); border-color:var(--gold); color:var(--gold);" onclick="batchAddPhotoUrls('${id}')">
+            <button class="btn-tiny" style="width:100%; padding:6px; background:rgba(212,175,55,0.1); border-color:var(--gold); color:var(--gold);" onclick="batchAddPhotoUrls('${id}')">
               ➕ 批量导入链接照片
             </button>
           </div>
@@ -6335,7 +6371,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <label style="display:block; margin-bottom:6px; color:#1877F2; font-size:0.78rem; font-weight:600;">
                 <i class="fab fa-facebook"></i> 关联 Facebook 相册外链 (Social Cross-post)
               </label>
-              <input type="text" id="da_fb_instant" value="${album?.fb_url || ''}" placeholder="https://www.facebook.com/media/set/..." style="width:100%; padding:8px; font-size:0.75rem; background:#080808; border:1px solid #333; color:#eee; border-radius:4px; margin-bottom:8px;">
+              <input type="text" id="da_fb_instant" value="${escAttr(album?.fb_url || '')}" placeholder="https://www.facebook.com/media/set/..." style="width:100%; padding:8px; font-size:0.75rem; background:#080808; border:1px solid #333; color:#eee; border-radius:4px; margin-bottom:8px;">
             </div>
             <button class="btn-tiny" onclick="saveDiaryAlbumMinimal('${id}')" style="width:100%; padding:6px; background:#1877F2; color:#fff; border:none;">
               💾 保存 FB 链接
@@ -6343,12 +6379,15 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- 🌟 Photos Grid -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <!-- 🌟 Photos Grid & Batch Action Toolbar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
           <h4 style="margin:0; color:#ddd; font-size:0.9rem;">
             相册内所有相片列表 (共 <span id="photoCountBadge">${allPhotos.length}</span> 张)
           </h4>
-          <span style="font-size:0.72rem; color:#888;">💡 点击「⭐ 设为封面」可随时更换相册主展示图</span>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn-tiny" onclick="toggleSelectAllDiaryPhotos()" style="padding:5px 12px; font-size:0.75rem;">☑️ 全选 / 取消全选</button>
+            <button type="button" class="btn-tiny danger" onclick="batchDeleteDiaryPhotos('${id}')" style="padding:5px 12px; font-size:0.75rem;">🗑️ 删除选中照片</button>
+          </div>
         </div>
 
         <div id="photoGridCMS" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(135px, 1fr)); gap:12px; max-height:420px; overflow-y:auto; padding-right:4px;">
@@ -6359,8 +6398,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <div id="photo_card_${p.id || pIdx}" style="position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:${isCover ? '2px solid var(--gold)' : '1px solid #333'}; background:#080808; box-shadow:0 4px 12px rgba(0,0,0,0.5);">
               <img src="${optimized}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
               
-              <!-- Index Badge -->
-              <span style="position:absolute; top:4px; left:4px; background:rgba(0,0,0,0.7); color:#ccc; font-size:0.65rem; padding:1px 5px; border-radius:3px;">#${pIdx + 1}</span>
+              <!-- Select Checkbox + Index Badge -->
+              <label style="position:absolute; top:4px; left:4px; background:rgba(0,0,0,0.78); color:#ccc; font-size:0.65rem; padding:2px 6px; border-radius:4px; display:flex; align-items:center; gap:4px; cursor:pointer; margin:0; z-index:2;">
+                <input type="checkbox" class="diary-photo-batch-cb" data-photo-id="${escAttr(p.id || '')}" data-media-url="${escAttr(optimized)}" style="width:13px; height:13px; accent-color:var(--gold); cursor:pointer; margin:0;">
+                <span>#${pIdx + 1}</span>
+              </label>
 
               <!-- Cover Badge -->
               ${isCover ? `<span style="position:absolute; bottom:4px; left:4px; background:var(--gold); color:#000; font-size:0.62rem; font-weight:bold; padding:1px 5px; border-radius:3px;">封面</span>` : ''}
@@ -6368,7 +6410,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <!-- Action buttons overlay -->
               <div style="position:absolute; top:4px; right:4px; display:flex; gap:3px;">
                 ${!isCover ? `<button onclick="setAlbumCover('${id}', '${optimized.replace(/'/g, "\\'")}', this)" style="background:rgba(0,0,0,0.75); border:1px solid #555; color:var(--gold); border-radius:4px; padding:2px 5px; cursor:pointer; font-size:0.65rem;" title="设为此相册封面">⭐ 封面</button>` : ''}
-                <button onclick="deleteDiaryPhoto('${p.id || ''}', '${optimized.replace(/'/g, "\\'")}', '${id}', this)" style="background:rgba(255,0,0,0.85); border:none; color:#fff; border-radius:4px; width:22px; height:22px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center;" title="删除此照片">✕</button>
+                <button onclick="deleteDiaryPhoto('${p.id || ''}', '${optimized.replace(/'/g, "\\'")}', '${id}', this)" style="background:rgba(230,57,70,0.9); border:none; color:#fff; border-radius:4px; width:22px; height:22px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center;" title="删除此照片">✕</button>
               </div>
             </div>
           `;}).join('') || '<p id="emptyPhotoNotice" style="grid-column:1/-1; text-align:center; opacity:0.5; padding:3rem 0; font-size:0.9rem;">此相册暂无照片，请使用上方拖拽或点击上传多张照片。</p>'}
@@ -6377,6 +6419,69 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
     document.body.appendChild(modal);
+  };
+
+  window.toggleSelectAllDiaryPhotos = () => {
+    const cbs = Array.from(document.querySelectorAll('.diary-photo-batch-cb'));
+    if (cbs.length === 0) return;
+    const allChecked = cbs.every(cb => cb.checked);
+    cbs.forEach(cb => { cb.checked = !allChecked; });
+  };
+
+  window.batchDeleteDiaryPhotos = async (aid) => {
+    const checked = Array.from(document.querySelectorAll('.diary-photo-batch-cb:checked'));
+    if (checked.length === 0) {
+      window.showAdminToast("请先勾选要删除的照片", "info");
+      return;
+    }
+    if (!confirm(`确定批量删除选中的 ${checked.length} 张照片吗？`)) return;
+
+    const urlsToRemove = new Set();
+    const idsToRemove = new Set();
+
+    for (const cb of checked) {
+      const pid = cb.getAttribute('data-photo-id');
+      const murl = cb.getAttribute('data-media-url');
+      if (pid) idsToRemove.add(pid);
+      if (murl) urlsToRemove.add(murl);
+
+      try {
+        if (pid && !pid.startsWith('photo_')) {
+          await db.from('diary_media').delete().eq('id', pid);
+        } else if (murl) {
+          await db.from('diary_media').delete().eq('media_url', murl);
+        }
+      } catch(e){}
+
+      const card = cb.closest('[id^="photo_card_"]') || cb.parentElement?.parentElement;
+      if (card) card.remove();
+    }
+
+    try {
+      const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
+      if (cfg?.value) {
+        let list = JSON.parse(cfg.value);
+        const aIdx = list.findIndex(x => String(x.id) === String(aid));
+        if (aIdx !== -1 && Array.isArray(list[aIdx].photos)) {
+          list[aIdx].photos = list[aIdx].photos.filter(p => {
+            const pUrl = typeof p === 'string' ? p : p.media_url;
+            const pId = typeof p === 'object' && p ? String(p.id) : '';
+            return !urlsToRemove.has(pUrl) && !(pId && idsToRemove.has(pId));
+          });
+          await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
+        }
+      }
+    } catch(e){}
+
+    const countBadge = document.getElementById('photoCountBadge');
+    const countH = document.getElementById('photoCountHeader');
+    const gridEl = document.getElementById('photoGridCMS');
+    if (gridEl) {
+      const newTotal = gridEl.querySelectorAll('img').length;
+      if (countBadge) countBadge.innerText = newTotal;
+      if (countH) countH.innerText = newTotal;
+    }
+    window.showAdminToast(`🗑️ 已成功批量删除 ${checked.length} 张照片！`, "success");
   };
 
   window.handleDiaryFilesSelected = (files, aid) => {
@@ -6392,7 +6497,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.uploadDiaryPhotosBatch = async (aid, files, updateUI = true) => {
     const imageFiles = files.filter(f => f.type.startsWith('image/'));
-    if (imageFiles.length === 0) return alert("请选择有效的图片文件");
+    if (imageFiles.length === 0) return window.showAdminToast("请选择有效的图片文件", "info");
 
     const statBox = document.getElementById('up_stat_box');
     const statText = document.getElementById('up_stat');
@@ -6456,13 +6561,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('photoGridCMS');
         if (grid && updateUI) {
           const photoDiv = document.createElement('div');
+          photoDiv.id = `photo_card_${photoItem.id}`;
           photoDiv.style = "position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #333; background:#080808; box-shadow:0 4px 12px rgba(0,0,0,0.5);";
           photoDiv.innerHTML = `
             <img src="${publicUrl}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
-            <span style="position:absolute; top:4px; left:4px; background:rgba(0,0,0,0.7); color:#ccc; font-size:0.65rem; padding:1px 5px; border-radius:3px;">新</span>
+            <label style="position:absolute; top:4px; left:4px; background:rgba(0,0,0,0.78); color:#ccc; font-size:0.65rem; padding:2px 6px; border-radius:4px; display:flex; align-items:center; gap:4px; cursor:pointer; margin:0; z-index:2;">
+              <input type="checkbox" class="diary-photo-batch-cb" data-photo-id="${escAttr(photoItem.id)}" data-media-url="${escAttr(publicUrl)}" style="width:13px; height:13px; accent-color:var(--gold); cursor:pointer; margin:0;">
+              <span>新</span>
+            </label>
             <div style="position:absolute; top:4px; right:4px; display:flex; gap:3px;">
               <button onclick="setAlbumCover('${aid}', '${publicUrl.replace(/'/g, "\\'")}', this)" style="background:rgba(0,0,0,0.75); border:1px solid #555; color:var(--gold); border-radius:4px; padding:2px 5px; cursor:pointer; font-size:0.65rem;" title="设为封面">⭐ 封面</button>
-              <button onclick="deleteDiaryPhoto('${photoItem.id}', '${publicUrl.replace(/'/g, "\\'")}', '${aid}', this)" style="background:rgba(255,0,0,0.85); border:none; color:#fff; border-radius:4px; width:22px; height:22px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center;" title="删除照片">✕</button>
+              <button onclick="deleteDiaryPhoto('${photoItem.id}', '${publicUrl.replace(/'/g, "\\'")}', '${aid}', this)" style="background:rgba(230,57,70,0.9); border:none; color:#fff; border-radius:4px; width:22px; height:22px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center;" title="删除照片">✕</button>
             </div>
           `;
           grid.appendChild(photoDiv);
@@ -6475,6 +6584,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (statText && updateUI) statText.innerText = `🎉 批量上传完成！已成功加入 ${successCount} 张照片。`;
+    if (updateUI) window.showAdminToast(`🎉 批量上传完成！已加入 ${successCount} 张照片。`, "success");
     const countBadge = document.getElementById('photoCountBadge');
     const countH = document.getElementById('photoCountHeader');
     const gridEl = document.getElementById('photoGridCMS');
@@ -6490,9 +6600,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.batchAddPhotoUrls = async (aid) => {
     const txt = document.getElementById('d_urls_batch')?.value.trim();
-    if (!txt) return alert("请输入图片链接（每行一个）");
+    if (!txt) return window.showAdminToast("请输入图片链接（每行一个）", "info");
     const urls = txt.split(/[\r\n,]+/).map(u => u.trim()).filter(u => u && (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('assets/')));
-    if (urls.length === 0) return alert("未识别到有效的图片链接");
+    if (urls.length === 0) return window.showAdminToast("未识别到有效的图片链接", "error");
 
     let count = 0;
     for (const url of urls) {
@@ -6523,7 +6633,7 @@ document.addEventListener('DOMContentLoaded', () => {
       count++;
     }
 
-    alert(`✅ 已成功批量导入 ${count} 张链接照片！`);
+    window.showAdminToast(`✅ 已成功批量导入 ${count} 张链接照片！`, "success");
     managePhotos(aid);
   };
 
@@ -6545,10 +6655,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      alert("⭐ 已成功将该照片设为相册封面！");
+      window.showAdminToast("⭐ 已成功将该照片设为相册封面！", "success");
       managePhotos(aid);
     } catch(e) {
-      alert("设置封面失败：" + e.message);
+      window.showAdminToast("设置封面失败：" + e.message, "error");
     }
   };
 
@@ -6589,6 +6699,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (countBadge) countBadge.innerText = newTotal;
       if (countH) countH.innerText = newTotal;
     }
+    window.showAdminToast("🗑️ 照片已删除", "info");
   };
 
   window.deleteItem = async(t, id) => {
@@ -6647,21 +6758,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch(e){}
     }
 
-    // 2. If deleting diary album, also remove from site_config cfg_diary_albums_json
-    if (t === 'diary_albums') {
-      try {
-        const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_diary_albums_json').maybeSingle();
-        if (cfg?.value) {
-          let list = JSON.parse(cfg.value);
-          if (Array.isArray(list)) {
-            list = list.filter(x => String(x.id) !== String(id));
-            await db.from('site_config').upsert({ key: 'cfg_diary_albums_json', value: JSON.stringify(list) }, { onConflict: 'key' });
-          }
-        }
-      } catch(e){}
-    }
-
-    // 3. If deleting music_works, also remove from site_config cfg_albums_custom_json
+    // 2. If deleting music_works, also remove from site_config cfg_albums_custom_json
     if (t === 'music_works') {
       try {
         const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_albums_custom_json').maybeSingle();
@@ -6675,7 +6772,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch(e){}
     }
 
-    // 4. If deleting singers, also clean up from cfg_singers_crop_json and cfg_hidden_singer_ids
+    // 3. If deleting singers, also clean up from cfg_singers_crop_json and cfg_hidden_singer_ids
     if (t === 'singers') {
       try {
         const { data: cfg } = await db.from('site_config').select('value').eq('key', 'cfg_singers_crop_json').maybeSingle();
@@ -6697,6 +6794,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch(e){}
     }
 
+    window.showAdminToast("🗑️ 已删除该记录", "info");
     renderCMS();
   };
 });
