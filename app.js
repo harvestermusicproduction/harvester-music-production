@@ -603,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event_time: "20:00 - 22:00",
       location: "马口教会",
       status_tag: "即将来临 ⏳",
-      image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg",
+      image_url: "",
       description: "收割机福音巡回前往森美兰马口教会，分享音乐创作历程与神恩典奇妙作为。",
       map_url: "https://maps.google.com"
     },
@@ -614,7 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event_time: "20:00 - 22:00",
       location: "巴生卓越社区教会",
       status_tag: "即将来临 ⏳",
-      image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg",
+      image_url: "",
       description: "巴生卓越社区教会专场音乐见证布道会，欢迎携同未信主亲友出席。",
       map_url: "https://maps.google.com"
     },
@@ -625,7 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event_time: "19:30 - 21:30",
       location: "日本 活水教会",
       status_tag: "即将来临 ⏳",
-      image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg",
+      image_url: "",
       description: "Harvester 国际巡回站：日本东京活水教会音乐见证分享会。跨越国界播种福音。",
       map_url: "https://maps.google.com"
     },
@@ -636,8 +636,8 @@ document.addEventListener('DOMContentLoaded', () => {
       event_time: "15:00 - 17:00",
       location: "新加坡 恩泉教会",
       status_tag: "已结束 🏁",
-      image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg",
-      description: "新加坡恩泉教会下午专场音乐见证布道会。活动已圆满举行。",
+      image_url: "",
+      description: "新加坡恩泉教会下午专场音乐见证布道会。活动已圆圆举行。",
       map_url: "https://maps.google.com"
     }
   ];
@@ -846,7 +846,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cfgPostersRaw !== undefined && cfgPostersRaw !== null) {
       try {
         const parsed = typeof cfgPostersRaw === 'string' ? JSON.parse(cfgPostersRaw) : cfgPostersRaw;
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           galleryItems = parsed.map(p => {
             let pTime = p.time || p.event_time || '';
             if (pTime && !/\d/.test(pTime)) pTime = '';
@@ -865,12 +865,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return {
               id: p.id || 'poster_' + Math.random(),
               title: p.title || 'Harvester 精彩活动',
-              image_url: p.image_url,
+              image_url: p.image_url ? String(p.image_url).trim() : '',
               date: p.date || '2026 全年巡回',
               time: pTime,
               venue: p.venue || '各大展演空间',
               statusTag: p.statusTag || 'HOT 热门',
-              link: p.link || `event.html?id=${p.id}`,
+              link: p.link || (p.id ? `event.html?id=${p.id}` : ''),
               img_pos: p.img_pos || '50% 50%',
               img_zoom: p.img_zoom || 1.0
             };
@@ -879,36 +879,43 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch(e) {
         galleryItems = [];
       }
-    }
-
-    if (galleryItems.length <= 1 && events && events.length > 0) {
-      events.forEach(e => {
-        if (e.image_url && !galleryItems.some(item => (item.id && item.id === e.id) || (item.title && (item.title === e.cleanTitle || item.title === e.title)))) {
-          galleryItems.push({
-            id: e.id,
-            title: e.cleanTitle || e.title,
-            image_url: e.image_url,
-            date: e.dateStr || `${e.year || '2026'}.${e.month || ''}.${e.day || ''}`,
-            time: e.timeStr || '',
-            venue: e.location || '线下敬拜现场',
-            statusTag: e.statusTag || '即将来临 ⏳',
-            link: `event.html?id=${e.id}`
-          });
-        }
-      });
+    } else {
+      // Fallback only if cfg_events_posters_json was never configured
+      if (events && events.length > 0) {
+        events.forEach(e => {
+          if (e.image_url && e.image_url.trim()) {
+            galleryItems.push({
+              id: e.id,
+              title: e.cleanTitle || e.title,
+              image_url: e.image_url.trim(),
+              date: e.dateStr || `${e.year || '2026'}.${e.month || ''}.${e.day || ''}`,
+              time: e.timeStr || '',
+              venue: e.location || '线下敬拜现场',
+              statusTag: e.statusTag || '即将来临 ⏳',
+              link: `event.html?id=${e.id}`
+            });
+          }
+        });
+      }
+      if (galleryItems.length === 0) {
+        galleryItems = defaultCuratedEvents.filter(e => e.image_url && e.image_url.trim()).map(e => ({
+          id: e.id,
+          title: e.title,
+          image_url: e.image_url.trim(),
+          date: e.event_date,
+          time: e.event_time,
+          venue: e.location,
+          statusTag: e.status_tag,
+          link: `event.html?id=${e.id}`
+        }));
+      }
     }
 
     if (galleryItems.length === 0) {
-      galleryItems = defaultCuratedEvents.map(e => ({
-        id: e.id,
-        title: e.title,
-        image_url: e.image_url,
-        date: e.event_date,
-        time: e.event_time,
-        venue: e.location,
-        statusTag: e.status_tag,
-        link: `event.html?id=${e.id}`
-      }));
+      if (heroSec) heroSec.style.display = 'none';
+      return;
+    } else {
+      if (heroSec) heroSec.style.display = 'block';
     }
 
     // Render cards
@@ -916,7 +923,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <a href="${item.link || 'javascript:void(0)'}" class="event-photo-card" ${item.link && item.link.startsWith('http') ? 'target="_blank"' : ''}>
         <div class="event-card-bg-blur" style="background-image: url('${item.image_url}')"></div>
         <div class="event-card-img-wrap">
-          <img src="${item.image_url}" alt="${item.title}" class="event-card-main-img" loading="lazy" style="object-position: ${item.img_pos || '50% 50%'}; transform: scale(${item.img_zoom || 1.0}); transform-origin: ${item.img_pos || '50% 50%'};" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=900&q=80'">
+          <img src="${item.image_url}" alt="${item.title}" class="event-card-main-img" loading="lazy" style="object-position: ${item.img_pos || '50% 50%'}; transform: scale(${item.img_zoom || 1.0}); transform-origin: ${item.img_pos || '50% 50%'};" onerror="this.style.opacity='0';">
         </div>
         <div class="event-card-gradient"></div>
         <span class="event-card-top-tag"><i class="fas fa-clock" style="margin-right:4px;"></i>${item.date}${item.time ? ' · ' + item.time : ''}</span>
@@ -1318,26 +1325,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Best poster URL resolution (自然尺寸放大高清呈现)
-      let posterUrl = parsed.image_url || album.cover_url || album.image_url || album.poster_url || "";
-      if (!posterUrl && list.length > 0) {
-        posterUrl = list[0].media_url;
-      }
-      if (!posterUrl) {
-        posterUrl = siteConfigs['cfg_events_banner'] || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85';
+      let posterUrl = (parsed.image_url || album.cover_url || album.image_url || album.poster_url || "").trim();
+      if (!posterUrl && list.length > 0 && list[0].media_url) {
+        posterUrl = list[0].media_url.trim();
       }
 
-      // 🌟 Render Enlarged Natural-Size Poster (适合原本的尺寸，高清且无多余提示字)
-      let mainPosterHtml = `
-        <div class="event-single-poster-wrap">
-          <div class="event-poster-card" onclick="openLightbox('${posterUrl}')" title="点击查看高清海报">
-            <img src="${posterUrl}" class="event-poster-full-img" alt="${cleanT}" draggable="false" onerror="this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=85'">
-            <div class="event-poster-hover-hint"><i class="fas fa-search-plus"></i> 点击查看高清原图</div>
+      // CRITICAL: NEVER fallback to cfg_events_banner or placeholder images when an event has no poster!
+      let mainPosterHtml = '';
+      if (posterUrl) {
+        mainPosterHtml = `
+          <div class="event-single-poster-wrap">
+            <div class="event-poster-card" onclick="openLightbox('${posterUrl}')" title="点击查看高清海报">
+              <img src="${posterUrl}" class="event-poster-full-img" alt="${cleanT}" draggable="false">
+              <div class="event-poster-hover-hint"><i class="fas fa-search-plus"></i> 点击查看高清原图</div>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
 
       // If there are additional photos beyond the poster, render secondary gallery
-      let extraPhotos = list.filter(p => p.media_url !== posterUrl);
+      let extraPhotos = list.filter(p => p.media_url && p.media_url !== posterUrl);
       let extraGalleryHtml = '';
       if (extraPhotos.length > 0) {
         extraGalleryHtml = `
@@ -1358,12 +1365,21 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       }
 
-      container.className = 'event-poster-view-container';
-      container.innerHTML = mainPosterHtml + extraGalleryHtml;
+      if (mainPosterHtml || extraGalleryHtml) {
+        container.className = 'event-poster-view-container';
+        container.innerHTML = mainPosterHtml + extraGalleryHtml;
+        container.style.display = 'block';
+      } else {
+        container.innerHTML = '';
+        container.style.display = 'none';
+      }
 
     } catch (e) {
       console.error("initEventGallery Error:", e);
-      container.innerHTML = "<p style='text-align:center; opacity:0.5; padding:3rem;'>加载失败。</p>";
+      if (container) {
+        container.innerHTML = '';
+        container.style.display = 'none';
+      }
     }
   }
 

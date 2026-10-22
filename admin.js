@@ -2538,11 +2538,15 @@ document.addEventListener('DOMContentLoaded', () => {
               <span style="font-size:0.72rem; color:var(--gold);">✨ 支持横版及打直/竖版海报完整展示</span>
             </div>
             <div style="width:100%; height:220px; border-radius:8px; overflow:hidden; border:1px solid #333; background:#080808; margin-bottom:10px; display:flex; align-items:center; justify-content:center; position:relative;">
-              <div id="ev_prev_bg" style="position:absolute; inset:-10px; background-image:url('${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}'); background-size:cover; background-position:center; filter:blur(20px) brightness(0.35); opacity:0.85;"></div>
-              <img id="ev_prev" src="${e?.image_url || 'https://via.placeholder.com/1920x1080?text=Harvester+Event'}" style="position:relative; z-index:1; width:100%; height:100%; object-fit:cover; object-position:${e?.img_pos || e?.pos || '50% 50%'}; transform:scale(${e?.img_zoom || e?.zoom || 1.0}); transform-origin:${e?.img_pos || e?.pos || '50% 50%'}; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85)); transition:all 0.1s ease;" onerror="this.src='https://via.placeholder.com/1920x1080?text=Harvester+Event'">
+              <div id="ev_prev_bg" style="position:absolute; inset:-10px; background-image:${e?.image_url ? `url('${e.image_url}')` : 'none'}; background-size:cover; background-position:center; filter:blur(20px) brightness(0.35); opacity:0.85;"></div>
+              <img id="ev_prev" src="${e?.image_url || ''}" style="position:relative; z-index:1; width:100%; height:100%; object-fit:cover; object-position:${e?.img_pos || e?.pos || '50% 50%'}; transform:scale(${e?.img_zoom || e?.zoom || 1.0}); transform-origin:${e?.img_pos || e?.pos || '50% 50%'}; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85)); transition:all 0.1s ease; display:${e?.image_url ? 'block' : 'none'};" onerror="this.style.display='none'; document.getElementById('ev_no_poster_hint').style.display='block';">
+              <div id="ev_no_poster_hint" style="position:relative; z-index:2; color:#777; font-size:0.85rem; text-align:center; display:${e?.image_url ? 'none' : 'block'};"><i class="fas fa-image" style="font-size:1.8rem; display:block; margin-bottom:6px; opacity:0.35;"></i>暂无海报 (纯文字活动)</div>
             </div>
             <input type="file" id="f_ev" style="font-size:0.8rem; color:#888;">
-            <button class="btn-tiny" style="margin-top:10px; width:100%; padding:8px;" onclick="uploadFile('f_ev', 'ev_url', 'ev_prev')">📤 上传活动海报图片</button>
+            <div style="display:flex; gap:8px; margin-top:10px;">
+              <button type="button" class="btn-tiny" style="flex:1; padding:8px;" onclick="uploadFile('f_ev', 'ev_url', 'ev_prev'); setTimeout(()=>{ const img=document.getElementById('ev_prev'); if(img){img.style.display='block';} const hint=document.getElementById('ev_no_poster_hint'); if(hint){hint.style.display='none';} }, 1200);">📤 上传活动海报图片</button>
+              <button type="button" class="btn-tiny" style="padding:8px 14px; background:rgba(255,59,48,0.15); color:#ff6b6b; border:1px solid rgba(255,59,48,0.3); cursor:pointer;" onclick="document.getElementById('ev_url').value=''; const p=document.getElementById('ev_prev'); if(p){p.src=''; p.style.display='none';} const bg=document.getElementById('ev_prev_bg'); if(bg) bg.style.backgroundImage='none'; const hint=document.getElementById('ev_no_poster_hint'); if(hint) hint.style.display='block'; alert('已移除海报！点击最下方【保存活动信息】即可生效。');">🗑️ 移除/清除海报</button>
+            </div>
             <input type="hidden" id="ev_url" value="${e?.image_url || ''}">
 
             <!-- 🎚️ 活动海报焦点与裁剪 -->
