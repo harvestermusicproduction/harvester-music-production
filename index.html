@@ -41,7 +41,7 @@
     "genre": ["Christian", "Worship", "Gospel", "Pop"]
   }
   </script>
-  <link rel="stylesheet" href="styles.css?v=59.0.0">
+  <link rel="stylesheet" href="styles.css?v=60.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
     window.onerror = function(msg, url, line) {
@@ -176,6 +176,56 @@
           —— 约翰福音 4:37
         </p>
       </div>
+    </div>
+  </section>
+
+  <!-- 🌟 最新消息版块 (Latest News Section) -->
+  <section id="latestNewsSection" class="home-news-section fade-in">
+    <div style="text-align: center; margin-bottom: 2.8rem;">
+      <p class="section-subtitle font-hand-en" style="margin-top: 0; margin-bottom: 0.5rem; line-height: 1.4; color: var(--gold-warm); font-size: 1.05rem; letter-spacing: 3px;">~ Latest News & Updates ~</p>
+      <h2 style="font-size: 2.5rem; color: #F6F4F0; margin: 0 auto; line-height: 1.2; font-family: var(--font-chn-title); letter-spacing: 4px;">
+        <span class="hand-underline">最新消息</span>
+      </h2>
+      <p style="font-family: var(--font-songti), serif; font-size: 0.95rem; color: #aaa; margin-top: 12px; letter-spacing: 1px;">
+        关注 Harvester 音乐团队最新巡回动态、作品发布与福音事工进展
+      </p>
+    </div>
+
+    <!-- 📰 News Cards Grid (0ms 零延迟首屏呈现 + 实时动态云端同步) -->
+    <div id="homeNewsGrid" class="home-news-grid">
+      <!-- 1. Genesis 30s Challenge -->
+      <article class="home-news-card" onclick="handleNewsCardClick('news_genesis_30s', event)">
+        <div class="home-news-img-wrap">
+          <div class="home-news-img-blur" style="background-image: url('https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1792653935424-WhatsApp_Image_2026-10-22_at_10.20.02.jpg');"></div>
+          <img src="https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1792653935424-WhatsApp_Image_2026-10-22_at_10.20.02.jpg" alt="《创世纪》30秒翻唱挑战" class="home-news-img" loading="lazy" style="object-position: 50% 50%; transform: scale(1);">
+          <span class="home-news-badge">✨ 开放参与</span>
+        </div>
+        <div class="home-news-body">
+          <span class="home-news-date"><i class="far fa-calendar-alt"></i> 2026.10.22</span>
+          <h3 class="home-news-title">《创世纪》30秒翻唱挑战正式开启！</h3>
+          <p class="home-news-desc">Harvester 邀请所有喜爱 CCM 现代福音音乐的朋友共同参与《创世纪》30秒副歌翻唱挑战！用你独特的歌声传扬神的大能与救赎，优秀作品将获得录音制作与平台发布支持。</p>
+          <div class="home-news-footer">
+            <span class="home-news-btn">查看详情 <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2. Tour 2026 -->
+      <article class="home-news-card" onclick="handleNewsCardClick('news_tour_2026', event)">
+        <div class="home-news-img-wrap">
+          <div class="home-news-img-blur" style="background-image: url('https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg');"></div>
+          <img src="https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg" alt="2026 全年福音巡回音乐见证布道会" class="home-news-img" loading="lazy" style="object-position: 50% 50%; transform: scale(1);">
+          <span class="home-news-badge">⚡ 巡回特会</span>
+        </div>
+        <div class="home-news-body">
+          <span class="home-news-date"><i class="far fa-calendar-alt"></i> 2026.10.20</span>
+          <h3 class="home-news-title">2026 全年福音巡回音乐见证布道会全面启动</h3>
+          <p class="home-news-desc">汤小康老师携手收割机敬拜音乐团队亲临各大城市教会与展演空间，以动人诗歌与生命见证带来福音飨宴。首站亚罗士打浸信会教会即将登场，欢迎各界弟兄姊妹携亲友同赴恩典盛宴。</p>
+          <div class="home-news-footer">
+            <span class="home-news-btn">查看详情 <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -333,7 +383,7 @@
   <script src="water-material.js?v=4.0" defer></script>
   <script src="liquid-engine.js?v=12.0.0" defer></script>
   <script src="visualizer.js?v=4.0" defer></script>
-  <script src="app.js?v=34.0.0" defer></script>
+  <script src="app.js?v=45.0.0" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       console.log("💎 Harvester Diamond V1.7: Engine Active");
@@ -647,5 +697,13 @@
     // Backwards compatibility for any legacy callers
     window.toggleVinyl = toggleHomeTurntable;
   </script>
+
+  <!-- 📰 最新消息阅读弹窗 (News Detail Modal) -->
+  <div id="newsDetailModal" class="news-detail-modal-overlay" style="display:none;" onclick="closeNewsDetailModal(event)">
+    <div class="news-detail-modal-content" onclick="event.stopPropagation()">
+      <button class="news-detail-close" onclick="closeNewsDetailModal()" title="关闭"><i class="fas fa-times"></i></button>
+      <div id="newsModalBody"></div>
+    </div>
+  </div>
 </body>
 </html>

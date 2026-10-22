@@ -73,6 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
       fetchDiary(); 
       // Re-hydrate event detail page once site configs are ready
       if (document.getElementById('galleryContainer')) initEventGallery();
+      // Re-hydrate latest news on home page
+      if (document.getElementById('homeNewsGrid')) renderHomeLatestNews();
     } catch (err) { console.warn("Supabase Config Error:", err.message); }
   }
 
@@ -275,6 +277,144 @@ document.addEventListener('DOMContentLoaded', () => {
       console.warn("fetchLatestMusicForHome note:", e);
     }
   }
+
+  // =========================================================================
+  // 📰 首页最新消息模块 (Home Latest News & Announcements)
+  // =========================================================================
+  const defaultCuratedNews = [
+    {
+      id: "news_genesis_30s",
+      title: "《创世纪》30秒翻唱挑战正式开启！",
+      tag: "✨ 开放参与",
+      date: "2026.10.22",
+      image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1792653935424-WhatsApp_Image_2026-10-22_at_10.20.02.jpg",
+      img_pos: "50% 50%",
+      img_zoom: 1.0,
+      description: "Harvester 邀请所有喜爱 CCM 现代福音音乐的朋友共同参与《创世纪》30秒副歌翻唱挑战！用你独特的歌声传扬神的大能与救赎，优秀作品将获得录音制作与平台发布支持。",
+      link: "events.html"
+    },
+    {
+      id: "news_tour_2026",
+      title: "2026 全年福音巡回音乐见证布道会全面启动",
+      tag: "⚡ 巡回特会",
+      date: "2026.10.20",
+      image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg",
+      img_pos: "50% 50%",
+      img_zoom: 1.0,
+      description: "汤小康老师携手收割机敬拜音乐团队亲临各大城市教会与展演空间，以动人诗歌与生命见证带来福音飨宴。首站亚罗士打浸信会教会即将登场，欢迎各界弟兄姊妹携亲友同赴恩典盛宴。",
+      link: "events.html"
+    }
+  ];
+
+  window._allCurrentNews = defaultCuratedNews;
+
+  function renderHomeLatestNews() {
+    const grid = document.getElementById('homeNewsGrid');
+    const sec = document.getElementById('latestNewsSection');
+    if (!grid) return;
+
+    let newsList = [];
+    const rawNews = siteConfigs['cfg_latest_news_json'] || localStorage.getItem('cfg_latest_news_json');
+    if (rawNews) {
+      try {
+        const parsed = typeof rawNews === 'string' ? JSON.parse(rawNews) : rawNews;
+        if (Array.isArray(parsed)) {
+          newsList = parsed.filter(n => n && (n.title || n.description));
+        }
+      } catch(e) {
+        console.warn("Parse news JSON note:", e);
+      }
+    }
+
+    if (!newsList || newsList.length === 0) {
+      newsList = defaultCuratedNews;
+    }
+
+    window._allCurrentNews = newsList;
+
+    if (newsList.length === 0) {
+      if (sec) sec.style.display = 'none';
+      return;
+    } else {
+      if (sec) sec.style.display = 'block';
+    }
+
+    grid.innerHTML = newsList.map(n => {
+      const hasImg = n.image_url && n.image_url.trim() !== '';
+      const tagHtml = n.tag ? `<span class="home-news-badge">${n.tag}</span>` : '';
+      const imgHtml = hasImg ? `
+        <div class="home-news-img-wrap">
+          <div class="home-news-img-blur" style="background-image: url('${n.image_url}');"></div>
+          <img src="${n.image_url}" alt="${n.title || ''}" class="home-news-img" loading="lazy" style="object-position: ${n.img_pos || '50% 50%'}; transform: scale(${n.img_zoom || 1.0}); transform-origin: ${n.img_pos || '50% 50%'};" onerror="this.parentElement.style.display='none'">
+          ${tagHtml}
+        </div>
+      ` : (tagHtml ? `<div class="home-news-no-img-header">${tagHtml}</div>` : '');
+
+      return `
+        <article class="home-news-card" onclick="handleNewsCardClick('${n.id}', event)">
+          ${imgHtml}
+          <div class="home-news-body">
+            ${n.date ? `<span class="home-news-date"><i class="far fa-calendar-alt"></i> ${n.date}</span>` : ''}
+            <h3 class="home-news-title">${n.title || '最新动态消息'}</h3>
+            <p class="home-news-desc">${n.description || ''}</p>
+            <div class="home-news-footer">
+              <span class="home-news-btn">查看详情 <i class="fas fa-arrow-right"></i></span>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    refreshObserver();
+  }
+
+  window.handleNewsCardClick = (newsId, event) => {
+    if (event) {
+      if (event.target.tagName === 'A' && event.target.getAttribute('href') && event.target.getAttribute('href') !== '#') {
+        return;
+      }
+    }
+    const item = (window._allCurrentNews || defaultCuratedNews).find(x => String(x.id) === String(newsId));
+    if (!item) return;
+
+    if (item.link && item.link.trim() !== '' && item.link !== '#') {
+      window.location.href = item.link;
+      return;
+    }
+
+    openNewsDetailModal(item);
+  };
+
+  window.openNewsDetailModal = (item) => {
+    const modal = document.getElementById('newsDetailModal');
+    const body = document.getElementById('newsModalBody');
+    if (!modal || !body) return;
+
+    const hasImg = item.image_url && item.image_url.trim() !== '';
+    body.innerHTML = `
+      ${item.tag ? `<span class="event-meta-pill" style="margin-bottom:12px; display:inline-block;"><i class="fas fa-bullhorn" style="color:var(--gold); margin-right:6px;"></i>${item.tag}</span>` : ''}
+      <h2 style="color:var(--gold); font-size:1.6rem; margin:0 0 10px 0; font-family:var(--font-songti), serif; line-height:1.4;">${item.title}</h2>
+      ${item.date ? `<p style="color:#888; font-size:0.85rem; margin-bottom:1.5rem;"><i class="far fa-calendar-alt"></i> 发布于 ${item.date}</p>` : ''}
+      ${hasImg ? `
+        <div style="width:100%; border-radius:12px; overflow:hidden; margin-bottom:1.5rem; border:1px solid #333; max-height:360px;">
+          <img src="${item.image_url}" alt="${item.title}" style="width:100%; height:100%; max-height:360px; object-fit:contain; background:#050505; display:block;">
+        </div>
+      ` : ''}
+      <div style="color:#ddd; font-size:0.98rem; line-height:1.9; white-space:pre-wrap; margin-bottom:2rem; font-family:var(--font-songti), serif;">${item.description || ''}</div>
+      ${item.link ? `
+        <div style="text-align:center;">
+          <a href="${item.link}" class="btn-premium" style="display:inline-flex; width:auto; padding:10px 28px; font-size:0.85rem;">前往相关页面 <i class="fas fa-arrow-right" style="margin-left:8px;"></i></a>
+        </div>
+      ` : ''}
+    `;
+
+    modal.style.display = 'flex';
+  };
+
+  window.closeNewsDetailModal = (e) => {
+    const modal = document.getElementById('newsDetailModal');
+    if (modal) modal.style.display = 'none';
+  };
 
   // --- 3. Dynamic Modules ---
   async function fetchMusic() {
@@ -1391,6 +1531,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Runtime ---
   refreshObserver(); // Observe ALL static fade-in elements on every page immediately
+  if (document.getElementById('homeNewsGrid')) renderHomeLatestNews();
   syncSiteContent();
   fetchMusic();
   fetchEvents();

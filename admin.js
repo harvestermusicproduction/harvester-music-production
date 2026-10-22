@@ -273,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <p class="nav-section-title" style="margin-top:16px;">FRONTEND PAGES / 前台页面分类管理</p>
             <a href="javascript:void(0)" onclick="switchModule('home')" class="nav-item ${currentModule==='home'?'active':''}">🏠 1. 主页 (Home)</a>
+            <a href="javascript:void(0)" onclick="switchModule('news')" class="nav-item ${currentModule==='news'?'active':''}">📰 1.1 最新消息 (Latest News)</a>
             <a href="javascript:void(0)" onclick="switchModule('music')" class="nav-item ${currentModule==='music'?'active':''}">🎵 2. 音乐与歌谱集 (Music & Scores)</a>
             <a href="javascript:void(0)" onclick="switchModule('events')" class="nav-item ${currentModule==='events'?'active':''}">📅 3. 活动 (Events)</a>
             <a href="javascript:void(0)" onclick="switchModule('diary')" class="nav-item ${currentModule==='diary'?'active':''}">📂 4. 照片集 (Diary)</a>
@@ -335,6 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.getElementById('moduleBody');
     if (currentModule === 'dashboard') renderDashboard(body);
     else if (currentModule === 'home') renderHomeCMS(body);
+    else if (currentModule === 'news') renderNewsCMS(body);
     else if (currentModule === 'music') renderMusic(body);
     else if (currentModule === 'events') renderEvents(body);
     else if (currentModule === 'diary') renderDiary(body);
@@ -621,6 +623,21 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       <div style="display:flex; flex-direction:column; gap:2.5rem; max-width:1100px;">
+        <!-- 0. 首页最新消息与动态管理快捷入口 -->
+        <div class="cms-card" style="border-left: 4px solid var(--gold); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; background:linear-gradient(135deg, #161410 0%, #111111 100%);">
+          <div>
+            <h3 style="color:var(--gold); margin:0 0 6px 0; display:flex; align-items:center; gap:8px;">
+              <span>📰</span> 首页最新消息动态管理 (Latest News CMS)
+            </h3>
+            <p style="font-size:0.84rem; color:#aaa; margin:0;">
+              管理首页顶部黄金位置的最新动态、翻唱挑战与特会公告卡片。支持随时发布新通告、添加图文与跳转链接。
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="switchModule('news')" style="padding:10px 22px; font-size:0.85rem; width:auto;">
+            进入最新消息管理 ➔
+          </button>
+        </div>
+
         <!-- 1. 最新歌曲推荐设定 -->
         <div class="cms-card" style="border-left: 4px solid #64D28A;">
           <h3 style="color:#64D28A; margin-top:0; display:flex; align-items:center; gap:8px;">
@@ -864,6 +881,351 @@ document.addEventListener('DOMContentLoaded', () => {
         <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#fff; box-shadow:0 0 4px rgba(255,255,255,0.8);"></span>
         <span>已选专属色系：<strong>${set.name}</strong>（${set.spine_bg} · 3D 书脊极简硬壳质感）</span>
       `;
+    }
+  };
+
+  // =========================================================================
+  // 📰 首页最新消息管理 (Latest News Management CMS)
+  // =========================================================================
+  let adminNewsList = [];
+
+  async function renderNewsCMS(container) {
+    container.innerHTML = `
+      <div style="display:flex; justify-content:center; align-items:center; height:200px;">
+        <p style="color:var(--gold); font-size:1.1rem;"><i class="fas fa-spinner fa-spin"></i> 正在加载最新消息数据...</p>
+      </div>
+    `;
+
+    try {
+      const { data: cfgRow, error } = await db.from('site_config').select('value').eq('key', 'cfg_latest_news_json').maybeSingle();
+      if (error) console.warn("Load news warning:", error);
+
+      let list = [];
+      if (cfgRow && cfgRow.value) {
+        try {
+          const parsed = typeof cfgRow.value === 'string' ? JSON.parse(cfgRow.value) : cfgRow.value;
+          if (Array.isArray(parsed)) list = parsed;
+        } catch(e) {}
+      }
+
+      if (list.length === 0) {
+        list = [
+          {
+            id: "news_genesis_30s",
+            title: "《创世纪》30秒翻唱挑战正式开启！",
+            tag: "✨ 开放参与",
+            date: "2026.10.22",
+            image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1792653935424-WhatsApp_Image_2026-10-22_at_10.20.02.jpg",
+            img_pos: "50% 50%",
+            img_zoom: 1.0,
+            description: "Harvester 邀请所有喜爱 CCM 现代福音音乐的朋友共同参与《创世纪》30秒副歌翻唱挑战！用你独特的歌声传扬神的大能与救赎，优秀作品将获得录音制作与平台发布支持。",
+            link: "events.html"
+          },
+          {
+            id: "news_tour_2026",
+            title: "2026 全年福音巡回音乐见证布道会全面启动",
+            tag: "⚡ 巡回特会",
+            date: "2026.10.20",
+            image_url: "https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg",
+            img_pos: "50% 50%",
+            img_zoom: 1.0,
+            description: "汤小康老师携手收割机敬拜音乐团队亲临各大城市教会与展演空间，以动人诗歌与生命见证带来福音飨宴。首站亚罗士打浸信会教会即将登场，欢迎各界弟兄姊妹携亲友同赴恩典盛宴。",
+            link: "events.html"
+          }
+        ];
+      }
+
+      adminNewsList = list;
+
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:15px;">
+          <div>
+            <h1 style="color:var(--gold); margin:0; display:flex; align-items:center; gap:10px;">
+              <span>📰</span> 首页最新消息管理 (Latest News CMS)
+            </h1>
+            <p style="color:#888; font-size:0.9rem; margin-top:6px;">
+              在此管理网站首页「最新消息」版块的动态资讯。支持发布图文通告、设置分类标签、添加跳转链接与上下排序。
+            </p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <a href="index.html#latestNewsSection" target="_blank" class="btn-tiny" style="padding:10px 16px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; color:var(--gold); border-color:var(--gold);">
+              <i class="fas fa-external-link-alt"></i> 查看前台效果
+            </a>
+            <button class="btn btn-submit" style="width:auto; padding:10px 22px;" onclick="openNewsModal(null)">
+              <i class="fas fa-plus"></i> 发布新消息
+            </button>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:1.2rem; max-width:1100px;">
+          ${list.length === 0 ? `
+            <div class="cms-card" style="text-align:center; padding:4rem 2rem;">
+              <i class="fas fa-newspaper" style="font-size:3rem; color:#444; margin-bottom:1rem; display:block;"></i>
+              <p style="color:#888; font-size:1rem; margin-bottom:1.5rem;">暂无最新消息，请点击下方按钮发布第一条动态！</p>
+              <button class="btn btn-submit" style="width:auto; padding:10px 24px;" onclick="openNewsModal(null)">
+                <i class="fas fa-plus"></i> 立即发布消息
+              </button>
+            </div>
+          ` : list.map((item, idx) => `
+            <div class="cms-card" style="display:flex; gap:20px; align-items:center; padding:1.4rem; background:#111; border:1px solid #222; border-radius:12px; transition:0.2s;" onmouseover="this.style.borderColor='rgba(246,210,138,0.4)';" onmouseout="this.style.borderColor='#222';">
+              <!-- Order Pill -->
+              <div style="display:flex; flex-direction:column; align-items:center; gap:4px; min-width:36px;">
+                <button type="button" class="btn-tiny" style="padding:4px 8px; font-size:0.7rem;" onclick="moveNewsItem(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''} title="向上移"><i class="fas fa-chevron-up"></i></button>
+                <span style="font-size:0.8rem; font-weight:700; color:var(--gold); font-family:monospace;">#${idx + 1}</span>
+                <button type="button" class="btn-tiny" style="padding:4px 8px; font-size:0.7rem;" onclick="moveNewsItem(${idx}, 1)" ${idx === list.length - 1 ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''} title="向下移"><i class="fas fa-chevron-down"></i></button>
+              </div>
+
+              <!-- Cover Thumbnail Preview -->
+              <div style="width:140px; height:90px; min-width:140px; border-radius:8px; overflow:hidden; background:#080808; border:1px solid #333; position:relative; display:flex; align-items:center; justify-content:center;">
+                ${item.image_url ? `
+                  <img src="${item.image_url}" alt="${item.title}" style="width:100%; height:100%; object-fit:cover; object-position:${item.img_pos || '50% 50%'};">
+                ` : `
+                  <span style="color:#555; font-size:0.75rem; text-align:center;"><i class="fas fa-align-left" style="display:block; margin-bottom:4px; font-size:1.1rem; opacity:0.5;"></i>纯文字</span>
+                `}
+              </div>
+
+              <!-- Content Info -->
+              <div style="flex:1; min-width:0;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+                  ${item.tag ? `<span style="background:rgba(246,210,138,0.15); color:var(--gold); border:1px solid rgba(246,210,138,0.3); font-size:0.72rem; padding:2px 8px; border-radius:12px; font-weight:600;">${item.tag}</span>` : ''}
+                  ${item.date ? `<span style="color:#888; font-size:0.75rem; font-family:monospace;"><i class="far fa-calendar-alt"></i> ${item.date}</span>` : ''}
+                  ${item.link ? `<a href="${item.link}" target="_blank" style="color:#58a6ff; font-size:0.75rem; text-decoration:none; display:inline-flex; align-items:center; gap:4px;"><i class="fas fa-link"></i> ${item.link}</a>` : ''}
+                </div>
+                <h3 style="color:#F6F4F0; font-size:1.1rem; margin:0 0 6px 0; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                  ${item.title || '（未命名消息）'}
+                </h3>
+                <p style="color:#999; font-size:0.84rem; margin:0; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+                  ${item.description || '无详细内容描述'}
+                </p>
+              </div>
+
+              <!-- Action Buttons -->
+              <div style="display:flex; flex-direction:column; gap:6px; min-width:85px;">
+                <button type="button" class="btn-tiny" style="width:100%; padding:6px 12px; display:inline-flex; align-items:center; justify-content:center; gap:5px;" onclick="openNewsModal('${item.id}')">
+                  <i class="fas fa-edit"></i> 编辑
+                </button>
+                <button type="button" class="btn-tiny danger" style="width:100%; padding:6px 12px; display:inline-flex; align-items:center; justify-content:center; gap:5px;" onclick="deleteNewsItem('${item.id}')">
+                  <i class="fas fa-trash-alt"></i> 删除
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } catch(err) {
+      console.error("renderNewsCMS Error:", err);
+      container.innerHTML = `
+        <div class="cms-card" style="text-align:center; padding:3rem 2rem; border-color:var(--admin-red);">
+          <p style="color:var(--admin-red); font-size:1.1rem; margin-bottom:1rem;">❌ 加载最新消息列表失败: ${err.message || err}</p>
+          <button class="btn btn-tiny" onclick="renderNewsCMS(document.getElementById('moduleBody'))">重试加载</button>
+        </div>
+      `;
+    }
+  }
+
+  window.openNewsModal = (newsId) => {
+    const existing = newsId ? adminNewsList.find(x => String(x.id) === String(newsId)) : null;
+    const isEdit = !!existing;
+
+    const modal = document.createElement('div');
+    modal.id = 'newsEditModal';
+    modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
+    
+    const today = new Date();
+    const defaultDate = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+
+    modal.innerHTML = `
+      <div style="background:#111; border:1px solid var(--gold); border-radius:16px; padding:2rem; width:100%; max-width:620px; max-height:90vh; overflow-y:auto; position:relative; box-shadow: 0 20px 60px rgba(0,0,0,1);">
+        <h2 style="color:var(--gold); margin-bottom:1.5rem; text-align:center;">${isEdit ? '✏️ 编辑最新消息' : '➕ 发布新消息'}</h2>
+        
+        <!-- 封面配图预览 -->
+        <div style="margin-bottom:20px; background: #0a0a0a; padding: 15px; border-radius: 12px; border:1px solid #222;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label style="color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; margin:0;">消息封面配图 / 海报 (可选)</label>
+            <span style="font-size:0.72rem; color:var(--gold);">支持留空（纯文字卡片）</span>
+          </div>
+          <div style="width:100%; height:200px; border-radius:8px; overflow:hidden; border:1px solid #333; background:#080808; margin-bottom:10px; display:flex; align-items:center; justify-content:center; position:relative;">
+            <div id="news_prev_bg" style="position:absolute; inset:-10px; background-image:${existing?.image_url ? `url('${existing.image_url}')` : 'none'}; background-size:cover; background-position:center; filter:blur(20px) brightness(0.35); opacity:0.85;"></div>
+            <img id="news_prev" src="${existing?.image_url || ''}" style="position:relative; z-index:1; width:100%; height:100%; object-fit:cover; object-position:${existing?.img_pos || '50% 50%'}; transform:scale(${existing?.img_zoom || 1.0}); transform-origin:${existing?.img_pos || '50% 50%'}; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.85)); transition:all 0.1s ease; display:${existing?.image_url ? 'block' : 'none'};" onerror="this.style.display='none'; document.getElementById('news_no_img_hint').style.display='block';">
+            <div id="news_no_img_hint" style="position:relative; z-index:2; color:#777; font-size:0.85rem; text-align:center; display:${existing?.image_url ? 'none' : 'block'};">
+              <i class="fas fa-image" style="font-size:1.8rem; display:block; margin-bottom:6px; opacity:0.35;"></i>暂无封面配图（将作为纯文字卡片展示）
+            </div>
+          </div>
+          <input type="file" id="f_news_file" style="font-size:0.8rem; color:#888;">
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <button type="button" class="btn-tiny" style="flex:1; padding:8px;" onclick="uploadFile('f_news_file', 'news_img_val', 'news_prev'); setTimeout(()=>{ const img=document.getElementById('news_prev'); if(img){img.style.display='block';} const hint=document.getElementById('news_no_img_hint'); if(hint){hint.style.display='none';} }, 1200);">📤 上传封面配图</button>
+            <button type="button" class="btn-tiny" style="padding:8px 14px; background:rgba(255,59,48,0.15); color:#ff6b6b; border:1px solid rgba(255,59,48,0.3); cursor:pointer;" onclick="document.getElementById('news_img_val').value=''; const p=document.getElementById('news_prev'); if(p){p.src=''; p.style.display='none';} const bg=document.getElementById('news_prev_bg'); if(bg) bg.style.backgroundImage='none'; const hint=document.getElementById('news_no_img_hint'); if(hint) hint.style.display='block';">🗑️ 清除图片 (纯文字消息)</button>
+          </div>
+          <input type="hidden" id="news_img_val" value="${existing?.image_url || ''}">
+
+          <!-- 图片焦点与裁剪 -->
+          ${renderImageCropControllerHTML({
+            id: 'news_crop',
+            targetImgId: 'news_prev',
+            posVal: existing?.img_pos || '50% 50%',
+            zoomVal: existing?.img_zoom || 1.0,
+            posInputId: 'news_pos',
+            zoomInputId: 'news_zoom',
+            label: '调整封面显示焦点与缩放',
+            hint: '可调节图片居中位置与放大倍率，使核心内容居中呈现'
+          })}
+        </div>
+
+        <!-- 标题 -->
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">消息标题 (Title) *</label>
+          <input type="text" id="news_title" value="${existing?.title || ''}" placeholder="例如：《创世纪》30秒翻唱挑战正式开启！" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
+        </div>
+
+        <!-- 标签与日期 -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:10px;">
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">分类标签 (Tag)</label>
+            <input type="text" id="news_tag" value="${existing?.tag || '✨ 开放参与'}" placeholder="例如：✨ 开放参与、⚡ 巡回特会" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">发布日期 (Date)</label>
+            <input type="text" id="news_date" value="${existing?.date || defaultDate}" placeholder="格式如 2026.10.22" style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
+          </div>
+        </div>
+
+        <!-- 快速点选标签 -->
+        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:15px;">
+          <button type="button" class="btn-tiny" onclick="document.getElementById('news_tag').value='✨ 开放参与'">✨ 开放参与</button>
+          <button type="button" class="btn-tiny" onclick="document.getElementById('news_tag').value='⚡ 巡回特会'">⚡ 巡回特会</button>
+          <button type="button" class="btn-tiny" onclick="document.getElementById('news_tag').value='🎵 新歌发布'">🎵 新歌发布</button>
+          <button type="button" class="btn-tiny" onclick="document.getElementById('news_tag').value='🔥 热门动态'">🔥 热门动态</button>
+          <button type="button" class="btn-tiny" onclick="document.getElementById('news_tag').value='📢 官方公告'">📢 官方公告</button>
+          <button type="button" class="btn-tiny" onclick="document.getElementById('news_tag').value='✝️ 见证分享'">✝️ 见证分享</button>
+        </div>
+
+        <!-- 详细内容描述 -->
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">详细内容描述 (Description / Content)</label>
+          <textarea id="news_desc" placeholder="请输入关于该消息的详细介绍与说明..." style="width:100%; height:110px; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px; line-height:1.6;">${existing?.description || ''}</textarea>
+        </div>
+
+        <!-- 目标跳转链接 (可选) -->
+        <div style="margin-bottom:15px;">
+          <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">点击卡片跳转链接 (Action URL - 可选)</label>
+          <input type="text" id="news_link" value="${existing?.link || ''}" placeholder="例如：events.html 或 https://..." style="width:100%; padding:10px; background:#181818; border:1px solid #333; color:#F6F4F0; border-radius:4px;">
+          <!-- 快捷链接按钮 -->
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;">
+            <button type="button" class="btn-tiny" onclick="document.getElementById('news_link').value='events.html'">活动总览页 (events.html)</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('news_link').value='music.html'">音乐歌谱集 (music.html)</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('news_link').value='submit.html'">我要投稿 (submit.html)</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('news_link').value='contact.html'">联系我们 (contact.html)</button>
+            <button type="button" class="btn-tiny" onclick="document.getElementById('news_link').value=''">清空（弹窗阅读全文）</button>
+          </div>
+        </div>
+
+        <!-- 底部提交按钮 -->
+        <div style="display:flex; gap:15px; position:sticky; bottom:0; background:#111; padding-top:12px; border-top:1px solid #222;">
+          <button class="btn btn-submit" id="btnSaveNewsSubmit" style="flex:2; padding:12px;" onclick="saveNewsItem('${existing?.id || ''}')">
+            🚀 确认保存并实时发布
+          </button>
+          <button class="btn-tiny" style="flex:1;" onclick="document.getElementById('newsEditModal').remove()">取消</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+  };
+
+  window.saveNewsItem = async (newsId) => {
+    const btn = document.getElementById('btnSaveNewsSubmit');
+    const originalText = btn ? btn.innerText : '保存';
+    if (btn) { btn.innerText = "⏳ 正在同步到云端..."; btn.disabled = true; }
+
+    const title = document.getElementById('news_title').value.trim();
+    if (!title) {
+      alert("请输入消息标题！");
+      if (btn) { btn.innerText = originalText; btn.disabled = false; }
+      return;
+    }
+
+    const payload = {
+      id: newsId || ('news_' + Date.now()),
+      title: title,
+      tag: document.getElementById('news_tag').value.trim(),
+      date: document.getElementById('news_date').value.trim(),
+      image_url: document.getElementById('news_img_val').value.trim(),
+      img_pos: document.getElementById('news_pos')?.value.trim() || '50% 50%',
+      img_zoom: parseFloat(document.getElementById('news_zoom')?.value) || 1.0,
+      description: document.getElementById('news_desc').value.trim(),
+      link: document.getElementById('news_link').value.trim()
+    };
+
+    let list = [...(adminNewsList || [])];
+    const existIdx = list.findIndex(x => String(x.id) === String(payload.id));
+    if (existIdx !== -1) {
+      list[existIdx] = payload;
+    } else {
+      list.unshift(payload);
+    }
+
+    try {
+      const { error } = await db.from('site_config').upsert({
+        key: 'cfg_latest_news_json',
+        value: JSON.stringify(list)
+      }, { onConflict: 'key' });
+
+      if (error) throw error;
+
+      adminNewsList = list;
+      const modal = document.getElementById('newsEditModal');
+      if (modal) modal.remove();
+
+      alert("✅ 最新消息已成功保存并实时发布！");
+      renderNewsCMS(document.getElementById('moduleBody'));
+    } catch(err) {
+      console.error("saveNewsItem Fail:", err);
+      alert("❌ 保存失败: " + (err.message || err));
+      if (btn) { btn.innerText = originalText; btn.disabled = false; }
+    }
+  };
+
+  window.deleteNewsItem = async (newsId) => {
+    if (!confirm("确定要删除这条最新消息吗？")) return;
+    let list = (adminNewsList || []).filter(x => String(x.id) !== String(newsId));
+
+    try {
+      const { error } = await db.from('site_config').upsert({
+        key: 'cfg_latest_news_json',
+        value: JSON.stringify(list)
+      }, { onConflict: 'key' });
+
+      if (error) throw error;
+
+      adminNewsList = list;
+      alert("✅ 消息已成功删除！");
+      renderNewsCMS(document.getElementById('moduleBody'));
+    } catch(err) {
+      alert("删除失败: " + (err.message || err));
+    }
+  };
+
+  window.moveNewsItem = async (idx, dir) => {
+    let list = [...(adminNewsList || [])];
+    const targetIdx = idx + dir;
+    if (targetIdx < 0 || targetIdx >= list.length) return;
+
+    const temp = list[idx];
+    list[idx] = list[targetIdx];
+    list[targetIdx] = temp;
+
+    try {
+      const { error } = await db.from('site_config').upsert({
+        key: 'cfg_latest_news_json',
+        value: JSON.stringify(list)
+      }, { onConflict: 'key' });
+
+      if (error) throw error;
+
+      adminNewsList = list;
+      renderNewsCMS(document.getElementById('moduleBody'));
+    } catch(err) {
+      alert("排序更新失败: " + (err.message || err));
     }
   };
 
