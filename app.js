@@ -60,12 +60,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 2. Site Content Synchronization ---
   let siteConfigs = {};
+  let siteConfigsLoaded = false;
+  let syncSitePromise = null;
   async function syncSiteContent() {
     if (!db) return;
     try {
       const { data, error } = await db.from('site_config').select('*');
       if (error) throw error;
       siteConfigs = data.reduce((acc, curr) => { acc[curr.key] = curr.value; return acc; }, {});
+      siteConfigsLoaded = true;
+      window.siteConfigs = siteConfigs;
+      window.siteConfigsLoaded = true;
       applyHydration();
       fetchLatestMusicForHome();
       fetchEvents();
@@ -517,6 +522,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let emailTemplate = item.email_template || item.emailTemplate || "";
     let order = (item.display_order !== undefined && item.display_order !== null && !isNaN(parseInt(item.display_order, 10))) ? parseInt(item.display_order, 10) : null;
     let meta = {};
+    let photos = [];
+    if (Array.isArray(item.photos)) photos = item.photos;
 
     // Parse EXT_META JSON block if embedded in description
     if (desc && typeof desc === 'string' && desc.includes('EXT_META:')) {
@@ -532,6 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (meta.loc || meta.location || meta.place || meta.venue || meta.address) rawLoc = meta.loc || meta.location || meta.place || meta.venue || meta.address;
           if (meta.murl || meta.map_url || meta.mapUrl) rawMapUrl = meta.murl || meta.map_url || meta.mapUrl;
           if (meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url) rawImg = meta.img || meta.image_url || meta.imageUrl || meta.cover_url || meta.poster_url;
+          if (meta.photos && Array.isArray(meta.photos)) photos = meta.photos;
           if (meta.et || meta.email_template) emailTemplate = meta.et || meta.email_template;
           if (meta.ord !== undefined || meta.display_order !== undefined) {
             const parsedOrd = parseInt(meta.ord ?? meta.display_order, 10);
@@ -603,8 +611,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Fallback 4: Guarantee time is never empty for ministry events
-    if (!rawTime) {
+    // Fallback 4: Guarantee time for ministry tour stops, but respect empty time on posters or online events
+    const isExplicitPosterWithoutTime = (item.id && String(item.id).startsWith('poster_')) && (item.time === '' || item.time === null);
+    if (!rawTime && !isExplicitPosterWithoutTime) {
       rawTime = '20:00 - 22:00';
     }
 
@@ -717,7 +726,8 @@ document.addEventListener('DOMContentLoaded', () => {
       created_at: item.created_at || '',
       fullDateTime,
       img_pos: meta.img_pos || meta.pos || item.img_pos || item.pos || '50% 50%',
-      img_zoom: meta.img_zoom || meta.zoom || item.img_zoom || item.zoom || 1.0
+      img_zoom: meta.img_zoom || meta.zoom || item.img_zoom || item.zoom || 1.0,
+      photos: photos
     };
   }
 
@@ -1280,39 +1290,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
+      // Await site content sync if still in-flight to prevent premature "no data" states
+      if (!siteConfigsLoaded && syncSitePromise) {
+        try { await syncSitePromise; } catch(e){}
+      }
+
       let album = null;
       let isEvent = false;
 
-      // 1. 优先在内置活动与内置相册中匹配
-      const curEv = defaultCuratedEvents.find(x => String(x.id) === String(id));
-      if (curEv) {
-        album = curEv;
-        isEvent = true;
-      }
-
-      if (!album) {
-        const curAlb = defaultCuratedAlbums.find(x => String(x.id) === String(id));
-        if (curAlb) {
-          album = curAlb;
-        }
-      }
-
-      // 2. 匹配 site_config cfg_events_custom_json
-      if (!album && siteConfigs['cfg_events_custom_json']) {
-        try {
-          const evList = typeof siteConfigs['cfg_events_custom_json'] === 'string' ? JSON.parse(siteConfigs['cfg_events_custom_json']) : siteConfigs['cfg_events_custom_json'];
-          if (Array.isArray(evList)) {
-            const foundEv = evList.find(x => String(x.id) === String(id));
-            if (foundEv) {
-              album = foundEv;
-              isEvent = true;
-            }
-          }
-        } catch(e){}
-      }
-
-      // 3. 匹配 site_config cfg_events_posters_json
-      if (!album && siteConfigs['cfg_events_posters_json']) {
+      // 1. 优先匹配 site_config cfg_events_posters_json (走廊海报)
+      if (siteConfigs['cfg_events_posters_json']) {
         try {
           const pList = typeof siteConfigs['cfg_events_posters_json'] === 'string' ? JSON.parse(siteConfigs['cfg_events_posters_json']) : siteConfigs['cfg_events_posters_json'];
           if (Array.isArray(pList)) {
@@ -1333,7 +1320,54 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e){}
       }
 
-      // 4. 匹配 site_config cfg_diary_albums_json
+      // 2. 直接从云端 site_config 备用查询 cfg_events_posters_json
+      if (!album && db) {
+        try {
+          const { data: pCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_posters_json').maybeSingle();
+          if (pCfg?.value) {
+            const pList = typeof pCfg.value === 'string' ? JSON.parse(pCfg.value) : pCfg.value;
+            if (Array.isArray(pList)) {
+              const foundP = pList.find(x => String(x.id) === String(id));
+              if (foundP) {
+                album = { ...foundP };
+                isEvent = true;
+              }
+            }
+          }
+        } catch(e){}
+      }
+
+      // 3. 匹配 site_config cfg_events_custom_json
+      if (!album && siteConfigs['cfg_events_custom_json']) {
+        try {
+          const evList = typeof siteConfigs['cfg_events_custom_json'] === 'string' ? JSON.parse(siteConfigs['cfg_events_custom_json']) : siteConfigs['cfg_events_custom_json'];
+          if (Array.isArray(evList)) {
+            const foundEv = evList.find(x => String(x.id) === String(id));
+            if (foundEv) {
+              album = foundEv;
+              isEvent = true;
+            }
+          }
+        } catch(e){}
+      }
+
+      // 4. 在内置活动与内置相册中匹配
+      if (!album) {
+        const curEv = defaultCuratedEvents.find(x => String(x.id) === String(id));
+        if (curEv) {
+          album = curEv;
+          isEvent = true;
+        }
+      }
+
+      if (!album) {
+        const curAlb = defaultCuratedAlbums.find(x => String(x.id) === String(id));
+        if (curAlb) {
+          album = curAlb;
+        }
+      }
+
+      // 5. 匹配 site_config cfg_diary_albums_json
       if (!album && siteConfigs['cfg_diary_albums_json']) {
         try {
           const list = typeof siteConfigs['cfg_diary_albums_json'] === 'string' ? JSON.parse(siteConfigs['cfg_diary_albums_json']) : siteConfigs['cfg_diary_albums_json'];
@@ -1344,8 +1378,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e){}
       }
 
-      // 5. 尝试从 Supabase 查找
-      if (!album && db) {
+      // 6. 尝试从 Supabase 查找 (仅当 id 为有效 UUID 时查询以避免 22P02 语法错误)
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(id));
+      if (!album && db && isUUID) {
         try {
           const { data: eventData } = await db.from('events').select('*').eq('id', id).maybeSingle();
           if (eventData) {
@@ -1355,7 +1390,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e){}
       }
 
-      if (!album && db) {
+      if (!album && db && isUUID) {
         try {
           const { data: diaryData } = await db.from('diary_albums').select('*').eq('id', id).maybeSingle();
           if (diaryData) album = diaryData;
@@ -1364,11 +1399,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!album) {
         container.innerHTML = "<p style='text-align:center; opacity:0.5; padding:3rem;'>暂无相关活动数据</p>";
+        container.style.display = 'block';
         return;
       }
 
       const parsed = parseEventData(album);
-      const cleanT = parsed.cleanTitle || parsed.title || '活动详情';
+      const cleanT = parsed.cleanTitle || album.title || parsed.title || '活动详情';
       document.title = `${cleanT} | Harvester Music`;
 
       const titleEl = document.getElementById('eventTitle');
@@ -1383,9 +1419,17 @@ document.addEventListener('DOMContentLoaded', () => {
         dateEl.style.flexWrap = 'wrap';
 
         let html = '';
-        if (parsed.dateStr) html += `<span class="event-meta-pill"><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.dateStr}</span>`;
-        html += `<span class="event-meta-pill event-time-pill"><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${parsed.timeStr || '20:00 - 22:00'}</span>`;
-        if (parsed.location) html += `<span class="event-meta-pill"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.location}</span>`;
+        if (parsed.dateStr) {
+          const isSpecialTag = /推荐|进行中|特会|巡回|HOT|FEATURED/i.test(parsed.dateStr);
+          const iconClass = isSpecialTag ? 'fa-sparkles' : 'fa-calendar-alt';
+          html += `<span class="event-meta-pill"><i class="fas ${iconClass}" style="color:var(--gold); margin-right:6px;"></i>${parsed.dateStr}</span>`;
+        }
+        if (parsed.timeStr) {
+          html += `<span class="event-meta-pill event-time-pill"><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${parsed.timeStr}</span>`;
+        }
+        if (parsed.location) {
+          html += `<span class="event-meta-pill"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.location}</span>`;
+        }
         
         dateEl.innerHTML = html;
       }
@@ -1429,9 +1473,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (eventHeader) eventHeader.appendChild(btnWrap);
       }
 
-      // Gather photos
+      // Gather photos (support multiple pictures uploaded via backend)
       let dbPhotos = [];
-      if (db) {
+      if (db && isUUID) {
         try {
           const { data: mData, error: mErr } = await db.from('diary_media').select('*').eq('album_id', id);
           if (!mErr && Array.isArray(mData)) dbPhotos = mData;
@@ -1441,7 +1485,16 @@ document.addEventListener('DOMContentLoaded', () => {
       let list = [];
       if (Array.isArray(album.photos) && album.photos.length > 0) {
         album.photos.forEach(p => {
-          const url = typeof p === 'string' ? p : p.media_url;
+          const url = (typeof p === 'string' ? p : (p?.media_url || p?.url || '')).trim();
+          if (url && !list.some(x => x.media_url === url)) {
+            list.push({ media_url: url });
+          }
+        });
+      }
+
+      if (Array.isArray(parsed.photos) && parsed.photos.length > 0) {
+        parsed.photos.forEach(p => {
+          const url = (typeof p === 'string' ? p : (p?.media_url || p?.url || '')).trim();
           if (url && !list.some(x => x.media_url === url)) {
             list.push({ media_url: url });
           }
@@ -1449,7 +1502,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       dbPhotos.forEach(p => {
-        const url = p.media_url;
+        const url = (p.media_url || '').trim();
         if (url && !list.some(x => x.media_url === url)) {
           list.push({ media_url: url });
         }
@@ -1457,7 +1510,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (album.diary_media && Array.isArray(album.diary_media)) {
         album.diary_media.forEach(p => {
-          const url = p.media_url;
+          const url = (p.media_url || '').trim();
           if (url && !list.some(x => x.media_url === url)) {
             list.push({ media_url: url });
           }
@@ -1488,15 +1541,17 @@ document.addEventListener('DOMContentLoaded', () => {
       let extraGalleryHtml = '';
       if (extraPhotos.length > 0) {
         extraGalleryHtml = `
-          <div style="max-width:1100px; margin:2rem auto; padding:0 1.5rem;">
-            <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:1.5rem;">
-              <span style="height:1px; flex:1; background:rgba(246,210,138,0.25);"></span>
-              <h3 style="color:var(--gold); font-size:1.05rem; font-weight:600; margin:0; letter-spacing:1px;"><i class="fas fa-camera"></i> 现场照片记录</h3>
-              <span style="height:1px; flex:1; background:rgba(246,210,138,0.25);"></span>
+          <div style="max-width:1100px; margin:2.5rem auto 4rem; padding:0 1.5rem;">
+            <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:2rem;">
+              <span style="height:1px; flex:1; background:linear-gradient(to right, transparent, rgba(246,210,138,0.3));"></span>
+              <h3 style="color:var(--gold); font-size:1.15rem; font-weight:600; margin:0; letter-spacing:1.5px; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-images"></i> 现场相片与图集记录 (${extraPhotos.length} 张)
+              </h3>
+              <span style="height:1px; flex:1; background:linear-gradient(to left, transparent, rgba(246,210,138,0.3));"></span>
             </div>
             <div class="photo-gallery">
               ${extraPhotos.map(p => `
-                <div class="gallery-item" onclick="openLightbox('${p.media_url}')">
+                <div class="gallery-item" onclick="openLightbox('${p.media_url}')" title="点击查看大图">
                   <img src="${p.media_url}" class="gallery-img" loading="lazy" onerror="this.parentElement.style.display='none'">
                 </div>
               `).join('')}
@@ -1532,7 +1587,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Runtime ---
   refreshObserver(); // Observe ALL static fade-in elements on every page immediately
   if (document.getElementById('homeNewsGrid')) renderHomeLatestNews();
-  syncSiteContent();
+  window.syncSitePromise = syncSitePromise = syncSiteContent();
   fetchMusic();
   fetchEvents();
   initInteractiveTitle();

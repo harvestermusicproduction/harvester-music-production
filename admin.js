@@ -2456,6 +2456,9 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.id = "eventPosterModal";
     modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
     
+    // Extract photos for multi-photo gallery
+    window._currentEditingPosterPhotos = Array.isArray(p?.photos) ? JSON.parse(JSON.stringify(p.photos)) : [];
+
     // Build options for events linking
     const evList = window._currentAdminEvents || [];
     const eventOptions = evList.map(e => `<option value="event.html?id=${e.id}" data-date="${e.event_date || ''}" data-time="${e.event_time || ''}" data-venue="${e.location || ''}" data-title="${sanitizeEventTitle(e.title, e.status_tag)}">${sanitizeEventTitle(e.title, e.status_tag)} (${e.event_date || '未定日期'}${e.event_time ? ' ' + e.event_time : ''})</option>`).join('');
@@ -2542,9 +2545,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <!-- 跳转链接与快速绑定 -->
-        <div style="margin-bottom:20px; background:#0e0e0e; padding:14px; border-radius:10px; border:1px solid #222;">
+        <div style="margin-bottom:16px; background:#0e0e0e; padding:14px; border-radius:10px; border:1px solid #222;">
           <label style="display:block; margin-bottom:6px; color:#aaa; font-size:0.8rem; font-weight:600;">点击跳转链接 (Target Link)</label>
-          <input type="text" id="ev_p_link" value="${p?.link || ''}" placeholder="例如：event.html?id=... 或相关详情链接 https://..." style="width:100%; padding:9px 10px; margin-bottom:8px;">
+          <input type="text" id="ev_p_link" value="${p?.link || ''}" placeholder="留空则自动跳转到该海报详情页 (event.html?id=...)" style="width:100%; padding:9px 10px; margin-bottom:8px;">
           
           <div style="display:flex; align-items:center; gap:8px;">
             <span style="font-size:0.75rem; color:#888; white-space:nowrap;">快速绑定活动：</span>
@@ -2568,6 +2571,41 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
+        <!-- 📸 海报详情页相片集 (点击海报后展示的现场/详情图片) -->
+        <div style="margin-bottom:20px; background:#0e0e0e; padding:16px; border-radius:12px; border:1.5px solid rgba(246,210,138,0.3); box-shadow:0 4px 18px rgba(0,0,0,0.5);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <label style="color:var(--gold); font-size:0.88rem; font-weight:700; margin:0; display:flex; align-items:center; gap:6px;">
+                <i class="fas fa-camera-retro"></i> 📸 海报详情页相片集 (点击海报后展示的现场与详情图片)
+              </label>
+              <p style="margin:4px 0 0 0; color:#888; font-size:0.75rem; line-height:1.4;">
+                访客点击海报进入详情页时，除主海报外还会展示这组照片（支持上传多张现场抓拍、活动嘉宾、宣传大图等）。
+              </p>
+            </div>
+            <span id="ev_p_photo_count_badge" style="font-size:0.75rem; color:var(--gold); background:rgba(246,210,138,0.12); border:1px solid rgba(246,210,138,0.35); padding:3px 10px; border-radius:20px; font-weight:600;">
+              已添加 0 张图片
+            </span>
+          </div>
+
+          <div style="background:#141414; border:1px dashed rgba(246,210,138,0.35); border-radius:8px; padding:12px; margin-bottom:12px;">
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+              <input type="file" id="f_ev_p_photos" accept="image/*" multiple style="font-size:0.78rem; color:#aaa; flex:1; min-width:180px;">
+              <button type="button" class="btn-tiny" id="btnUploadPosterPhotos" style="background:rgba(246,210,138,0.2); border-color:var(--gold); color:var(--gold); font-weight:600; padding:6px 14px;" onclick="uploadPosterGalleryPhotos()">
+                📤 批量上传选中照片
+              </button>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <input type="text" id="ev_p_photo_url" placeholder="或输入单张图片外部 URL (https://...) 并添加" style="flex:1; padding:6px 10px; background:#1e1e1e; border:1px solid #333; color:#eee; border-radius:4px; font-size:0.8rem;">
+              <button type="button" class="btn-tiny" style="padding:6px 12px; white-space:nowrap;" onclick="addPosterPhotoByUrl()">+ 添加图片</button>
+            </div>
+            <div id="ev_p_photos_upload_stat" style="display:none; font-size:0.75rem; color:var(--gold); margin-top:6px;"></div>
+          </div>
+
+          <!-- 照片缩略图预览网格 -->
+          <div id="ev_p_photos_grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(85px, 1fr)); gap:10px; max-height:220px; overflow-y:auto; padding:4px;">
+          </div>
+        </div>
+
         <div style="display:flex; gap:15px; position:sticky; bottom:0; background:#111; padding-top:10px; border-top:1px solid #222;">
           <button class="btn btn-submit" id="btnSaveEventPoster" style="flex:2; padding:12px;" onclick="saveEventPoster('${p?.id || ''}')">💾 保存海报设置</button>
           <button class="btn-tiny" style="flex:1;" onclick="this.closest('#eventPosterModal').remove()">取消</button>
@@ -2575,6 +2613,90 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
     document.body.appendChild(modal);
+    renderPosterPhotosGrid();
+  };
+
+  // 渲染走廊海报内图片网格
+  window.renderPosterPhotosGrid = () => {
+    const grid = document.getElementById('ev_p_photos_grid');
+    const countBadge = document.getElementById('ev_p_photo_count_badge');
+    const photos = window._currentEditingPosterPhotos || [];
+    if (countBadge) countBadge.innerText = `已添加 ${photos.length} 张图片`;
+    if (!grid) return;
+
+    if (photos.length === 0) {
+      grid.innerHTML = `<p style="grid-column:1/-1; color:#666; font-size:0.78rem; text-align:center; padding:12px 0; margin:0;">暂未添加附加图片（访客点击海报将只展示主海报）</p>`;
+      return;
+    }
+
+    grid.innerHTML = photos.map((item, idx) => {
+      const url = typeof item === 'string' ? item : (item.media_url || item.url || '');
+      return `
+        <div style="position:relative; width:100%; aspect-ratio:1/1; border-radius:8px; overflow:hidden; border:1px solid rgba(246,210,138,0.3); background:#050505; box-shadow:0 4px 10px rgba(0,0,0,0.5);">
+          <img src="${url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
+          <button type="button" onclick="removePosterPhoto(${idx})" style="position:absolute; top:3px; right:3px; background:rgba(0,0,0,0.85); color:#ff6b6b; border:1px solid rgba(255,107,107,0.4); border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer; line-height:1;" title="移除此相片">✕</button>
+        </div>
+      `;
+    }).join('');
+  };
+
+  // 批量上传海报相片集
+  window.uploadPosterGalleryPhotos = async () => {
+    const fileInput = document.getElementById('f_ev_p_photos');
+    const files = Array.from(fileInput?.files || []).filter(f => f.type.startsWith('image/'));
+    if (files.length === 0) return alert("请先选择图片文件");
+
+    const stat = document.getElementById('ev_p_photos_upload_stat');
+    const btn = document.getElementById('btnUploadPosterPhotos');
+    const origText = btn ? btn.innerText : '📤 批量上传选中照片';
+    if (btn) { btn.innerText = "⏳ 上传中..."; btn.disabled = true; }
+    if (stat) { stat.style.display = 'block'; stat.innerText = `⏳ 准备上传 ${files.length} 张图片...`; }
+
+    let count = 0;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (stat) stat.innerText = `⏳ 正在处理第 ${i+1}/${files.length} 张: ${file.name}...`;
+      try {
+        let uploadFile = file;
+        if (file.type.startsWith('image/')) {
+          uploadFile = await compressImage(file);
+        }
+        const safeName = uploadFile.name.replace(/[^\w.-]/g, "_");
+        const path = `banners/${Date.now()}-${i}-${safeName}`;
+        const { data, error } = await db.storage.from('harvester-media').upload(path, uploadFile);
+        if (error) throw error;
+        const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
+        if (!window._currentEditingPosterPhotos) window._currentEditingPosterPhotos = [];
+        window._currentEditingPosterPhotos.push({ media_url: publicUrl });
+        count++;
+      } catch(err) {
+        console.warn("Upload photo item failed:", err);
+      }
+    }
+
+    if (fileInput) fileInput.value = '';
+    if (stat) {
+      stat.innerText = `✅ 成功上传 ${count} 张图片！`;
+      setTimeout(() => { if (stat) stat.style.display = 'none'; }, 2500);
+    }
+    if (btn) { btn.innerText = origText; btn.disabled = false; }
+    renderPosterPhotosGrid();
+  };
+
+  window.addPosterPhotoByUrl = () => {
+    const input = document.getElementById('ev_p_photo_url');
+    const url = input?.value.trim();
+    if (!url) return alert("请输入图片链接");
+    if (!window._currentEditingPosterPhotos) window._currentEditingPosterPhotos = [];
+    window._currentEditingPosterPhotos.push({ media_url: url });
+    if (input) input.value = '';
+    renderPosterPhotosGrid();
+  };
+
+  window.removePosterPhoto = (idx) => {
+    if (!window._currentEditingPosterPhotos) return;
+    window._currentEditingPosterPhotos.splice(idx, 1);
+    renderPosterPhotosGrid();
   };
 
   // 上传走廊海报图片
@@ -2632,6 +2754,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const list = window._currentAdminPosters || [];
     const imgPos = document.getElementById('ev_p_pos')?.value.trim() || '50% 50%';
     const imgZoom = parseFloat(document.getElementById('ev_p_zoom')?.value) || 1.0;
+    const photos = (window._currentEditingPosterPhotos || []).map(p => typeof p === 'string' ? { media_url: p } : p);
     const item = {
       id: posterId || ('poster_' + Date.now()),
       title: title,
@@ -2642,7 +2765,8 @@ document.addEventListener('DOMContentLoaded', () => {
       date: date,
       time: time,
       venue: venue,
-      link: link
+      link: link,
+      photos: photos
     };
 
     if (posterId) {
@@ -2870,6 +2994,18 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
 
+        // Extract photos from meta or direct photos field
+        let evPhotos = [];
+        if (Array.isArray(e.photos)) evPhotos = e.photos;
+        if (desc.includes('EXT_META:')) {
+          const mm = desc.match(/EXT_META:(.*?)\|\|/);
+          if (mm) {
+            try {
+              const parsedMeta = JSON.parse(mm[1]);
+              if (parsedMeta.photos && Array.isArray(parsedMeta.photos)) evPhotos = parsedMeta.photos;
+            } catch(err){}
+          }
+        }
         e = {
           ...e,
           title: rawTitle,
@@ -2881,11 +3017,14 @@ document.addEventListener('DOMContentLoaded', () => {
           image_url: img,
           email_template: et,
           display_order: ord,
-          description: desc
+          description: desc,
+          photos: evPhotos
         };
       }
 
       const isEdit = !!e;
+      window._currentEditingEventPhotos = Array.isArray(e?.photos) ? JSON.parse(JSON.stringify(e.photos)) : [];
+
       const modal = document.createElement('div');
       modal.id = "eventEditModal";
       modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(8px); padding:20px;";
@@ -2979,7 +3118,42 @@ document.addEventListener('DOMContentLoaded', () => {
           <textarea id="ev_desc" placeholder="请输入活动详情描述..." style="width:100%; height:90px; margin-bottom:15px; padding:10px;">${e?.description || ''}</textarea>
 
           <label style="display:block; margin-bottom:5px; color:#aaa; font-size:0.8rem;">定制提醒邮件内容 (Email Notification Template)</label>
-          <textarea id="ev_email" placeholder="输入在活动前给订阅听众发送的专属提醒通知..." style="width:100%; height:70px; margin-bottom:20px; padding:10px;">${e?.email_template || ''}</textarea>
+          <textarea id="ev_email" placeholder="输入在活动前给订阅听众发送的专属提醒通知..." style="width:100%; height:70px; margin-bottom:16px; padding:10px;">${e?.email_template || ''}</textarea>
+
+          <!-- 📸 活动详情页相片集 (Event Multi-Photo Gallery) -->
+          <div style="margin-bottom:20px; background:#0a0a0a; padding:15px; border-radius:12px; border:1.5px solid rgba(246,210,138,0.3); box-shadow:0 4px 18px rgba(0,0,0,0.5);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+              <div>
+                <label style="color:var(--gold); font-size:0.88rem; font-weight:700; margin:0; display:flex; align-items:center; gap:6px;">
+                  <i class="fas fa-camera"></i> 📸 活动详情页相片集 (点击活动后展示的现场/详情图片)
+                </label>
+                <p style="margin:4px 0 0 0; color:#888; font-size:0.75rem; line-height:1.4;">
+                  访客进入活动详情页后，除海报外还会展示这组照片（支持上传多张现场照片、特会花絮、宣传图等）。
+                </p>
+              </div>
+              <span id="ev_photo_count_badge" style="font-size:0.75rem; color:var(--gold); background:rgba(246,210,138,0.12); border:1px solid rgba(246,210,138,0.35); padding:3px 10px; border-radius:20px; font-weight:600;">
+                已添加 0 张图片
+              </span>
+            </div>
+
+            <div style="background:#141414; border:1px dashed rgba(246,210,138,0.35); border-radius:8px; padding:12px; margin-bottom:12px;">
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+                <input type="file" id="f_ev_photos" accept="image/*" multiple style="font-size:0.78rem; color:#aaa; flex:1; min-width:180px;">
+                <button type="button" class="btn-tiny" id="btnUploadEventPhotos" style="background:rgba(246,210,138,0.2); border-color:var(--gold); color:var(--gold); font-weight:600; padding:6px 14px;" onclick="uploadEventGalleryPhotos()">
+                  📤 批量上传选中照片
+                </button>
+              </div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="text" id="ev_photo_url_input" placeholder="或输入单张图片外部 URL (https://...) 并添加" style="flex:1; padding:6px 10px; background:#1e1e1e; border:1px solid #333; color:#eee; border-radius:4px; font-size:0.8rem;">
+                <button type="button" class="btn-tiny" style="padding:6px 12px; white-space:nowrap;" onclick="addEventPhotoByUrl()">+ 添加图片</button>
+              </div>
+              <div id="ev_photos_upload_stat" style="display:none; font-size:0.75rem; color:var(--gold); margin-top:6px;"></div>
+            </div>
+
+            <!-- 照片缩略图预览网格 -->
+            <div id="ev_photos_grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(85px, 1fr)); gap:10px; max-height:220px; overflow-y:auto; padding:4px;">
+            </div>
+          </div>
 
           <div style="display:flex; gap:15px; position:sticky; bottom:0; background:#111; padding-top:10px; border-top:1px solid #222;">
             <button class="btn btn-submit" id="btnSaveEventSubmit" style="flex:2; padding:12px;" onclick="saveEvent('${e?.id || ''}')">🚀 保存活动信息</button>
@@ -2988,12 +3162,96 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
       document.body.appendChild(modal);
+      renderEventPhotosGrid();
     } catch (err) {
       console.error("openEventModal Fail:", err);
       alert("😰 无法加载活动数据: " + (err.message || err));
     } finally {
       if (id && btn) { btn.innerText = originalText; btn.disabled = false; }
     }
+  };
+
+  // 渲染活动内照片缩略图网格
+  window.renderEventPhotosGrid = () => {
+    const grid = document.getElementById('ev_photos_grid');
+    const countBadge = document.getElementById('ev_photo_count_badge');
+    const photos = window._currentEditingEventPhotos || [];
+    if (countBadge) countBadge.innerText = `已添加 ${photos.length} 张图片`;
+    if (!grid) return;
+
+    if (photos.length === 0) {
+      grid.innerHTML = `<p style="grid-column:1/-1; color:#666; font-size:0.78rem; text-align:center; padding:12px 0; margin:0;">暂未添加附加图片（访客点击活动将只展示海报）</p>`;
+      return;
+    }
+
+    grid.innerHTML = photos.map((item, idx) => {
+      const url = typeof item === 'string' ? item : (item.media_url || item.url || '');
+      return `
+        <div style="position:relative; width:100%; aspect-ratio:1/1; border-radius:8px; overflow:hidden; border:1px solid rgba(246,210,138,0.3); background:#050505; box-shadow:0 4px 10px rgba(0,0,0,0.5);">
+          <img src="${url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'">
+          <button type="button" onclick="removeEventPhoto(${idx})" style="position:absolute; top:3px; right:3px; background:rgba(0,0,0,0.85); color:#ff6b6b; border:1px solid rgba(255,107,107,0.4); border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer; line-height:1;" title="移除此相片">✕</button>
+        </div>
+      `;
+    }).join('');
+  };
+
+  // 批量上传活动详情相片集
+  window.uploadEventGalleryPhotos = async () => {
+    const fileInput = document.getElementById('f_ev_photos');
+    const files = Array.from(fileInput?.files || []).filter(f => f.type.startsWith('image/'));
+    if (files.length === 0) return alert("请先选择图片文件");
+
+    const stat = document.getElementById('ev_photos_upload_stat');
+    const btn = document.getElementById('btnUploadEventPhotos');
+    const origText = btn ? btn.innerText : '📤 批量上传选中照片';
+    if (btn) { btn.innerText = "⏳ 上传中..."; btn.disabled = true; }
+    if (stat) { stat.style.display = 'block'; stat.innerText = `⏳ 准备上传 ${files.length} 张图片...`; }
+
+    let count = 0;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (stat) stat.innerText = `⏳ 正在处理第 ${i+1}/${files.length} 张: ${file.name}...`;
+      try {
+        let uploadFile = file;
+        if (file.type.startsWith('image/')) {
+          uploadFile = await compressImage(file);
+        }
+        const safeName = uploadFile.name.replace(/[^\w.-]/g, "_");
+        const path = `events/${Date.now()}-${i}-${safeName}`;
+        const { data, error } = await db.storage.from('harvester-media').upload(path, uploadFile);
+        if (error) throw error;
+        const { data: { publicUrl } } = db.storage.from('harvester-media').getPublicUrl(path);
+        if (!window._currentEditingEventPhotos) window._currentEditingEventPhotos = [];
+        window._currentEditingEventPhotos.push({ media_url: publicUrl });
+        count++;
+      } catch(err) {
+        console.warn("Upload event photo failed:", err);
+      }
+    }
+
+    if (fileInput) fileInput.value = '';
+    if (stat) {
+      stat.innerText = `✅ 成功上传 ${count} 张图片！`;
+      setTimeout(() => { if (stat) stat.style.display = 'none'; }, 2500);
+    }
+    if (btn) { btn.innerText = origText; btn.disabled = false; }
+    renderEventPhotosGrid();
+  };
+
+  window.addEventPhotoByUrl = () => {
+    const input = document.getElementById('ev_photo_url_input');
+    const url = input?.value.trim();
+    if (!url) return alert("请输入图片链接");
+    if (!window._currentEditingEventPhotos) window._currentEditingEventPhotos = [];
+    window._currentEditingEventPhotos.push({ media_url: url });
+    if (input) input.value = '';
+    renderEventPhotosGrid();
+  };
+
+  window.removeEventPhoto = (idx) => {
+    if (!window._currentEditingEventPhotos) return;
+    window._currentEditingEventPhotos.splice(idx, 1);
+    renderEventPhotosGrid();
   };
 
   window.saveEvent = async(id) => {
@@ -3007,6 +3265,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const imgPos = document.getElementById('ev_pos')?.value.trim() || '50% 50%';
     const imgZoom = parseFloat(document.getElementById('ev_zoom')?.value) || 1.0;
+    const eventPhotos = (window._currentEditingEventPhotos || []).map(p => typeof p === 'string' ? { media_url: p } : p);
+
     const payload = {
       title: finalTitle,
       event_date: document.getElementById('ev_d').value,
@@ -3019,7 +3279,8 @@ document.addEventListener('DOMContentLoaded', () => {
       status_tag: stag,
       email_template: document.getElementById('ev_email').value,
       description: document.getElementById('ev_desc').value,
-      display_order: parseInt(document.getElementById('ev_order').value, 10) || 0
+      display_order: parseInt(document.getElementById('ev_order').value, 10) || 0,
+      photos: eventPhotos
     };
 
     if (!payload.title) {
@@ -3029,10 +3290,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      // 1. 尝试直接保存
+      // 1. 尝试直接保存 (若由于 photos 字段不在表结构中报错，则优雅降级)
+      let directPayload = { ...payload };
       let saveRes = id 
-        ? await db.from('events').update(payload).eq('id', id)
-        : await db.from('events').insert([payload]).select();
+        ? await db.from('events').update(directPayload).eq('id', id)
+        : await db.from('events').insert([directPayload]).select();
+
+      if (saveRes.error) {
+        console.warn("Direct save with photos failed, retry without photos column in events table:", saveRes.error);
+        const { photos: _omitted, ...safePayload } = payload;
+        saveRes = id 
+          ? await db.from('events').update(safePayload).eq('id', id)
+          : await db.from('events').insert([safePayload]).select();
+      }
 
       if (saveRes.error) {
         console.warn("Direct save failed, packing structured meta into description fallback:", saveRes.error);
@@ -3048,7 +3318,8 @@ document.addEventListener('DOMContentLoaded', () => {
           img_zoom: payload.img_zoom,
           stag: payload.status_tag,
           et: payload.email_template,
-          ord: payload.display_order
+          ord: payload.display_order,
+          photos: eventPhotos
         };
         const fallbackPayload = {
           title: payload.title,
@@ -3063,7 +3334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fRes.error) throw fRes.error;
       }
 
-      // 2. 双重持久化同步到 site_config 备用存储 (防 RLS 拦截)
+      // 2. 双重持久化同步到 site_config 备用存储 (防 RLS 拦截，并保存 photos 数组)
       try {
         const { data: evCfg } = await db.from('site_config').select('value').eq('key', 'cfg_events_custom_json').maybeSingle();
         let evList = [];
@@ -3073,7 +3344,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!Array.isArray(evList)) evList = [];
         const evItem = {
           id: id || ('ev_' + Date.now()),
-          ...payload
+          ...payload,
+          photos: eventPhotos
         };
         const existIdx = evList.findIndex(x => String(x.id) === String(evItem.id) || x.title === evItem.title);
         if (existIdx !== -1) evList[existIdx] = evItem;
