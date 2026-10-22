@@ -1351,22 +1351,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 <label style="font-size:0.75rem; color:#888; display:block;">折页三顶部幕后相片 URL</label>
                 <input type="text" id="m_photo3" value="${photo3}" style="width:100%; padding:6px;">
               </div>
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div>
-                  <label style="font-size:0.75rem; color:#888; display:block;">词曲创作</label>
-                  <input type="text" id="m_composer" value="${composer}" placeholder="Harvester Worship" style="width:100%; padding:6px;">
+                  <label style="font-size:0.75rem; color:#888; display:block; margin-bottom:3px;">词曲创作 (支持 Enter 换行)</label>
+                  <textarea id="m_composer" placeholder="Harvester Worship&#10;可按 Enter 键换行输入人员分工" style="width:100%; height:82px; padding:7px 8px; font-size:0.82rem; line-height:1.45; background:#1a1a1a; color:#fff; border:1px solid #333; border-radius:6px; resize:vertical; font-family:inherit;">${composer}</textarea>
                 </div>
                 <div>
-                  <label style="font-size:0.75rem; color:#888; display:block;">编曲制作</label>
-                  <input type="text" id="m_arrangement" value="${arrangement}" placeholder="Harvester Music Production" style="width:100%; padding:6px;">
+                  <label style="font-size:0.75rem; color:#888; display:block; margin-bottom:3px;">编曲制作 (支持 Enter 换行)</label>
+                  <textarea id="m_arrangement" placeholder="Harvester Music Production&#10;可按 Enter 键换行输入分工" style="width:100%; height:82px; padding:7px 8px; font-size:0.82rem; line-height:1.45; background:#1a1a1a; color:#fff; border:1px solid #333; border-radius:6px; resize:vertical; font-family:inherit;">${arrangement}</textarea>
                 </div>
                 <div>
-                  <label style="font-size:0.75rem; color:#888; display:block;">人声主唱</label>
-                  <input type="text" id="m_vocals" value="${vocals}" placeholder="选填（若不填写则前台不显示）" style="width:100%; padding:6px;">
+                  <label style="font-size:0.75rem; color:#888; display:block; margin-bottom:3px;">人声主唱 (支持 Enter 换行)</label>
+                  <textarea id="m_vocals" placeholder="例如：&#10;主唱: 汤小康&#10;合声: 潘慶章" style="width:100%; height:82px; padding:7px 8px; font-size:0.82rem; line-height:1.45; background:#1a1a1a; color:#fff; border:1px solid #333; border-radius:6px; resize:vertical; font-family:inherit;">${vocals}</textarea>
                 </div>
                 <div>
-                  <label style="font-size:0.75rem; color:#888; display:block;">录音混音母带</label>
-                  <input type="text" id="m_mixing" value="${mixing}" placeholder="选填（若不填写则前台不显示）" style="width:100%; padding:6px;">
+                  <label style="font-size:0.75rem; color:#888; display:block; margin-bottom:3px;">录音混音母带 (支持 Enter 换行)</label>
+                  <textarea id="m_mixing" placeholder="例如：&#10;混音: TSH Global&#10;母带后期: 派仔洪" style="width:100%; height:82px; padding:7px 8px; font-size:0.82rem; line-height:1.45; background:#1a1a1a; color:#fff; border:1px solid #333; border-radius:6px; resize:vertical; font-family:inherit;">${mixing}</textarea>
                 </div>
               </div>
             </div>

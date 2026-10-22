@@ -1427,27 +1427,26 @@ ${activeSong.lyrics}
                     <h3 style="margin:2px 0 0; color:${pal.fold3_text}; font-size:1.35rem; font-family:var(--font-gaoduanhei), var(--font-brand), sans-serif; font-weight:700;">同工团队 (CREDITS)</h3>
                   </div>
 
-                  <div style="font-size:0.88rem; space-y:8px; color:${pal.fold3_text}; font-family:var(--font-body);">
+                  <div style="font-size:0.86rem; color:${pal.fold3_text}; font-family:var(--font-body); display:flex; flex-direction:column; gap:8px; max-height:245px; overflow-y:auto; padding-right:4px;">
                     ${(activeSong.composer || activeSong.artist) ? `
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
-                      <span style="opacity:0.75;">词曲创作：</span>
-                      <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.composer || activeSong.artist}</span>
+                    <div style="border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:5px;">
+                      <div style="opacity:0.72; font-size:0.74rem; font-weight:700; letter-spacing:0.5px; margin-bottom:2px;">词曲创作：</div>
+                      <div style="font-weight:600; color:${pal.fold3_text}; white-space:pre-line; line-height:1.45; font-size:0.82rem;">${(activeSong.composer || activeSong.artist || '').trim()}</div>
                     </div>` : ''}
                     ${(activeSong.arrangement && activeSong.arrangement.trim() !== '') ? `
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
-                      <span style="opacity:0.75;">编曲制作：</span>
-                      <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.arrangement}</span>
+                    <div style="border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:5px;">
+                      <div style="opacity:0.72; font-size:0.74rem; font-weight:700; letter-spacing:0.5px; margin-bottom:2px;">编曲制作：</div>
+                      <div style="font-weight:600; color:${pal.fold3_text}; white-space:pre-line; line-height:1.45; font-size:0.82rem;">${activeSong.arrangement.trim()}</div>
                     </div>` : ''}
                     ${(activeSong.vocals && activeSong.vocals.trim() !== '') ? `
-                      <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
-                        <span style="opacity:0.75;">人声主唱：</span>
-                        <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.vocals.trim()}</span>
-                      </div>
-                    ` : ''}
+                    <div style="border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:5px;">
+                      <div style="opacity:0.72; font-size:0.74rem; font-weight:700; letter-spacing:0.5px; margin-bottom:2px;">人声主唱：</div>
+                      <div style="font-weight:600; color:${pal.fold3_text}; white-space:pre-line; line-height:1.45; font-size:0.82rem;">${activeSong.vocals.trim()}</div>
+                    </div>` : ''}
                     ${(activeSong.mixing && activeSong.mixing.trim() !== '') ? `
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:6px;">
-                      <span style="opacity:0.75;">录音混音母带：</span>
-                      <span style="font-weight:600; color:${pal.fold3_text};">${activeSong.mixing.trim()}</span>
+                    <div style="border-bottom:1px solid rgba(0,0,0,0.06); padding-bottom:5px;">
+                      <div style="opacity:0.72; font-size:0.74rem; font-weight:700; letter-spacing:0.5px; margin-bottom:2px;">录音混音母带：</div>
+                      <div style="font-weight:600; color:${pal.fold3_text}; white-space:pre-line; line-height:1.45; font-size:0.82rem;">${activeSong.mixing.trim()}</div>
                     </div>` : ''}
                   </div>
                 </div>
