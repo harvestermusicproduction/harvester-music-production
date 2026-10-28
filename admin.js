@@ -423,6 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <nav style="flex:1; display:flex; flex-direction:column; gap:4px; overflow-y:auto; padding-right:4px;">
             <p class="nav-section-title">CONTROL CENTER / 概览</p>
             <a href="javascript:void(0)" onclick="switchModule('dashboard')" class="nav-item ${currentModule==='dashboard'?'active':''}">📊 仪表盘概览 (Overview)</a>
+            <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" class="nav-item" style="color:var(--gold); border:1px dashed rgba(212,175,55,0.35); background:rgba(212,175,55,0.06); margin-top:2px;">📈 Google Analytics 报表 <i class="fas fa-external-link-alt" style="margin-left:auto; font-size:0.72rem; opacity:0.8;"></i></a>
 
             <p class="nav-section-title" style="margin-top:16px;">FRONTEND PAGES / 前台页面分类管理</p>
             <a href="javascript:void(0)" onclick="switchModule('home')" class="nav-item ${currentModule==='home'?'active':''}">🏠 1. 主页 (Home)</a>
@@ -692,7 +693,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <h1 style="color:#ffffff; font-size:1.85rem; margin:0; font-weight:800; letter-spacing:0.5px;">系统概览 <span style="color:var(--gold);">(Dashboard)</span></h1>
           <p style="color:#a0a0a0; font-size:0.85rem; margin:4px 0 0;">欢迎进入收割机音乐后台控制中心 · Harvester Gold & Obsidian Edition</p>
         </div>
-        <button onclick="renderCMS()" class="btn-tiny" style="display:flex; align-items:center; gap:6px;"><i class="fas fa-sync-alt"></i> 刷新数据</button>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" class="btn-tiny" style="display:inline-flex; align-items:center; gap:7px; text-decoration:none; background:linear-gradient(135deg, #e5c158 0%, #c49b27 100%); color:#111111; border:none; font-weight:700; padding:8px 16px; box-shadow:0 4px 14px rgba(212,175,55,0.3);">
+            <i class="fas fa-chart-line"></i> 📊 查看 Google Analytics 流量报表 <i class="fas fa-external-link-alt" style="font-size:0.7rem;"></i>
+          </a>
+          <button onclick="renderCMS()" class="btn-tiny" style="display:flex; align-items:center; gap:6px;"><i class="fas fa-sync-alt"></i> 刷新数据</button>
+        </div>
       </div>
 
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-top:20px;">
@@ -703,6 +709,23 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="cms-card" style="background:#111111; padding:1.8rem; border-radius:12px; border:1px solid #222; border-left:4px solid #ffffff;">
           <h3 style="font-size:2.6rem; margin:0; color:#ffffff; font-weight:900;">${m||0}</h3>
           <p style="color:#a0a0a0; margin:6px 0 0; font-size:0.82rem; text-transform:uppercase; letter-spacing:1px; font-weight:600;">已发布曲目 (Live Tracks)</p>
+        </div>
+        <div class="cms-card" style="background:#111111; padding:1.5rem 1.8rem; border-radius:12px; border:1px solid rgba(212,175,55,0.35); border-left:4px solid #2ed573; display:flex; flex-direction:column; justify-content:space-between; gap:10px;">
+          <div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+              <span style="font-size:0.75rem; color:#2ed573; font-weight:700; letter-spacing:0.8px; display:inline-flex; align-items:center; gap:6px;">
+                <span style="width:8px; height:8px; border-radius:50%; background:#2ed573; display:inline-block; box-shadow:0 0 8px #2ed573;"></span> GA4 实时追踪已激活
+              </span>
+              <span style="font-family:monospace; font-size:0.75rem; color:var(--gold); background:rgba(212,175,55,0.12); padding:2px 7px; border-radius:4px; border:1px solid rgba(212,175,55,0.3);">G-77SDJ92ZP7</span>
+            </div>
+            <p style="color:#ffffff; margin:8px 0 2px; font-size:1.05rem; font-weight:700;">Google Analytics 流量分析</p>
+            <p style="color:#888; margin:0; font-size:0.75rem;">实时监控在线访客、国家地区、来源渠道与试听下载事件</p>
+          </div>
+          <div style="display:flex; gap:8px; margin-top:4px;">
+            <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noopener noreferrer" class="btn-tiny" style="flex:1; text-align:center; text-decoration:none; border-color:var(--gold); color:var(--gold-light); background:rgba(212,175,55,0.12); font-weight:600;">
+              📈 进入 GA4 后台 ↗
+            </a>
+          </div>
         </div>
       </div>
 
@@ -2346,6 +2369,10 @@ document.addEventListener('DOMContentLoaded', () => {
         rawTitle = rawTitle.replace(titleTagMatch[0], '').trim();
       }
       rawTitle = sanitizeEventTitle(rawTitle, stag);
+      if (rawTitle === '音乐见证布道会' && loc) {
+        const shortLoc = loc.replace(/\s*\(.*?\)/, '').trim();
+        if (shortLoc) rawTitle = `音乐见证布道会 · ${shortLoc}`;
+      }
 
       if (!evTime && evDate) {
         if (evDate.includes('T')) {

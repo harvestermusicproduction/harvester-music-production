@@ -2,34 +2,46 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Noto+Serif+SC:wght@300;400;500;600;700;900&display=swap');
 
 :root {
-  --gold: #f6d28a;
-  --gold-warm: #f4be6a;
-  --gold-amber: #e8a848;
-  --bg: #1a222a; 
-  --bg-warm-dark: #161d24;
-  --text: #F6F4F0; 
-  --text-muted: #b8ac9f;
-  --gray: #9c9083;
-  --panel: #1c242d;
-  --panel-warm: rgba(28, 36, 45, 0.78);
+  --bg-dark: #1C140F;
+  --bg: #1C140F; 
+  --bg-warm-dark: #18110D;
+  --bg-card: rgba(45, 31, 24, 0.82);
+  --panel: #2D1F18;
+  --panel-warm: rgba(45, 31, 24, 0.82);
+  --border-warm: rgba(255, 184, 48, 0.28);
+  --border-warm-solid: #4A3326;
 
-  /* 🎨 Morandi Color System (莫兰迪治愈柔和色调) */
-  --morandi-bg: #1a222a;
-  --morandi-bg-subtle: #242f3a;
-  --morandi-kraft: #dedad4;
-  --morandi-kraft-dark: #202933;
-  --morandi-teal: #3b5a5b;
-  --morandi-sage: #52796f;
-  --morandi-rose: #b06d60;
-  --morandi-clay: #c47b6a;
-  --morandi-sand: #d4af37;
-  --morandi-gold: #f6d28a;
-  --morandi-amber: #e8a848;
-  --morandi-cream: #F6F4F0;
-  --morandi-muted: #b8ac9f;
-  --morandi-slate: #2d3748;
-  --morandi-border: rgba(246, 210, 138, 0.28);
-  --morandi-border-subtle: rgba(255, 255, 255, 0.12);
+  --gold: #FFB830;
+  --gold-warm: #FFA822;
+  --gold-amber: #FF8C2A;
+  --gold-light: #FFE082;
+  --coral: #FF6B4A;
+  --accent-coral: #FF6B4A;
+  --gold-glow: rgba(255, 184, 48, 0.42);
+  --coral-glow: rgba(255, 107, 74, 0.38);
+
+  --text: #FFF8F0; 
+  --text-main: #FFF8F0;
+  --text-muted: #E6D5C3;
+  --gray: #C4B09C;
+
+  /* ☀️ Sunlit Harvest Color System (晨曦金麦 · 暖阳珊瑚色调) */
+  --morandi-bg: #1C140F;
+  --morandi-bg-subtle: #2D1F18;
+  --morandi-kraft: #F5E8D5;
+  --morandi-kraft-dark: #251913;
+  --morandi-teal: #D97706;
+  --morandi-sage: #E07A5F;
+  --morandi-rose: #FF6B4A;
+  --morandi-clay: #FF7B54;
+  --morandi-sand: #FFB830;
+  --morandi-gold: #FFB830;
+  --morandi-amber: #FFA822;
+  --morandi-cream: #FFF8F0;
+  --morandi-muted: #E6D5C3;
+  --morandi-slate: #38261D;
+  --morandi-border: rgba(255, 184, 48, 0.28);
+  --morandi-border-subtle: rgba(255, 248, 240, 0.14);
   
   /* 🏛️ Unified Platform Typography Standard: 
      - 全站统一中文字体 (All Chinese Fonts): 思源宋体 (Noto Serif SC / Source Han Serif / Songti SC)
@@ -95,9 +107,9 @@ html {
 }
 body {
   font-family: var(--font-body);
-  background: radial-gradient(circle at 50% 15%, #242f3a 0%, #1b232c 45%, #141a20 100%);
-  background-color: #1b232c;
-  color: var(--text);
+  background: radial-gradient(circle at 18% 18%, rgba(255, 107, 74, 0.18) 0%, transparent 48%), radial-gradient(circle at 82% 24%, rgba(255, 184, 48, 0.20) 0%, transparent 52%), linear-gradient(160deg, #1E1510 0%, #2D1F18 52%, #18110D 100%);
+  background-color: #1C140F;
+  color: var(--text-main);
   line-height: 1.8;
   overflow-x: hidden;
   width: 100%;
@@ -116,61 +128,61 @@ img, video, iframe, canvas, svg {
 }
 
 /* =========================================================================
-   🎨 MORANDI COLOR PALETTE PAGE BACKGROUND SYSTEM (莫兰迪治愈柔和全站背景)
+   ☀️ SUNLIT HARVEST PAGE BACKGROUND SYSTEM (晨曦金麦 · 暖阳珊瑚全站背景)
    ========================================================================= */
-/* 1. 主页 (Home) - 莫兰迪·深灰湖蓝 (Slate Teal & Lake Mist) */
+/* 1. 主页 (Home) - 晨曦金麦 · 暖阳珊瑚 (Sunlit Harvest Gold & Coral Glow) */
 body.page-home, .page-home {
-  background: radial-gradient(ellipse at 50% 25%, #2d3e4e 0%, #1f2a36 55%, #151d26 100%) !important;
-  background-color: #1f2a36 !important;
+  background: radial-gradient(circle at 18% 18%, rgba(255, 107, 74, 0.20) 0%, transparent 48%), radial-gradient(circle at 82% 24%, rgba(255, 184, 48, 0.22) 0%, transparent 52%), linear-gradient(160deg, #1E1510 0%, #2D1F18 52%, #18110D 100%) !important;
+  background-color: #1C140F !important;
   background-attachment: fixed !important;
 }
 
-/* 2. 音乐与歌谱集 (Music & Scores) - 动态随中心专辑色板切换 (5套专属莫兰迪色系) */
+/* 2. 音乐与歌谱集 (Music & Scores) - 动态随中心专辑暖阳色板切换 */
 body.page-music, body.page-scores, .page-music, .page-scores {
-  background-color: var(--active-album-theme, #182222) !important;
-  background-image: none !important;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 107, 74, 0.16) 0%, transparent 50%), radial-gradient(circle at 80% 25%, rgba(255, 184, 48, 0.18) 0%, transparent 52%), var(--active-album-theme, #1E1510) !important;
+  background-color: var(--active-album-theme, #1E1510) !important;
   transition: background-color 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
 }
 
-/* 3. 活动与日历 (Events) - 莫兰迪·暖褐陶土 (Muted Terracotta Clay & Roasted Espresso) */
+/* 3. 活动与日历 (Events) - 暖阳赤陶与烘焙可可 (Sunlit Terracotta & Roasted Espresso) */
 body.page-events, body.page-event, .page-events, .page-event {
-  background: radial-gradient(ellipse at 50% 25%, #4b3630 0%, #342420 55%, #201513 100%) !important;
-  background-color: #342420 !important;
+  background: radial-gradient(circle at 22% 18%, rgba(255, 107, 74, 0.22) 0%, transparent 48%), radial-gradient(circle at 80% 28%, rgba(255, 184, 48, 0.18) 0%, transparent 52%), linear-gradient(160deg, #241712 0%, #332018 52%, #1A110D 100%) !important;
+  background-color: #241712 !important;
   background-attachment: fixed !important;
 }
 
-/* 4. 照片集 (Diary / Footprints) - 莫兰迪·复古亚麻卡其 (Muted Kraft Linen & Warm Earth) */
+/* 4. 照片集 (Diary / Footprints) - 晨曦麦浪与暖胡桃 (Golden Wheat & Warm Walnut) */
 body.page-diary, .page-diary {
-  background: radial-gradient(ellipse at 50% 25%, #434136 0%, #2f2d24 55%, #1e1d17 100%) !important;
-  background-color: #2f2d24 !important;
+  background: radial-gradient(circle at 18% 22%, rgba(255, 184, 48, 0.22) 0%, transparent 48%), radial-gradient(circle at 82% 20%, rgba(255, 107, 74, 0.16) 0%, transparent 52%), linear-gradient(160deg, #221811 0%, #302218 52%, #19120D 100%) !important;
+  background-color: #221811 !important;
   background-attachment: fixed !important;
 }
 
-/* 5. 我要投稿 (Submit) - 莫兰迪·灰绿鼠尾草 (Dusty Sage Green & Forest Moss) */
+/* 5. 我要投稿 (Submit) - 暖阳琥珀与焦糖咖啡 (Sunlit Amber & Caramel Espresso) */
 body.page-submit, .page-submit {
-  background: radial-gradient(ellipse at 50% 25%, #2b4737 0%, #1d3226 55%, #132119 100%) !important;
-  background-color: #1d3226 !important;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 184, 48, 0.20) 0%, transparent 48%), radial-gradient(circle at 78% 26%, rgba(255, 107, 74, 0.18) 0%, transparent 52%), linear-gradient(160deg, #201610 0%, #2E2017 52%, #18110C 100%) !important;
+  background-color: #201610 !important;
   background-attachment: fixed !important;
 }
 
-/* 6. 关于我们 (About & Singers) - 莫兰迪·暖砂胡桃木 (Warm Sand & Walnut Earth) */
+/* 6. 关于我们 (About & Singers) - 暖砂胡桃木与晨光金 (Warm Sand Walnut & Sunlit Gold) */
 body.page-about, body.page-singers, .page-about, .page-singers {
-  background: radial-gradient(ellipse at 50% 25%, #48392c 0%, #32261d 55%, #201811 100%) !important;
-  background-color: #32261d !important;
+  background: radial-gradient(circle at 18% 18%, rgba(255, 107, 74, 0.18) 0%, transparent 48%), radial-gradient(circle at 82% 24%, rgba(255, 184, 48, 0.22) 0%, transparent 52%), linear-gradient(160deg, #231812 0%, #322219 52%, #19120D 100%) !important;
+  background-color: #231812 !important;
   background-attachment: fixed !important;
 }
 
-/* 7. 支持我们 (Support) - 莫兰迪·干枯玫瑰粉黛 (Dusty Rose & Vintage Berry Slate) */
+/* 7. 支持我们 (Support) - 暖阳珊瑚与琥珀可可 (Warm Coral & Amber Cocoa) */
 body.page-support, .page-support {
-  background: radial-gradient(ellipse at 50% 25%, #4d2f3d 0%, #351f2a 55%, #22131b 100%) !important;
-  background-color: #351f2a !important;
+  background: radial-gradient(circle at 22% 18%, rgba(255, 107, 74, 0.24) 0%, transparent 48%), radial-gradient(circle at 80% 24%, rgba(255, 184, 48, 0.18) 0%, transparent 52%), linear-gradient(160deg, #251612 0%, #35201A 52%, #1B100D 100%) !important;
+  background-color: #251612 !important;
   background-attachment: fixed !important;
 }
 
-/* 8. 联系我们 (Contact) - 莫兰迪·燕麦冷炭灰 (Oatmeal Cold Charcoal & Mineral Slate) */
+/* 8. 联系我们 (Contact) - 烘焙燕麦与暖金可可 (Roasted Oat & Golden Espresso) */
 body.page-contact, .page-contact {
-  background: radial-gradient(ellipse at 50% 25%, #3a4450 0%, #272f38 55%, #181d23 100%) !important;
-  background-color: #272f38 !important;
+  background: radial-gradient(circle at 18% 20%, rgba(255, 184, 48, 0.20) 0%, transparent 48%), radial-gradient(circle at 82% 24%, rgba(255, 107, 74, 0.18) 0%, transparent 52%), linear-gradient(160deg, #1F1611 0%, #2D2018 52%, #17100C 100%) !important;
+  background-color: #1F1611 !important;
   background-attachment: fixed !important;
 }
 
@@ -191,7 +203,7 @@ body.page-contact, .page-contact {
   opacity: 0;
   pointer-events: none;
   font-family: var(--font-songti), serif;
-  filter: drop-shadow(0 0 12px rgba(246, 210, 138, 0.55));
+  filter: drop-shadow(0 0 12px rgba(255, 184, 48, 0.65));
   animation: ambientNoteRise linear infinite;
 }
 @keyframes ambientNoteRise {
@@ -217,8 +229,8 @@ body.page-contact, .page-contact {
   font-weight: 900 !important;
   text-transform: uppercase !important;
   letter-spacing: -0.5px !important;
-  color: #F6F4F0 !important;
-  text-shadow: 0 8px 30px rgba(0,0,0,0.85), 0 0 35px rgba(246, 210, 138, 0.3) !important;
+  color: #FFF8F0 !important;
+  text-shadow: 0 8px 30px rgba(20, 12, 8, 0.85), 0 0 35px rgba(255, 184, 48, 0.38) !important;
   line-height: 1.15 !important;
   display: inline-block !important;
   width: auto !important;
@@ -233,7 +245,7 @@ body.page-contact, .page-contact {
 
 .hero-hand-title:hover {
   letter-spacing: 2px !important;
-  text-shadow: 0 12px 40px rgba(0,0,0,0.9), 0 0 45px rgba(246, 210, 138, 0.75), 0 0 70px rgba(232, 168, 72, 0.4) !important;
+  text-shadow: 0 12px 40px rgba(20, 12, 8, 0.9), 0 0 45px rgba(255, 184, 48, 0.8), 0 0 70px rgba(255, 107, 74, 0.45) !important;
 }
 
 /* Individual letter interactive dynamics */
@@ -246,8 +258,8 @@ body.page-contact, .page-contact {
 .hero-hand-title .title-char:hover {
   color: var(--gold) !important;
   transform: translateY(-8px) scale(1.16) rotate(var(--rot, -3deg));
-  text-shadow: 0 0 20px rgba(246, 210, 138, 0.95), 0 0 35px rgba(246, 210, 138, 0.7) !important;
-  filter: drop-shadow(0 0 10px rgba(246, 210, 138, 0.8));
+  text-shadow: 0 0 20px rgba(255, 184, 48, 0.95), 0 0 35px rgba(255, 107, 74, 0.75) !important;
+  filter: drop-shadow(0 0 10px rgba(255, 184, 48, 0.85));
 }
 
 .hero-hand-title .title-word {
@@ -2531,19 +2543,19 @@ body.harvest-active {
 }
 
 .event-meta-pill.event-time-pill {
-  border: 1.5px solid rgba(246, 210, 138, 0.75) !important;
-  background: rgba(246, 210, 138, 0.2) !important;
+  border: 1.5px solid rgba(255, 184, 48, 0.85) !important;
+  background: rgba(255, 184, 48, 0.22) !important;
   color: var(--gold) !important;
-  font-weight: 700 !important;
-  font-size: 1rem !important;
-  box-shadow: 0 4px 18px rgba(246, 210, 138, 0.25) !important;
-  letter-spacing: 0.5px;
+  font-weight: 800 !important;
+  font-size: 1.05rem !important;
+  box-shadow: 0 4px 20px rgba(255, 184, 48, 0.28) !important;
+  letter-spacing: 0.6px;
 }
 
 .event-meta-pill.event-time-pill i {
   color: var(--gold) !important;
-  margin-right: 6px;
-  font-size: 1rem;
+  margin-right: 8px;
+  font-size: 1.05rem;
 }
 
 .event-time-badge {
@@ -2589,6 +2601,98 @@ body.harvest-active {
 .event-strip-time i {
   color: var(--gold);
   font-size: 0.78rem;
+}
+
+/* 🌟 Event Detail Showcase Card (活动详情与时间卡片) */
+.event-showcase-card {
+  max-width: 820px;
+  margin: 2.5rem auto 3.5rem;
+  background: rgba(20, 15, 13, 0.75);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1.5px solid rgba(246, 210, 138, 0.35);
+  border-radius: 20px;
+  padding: 2.5rem 2.2rem;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 25px rgba(246, 210, 138, 0.08);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.event-showcase-time-highlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(246, 210, 138, 0.15);
+  border: 1.5px solid var(--gold);
+  color: var(--gold);
+  font-size: 1.25rem;
+  font-weight: 800;
+  padding: 10px 24px;
+  border-radius: 50px;
+  margin: 1.2rem 0;
+  box-shadow: 0 6px 20px rgba(246, 210, 138, 0.25);
+  font-family: var(--font-times-new-roman), serif;
+  letter-spacing: 1px;
+}
+
+.event-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.2rem;
+  margin: 1.5rem 0 2rem;
+  text-align: left;
+}
+
+.event-showcase-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(246, 210, 138, 0.15);
+  border-radius: 12px;
+  padding: 1.1rem 1.2rem;
+}
+
+.event-showcase-item h4 {
+  margin: 0 0 6px;
+  color: var(--gold);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.event-showcase-item p {
+  margin: 0;
+  color: #F6F4F0;
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.event-showcase-footer {
+  border-top: 1px dashed rgba(246, 210, 138, 0.25);
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  color: #bfa88f;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .event-showcase-card {
+    padding: 1.8rem 1.2rem;
+    margin: 1.5rem auto 2.5rem;
+    border-radius: 16px;
+  }
+  .event-showcase-time-highlight {
+    font-size: 1.05rem;
+    padding: 8px 18px;
+    margin: 0.8rem 0;
+  }
+  .event-showcase-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
 }
 
 /* --- Reminder Modal --- */
@@ -5851,6 +5955,14 @@ a, button, [role="button"], input, select, textarea,
     font-size: 0.82rem !important;
     padding: 4px 12px !important;
     max-width: 100% !important;
+  }
+  .event-meta-pill.event-time-pill {
+    font-size: 0.92rem !important;
+    padding: 5px 14px !important;
+    font-weight: 800 !important;
+    border-color: var(--gold) !important;
+    background: rgba(246, 210, 138, 0.22) !important;
+    color: var(--gold) !important;
   }
   .event-poster-card {
     border-radius: 12px !important;

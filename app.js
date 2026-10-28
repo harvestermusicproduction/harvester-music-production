@@ -610,9 +610,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Fallback 4: Guarantee time for ministry tour stops, but respect empty time on posters or online events
-    const isExplicitPosterWithoutTime = (item.id && String(item.id).startsWith('poster_')) && (item.time === '' || item.time === null);
-    if (!rawTime && !isExplicitPosterWithoutTime) {
+    // Fallback 4: Guarantee time for ministry tour stops and all event items
+    if (!rawTime) {
       rawTime = '20:00 - 22:00';
     }
 
@@ -699,7 +698,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     if (!timeStr) {
-      timeStr = "19:30 - 21:30";
+      timeStr = rawTime || "20:00 - 22:00";
     }
 
     const fullDateTime = `${dateStr} ${timeStr}`.trim();
@@ -854,14 +853,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const tagHtml = e.statusTag ? `<span class="event-strip-badge ${badgeClass}">${e.statusTag}</span>` : '';
 
-      const isCancelled = tagText.includes("取消") || tagText.includes("CANCEL");
-      let actionHtml = '';
-      if (isCancelled) {
-        actionHtml = `<span class="event-strip-disabled">已取消</span>`;
+      let titleDisplay = e.cleanTitle || e.title || '';
+      if (titleDisplay === '音乐见证布道会' && e.location) {
+        const shortLoc = e.location.replace(/\s*\(.*?\)/, '').trim();
+        if (shortLoc) titleDisplay = `音乐见证布道会 · ${shortLoc}`;
       }
 
-      const safeTitle = (e.cleanTitle || e.title || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const safeTitle = (titleDisplay || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
       const safeLoc = (e.location || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const eventTimeStr = e.timeStr || '20:00 - 22:00';
 
       return `
         <div class="event-strip-row fade-in">
@@ -871,7 +871,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="event-month-year">
               <span class="event-month">${e.month}</span>
               <span class="event-year">${e.year}</span>
-              <span class="event-time-badge"><i class="fas fa-clock"></i> ${e.timeStr || '20:00 - 22:00'}</span>
+              <span class="event-time-badge"><i class="fas fa-clock"></i> ${eventTimeStr}</span>
             </div>
           </div>
 
@@ -879,17 +879,16 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="event-info-block">
             ${tagHtml ? `<div class="event-tag-badge-wrap">${tagHtml}</div>` : ''}
             <h3 class="event-strip-title">
-              <a href="event.html?id=${e.id}">${e.cleanTitle}</a>
+              <a href="event.html?id=${e.id}">${titleDisplay}</a>
             </h3>
             <p class="event-strip-venue">
-              <span class="event-strip-time"><i class="fas fa-clock"></i> ${e.timeStr || '20:00 - 22:00'}</span><span class="event-strip-dot">·</span>
+              <span class="event-strip-time"><i class="fas fa-clock"></i> 活动时间：${eventTimeStr}</span><span class="event-strip-dot">·</span>
               <span class="event-strip-loc"><i class="fas fa-map-marker-alt"></i> ${e.location || 'HARVESTER MUSIC PRODUCTION'}</span>
             </p>
           </div>
 
           <!-- Right: Action -->
           <div class="event-action-block">
-            ${actionHtml}
             <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('${e.id}', '${safeTitle}', '${e.fullDateTime}')">
               <i class="fas fa-bell"></i>
             </button>
@@ -1069,25 +1068,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Render cards
-    const renderCard = (item) => `
+    const renderCard = (item) => {
+      const hasTime = !!(item.time && /\d/.test(item.time));
+      const topTagIcon = hasTime ? 'fa-clock' : (/推荐|HOT|FEATURED/i.test(item.date) ? 'fa-star' : 'fa-calendar-alt');
+      const topTagText = hasTime ? `${item.date} · ${item.time}` : item.date;
+
+      return `
       <a href="${item.link || 'javascript:void(0)'}" class="event-photo-card" ${item.link && item.link.startsWith('http') ? 'target="_blank"' : ''}>
         <div class="event-card-bg-blur" style="background-image: url('${item.image_url}')"></div>
         <div class="event-card-img-wrap">
           <img src="${item.image_url}" alt="${item.title}" class="event-card-main-img" loading="lazy" style="object-position: ${item.img_pos || '50% 50%'}; transform: scale(${item.img_zoom || 1.0}); transform-origin: ${item.img_pos || '50% 50%'};" onerror="this.style.opacity='0';">
         </div>
         <div class="event-card-gradient"></div>
-        <span class="event-card-top-tag"><i class="fas fa-clock" style="margin-right:4px;"></i>${item.date}${item.time ? ' · ' + item.time : ''}</span>
+        <span class="event-card-top-tag"><i class="fas ${topTagIcon}" style="margin-right:4px;"></i>${topTagText}</span>
         <span class="event-card-status-pill">${item.statusTag}</span>
         <div class="event-card-bottom-info">
           <h3 class="event-card-title">${item.title}</h3>
           <div class="event-card-meta">
-            <span class="event-card-time"><i class="fas fa-clock"></i> ${item.time || '20:00 - 22:00'}</span>
+            ${hasTime ? `<span class="event-card-time"><i class="fas fa-clock"></i> ${item.time}</span>` : ''}
             <span><i class="fas fa-map-marker-alt"></i> ${item.venue}</span>
             <span><i class="fas fa-arrow-right"></i> 查看详情</span>
           </div>
         </div>
       </a>
     `;
+    };
 
     // Dynamic repeat count for seamless running loop without phantom mock items
     let repeatCount = 1;
@@ -1587,7 +1592,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const parsed = parseEventData(album);
-      const cleanT = parsed.cleanTitle || album.title || parsed.title || '活动详情';
+      let cleanT = parsed.cleanTitle || album.title || parsed.title || '活动详情';
+      if (cleanT === '音乐见证布道会' && parsed.location) {
+        const shortLoc = parsed.location.replace(/\s*\(.*?\)/, '').trim();
+        if (shortLoc) cleanT = `音乐见证布道会 · ${shortLoc}`;
+      }
       document.title = `${cleanT} | Harvester Music`;
 
       const titleEl = document.getElementById('eventTitle');
@@ -1607,9 +1616,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const iconClass = isSpecialTag ? 'fa-sparkles' : 'fa-calendar-alt';
           html += `<span class="event-meta-pill"><i class="fas ${iconClass}" style="color:var(--gold); margin-right:6px;"></i>${parsed.dateStr}</span>`;
         }
-        if (parsed.timeStr) {
-          html += `<span class="event-meta-pill event-time-pill"><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>${parsed.timeStr}</span>`;
-        }
+        const displayTime = parsed.timeStr || album.event_time || album.time || '20:00 - 22:00';
+        html += `<span class="event-meta-pill event-time-pill"><i class="fas fa-clock" style="color:var(--gold); margin-right:8px;"></i>活动时间：${displayTime}</span>`;
         if (parsed.location) {
           html += `<span class="event-meta-pill"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.location}</span>`;
         }
@@ -1750,13 +1758,61 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       }
 
-      if (mainPosterHtml || extraGalleryHtml) {
+      const eventTimeStr = parsed.timeStr || album.event_time || album.time || '20:00 - 22:00';
+
+      const showcaseCardHtml = `
+        <div class="event-showcase-card fade-in visible" style="${posterUrl ? 'margin-top:2.5rem;' : ''}">
+          <div style="display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:0.85rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:0.8rem; background:rgba(246,210,138,0.1); border:1px solid rgba(246,210,138,0.3); border-radius:50px; padding:4px 16px;">
+            <i class="fas fa-church"></i> 福音巡回音乐见证布道会
+          </div>
+          <h2 style="color:#F6F4F0; font-size:1.85rem; font-family:var(--font-brand), sans-serif; margin:0 0 1rem; line-height:1.3;">
+            ${cleanT}
+          </h2>
+          <div class="event-showcase-time-highlight">
+            <i class="fas fa-clock"></i> 活动时间：${eventTimeStr}
+          </div>
+          <div class="event-showcase-grid">
+            <div class="event-showcase-item">
+              <h4><i class="fas fa-calendar-alt"></i> 活动日期</h4>
+              <p>${parsed.dateStr || '2026年'}</p>
+            </div>
+            <div class="event-showcase-item" style="border: 1.5px solid rgba(246, 210, 138, 0.45); background: rgba(246, 210, 138, 0.08);">
+              <h4 style="color:var(--gold);"><i class="fas fa-clock"></i> 活动时间</h4>
+              <p style="color:var(--gold); font-size:1.08rem; font-weight:700;">${eventTimeStr}</p>
+            </div>
+            <div class="event-showcase-item">
+              <h4><i class="fas fa-map-marker-alt"></i> 聚会地点</h4>
+              <p>${parsed.location || '线下敬拜现场'}</p>
+            </div>
+          </div>
+          ${parsed.description ? `<p style="color:#ddd; font-size:0.95rem; line-height:1.8; max-width:640px; margin:0 auto 1.5rem; text-align:justify;">${parsed.description}</p>` : ''}
+          <div class="event-showcase-footer">
+            <p style="margin:0 0 1rem;">🌾 汤小康老师与收割机敬拜音乐团队亲临服事 · 欢迎主内肢体携未信亲友踊跃赴会</p>
+            <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+              ${isEvent ? `
+                <button class="btn-strip-remind" style="width:auto; height:auto; border-radius:50px; padding:10px 22px; font-size:0.9rem; gap:8px;" onclick="openReminderModal('${album.id}', '${(cleanT || '').replace(/'/g, "\\'")}', '${parsed.fullDateTime || (parsed.dateStr + ' ' + eventTimeStr)}')">
+                  <i class="fas fa-bell"></i> 开启活动提醒
+                </button>
+              ` : ''}
+              <a href="events.html" class="btn-frosted-gold" style="min-width:auto; padding:10px 22px; font-size:0.9rem; text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                <i class="fas fa-arrow-left"></i> 返回巡回列表
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      if (mainPosterHtml || showcaseCardHtml || extraGalleryHtml) {
         container.className = 'event-poster-view-container';
-        container.innerHTML = mainPosterHtml + extraGalleryHtml;
+        container.innerHTML = mainPosterHtml + showcaseCardHtml + extraGalleryHtml;
         container.style.display = 'block';
       } else {
         container.innerHTML = '';
         container.style.display = 'none';
+      }
+
+      if (typeof refreshObserver === 'function') {
+        refreshObserver();
       }
 
     } catch (e) {

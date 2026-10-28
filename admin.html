@@ -24,56 +24,57 @@
     });
   </script>
   <title>CMS 后台管理 · Harvester Music</title>
-  <link rel="stylesheet" href="styles.css?v=59.0.0">
+  <link rel="stylesheet" href="styles.css?v=70.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --gold: #d4af37 !important;
-      --gold-light: #e5c158;
-      --gold-dark: #b89225;
-      --gold-glow: rgba(212, 175, 55, 0.35) !important;
-      --gold-bg: rgba(212, 175, 55, 0.12);
-      --gold-border: rgba(212, 175, 55, 0.38);
-      --admin-red: #e63946;
-      --admin-red-light: #ff4d4f;
-      --admin-red-dark: #c92a3f;
-      --admin-red-glow: rgba(230, 57, 70, 0.35);
-      --admin-red-bg: rgba(230, 57, 70, 0.12);
-      --admin-red-border: rgba(230, 57, 70, 0.38);
-      --admin-bg-darkest: #070707;
-      --admin-bg-dark: #0f0f0f;
-      --admin-bg-card: #141414;
-      --admin-bg-input: #1a1a1a;
-      --admin-text-main: #ffffff;
-      --admin-text-sub: #dedede;
-      --admin-text-muted: #a0a0a0;
-      --admin-border: #242424;
+      --gold: #FFB830 !important;
+      --gold-light: #FFD166 !important;
+      --gold-dark: #E09612 !important;
+      --gold-glow: rgba(255, 184, 48, 0.38) !important;
+      --gold-bg: rgba(255, 184, 48, 0.14) !important;
+      --gold-border: rgba(255, 184, 48, 0.42) !important;
+      --admin-coral: #FF6B4A;
+      --admin-red: #FF4757;
+      --admin-red-light: #ff6b81;
+      --admin-red-dark: #e03140;
+      --admin-red-glow: rgba(255, 71, 87, 0.35);
+      --admin-red-bg: rgba(255, 71, 87, 0.12);
+      --admin-red-border: rgba(255, 71, 87, 0.42);
+      --admin-bg-darkest: #18110D;
+      --admin-bg-dark: #211712;
+      --admin-bg-card: #2B1E17;
+      --admin-bg-input: #1D140F;
+      --admin-border: #4A3326;
+      --admin-text-main: #FFF8F0;
+      --admin-text-sub: #E6D5C3;
+      --admin-text-muted: #B89F88;
     }
 
     body {
-      background: radial-gradient(circle at 50% 30%, #17140d 0%, #080808 100%);
+      background: radial-gradient(circle at 15% 20%, rgba(255, 107, 74, 0.16) 0%, transparent 45%), radial-gradient(circle at 85% 25%, rgba(255, 184, 48, 0.18) 0%, transparent 50%), linear-gradient(160deg, #1E1510 0%, #2B1D16 55%, #160F0B 100%);
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       margin: 0;
       overflow: hidden;
-      color: #ffffff;
+      color: var(--admin-text-main);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
     }
 
     label {
-      color: #a0a0a0;
+      color: var(--admin-text-muted);
     }
 
     .auth-container {
-      background: #111111;
+      background: linear-gradient(145deg, #2B1E17 0%, #211712 100%);
       border: 1.5px solid var(--gold-border);
       border-radius: 16px;
       padding: 3rem 2.5rem;
       width: 100%;
       max-width: 400px;
-      box-shadow: 0 15px 50px rgba(0,0,0,0.9), 0 0 30px rgba(212, 175, 55, 0.12);
+      box-shadow: 0 18px 50px rgba(15, 9, 5, 0.85), 0 0 35px rgba(255, 184, 48, 0.16);
       position: relative;
       z-index: 10;
       text-align: center;
@@ -87,7 +88,7 @@
     }
     .auth-title {
       font-family: var(--font-brand), sans-serif;
-      color: #ffffff;
+      color: var(--admin-text-main);
       font-size: 1.85rem;
       font-weight: 800;
       letter-spacing: 2px;
@@ -102,7 +103,7 @@
     }
     .auth-input-group label {
       display: block;
-      color: #a0a0a0;
+      color: var(--admin-text-muted);
       font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -111,9 +112,9 @@
     .auth-input-group input {
       width: 100%;
       padding: 0.85rem 1rem;
-      background: #1a1a1a;
-      border: 1px solid #333333;
-      color: #ffffff;
+      background: var(--admin-bg-input);
+      border: 1px solid var(--admin-border);
+      color: var(--admin-text-main);
       border-radius: 6px;
       transition: border-color 0.3s, box-shadow 0.3s;
       box-sizing: border-box;
@@ -134,26 +135,26 @@
       display: none;
     }
 
-    /* Primary Positive Actions (Gold) */
+    /* Primary Positive Actions (Sunlit Harvest Gold -> Coral Gradient) */
     .btn-login, .btn-submit, .btn-primary, .btn-submit-cms {
       width: 100%;
-      background: linear-gradient(135deg, #e5c158 0%, #c49b27 100%);
-      color: #111111;
+      background: linear-gradient(135deg, #FFB830 0%, #FF6B4A 100%) !important;
+      color: #1A110B !important;
       padding: 0.9rem 1.5rem;
       border: none;
       border-radius: 8px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1.2px;
       cursor: pointer;
-      box-shadow: 0 4px 18px rgba(212, 175, 55, 0.32);
+      box-shadow: 0 6px 20px rgba(255, 107, 74, 0.35);
       transition: all 0.25s ease;
     }
     .btn-login:hover, .btn-submit:hover, .btn-primary:hover, .btn-submit-cms:hover {
-      background: linear-gradient(135deg, #f0cf6e 0%, #d4af37 100%);
-      color: #000000;
+      background: linear-gradient(135deg, #FFD166 0%, #FF8266 100%) !important;
+      color: #120B07 !important;
       transform: translateY(-2px);
-      box-shadow: 0 6px 24px rgba(212, 175, 55, 0.5);
+      box-shadow: 0 8px 26px rgba(255, 107, 74, 0.5), 0 0 18px rgba(255, 184, 48, 0.35);
     }
     .btn-login:active, .btn-submit:active, .btn-primary:active, .btn-submit-cms:active {
       transform: translateY(1px);
@@ -162,9 +163,9 @@
     /* Secondary / Tiny Buttons */
     .btn-tiny {
       padding: 6px 14px;
-      background: #1a1a1a;
-      border: 1px solid #333333;
-      color: #d0d0d0;
+      background: #241913;
+      border: 1px solid var(--admin-border);
+      color: var(--admin-text-sub);
       border-radius: 6px;
       font-size: 0.75rem;
       font-weight: 500;
@@ -173,27 +174,27 @@
     }
     .btn-tiny:hover {
       border-color: var(--gold);
-      color: #ffffff;
-      background: rgba(212, 175, 55, 0.14);
+      color: var(--admin-text-main);
+      background: rgba(255, 184, 48, 0.16);
     }
 
-    /* Destructive Actions (Strictly Admin Red) */
+    /* Destructive Actions (Strictly Admin Red #FF4757) */
     .btn-tiny.danger, .btn.danger, button.danger {
-      color: #ff6b6b;
-      border-color: rgba(230, 57, 70, 0.45);
-      background: rgba(230, 57, 70, 0.08);
+      color: #FF6B81;
+      border-color: rgba(255, 71, 87, 0.45);
+      background: rgba(255, 71, 87, 0.1) !important;
     }
     .btn-tiny.danger:hover, .btn.danger:hover, button.danger:hover {
-      background: var(--admin-red);
-      border-color: var(--admin-red);
-      color: #ffffff;
+      background: var(--admin-red) !important;
+      border-color: var(--admin-red) !important;
+      color: #ffffff !important;
       box-shadow: 0 4px 14px var(--admin-red-glow);
     }
 
     .btn-home {
       display: block;
       margin-top: 1.5rem;
-      color: #a0a0a0;
+      color: var(--admin-text-muted);
       font-size: 0.82rem;
       text-decoration: none;
       transition: 0.3s;
@@ -206,16 +207,16 @@
     .cms-layout {
       display: flex;
       height: 100vh;
-      background: #080808;
-      color: #ffffff;
+      background: transparent;
+      color: var(--admin-text-main);
       overflow: hidden;
       position: relative;
     }
     .cms-sidebar {
       width: 265px;
       min-width: 265px;
-      background: #0c0c0c;
-      border-right: 1px solid #222222;
+      background: linear-gradient(180deg, #211712 0%, #18110D 100%);
+      border-right: 1px solid var(--admin-border);
       padding: 1.8rem 1.1rem;
       display: flex;
       flex-direction: column;
@@ -225,7 +226,7 @@
     }
     .nav-section-title {
       font-size: 0.65rem;
-      color: #a0a0a0;
+      color: var(--admin-text-muted);
       text-transform: uppercase;
       letter-spacing: 1.8px;
       margin: 10px 0 6px 8px;
@@ -233,7 +234,7 @@
     }
     .cms-layout aside nav a,
     .nav-item {
-      color: #b0b0b0;
+      color: var(--admin-text-sub);
       text-decoration: none;
       padding: 9px 12px;
       border-radius: 6px;
@@ -247,29 +248,29 @@
     }
     .cms-layout aside nav a:hover,
     .nav-item:hover {
-      background: rgba(255, 255, 255, 0.06);
-      color: #ffffff;
+      background: rgba(255, 184, 48, 0.1);
+      color: var(--admin-text-main);
     }
     .nav-item.active {
-      background: rgba(212, 175, 55, 0.15);
-      color: var(--gold-light);
+      background: linear-gradient(90deg, rgba(255, 184, 48, 0.22), rgba(255, 107, 74, 0.12));
+      color: #FFB830;
       font-weight: 600;
-      border-left: 3px solid var(--gold);
+      border-left: 3px solid #FFB830;
     }
 
     .cms-card {
-      background: #111111;
-      border: 1px solid #222222;
+      background: var(--admin-bg-card);
+      border: 1px solid var(--admin-border);
       border-radius: 12px;
       padding: 2rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      box-shadow: 0 6px 24px rgba(15, 9, 5, 0.55);
     }
 
     input[type="text"], input[type="file"], input[type="number"], input[type="date"], input[type="email"], input[type="password"], select, textarea {
       padding: 10px 12px;
-      background: #141414 !important;
-      border: 1px solid #2e2e2e !important;
-      color: #ffffff !important;
+      background: var(--admin-bg-input) !important;
+      border: 1px solid var(--admin-border) !important;
+      color: var(--admin-text-main) !important;
       border-radius: 6px !important;
       margin-top: 5px;
       box-sizing: border-box;
@@ -284,7 +285,7 @@
     #adminDashboard {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: #080808;
+      background: radial-gradient(circle at 15% 20%, rgba(255, 107, 74, 0.16) 0%, transparent 45%), radial-gradient(circle at 85% 25%, rgba(255, 184, 48, 0.18) 0%, transparent 50%), linear-gradient(160deg, #1E1510 0%, #2B1D16 55%, #160F0B 100%);
       z-index: 20;
       display: none;
     }
@@ -298,15 +299,15 @@
       align-items: center;
       justify-content: space-between;
       padding: 12px 18px;
-      background: #0c0c0c;
-      border-bottom: 1px solid #222222;
+      background: #211712;
+      border-bottom: 1px solid var(--admin-border);
       z-index: 90;
     }
     .cms-sidebar-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(18, 11, 7, 0.72);
       backdrop-filter: blur(3px);
       z-index: 95;
     }
@@ -334,13 +335,13 @@
       gap: 12px;
       padding: 13px 16px;
       border-radius: 10px;
-      background: rgba(20, 20, 20, 0.96);
+      background: rgba(43, 30, 23, 0.96);
       backdrop-filter: blur(12px);
-      color: #ffffff;
+      color: var(--admin-text-main);
       font-size: 0.86rem;
       line-height: 1.45;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75);
-      border: 1px solid #333333;
+      box-shadow: 0 10px 30px rgba(15, 9, 5, 0.78);
+      border: 1px solid var(--admin-border);
       border-left: 4px solid var(--gold);
       transform: translateX(120%);
       opacity: 0;
@@ -355,10 +356,10 @@
     }
     .admin-toast.error {
       border-left-color: var(--admin-red);
-      background: rgba(28, 14, 16, 0.96);
+      background: rgba(48, 20, 22, 0.96);
     }
     .admin-toast.info {
-      border-left-color: #58a6ff;
+      border-left-color: var(--admin-coral);
     }
 
     /* Responsive Mobile & Tablet Styles (< 900px) */
@@ -453,7 +454,7 @@
     })();
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="config.js?v=20261021_01"></script>
-  <script src="admin.js?v=20261022_05"></script>
+  <script src="config.js?v=20261022_ga"></script>
+  <script src="admin.js?v=20261022_ga"></script>
 </body>
 </html>
