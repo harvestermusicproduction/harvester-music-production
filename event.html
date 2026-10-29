@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=70.0.0">
+  <link rel="stylesheet" href="styles.css?v=71.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .event-meta-pill {
@@ -35,10 +35,10 @@
       transition: all 0.3s ease;
     }
     .event-meta-pill.event-time-pill {
-      border: 1.5px solid rgba(246, 210, 138, 0.85);
-      background: rgba(246, 210, 138, 0.18);
+      border: 1.5px solid var(--gold);
+      background: rgba(246, 210, 138, 0.22);
       color: var(--gold);
-      font-weight: 700;
+      font-weight: 800;
       font-size: 1.05rem;
       box-shadow: 0 4px 20px rgba(246, 210, 138, 0.28);
       letter-spacing: 0.8px;
@@ -47,6 +47,18 @@
       color: var(--gold);
       margin-right: 8px;
       font-size: 1.05rem;
+    }
+    .event-meta-pill.event-free-pill {
+      border: 1.5px solid rgba(46, 213, 115, 0.6);
+      background: rgba(46, 213, 115, 0.16);
+      color: #2ed573;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      box-shadow: 0 4px 15px rgba(46, 213, 115, 0.2);
+    }
+    .event-meta-pill.event-free-pill i {
+      color: #2ed573;
+      margin-right: 7px;
     }
 
     /* 🌟 Showcase Card for Events Without Poster */
@@ -220,16 +232,26 @@
   </div>
   <main style="padding-top: 100px;">
     <section>
-      <div id="eventHeader" class="text-center mb-4" style="padding: 0 1rem;">
-        <!-- Title, Date/Time, and Description (Pre-hydrated default prevents blank state) -->
-        <h1 class="text-gold" id="eventTitle">音乐见证布道会 · 亚罗士打浸信会教会</h1>
-        <div id="eventDate" style="letter-spacing: 1px; font-size: 1rem; opacity: 0.95; display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
-          <span class="event-meta-pill"><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>2026年10月25日</span>
-          <span class="event-meta-pill event-time-pill"><i class="fas fa-clock" style="color:var(--gold); margin-right:6px;"></i>活动时间：20:15 - 22:00</span>
-          <span class="event-meta-pill"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>亚罗士打浸信会教会 (咖啡牧师教会)</span>
+      <div id="eventHeader" class="text-center mb-4" style="padding: 0 1rem; max-width: 900px; margin: 0 auto 2.5rem;">
+        <div style="display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:0.85rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:1rem; background:rgba(246,210,138,0.12); border:1.5px solid rgba(246,210,138,0.35); border-radius:50px; padding:5px 18px;">
+          <i class="fas fa-church"></i> 福音巡回音乐见证布道会
         </div>
-        <div id="eventDesc" style="max-width: 650px; margin: 1.5rem auto 0; color: #ddd; font-size: 0.95rem; line-height: 1.8; text-align: center; display: block;">汤小康老师与收割机敬拜音乐团队亲临亚罗士打浸信会教会，以动人 CCM 诗歌与深刻生命见证带来福音飨宴。欢迎各界会友携亲友出席。</div>
-        <div id="event_remind_btn_wrap" style="width:100%; display:flex; justify-content:center; margin-top:20px;"></div>
+        <h1 class="text-gold" id="eventTitle" style="font-size:2.2rem; font-family:var(--font-brand), sans-serif; margin-bottom:1.2rem; line-height:1.3;">音乐见证布道会 · 亚罗士打浸信会教会</h1>
+        <div id="eventDate" style="letter-spacing: 0.6px; font-size: 1rem; opacity: 0.98; display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px;">
+          <span class="event-meta-pill"><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>2026年10月25日</span>
+          <span class="event-meta-pill event-time-pill"><i class="fas fa-clock" style="color:var(--gold); margin-right:8px;"></i>活动时间：20:15 - 22:00</span>
+          <span class="event-meta-pill"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>亚罗士打浸信会教会 (咖啡牧师教会)</span>
+          <span class="event-meta-pill event-free-pill"><i class="fas fa-heart" style="color:#2ed573; margin-right:6px;"></i>免费入场 · 自由赴会</span>
+        </div>
+        <div id="eventDesc" style="max-width: 680px; margin: 1.8rem auto 0; color: #ddd; font-size: 1rem; line-height: 1.85; text-align: center; display: block;">汤小康老师与收割机敬拜音乐团队亲临亚罗士打浸信会教会，以动人 CCM 诗歌与深刻生命见证带来福音飨宴。欢迎各界会友携亲友出席。</div>
+        <div id="event_remind_btn_wrap" style="width:100%; display:flex; justify-content:center; gap:14px; margin-top:24px; flex-wrap:wrap;">
+          <button class="btn-frosted-gold" style="min-width:180px; max-width:240px; padding:12px 24px; background:rgba(246,210,138,0.15); color:var(--gold); border:1.5px solid rgba(246,210,138,0.4); border-radius:50px; cursor:pointer; font-weight:700; font-size:0.95rem; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="openReminderModal('e44e2f32-b755-4339-a9a4-bfe910fa9c3e', '音乐见证布道会 · 亚罗士打浸信会教会', '2026年10月25日 20:15 - 22:00')">
+            <i class="fas fa-bell"></i> 开启活动提醒
+          </button>
+          <a href="events.html" class="btn-frosted-gold" style="min-width:auto; padding:12px 22px; font-size:0.95rem; text-decoration:none; display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); color:#F6F4F0; border-radius:50px;">
+            <i class="fas fa-arrow-left"></i> 返回巡回列表
+          </a>
+        </div>
       </div>
 
       <div id="galleryContainer" class="event-poster-view-container" style="display:none;"></div>
@@ -256,7 +278,7 @@
     <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
   </footer>
 
-  <script src="app.js?v=70.0.0"></script>
+  <script src="app.js?v=71.0.0"></script>
   <script>
     // Specific initialization for this page
     document.addEventListener('DOMContentLoaded', () => {

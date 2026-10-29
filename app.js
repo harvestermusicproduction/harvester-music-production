@@ -864,7 +864,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const eventTimeStr = e.timeStr || '20:00 - 22:00';
 
       return `
-        <div class="event-strip-row fade-in">
+        <div class="event-strip-row fade-in visible">
           <!-- Left: Date Block -->
           <div class="event-date-block">
             <span class="event-day">${e.day}</span>
@@ -877,7 +877,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <!-- Center: Info -->
           <div class="event-info-block">
-            ${tagHtml ? `<div class="event-tag-badge-wrap">${tagHtml}</div>` : ''}
+            <div class="event-tag-badge-wrap">
+              ${tagHtml}
+              <span class="event-strip-badge free-badge"><i class="fas fa-heart"></i> 免费入场</span>
+            </div>
             <h3 class="event-strip-title">
               <a href="event.html?id=${e.id}">${titleDisplay}</a>
             </h3>
@@ -892,6 +895,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('${e.id}', '${safeTitle}', '${e.fullDateTime}')">
               <i class="fas fa-bell"></i>
             </button>
+            <a href="event.html?id=${e.id}" class="btn-strip-detail" title="查看活动详情">
+              <i class="fas fa-arrow-right"></i>
+            </a>
           </div>
         </div>`;
     }).join('');
@@ -1602,12 +1608,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const titleEl = document.getElementById('eventTitle');
       if (titleEl) titleEl.innerText = cleanT;
 
+      const displayTime = parsed.timeStr || album.event_time || album.time || '20:00 - 22:00';
+
       const dateEl = document.getElementById('eventDate');
       if (dateEl) {
         dateEl.style.display = 'flex';
         dateEl.style.alignItems = 'center';
         dateEl.style.justifyContent = 'center';
-        dateEl.style.gap = '15px';
+        dateEl.style.gap = '12px';
         dateEl.style.flexWrap = 'wrap';
 
         let html = '';
@@ -1616,11 +1624,11 @@ document.addEventListener('DOMContentLoaded', () => {
           const iconClass = isSpecialTag ? 'fa-sparkles' : 'fa-calendar-alt';
           html += `<span class="event-meta-pill"><i class="fas ${iconClass}" style="color:var(--gold); margin-right:6px;"></i>${parsed.dateStr}</span>`;
         }
-        const displayTime = parsed.timeStr || album.event_time || album.time || '20:00 - 22:00';
         html += `<span class="event-meta-pill event-time-pill"><i class="fas fa-clock" style="color:var(--gold); margin-right:8px;"></i>活动时间：${displayTime}</span>`;
         if (parsed.location) {
           html += `<span class="event-meta-pill"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.location}</span>`;
         }
+        html += `<span class="event-meta-pill event-free-pill"><i class="fas fa-heart" style="color:#2ed573; margin-right:6px;"></i>免费入场 · 自由赴会</span>`;
         
         dateEl.innerHTML = html;
       }
@@ -1651,24 +1659,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 只有真正的教会/布道巡回活动且具备场次时间时，才显示“提醒我”按钮；相簿与纯图片回顾绝不显示提醒功能
       const oldBtnWrap = document.getElementById('event_remind_btn_wrap');
-      if (oldBtnWrap) oldBtnWrap.innerHTML = '';
-      if (isEvent && (parsed.timeStr || (album.event_time && String(album.event_time).trim()))) {
+      if (oldBtnWrap) {
         const cleanTitle = (cleanT || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        const btn = document.createElement('button');
-        btn.className = 'btn-frosted-gold';
-        btn.style = "min-width:180px; max-width:260px; padding:12px 24px; background:rgba(246,210,138,0.1); color:var(--gold); border:1px solid rgba(246,210,138,0.3); border-radius:50px; cursor:pointer; font-weight:600; font-size:0.95rem; display:inline-flex; align-items:center; justify-content:center; gap:8px;";
-        btn.onclick = () => openReminderModal(album.id, cleanTitle, parsed.fullDateTime);
-        btn.innerHTML = `<i class="fas fa-bell"></i> 提醒我`;
-        if (oldBtnWrap) {
-          oldBtnWrap.appendChild(btn);
-        } else {
-          const btnWrap = document.createElement('div');
-          btnWrap.id = 'event_remind_btn_wrap';
-          btnWrap.style = "width:100%; display:flex; justify-content:center; margin-top:20px;";
-          btnWrap.appendChild(btn);
-          const eventHeader = document.getElementById('eventHeader');
-          if (eventHeader) eventHeader.appendChild(btnWrap);
-        }
+        oldBtnWrap.innerHTML = `
+          <button class="btn-frosted-gold" style="min-width:180px; max-width:240px; padding:12px 24px; background:rgba(246,210,138,0.15); color:var(--gold); border:1.5px solid rgba(246,210,138,0.4); border-radius:50px; cursor:pointer; font-weight:700; font-size:0.95rem; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="openReminderModal('${album.id}', '${cleanTitle}', '${parsed.fullDateTime || (parsed.dateStr + ' ' + displayTime)}')">
+            <i class="fas fa-bell"></i> 开启活动提醒
+          </button>
+          <a href="events.html" class="btn-frosted-gold" style="min-width:auto; padding:12px 22px; font-size:0.95rem; text-decoration:none; display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); color:#F6F4F0; border-radius:50px;">
+            <i class="fas fa-arrow-left"></i> 返回巡回列表
+          </a>
+        `;
       }
 
       // Gather photos (support multiple pictures uploaded via backend)
@@ -1758,53 +1758,41 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       }
 
-      const eventTimeStr = parsed.timeStr || album.event_time || album.time || '20:00 - 22:00';
-
-      const showcaseCardHtml = `
-        <div class="event-showcase-card fade-in visible" style="${posterUrl ? 'margin-top:2.5rem;' : ''}">
-          <div style="display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:0.85rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:0.8rem; background:rgba(246,210,138,0.1); border:1px solid rgba(246,210,138,0.3); border-radius:50px; padding:4px 16px;">
-            <i class="fas fa-church"></i> 福音巡回音乐见证布道会
-          </div>
-          <h2 style="color:#F6F4F0; font-size:1.85rem; font-family:var(--font-brand), sans-serif; margin:0 0 1rem; line-height:1.3;">
-            ${cleanT}
-          </h2>
-          <div class="event-showcase-time-highlight">
-            <i class="fas fa-clock"></i> 活动时间：${eventTimeStr}
-          </div>
-          <div class="event-showcase-grid">
-            <div class="event-showcase-item">
-              <h4><i class="fas fa-calendar-alt"></i> 活动日期</h4>
-              <p>${parsed.dateStr || '2026年'}</p>
+      let contentHtml = '';
+      if (mainPosterHtml) {
+        contentHtml += mainPosterHtml;
+      } else {
+        // Warm invitation banner when no graphic poster is attached
+        contentHtml += `
+          <div class="event-no-poster-card fade-in visible" style="max-width:760px; margin:2rem auto 3rem; background:rgba(255,255,255,0.035); border:1px solid rgba(246,210,138,0.25); border-radius:18px; padding:2.4rem 2rem; text-align:center; box-shadow:0 15px 45px rgba(0,0,0,0.65);">
+            <div style="display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:0.85rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:1rem; background:rgba(246,210,138,0.12); border:1px solid rgba(246,210,138,0.3); border-radius:50px; padding:4px 16px;">
+              <i class="fas fa-church"></i> 福音巡回音乐见证布道会
             </div>
-            <div class="event-showcase-item" style="border: 1.5px solid rgba(246, 210, 138, 0.45); background: rgba(246, 210, 138, 0.08);">
-              <h4 style="color:var(--gold);"><i class="fas fa-clock"></i> 活动时间</h4>
-              <p style="color:var(--gold); font-size:1.08rem; font-weight:700;">${eventTimeStr}</p>
-            </div>
-            <div class="event-showcase-item">
-              <h4><i class="fas fa-map-marker-alt"></i> 聚会地点</h4>
-              <p>${parsed.location || '线下敬拜现场'}</p>
-            </div>
-          </div>
-          ${parsed.description ? `<p style="color:#ddd; font-size:0.95rem; line-height:1.8; max-width:640px; margin:0 auto 1.5rem; text-align:justify;">${parsed.description}</p>` : ''}
-          <div class="event-showcase-footer">
-            <p style="margin:0 0 1rem;">🌾 汤小康老师与收割机敬拜音乐团队亲临服事 · 欢迎主内肢体携未信亲友踊跃赴会</p>
+            <p style="color:var(--gold); font-size:1.15rem; font-weight:700; margin:0 0 0.8rem; letter-spacing:1px;">
+              🌾 汤小康老师与收割机敬拜音乐团队亲临服事
+            </p>
+            <p style="color:#ddd; font-size:0.98rem; line-height:1.9; margin:0 auto 1.5rem; max-width:620px;">
+              以动人 CCM 诗歌与深刻生命见证带来福音飨宴。本场聚会完全免费入场，诚挚欢迎主内肢体携未信亲友踊跃赴会，同沐主恩！
+            </p>
             <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
-              ${isEvent ? `
-                <button class="btn-strip-remind" style="width:auto; height:auto; border-radius:50px; padding:10px 22px; font-size:0.9rem; gap:8px;" onclick="openReminderModal('${album.id}', '${(cleanT || '').replace(/'/g, "\\'")}', '${parsed.fullDateTime || (parsed.dateStr + ' ' + eventTimeStr)}')">
-                  <i class="fas fa-bell"></i> 开启活动提醒
-                </button>
-              ` : ''}
-              <a href="events.html" class="btn-frosted-gold" style="min-width:auto; padding:10px 22px; font-size:0.9rem; text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+              <button class="btn-frosted-gold" style="min-width:auto; padding:10px 22px; font-size:0.92rem; gap:8px; background:rgba(246,210,138,0.18); border-color:var(--gold); color:var(--gold); border-radius:50px; cursor:pointer;" onclick="openReminderModal('${album.id}', '${(cleanT || '').replace(/'/g, "\\'")}', '${parsed.fullDateTime || (parsed.dateStr + ' ' + displayTime)}')">
+                <i class="fas fa-bell"></i> 开启活动提醒
+              </button>
+              <a href="events.html" class="btn-frosted-gold" style="min-width:auto; padding:10px 22px; font-size:0.92rem; text-decoration:none; display:inline-flex; align-items:center; gap:8px; border-radius:50px;">
                 <i class="fas fa-arrow-left"></i> 返回巡回列表
               </a>
             </div>
           </div>
-        </div>
-      `;
+        `;
+      }
 
-      if (mainPosterHtml || showcaseCardHtml || extraGalleryHtml) {
+      if (extraGalleryHtml) {
+        contentHtml += extraGalleryHtml;
+      }
+
+      if (contentHtml) {
         container.className = 'event-poster-view-container';
-        container.innerHTML = mainPosterHtml + showcaseCardHtml + extraGalleryHtml;
+        container.innerHTML = contentHtml;
         container.style.display = 'block';
       } else {
         container.innerHTML = '';

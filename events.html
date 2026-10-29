@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=70.0.0">
+  <link rel="stylesheet" href="styles.css?v=71.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     /* --- 🌟 Full-Width Panoramic Multi-Photo Running Gallery (横向尽头多照片轮播画廊) --- */
@@ -584,14 +584,47 @@
       border: 1px solid rgba(164, 176, 190, 0.3);
     }
 
+    .event-strip-badge.free-badge {
+      color: #2ed573;
+      background: rgba(46, 213, 115, 0.14);
+      border: 1px solid rgba(46, 213, 115, 0.38);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     /* Right: Action Block */
     .event-action-block {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       justify-content: flex-end;
       flex-shrink: 0;
       min-width: auto;
+    }
+
+    .btn-strip-detail {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ccc;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      transition: all 0.25s ease;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .btn-strip-detail:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(246, 210, 138, 0.15);
+      transform: scale(1.08);
     }
 
     .btn-strip-remind {
@@ -1182,7 +1215,10 @@
         </div>
       </div>
       <div class="event-info-block">
-        <div class="event-tag-badge-wrap"><span class="event-strip-badge open">即将来临 ⏳</span></div>
+        <div class="event-tag-badge-wrap">
+          <span class="event-strip-badge open">即将来临 ⏳</span>
+          <span class="event-strip-badge free-badge"><i class="fas fa-heart"></i> 免费入场</span>
+        </div>
         <h3 class="event-strip-title"><a href="event.html?id=e44e2f32-b755-4339-a9a4-bfe910fa9c3e">音乐见证布道会 · 亚罗士打浸信会教会</a></h3>
         <p class="event-strip-venue">
           <span class="event-strip-time"><i class="fas fa-clock"></i> 活动时间：20:15 - 22:00</span><span class="event-strip-dot">·</span>
@@ -1193,6 +1229,9 @@
         <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('e44e2f32-b755-4339-a9a4-bfe910fa9c3e', '音乐见证布道会 · 亚罗士打浸信会教会', '2026.10.25 20:15 - 22:00')">
           <i class="fas fa-bell"></i>
         </button>
+        <a href="event.html?id=e44e2f32-b755-4339-a9a4-bfe910fa9c3e" class="btn-strip-detail" title="查看活动详情">
+          <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
     </div>
 
@@ -1207,7 +1246,10 @@
         </div>
       </div>
       <div class="event-info-block">
-        <div class="event-tag-badge-wrap"><span class="event-strip-badge open">即将来临 ⏳</span></div>
+        <div class="event-tag-badge-wrap">
+          <span class="event-strip-badge open">即将来临 ⏳</span>
+          <span class="event-strip-badge free-badge"><i class="fas fa-heart"></i> 免费入场</span>
+        </div>
         <h3 class="event-strip-title"><a href="event.html?id=7e4d246d-5046-444d-8c1a-1384ac6c59b1">音乐见证布道会 · 马口教会</a></h3>
         <p class="event-strip-venue">
           <span class="event-strip-time"><i class="fas fa-clock"></i> 活动时间：20:00 - 22:00</span><span class="event-strip-dot">·</span>
@@ -1218,6 +1260,9 @@
         <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('7e4d246d-5046-444d-8c1a-1384ac6c59b1', '音乐见证布道会 · 马口教会', '2026.11.08 20:00 - 22:00')">
           <i class="fas fa-bell"></i>
         </button>
+        <a href="event.html?id=7e4d246d-5046-444d-8c1a-1384ac6c59b1" class="btn-strip-detail" title="查看活动详情">
+          <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
     </div>
 
@@ -1232,7 +1277,10 @@
         </div>
       </div>
       <div class="event-info-block">
-        <div class="event-tag-badge-wrap"><span class="event-strip-badge open">即将来临 ⏳</span></div>
+        <div class="event-tag-badge-wrap">
+          <span class="event-strip-badge open">即将来临 ⏳</span>
+          <span class="event-strip-badge free-badge"><i class="fas fa-heart"></i> 免费入场</span>
+        </div>
         <h3 class="event-strip-title"><a href="event.html?id=d638a60e-0ae9-43d3-9b43-a7360b978778">音乐见证布道会 · 巴生卓越社区教会</a></h3>
         <p class="event-strip-venue">
           <span class="event-strip-time"><i class="fas fa-clock"></i> 活动时间：20:00 - 22:00</span><span class="event-strip-dot">·</span>
@@ -1243,6 +1291,9 @@
         <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('d638a60e-0ae9-43d3-9b43-a7360b978778', '音乐见证布道会 · 巴生卓越社区教会', '2026.11.22 20:00 - 22:00')">
           <i class="fas fa-bell"></i>
         </button>
+        <a href="event.html?id=d638a60e-0ae9-43d3-9b43-a7360b978778" class="btn-strip-detail" title="查看活动详情">
+          <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
     </div>
 
@@ -1257,7 +1308,10 @@
         </div>
       </div>
       <div class="event-info-block">
-        <div class="event-tag-badge-wrap"><span class="event-strip-badge open">即将来临 ⏳</span></div>
+        <div class="event-tag-badge-wrap">
+          <span class="event-strip-badge open">即将来临 ⏳</span>
+          <span class="event-strip-badge free-badge"><i class="fas fa-heart"></i> 免费入场</span>
+        </div>
         <h3 class="event-strip-title"><a href="event.html?id=49d93ede-d4bb-4af5-90d5-83be66e692a9">音乐见证布道会 · 日本东京活水教会</a></h3>
         <p class="event-strip-venue">
           <span class="event-strip-time"><i class="fas fa-clock"></i> 活动时间：19:30 - 21:30</span><span class="event-strip-dot">·</span>
@@ -1268,6 +1322,9 @@
         <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('49d93ede-d4bb-4af5-90d5-83be66e692a9', '音乐见证布道会 · 日本东京活水教会', '2026.12.17 19:30 - 21:30')">
           <i class="fas fa-bell"></i>
         </button>
+        <a href="event.html?id=49d93ede-d4bb-4af5-90d5-83be66e692a9" class="btn-strip-detail" title="查看活动详情">
+          <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
     </div>
 
@@ -1282,7 +1339,10 @@
         </div>
       </div>
       <div class="event-info-block">
-        <div class="event-tag-badge-wrap"><span class="event-strip-badge ended">已结束 🏁</span></div>
+        <div class="event-tag-badge-wrap">
+          <span class="event-strip-badge ended">已结束 🏁</span>
+          <span class="event-strip-badge free-badge"><i class="fas fa-heart"></i> 免费入场</span>
+        </div>
         <h3 class="event-strip-title"><a href="event.html?id=e48a862c-6763-450d-b43f-8549ae21a3d7">音乐见证布道会 · 新加坡恩泉教会</a></h3>
         <p class="event-strip-venue">
           <span class="event-strip-time"><i class="fas fa-clock"></i> 活动时间：15:00 - 17:00</span><span class="event-strip-dot">·</span>
@@ -1293,6 +1353,9 @@
         <button class="btn-strip-remind" title="开启活动提醒" onclick="openReminderModal('e48a862c-6763-450d-b43f-8549ae21a3d7', '音乐见证布道会 · 新加坡恩泉教会', '2026.10.08 15:00 - 17:00')">
           <i class="fas fa-bell"></i>
         </button>
+        <a href="event.html?id=e48a862c-6763-450d-b43f-8549ae21a3d7" class="btn-strip-detail" title="查看活动详情">
+          <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
     </div>
   </div>
@@ -1314,7 +1377,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="config.js?v=24.0.0"></script>
-  <script src="app.js?v=70.0.0"></script>
+  <script src="app.js?v=71.0.0"></script>
 
 
 </body>
