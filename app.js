@@ -879,7 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="event-info-block">
             <div class="event-tag-badge-wrap">
               ${tagHtml}
-              <span class="event-strip-badge free-badge"><i class="fas fa-heart"></i> 免费入场</span>
+              <span class="event-strip-badge free-badge"><i class="fas fa-heart"></i> 免费入场 · 无需购票</span>
             </div>
             <h3 class="event-strip-title">
               <a href="event.html?id=${e.id}">${titleDisplay}</a>
@@ -1014,7 +1014,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 || defaultCuratedEvents.find(ev => (p.link && p.link.includes(ev.id)) || String(p.id) === String(ev.id) || p.title === ev.title);
               if (matchedEv) pTime = matchedEv.timeStr || matchedEv.event_time || matchedEv.time || '';
             }
-            if (!pTime) {
+            if (!pTime && !String(p.id || '').includes('1792653969069') && !String(p.title || '').includes('翻唱') && !String(p.title || '').includes('挑战')) {
               pTime = '20:00 - 22:00';
             }
             return {
@@ -1628,7 +1628,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (parsed.location) {
           html += `<span class="event-meta-pill"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>${parsed.location}</span>`;
         }
-        html += `<span class="event-meta-pill event-free-pill"><i class="fas fa-heart" style="color:#2ed573; margin-right:6px;"></i>免费入场 · 自由赴会</span>`;
+        html += `<span class="event-meta-pill event-free-pill"><i class="fas fa-heart" style="color:#2ed573; margin-right:6px;"></i>免费入场 · 自由赴会 · 无需购票</span>`;
         
         dateEl.innerHTML = html;
       }
@@ -1758,32 +1758,62 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       }
 
-      let contentHtml = '';
-      if (mainPosterHtml) {
-        contentHtml += mainPosterHtml;
-      } else {
-        // Warm invitation banner when no graphic poster is attached
-        contentHtml += `
-          <div class="event-no-poster-card fade-in visible" style="max-width:760px; margin:2rem auto 3rem; background:rgba(255,255,255,0.035); border:1px solid rgba(246,210,138,0.25); border-radius:18px; padding:2.4rem 2rem; text-align:center; box-shadow:0 15px 45px rgba(0,0,0,0.65);">
-            <div style="display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:0.85rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:1rem; background:rgba(246,210,138,0.12); border:1px solid rgba(246,210,138,0.3); border-radius:50px; padding:4px 16px;">
-              <i class="fas fa-church"></i> 福音巡回音乐见证布道会
+      const safeTitleAttr = (cleanT || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const reminderDateArg = parsed.fullDateTime || (parsed.dateStr + ' ' + displayTime);
+
+      const showcaseCardHtml = `
+        <div class="event-showcase-card fade-in visible"${mainPosterHtml ? ' style="margin-top:2rem;"' : ''}>
+          <div style="display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:0.85rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:1.2rem; background:rgba(246,210,138,0.12); border:1.5px solid rgba(246,210,138,0.35); border-radius:50px; padding:6px 20px;">
+            <i class="fas fa-church"></i> 福音巡回音乐见证布道会
+          </div>
+          <h2 style="color:#F6F4F0; font-size:1.8rem; font-family:var(--font-brand), sans-serif; margin:0 0 0.8rem; line-height:1.35;">${cleanT}</h2>
+          <p style="color:var(--gold); font-size:1.15rem; font-weight:700; margin:0 0 1.2rem; letter-spacing:0.8px;">
+            🌾 汤小康老师与收割机敬拜音乐团队亲临服事
+          </p>
+
+          <div class="event-showcase-time-highlight">
+            <i class="fas fa-clock"></i> 活动时间：${displayTime}
+          </div>
+
+          <div class="event-showcase-grid">
+            <div class="event-showcase-item">
+              <h4><i class="fas fa-calendar-alt"></i> 活动日期</h4>
+              <p>${parsed.dateStr || '待定'}</p>
             </div>
-            <p style="color:var(--gold); font-size:1.15rem; font-weight:700; margin:0 0 0.8rem; letter-spacing:1px;">
-              🌾 汤小康老师与收割机敬拜音乐团队亲临服事
-            </p>
-            <p style="color:#ddd; font-size:0.98rem; line-height:1.9; margin:0 auto 1.5rem; max-width:620px;">
-              以动人 CCM 诗歌与深刻生命见证带来福音飨宴。本场聚会完全免费入场，诚挚欢迎主内肢体携未信亲友踊跃赴会，同沐主恩！
-            </p>
-            <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
-              <button class="btn-frosted-gold" style="min-width:auto; padding:10px 22px; font-size:0.92rem; gap:8px; background:rgba(246,210,138,0.18); border-color:var(--gold); color:var(--gold); border-radius:50px; cursor:pointer;" onclick="openReminderModal('${album.id}', '${(cleanT || '').replace(/'/g, "\\'")}', '${parsed.fullDateTime || (parsed.dateStr + ' ' + displayTime)}')">
-                <i class="fas fa-bell"></i> 开启活动提醒
-              </button>
-              <a href="events.html" class="btn-frosted-gold" style="min-width:auto; padding:10px 22px; font-size:0.92rem; text-decoration:none; display:inline-flex; align-items:center; gap:8px; border-radius:50px;">
-                <i class="fas fa-arrow-left"></i> 返回巡回列表
-              </a>
+            <div class="event-showcase-item">
+              <h4><i class="fas fa-clock"></i> 活动时间</h4>
+              <p style="color:var(--gold); font-weight:800; font-size:1.15rem;">${displayTime}</p>
+            </div>
+            <div class="event-showcase-item">
+              <h4><i class="fas fa-map-marker-alt"></i> 举行地点</h4>
+              <p>${parsed.location || '待定'}</p>
+            </div>
+            <div class="event-showcase-item">
+              <h4><i class="fas fa-heart"></i> 入场方式</h4>
+              <p style="color:#2ed573; font-weight:700;"><i class="fas fa-check-circle"></i> 全场免费 · 自由赴会 · 无需购票</p>
             </div>
           </div>
-        `;
+
+          <p style="color:#ddd; font-size:1rem; line-height:1.9; margin:1.5rem auto 1.8rem; max-width:680px;">
+            ${parsed.description || '以动人 CCM 诗歌与深刻生命见证带来福音飨宴。本场聚会完全免费入场，诚挚欢迎主内肢体携未信亲友踊跃赴会，同沐主恩！'}
+          </p>
+
+          <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:1.5rem;">
+            <button class="btn-frosted-gold" style="min-width:180px; padding:12px 24px; font-size:0.95rem; font-weight:700; gap:8px; background:rgba(246,210,138,0.22); border-color:var(--gold); color:var(--gold); border-radius:50px; cursor:pointer;" onclick="openReminderModal('${album.id}', '${safeTitleAttr}', '${reminderDateArg}')">
+              <i class="fas fa-bell"></i> 开启活动提醒
+            </button>
+            <a href="events.html" class="btn-frosted-gold" style="min-width:auto; padding:12px 22px; font-size:0.95rem; text-decoration:none; display:inline-flex; align-items:center; gap:8px; border-radius:50px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); color:#F6F4F0;">
+              <i class="fas fa-arrow-left"></i> 返回巡回列表
+            </a>
+          </div>
+        </div>
+      `;
+
+      let contentHtml = '';
+      if (mainPosterHtml) {
+        contentHtml += mainPosterHtml + showcaseCardHtml;
+      } else {
+        contentHtml += showcaseCardHtml;
       }
 
       if (extraGalleryHtml) {

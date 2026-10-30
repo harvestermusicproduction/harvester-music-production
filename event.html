@@ -18,9 +18,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Montserrat:wght@800;900&family=Archivo+Black&family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@700&family=Kalam:wght@700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=71.0.0">
+  <link rel="stylesheet" href="styles.css?v=72.0.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    :root {
+      --gold: #FFB830;
+      --gold-light: #F6D28A;
+      --gold-dark: #C98B18;
+      --bg: #0A0807;
+      --text: #F6F4F0;
+      --font-brand: 'Syne', sans-serif;
+      --font-times-new-roman: 'Times New Roman', 'Noto Serif SC', serif;
+    }
     .event-meta-pill {
       display: inline-flex;
       align-items: center;
@@ -241,7 +250,7 @@
           <span class="event-meta-pill"><i class="fas fa-calendar-alt" style="color:var(--gold); margin-right:6px;"></i>2026年10月25日</span>
           <span class="event-meta-pill event-time-pill"><i class="fas fa-clock" style="color:var(--gold); margin-right:8px;"></i>活动时间：20:15 - 22:00</span>
           <span class="event-meta-pill"><i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:6px;"></i>亚罗士打浸信会教会 (咖啡牧师教会)</span>
-          <span class="event-meta-pill event-free-pill"><i class="fas fa-heart" style="color:#2ed573; margin-right:6px;"></i>免费入场 · 自由赴会</span>
+          <span class="event-meta-pill event-free-pill"><i class="fas fa-heart" style="color:#2ed573; margin-right:6px;"></i>免费入场 · 自由赴会 · 无需购票</span>
         </div>
         <div id="eventDesc" style="max-width: 680px; margin: 1.8rem auto 0; color: #ddd; font-size: 1rem; line-height: 1.85; text-align: center; display: block;">汤小康老师与收割机敬拜音乐团队亲临亚罗士打浸信会教会，以动人 CCM 诗歌与深刻生命见证带来福音飨宴。欢迎各界会友携亲友出席。</div>
         <div id="event_remind_btn_wrap" style="width:100%; display:flex; justify-content:center; gap:14px; margin-top:24px; flex-wrap:wrap;">
@@ -254,7 +263,60 @@
         </div>
       </div>
 
-      <div id="galleryContainer" class="event-poster-view-container" style="display:none;"></div>
+      <div id="galleryContainer" class="event-poster-view-container" style="display:block;">
+        <div class="event-single-poster-wrap">
+          <div class="event-poster-card" onclick="openLightbox('https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg')" title="点击查看高清海报">
+            <img src="https://ollfdarbmiahgjaqivpg.supabase.co/storage/v1/object/public/harvester-media/banners/1790673348948-WhatsApp_Image_2026-09-22_at_18.56.58.jpg" class="event-poster-full-img" alt="音乐见证布道会 · 亚罗士打浸信会教会" draggable="false">
+            <div class="event-poster-hover-hint"><i class="fas fa-search-plus"></i> 点击查看高清原图</div>
+          </div>
+        </div>
+
+        <div class="event-showcase-card fade-in visible" style="margin-top:2rem;">
+          <div style="display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:0.85rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:1.2rem; background:rgba(246,210,138,0.12); border:1.5px solid rgba(246,210,138,0.35); border-radius:50px; padding:6px 20px;">
+            <i class="fas fa-church"></i> 福音巡回音乐见证布道会
+          </div>
+          <h2 style="color:#F6F4F0; font-size:1.8rem; font-family:var(--font-brand), sans-serif; margin:0 0 0.8rem; line-height:1.35;">音乐见证布道会 · 亚罗士打浸信会教会</h2>
+          <p style="color:var(--gold); font-size:1.15rem; font-weight:700; margin:0 0 1.2rem; letter-spacing:0.8px;">
+            🌾 汤小康老师与收割机敬拜音乐团队亲临服事
+          </p>
+
+          <div class="event-showcase-time-highlight">
+            <i class="fas fa-clock"></i> 活动时间：20:15 - 22:00
+          </div>
+
+          <div class="event-showcase-grid">
+            <div class="event-showcase-item">
+              <h4><i class="fas fa-calendar-alt"></i> 活动日期</h4>
+              <p>2026年10月25日</p>
+            </div>
+            <div class="event-showcase-item">
+              <h4><i class="fas fa-clock"></i> 活动时间</h4>
+              <p style="color:var(--gold); font-weight:800; font-size:1.15rem;">20:15 - 22:00</p>
+            </div>
+            <div class="event-showcase-item">
+              <h4><i class="fas fa-map-marker-alt"></i> 举行地点</h4>
+              <p>亚罗士打浸信会教会 (咖啡牧师教会)</p>
+            </div>
+            <div class="event-showcase-item">
+              <h4><i class="fas fa-heart"></i> 入场方式</h4>
+              <p style="color:#2ed573; font-weight:700;"><i class="fas fa-check-circle"></i> 全场免费 · 自由赴会 · 无需购票</p>
+            </div>
+          </div>
+
+          <p style="color:#ddd; font-size:1rem; line-height:1.9; margin:1.5rem auto 1.8rem; max-width:680px;">
+            汤小康老师与收割机敬拜音乐团队亲临亚罗士打浸信会教会，以动人 CCM 诗歌与深刻生命见证带来福音飨宴。欢迎各界会友携亲友出席。
+          </p>
+
+          <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:1.5rem;">
+            <button class="btn-frosted-gold" style="min-width:180px; padding:12px 24px; font-size:0.95rem; font-weight:700; gap:8px; background:rgba(246,210,138,0.22); border-color:var(--gold); color:var(--gold); border-radius:50px; cursor:pointer;" onclick="openReminderModal('e44e2f32-b755-4339-a9a4-bfe910fa9c3e', '音乐见证布道会 · 亚罗士打浸信会教会', '2026年10月25日 20:15 - 22:00')">
+              <i class="fas fa-bell"></i> 开启活动提醒
+            </button>
+            <a href="events.html" class="btn-frosted-gold" style="min-width:auto; padding:12px 22px; font-size:0.95rem; text-decoration:none; display:inline-flex; align-items:center; gap:8px; border-radius:50px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); color:#F6F4F0;">
+              <i class="fas fa-arrow-left"></i> 返回巡回列表
+            </a>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -278,7 +340,7 @@
     <p style="font-size:0.85rem; opacity:0.6;">&copy; 2025 Harvester Music Production. 版权所有。</p>
   </footer>
 
-  <script src="app.js?v=71.0.0"></script>
+  <script src="app.js?v=72.0.0"></script>
   <script>
     // Specific initialization for this page
     document.addEventListener('DOMContentLoaded', () => {
